@@ -3,25 +3,25 @@
 [cite_start]**Assura** is a comprehensive enterprise solution engineered to manage the entire lifecycle of an organization's physical assets—from registration and assignment to depreciation and discarding[cite: 1764, 1777]. [cite_start]The system ensures financial accuracy, real-time tracking via QR technology, and accountability across the organization[cite: 1788, 1858].
 
 ## 🚀 Tech Stack
-* [cite_start]**Frontend:** Angular (Standalone Components) [cite: 1766, 1933]
-* [cite_start]**Mobile:** Flutter (Cross-platform) [cite: 1935, 1960]
-* [cite_start]**Backend:** .NET / ASP.NET Core REST API [cite: 1767, 1938]
-* [cite_start]**Database:** MySQL [cite: 1767, 1944]
-* [cite_start]**Reporting:** ClosedXML (Excel) and QuestPDF (PDF) [cite: 1978]
-* [cite_start]**Security:** JWT Authentication and Role-Based Access Control (RBAC) [cite: 1768, 1947]
+* **Frontend:** Angular (Standalone Components) 
+* **Mobile:** Flutter (Cross-platform)
+* **Backend:** .NET / ASP.NET Core REST API
+* **Database:** MySQL 
+* **Reporting:** ClosedXML (Excel) and QuestPDF (PDF) 
+* **Security:** JWT Authentication and Role-Based Access Control (RBAC) 
 
 ## 🌟 Key Role Features
-[cite_start]Assura provides a tailored experience for 10 distinct user groups[cite: 1981, 2035]:
+Assura provides a tailored experience for 10 distinct user groups:
 
-1.  [cite_start]**HR Manager**: Manages user accounts and assigns specific roles and divisions to employees after account creation[cite: 1991, 2003].
-2.  [cite_start]**Procurement Manager**: Manages suppliers and tenders, prepares purchase orders, and coordinates with external repair firms[cite: 1986, 1997].
-3.  [cite_start]**Storekeeper**: Registers new assets, generates unique QR codes, and manages inventory documentation like GRN, GIN, and TIN[cite: 1830, 1992, 1997].
-4.  [cite_start]**Superintendent**: Manages asset discarding workflows, records disposal notes, and oversees the physical discarding process[cite: 1990, 2020].
-5.  [cite_start]**Accountant**: Confirms discard notes with proof of disposal and updates the store's status in the system[cite: 1994, 2024].
-6.  [cite_start]**Auditor**: Monitors real-time analytics, detects anomalies, and exports comprehensive reports as Excel or PDF files[cite: 1836, 1987, 2048].
-7.  [cite_start]**Admin**: Responsible for asset verification and tracking physical status and division via QR scanning[cite: 1985, 2069].
-8.  [cite_start]**Employee**: Views assigned assets, makes requests for new assets, and initiates transfer or discard requests[cite: 1983, 2007].
-9.  [cite_start]**Division Head**: Reviews, approves, or rejects requests from employees within their division and manages internal transfers[cite: 1984, 1997, 2019].
+1.  **HR Manager**: Manages user accounts and assigns specific roles and divisions to employees after account creation.
+2.  **Procurement Manager**: Manages suppliers and tenders, prepares purchase orders, and coordinates with external repair firms.
+3.  **Storekeeper**: Registers new assets, generates unique QR codes, and manages inventory documentation like GRN, GIN, and TIN.
+4.  **Superintendent**: Manages asset discarding workflows, records disposal notes, and oversees the physical discarding process.
+5.  **Accountant**: Confirms discard notes with proof of disposal and updates the store's status in the system.
+6.  **Auditor**: Monitors real-time analytics, detects anomalies, and exports comprehensive reports as Excel or PDF files.
+7.  **Admin**: Responsible for asset verification and tracking physical status and division via QR scanning.
+8.  **Employee**: Views assigned assets, makes requests for new assets, and initiates transfer or discard requests.
+9.  **Division Head**: Reviews, approves, or rejects requests from employees within their division and manages internal transfers.
 
 ## 📁 Folder Structure
 The project follows a **Feature-based Standalone Architecture** to ensure scalability and isolation of role-specific logic.
