@@ -67,13 +67,50 @@ src/assets/
 
 ```
 
-## Setup Steps
+## 🛠️ Setup & Installation
 
- # clone repo
- git clone repo_link
+### Prerequisites
+- **Node.js**: v18.13.0 or higher (LTS recommended)
+- **Angular CLI**: Install globally via `npm install -g @angular/cli`
 
- # Dependencies install 
- npm install
+### Installation Steps
 
- # run in local server
- ng serve
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/System-Street-Studio/assura-frontend.git
+   cd assura-frontend
+   ```
+
+2. **Navigate to the frontend directory** ⚠️
+   The Angular project is nested inside the `frontend` folder.
+   ```bash
+   cd frontend
+   ```
+
+3. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+4. **Configure Environment**
+   - The app expects a **.NET Backend** running on `https://localhost:5171`.
+   - If your backend is on a different port, update `src/environments/environment.ts`.
+
+5. **Run the application**
+   ```bash
+   ng serve
+   ```
+   Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+
+6. **Run Tests & Linting**
+   - Run Unit Tests:
+     ```bash
+     npm run test
+     ```
+   - Check Code Quality:
+     ```bash
+     npm run lint
+     ```
+
+## 🤝 Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.

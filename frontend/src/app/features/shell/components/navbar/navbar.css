@@ -17,6 +17,13 @@
     gap: 10px;
 }
 
+.role-name {
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
 .navbar-logo {
     height: 28px;
     width: 28px;

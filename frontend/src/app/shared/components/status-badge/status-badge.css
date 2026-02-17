@@ -1,0 +1,11 @@
+.status-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}

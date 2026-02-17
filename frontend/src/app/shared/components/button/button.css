@@ -1,0 +1,23 @@
+.btn {
+    width: 130px;
+    height: 29px;
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn:hover {
+    opacity: 0.85;
+}
+
+.btn:active {
+    opacity: 0.75;
+}

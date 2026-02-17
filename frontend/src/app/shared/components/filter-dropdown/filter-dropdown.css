@@ -1,0 +1,89 @@
+.filter-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    padding: 20px 24px;
+    min-width: 280px;
+    max-height: 420px;
+    overflow-y: auto;
+    z-index: 100;
+    font-family: 'Jost', sans-serif;
+}
+
+.filter-group {
+    margin-bottom: 18px;
+}
+
+.filter-group:last-of-type {
+    margin-bottom: 20px;
+}
+
+.filter-header {
+    margin-bottom: 10px;
+}
+
+.filter-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.required-star {
+    color: #E53935;
+    margin-left: 2px;
+    font-weight: 700;
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #374151;
+}
+
+.filter-checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: #00AFB5;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.option-label {
+    font-weight: 400;
+}
+
+.filter-footer {
+    display: flex;
+    justify-content: center;
+}
+
+.close-btn {
+    width: 130px;
+    height: 29px;
+    background-color: #A30000;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.close-btn:hover {
+    opacity: 0.85;
+}

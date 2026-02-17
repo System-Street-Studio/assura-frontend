@@ -1,0 +1,22 @@
+<div class="data-table-container">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th *ngFor="let col of columns">{{ col.label }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of data" (click)="onRowClick(row)" class="data-row">
+        <td *ngFor="let col of columns">
+          <ng-container [ngSwitch]="col.type">
+            <app-status-badge *ngSwitchCase="'status'" [status]="row[col.key]"> </app-status-badge>
+            <span *ngSwitchDefault>{{ row[col.key] }}</span>
+          </ng-container>
+        </td>
+      </tr>
+      <tr *ngIf="data.length === 0">
+        <td [attr.colspan]="columns.length" class="empty-state">No data available</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
