@@ -4,8 +4,13 @@ import { shellRoutes } from './features/shell/shell.routes';
 
 export const routes: Routes = [
   {
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
+  },
+  {
     path: '',
     component: ShellComponent,
     children: shellRoutes,
   },
+  { path: '**', redirectTo: '' }
 ];

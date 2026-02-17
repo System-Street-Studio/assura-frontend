@@ -27,10 +27,27 @@ Each folder corresponds to a specific **User Role** or **Functional Area**.
 | **`hr`** | **HR Manager** | Specific manager portals. |
 | **`inventory`** | **Storekeeper** | Specific manager portals. |
 | **`procurement`** | **Procurement Mgr** | Supplier Management, Tenders, Purchase Orders. |
-| **`maintenance`** | **Superintendent** | Asset Discarding, Repairs, Disposal Notes. |
+| **`maintenance`** | **Maintenance** | General Maintenance Tasks. |
+| **`superintendent`** | **Superintendent** | Asset Discarding, Repairs, Disposal Notes. |
 | **`approvals`** | **Division Head** | Approve/Reject functionality for requests. |
 | **`reporting`** | **Auditor** | Reports, Analytics, Logs. |
 | **`accountant`** | **Accountant** | Asset Valuation, Depreciation, Financial Audit. |
+
+---
+
+### Standard Feature Structure
+Every feature module follows this strict directory structure:
+
+```
+src/app/features/[feature-name]/
+├── components/    # Dumb/Presentational components specific to this feature
+├── models/        # Interfaces, Types, Enums
+├── pages/         # Smart/routed components (Top-level views)
+├── services/      # Feature-specific services/API calls
+└── [feature].routes.ts  # Routing configuration
+```
+
+**Example:** `src/app/features/inventory/pages/manage-assets/`
 
 ---
 
