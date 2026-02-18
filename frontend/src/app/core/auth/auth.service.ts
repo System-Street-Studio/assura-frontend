@@ -20,9 +20,10 @@ export class AuthService {
     const token = this.getToken();
     if (!token) return false;
     try {
-      const decoded: any = jwtDecode(token);
+      const decoded: unknown = jwtDecode(token);
       // Check for expiration
-      const isExpired = decoded.exp && decoded.exp * 1000 < Date.now();
+      const payload = decoded as { exp: number };
+      const isExpired = payload.exp && payload.exp * 1000 < Date.now();
       return !isExpired;
     } catch {
       return false;
@@ -33,8 +34,16 @@ export class AuthService {
     const token = this.getToken();
     if (!token) return null;
     try {
-      const decoded: any = jwtDecode(token);
-      return decoded.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
+      const decoded: unknown = jwtDecode(token);
+      const payload = decoded as {
+        role?: string;
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string;
+      };
+      return (
+        payload.role ||
+        payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
+        null
+      );
     } catch {
       return null;
     }

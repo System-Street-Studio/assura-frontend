@@ -1,16 +1,22 @@
 <div class="filter-dropdown">
-  <div *ngFor="let group of groups" class="filter-group">
+  @for (group of groups; track group.title) {
+  <div class="filter-group">
     <div class="filter-header">
       <span class="filter-title">{{ group.title }}</span>
-      <span *ngIf="group.required" class="required-star">*</span>
+      @if (group.required) {
+      <span class="required-star">*</span>
+      }
     </div>
     <div class="filter-options">
-      <label *ngFor="let option of group.options" class="filter-option">
+      @for (option of group.options; track option.label) {
+      <label class="filter-option">
         <input type="checkbox" [(ngModel)]="option.checked" class="filter-checkbox" />
         <span class="option-label">{{ option.label }}</span>
       </label>
+      }
     </div>
   </div>
+  }
 
   <div class="filter-footer">
     <button class="close-btn" (click)="onClose()">Close</button>
