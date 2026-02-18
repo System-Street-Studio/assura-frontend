@@ -1,0 +1,54 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Assura</h2>
+            <p>Log into the system</p>
+        </div>
+
+        @if (errorMessage) {
+        <div class="error-message">
+            {{ errorMessage }}
+        </div>
+        }
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <mat-icon class="input-icon">person_outline</mat-icon>
+                    <input type="email" id="email" formControlName="email" class="form-control"
+                        placeholder="Username" />
+                </div>
+                @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+                <div class="error-message">Valid email is required</div>
+                }
+            </div>
+
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <mat-icon class="input-icon">lock_outline</mat-icon>
+                    <input type="password" id="password" formControlName="password" class="form-control"
+                        placeholder="Password" />
+                </div>
+                @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+                <div class="error-message">Password is required</div>
+                }
+            </div>
+
+            <div class="forgot-password">
+                <a href="#">Forgot Password</a>
+            </div>
+
+            <button type="submit" class="btn-primary" [disabled]="loginForm.invalid || isLoading">
+                @if (isLoading) {
+                <span>Logging in...</span>
+                } @else {
+                <span>Login</span>
+                }
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Don't have an account <span>Sign Up</span>
+        </div>
+    </div>
+</div>
