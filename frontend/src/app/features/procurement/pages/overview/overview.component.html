@@ -1,0 +1,38 @@
+<div class="overview-container">
+    <h2 class="page-title">Statics</h2>
+
+    <div class="statics-grid">
+        <!-- Row 1: Total Suppliers (Centered) -->
+        <div class="stat-card suppliers-card">
+            <div class="card-title">Total Suppliers (Active)</div>
+            <div class="card-value">{{ stats.totalSuppliers }}</div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="stat-row">
+            <div class="stat-card pos-not-completed-card">
+                <div class="card-title">POs - Not Completed</div>
+                <div class="card-value">{{ stats.posNotCompleted }}</div>
+            </div>
+
+            <div class="stat-card pos-completed-card">
+                <div class="card-title">POs - Completed</div>
+                <div class="card-value">{{ stats.posCompleted }}</div>
+            </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="stat-row">
+            <div class="stat-card repairs-not-completed-card">
+                <div class="card-title">Repairs - Not Completed</div>
+                <div class="card-value">{{ stats.repairsNotCompleted }}</div>
+            </div>
+
+            <div class="stat-card repairs-completed-card">
+                <div class="card-title">Repairs - Completed</div>
+                <div class="card-value">{{ stats.repairsCompleted }}</div>
+            </div>
+        </div>
+
+    </div>
+</div>

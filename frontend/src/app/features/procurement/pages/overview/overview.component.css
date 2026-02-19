@@ -1,0 +1,97 @@
+.overview-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 2rem;
+    font-family: 'Jost', sans-serif;
+}
+
+.statics-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    /* Centers the first row */
+}
+
+.stat-row {
+    display: flex;
+    gap: 1.5rem;
+    width: 100%;
+    /* Or specific width to match design */
+    justify-content: center;
+}
+
+.stat-card {
+    border-radius: 12px;
+    padding: 1.5rem;
+    min-width: 300px;
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    /* Subtle shadow */
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    font-family: 'Jost', sans-serif;
+}
+
+.card-value {
+    align-self: flex-end;
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+    font-family: 'Jost', sans-serif;
+}
+
+/* Specific Card Colors based on design description */
+
+/* Suppliers: Blue-grey */
+.suppliers-card {
+    background-color: #AAB7C4;
+    /* Adjust color code as needed */
+    background: linear-gradient(135deg, #BCC6D0 0%, #9AA8B8 100%);
+    /* Centering the first card specifically if needed, but flex-col + align-center handles it */
+}
+
+/* POs Not Completed: Red-ish/Pink */
+.pos-not-completed-card {
+    background-color: #DFA8A8;
+    background: linear-gradient(135deg, #E6B0B0 0%, #D89898 100%);
+}
+
+/* POs Completed: Orange */
+.pos-completed-card {
+    background-color: #F5CEA3;
+    background: linear-gradient(135deg, #FAD6B0 0%, #ECC090 100%);
+}
+
+/* Repairs Not Completed: Beige */
+.repairs-not-completed-card {
+    background-color: #F2E8CF;
+    background: linear-gradient(135deg, #F7EFDA 0%, #E8DDB8 100%);
+}
+
+/* Repairs Completed: Teal/Light Blue */
+.repairs-completed-card {
+    background-color: #A8D8D8;
+    background: linear-gradient(135deg, #B6E0E0 0%, #93CBCB 100%);
+}

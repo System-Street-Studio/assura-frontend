@@ -1,0 +1,98 @@
+<div class="po-container">
+
+    <!-- Section 1: List of Purchasing Orders -->
+    <section class="orders-section">
+        <h2 class="section-title">List of Purchasing Orders</h2>
+
+        <div class="controls-row">
+            <div class="search-bar">
+                <mat-icon class="search-icon">search</mat-icon>
+                <input type="text" placeholder="Search Assets..." class="search-input">
+            </div>
+            <button class="filter-btn">
+                <mat-icon>filter_list</mat-icon> Filter
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>PO ID</th>
+                        <th>Department</th>
+                        <th>Issued Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let order of orders">
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.department }}</td>
+                        <td>{{ order.date }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Create Button -->
+    <div class="action-row">
+        <button class="create-po-btn">Create a PO</button>
+    </div>
+
+    <!-- Section 2: Requests Area -->
+    <section class="requests-section">
+        <h2 class="section-title">Purchasing Order Requests</h2>
+
+        <div class="requests-layout">
+            <!-- Left: Request List -->
+            <div class="requests-list">
+                <div class="request-card" *ngFor="let req of requests">
+                    <div class="req-name">{{ req.name }}</div>
+                    <div class="req-dept">{{ req.department }}</div>
+                    <div class="req-time">{{ req.time }}</div>
+                </div>
+            </div>
+
+            <!-- Right: Asset Request Details -->
+            <div class="request-details">
+                <h3 class="details-title">Asset Request</h3>
+                <hr class="divider">
+
+                <div class="details-grid">
+                    <div class="detail-field">
+                        <label>Employee</label>
+                        <div class="value">{{ selectedRequest.employee }}</div>
+                    </div>
+                    <div class="detail-field">
+                        <label>Specifications</label>
+                        <div class="specs-box">
+                            <div>RAM : {{ selectedRequest.specs.ram }}</div>
+                            <div>Storage: {{ selectedRequest.specs.storage }}</div>
+                            <div>Processor: {{ selectedRequest.specs.processor }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-field">
+                        <label>Division</label>
+                        <div class="value">{{ selectedRequest.division }}</div>
+                    </div>
+                    <!-- Spacer for grid alignment if needed -->
+                    <div></div>
+
+                    <div class="detail-field">
+                        <label>Date</label>
+                        <div class="value">{{ selectedRequest.date }}</div>
+                    </div>
+                </div>
+
+                <div class="detail-field full-width">
+                    <label>Special Note</label>
+                    <div class="note-box">
+                        {{ selectedRequest.note }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</div>
