@@ -25,6 +25,10 @@ export class PurchaseOrdersComponent {
         this.router.navigate(['procurement', 'purchase-orders', id]);
     }
 
+    navigateToCreate() {
+        this.router.navigate(['procurement', 'purchase-orders', 'create']);
+    }
+
 
     // Mock Data for "Purchasing Order Requests"
     requests = [
