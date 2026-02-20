@@ -10,5 +10,9 @@ export const procurementRoutes: Routes = [
         path: 'overview',
         loadComponent: () => import('./pages/overview/overview.component').then(m => m.OverviewComponent)
     },
+    {
+        path: 'purchase-orders/:id',
+        loadComponent: () => import('./pages/purchase-order-details/purchase-order-details.component').then(m => m.PurchaseOrderDetailsComponent)
+    },
     { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];
