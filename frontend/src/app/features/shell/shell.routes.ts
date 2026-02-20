@@ -12,7 +12,7 @@ export const shellRoutes: Routes = [
    {
     path: 'employee',
     loadChildren: () => import('../employee/employee.routes').then(m => m.employeeRoutes)
-   },
+  },
   // {
   //   path: 'hr',
   //   loadChildren: () => import('../../hr/hr.routes').then(m => m.hrRoutes)

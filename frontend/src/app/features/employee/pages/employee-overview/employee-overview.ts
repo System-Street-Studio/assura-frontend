@@ -22,7 +22,7 @@ interface Activity {
   styleUrls: ['./employee-overview.css']
 })
 export class EmployeeOverviewComponent {
-  // Signal-based data for better performance in Angular 18
+  
   pendingRequests = signal<RequestItem[]>([
     { item: 'Office Chair', date: '2025-05-20', status: 'Pending', priority: 'High' },
     { item: 'New Monitor', date: '2025-05-18', status: 'Pending', priority: 'Medium' },
