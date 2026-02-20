@@ -145,6 +145,13 @@
     gap: 1rem;
 }
 
+/* Wrapper stacks the card list and pagination bar vertically */
+.requests-list-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 .request-card {
     background: #FFFFFF;
     border-radius: 12px;

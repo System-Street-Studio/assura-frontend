@@ -7,7 +7,7 @@
         <div class="controls-row">
             <div class="search-bar">
                 <mat-icon class="search-icon">search</mat-icon>
-                <input type="text" placeholder="Search by Dept..." class="search-input">
+                <input type="text" placeholder="Search by Department..." class="search-input">
             </div>
             <div class="filter-wrapper">
                 <button class="filter-btn" (click)="toggleFilter()">
@@ -28,7 +28,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let order of orders">
+                    <tr *ngFor="let order of pagedOrders">
                         <td (click)="navigateToDetails(order.id)"
                             style="cursor: pointer; color: #000; font-weight: 500;">{{ order.id }}</td>
                         <td>{{ order.department }}</td>
@@ -36,12 +36,17 @@
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Orders Pagination -->
+            <app-pagination [currentPage]="ordersCurrentPage" [totalPages]="ordersTotalPages"
+                [pageNumbers]="ordersPageNumbers" (pageChange)="goToOrdersPage($event)">
+            </app-pagination>
         </div>
     </section>
 
     <!-- Create Button -->
     <div class="action-row">
-        <button class="create-po-btn" (click)="navigateToCreate()">Create a PO</button>
+        <button class="create-po-btn" (click)="navigateToCreate()">Save PO</button>
     </div>
 
     <!-- Section 2: Requests Area -->
@@ -50,13 +55,20 @@
 
         <div class="requests-layout">
             <!-- Left: Request List -->
-            <div class="requests-list">
-                <div class="request-card" *ngFor="let req of requests" (click)="selectRequest(req)"
-                    [class.active]="selectedRequest === req">
-                    <div class="req-name">{{ req.name }}</div>
-                    <div class="req-dept">{{ req.department }}</div>
-                    <div class="req-time">{{ req.time }}</div>
+            <div class="requests-list-wrapper">
+                <div class="requests-list">
+                    <div class="request-card" *ngFor="let req of pagedRequests" (click)="selectRequest(req)"
+                        [class.active]="selectedRequest === req">
+                        <div class="req-name">{{ req.name }}</div>
+                        <div class="req-dept">{{ req.department }}</div>
+                        <div class="req-time">{{ req.time }}</div>
+                    </div>
                 </div>
+
+                <!-- Requests Pagination -->
+                <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
+                    [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
+                </app-pagination>
             </div>
 
             <!-- Right: Asset Request Details -->

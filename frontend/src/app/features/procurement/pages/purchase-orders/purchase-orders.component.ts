@@ -1,14 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { FilterDropdownComponent, FilterGroup } from '../../../../shared/components/filter-dropdown/filter-dropdown';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms'; // For search input if needed
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-purchase-orders',
     standalone: true,
-    imports: [CommonModule, MatIconModule, FormsModule, FilterDropdownComponent],
+    imports: [CommonModule, MatIconModule, FormsModule, FilterDropdownComponent, PaginationComponent],
     templateUrl: './purchase-orders.component.html',
     styleUrls: ['./purchase-orders.component.css']
 })
@@ -18,8 +19,21 @@ export class PurchaseOrdersComponent {
     // Mock Data for "List of Purchasing Orders"
     orders = [
         { id: 'S-2339', department: 'Information Technology', date: '12 Jan 2026' },
-        { id: 'S-7839', department: 'Astronomy', date: '12 Jan 2026' }
+        { id: 'S-7839', department: 'Astronomy', date: '12 Jan 2026' },
+        { id: 'S-1120', department: 'Finance', date: '15 Jan 2026' },
+        { id: 'S-4402', department: 'Human Resource', date: '18 Jan 2026' },
+        { id: 'S-3310', department: 'Admin', date: '20 Jan 2026' },
+        { id: 'S-9901', department: 'Space Applications', date: '22 Jan 2026' },
+        { id: 'S-5521', department: 'Communication Engineering', date: '25 Jan 2026' },
     ];
+
+    // Orders table pagination
+    ordersPageSize = 5;
+    ordersCurrentPage = 1;
+    get ordersTotalPages(): number { return Math.max(1, Math.ceil(this.orders.length / this.ordersPageSize)); }
+    get ordersPageNumbers(): number[] { return Array.from({ length: this.ordersTotalPages }, (_, i) => i + 1); }
+    get pagedOrders() { return this.orders.slice((this.ordersCurrentPage - 1) * this.ordersPageSize, this.ordersCurrentPage * this.ordersPageSize); }
+    goToOrdersPage(page: number) { if (page >= 1 && page <= this.ordersTotalPages) this.ordersCurrentPage = page; }
 
     navigateToDetails(id: string) {
         this.router.navigate(['procurement', 'purchase-orders', id]);
@@ -78,6 +92,14 @@ export class PurchaseOrdersComponent {
             note: 'Urgent requirement for graphic design project.'
         }
     ];
+
+    // Requests list pagination
+    requestsPageSize = 5;
+    requestsCurrentPage = 1;
+    get requestsTotalPages(): number { return Math.max(1, Math.ceil(this.requests.length / this.requestsPageSize)); }
+    get requestsPageNumbers(): number[] { return Array.from({ length: this.requestsTotalPages }, (_, i) => i + 1); }
+    get pagedRequests() { return this.requests.slice((this.requestsCurrentPage - 1) * this.requestsPageSize, this.requestsCurrentPage * this.requestsPageSize); }
+    goToRequestsPage(page: number) { if (page >= 1 && page <= this.requestsTotalPages) this.requestsCurrentPage = page; }
 
     // Mock Data for "Asset Request" Details (Currently selected)
     selectedRequest = this.requests[0];
