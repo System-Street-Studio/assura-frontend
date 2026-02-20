@@ -1,16 +1,18 @@
+
 import { Routes } from '@angular/router';
 import { OverviewComponent } from './pages/overview/overview';
 
+
 export const shellRoutes: Routes = [
-  // { path: 'overview', component: OverviewComponent },
+  { path: 'overview', component: OverviewComponent },
   // {
   //   path: 'inventory',
   //   loadChildren: () => import('../../inventory/inventory.routes').then(m => m.inventoryRoutes)
   // },
-  // {
-  //   path: 'employee',
-  //   loadChildren: () => import('../../employee/employee.routes').then(m => m.employeeRoutes)
-  // },
+   {
+    path: 'employee',
+    loadChildren: () => import('../employee/employee.routes').then(m => m.employeeRoutes)
+   },
   // {
   //   path: 'hr',
   //   loadChildren: () => import('../../hr/hr.routes').then(m => m.hrRoutes)

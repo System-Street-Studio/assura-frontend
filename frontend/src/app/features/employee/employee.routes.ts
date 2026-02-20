@@ -1,6 +1,18 @@
 import { Routes } from '@angular/router';
+import { EmployeeOverviewComponent } from './pages/employee-overview/employee-overview';
+
+
 
 export const employeeRoutes: Routes = [
-    // { path: 'dashboard', loadComponent: ... },
-    { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    {
+        path: 'employee-overview',
+        component: EmployeeOverviewComponent
+    },
+    
+    
+    {
+        path: '',
+        redirectTo: 'employee-overview',
+        pathMatch: 'full'
+    }
 ];

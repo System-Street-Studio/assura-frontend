@@ -1,0 +1,81 @@
+<div class="dashboard-wrapper">
+
+    <div class="content-padding">
+      <h1 class="page-title">Dashboard</h1>
+
+      <section class="section">
+        <h3 class="section-label">Quick Action</h3>
+        <div class="grid-4">
+          <button class="action-btn">Request New Asset</button>
+          <button class="action-btn">Request Temporary Transfer</button>
+          <button class="action-btn" routerLink="/employee/employee-assets">View My Assets</button>
+          <button class="action-btn">View My Requests</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <h3 class="section-label">Overview</h3>
+        <div class="grid-4">
+          <div class="stat-card border-blue">
+            <div class="stat-top">My Assigned Assets </div>
+            <div class="stat-val">12</div>
+            <div class="stat-sub">All assets assigned to me</div>
+          </div>
+          <div class="stat-card border-green">
+            <div class="stat-top">Pending Requests </div>
+            <div class="stat-val">03</div>
+            <div class="stat-sub">Waiting for approval</div>
+          </div>
+          <div class="stat-card border-yellow">
+            <div class="stat-top">Temporary transfers </div>
+            <div class="stat-val">01</div>
+            <div class="stat-sub">All temporary transfers your assets</div>
+          </div>
+          <div class="stat-card border-red">
+            <div class="stat-top">Assets in maintenance </div>
+            <div class="stat-val">02</div>
+            <div class="stat-sub">Awaiting repair or service</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="details-layout">
+        <div class="white-panel">
+          <h3>Pending Requests</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Priority</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (req of pendingRequests(); track req.item) {
+                <tr>
+                  <td>{{ req.item }}</td>
+                  <td>{{ req.date }}</td>
+                  <td>{{ req.status }}</td>
+                  <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="white-panel">
+          <h3>Recent Activities</h3>
+          <div class="activity-feed">
+            @for (act of recentActivities(); track act.description) {
+              <div class="activity-item">
+                <p class="act-desc">{{ act.description }}</p>
+                <span class="act-time">{{ act.timestamp }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+</div>
