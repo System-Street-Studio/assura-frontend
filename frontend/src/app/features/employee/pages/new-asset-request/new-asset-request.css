@@ -99,10 +99,11 @@
   border: none;
   padding: 15px;
   border-radius: 8px;
-  font-weight: 700;
+  font-weight: 650;
   font-size: 16px;
   cursor: pointer;
   margin-top: 10px;
+  font-family: 'jost'; 
   
 }
 

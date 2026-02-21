@@ -3,6 +3,7 @@ import { EmployeeOverviewComponent } from './pages/employee-overview/employee-ov
 import { EmployeeAssetsComponent } from './pages/employee-assets/employee-assets';
 import { RequestsMainComponent } from './pages/requests-main/requests-main';
 import { NewAssetRequestComponent } from './pages/new-asset-request/new-asset-request';
+import { MaintenanceFormComponent } from './pages/maintenance-form/maintenance-form';
 
 
 export const employeeRoutes: Routes = [
@@ -22,6 +23,11 @@ export const employeeRoutes: Routes = [
    {
         path: 'new-asset-request',
         component:NewAssetRequestComponent 
+
+   },
+    {
+        path: 'maintenance-form',
+        component:MaintenanceFormComponent 
 
    },
     
