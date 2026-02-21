@@ -9,7 +9,7 @@
           <button class="action-btn">Request New Asset</button>
           <button class="action-btn">Request Temporary Transfer</button>
           <button class="action-btn" routerLink="/employee/employee-assets">View My Assets</button>
-          <button class="action-btn">View My Requests</button>
+          <button class="action-btn" routerLink="/employee/requests-main">View My Requests</button>
         </div>
       </section>
 
@@ -57,7 +57,7 @@
                 <tr>
                   <td>{{ req.item }}</td>
                   <td>{{ req.date }}</td>
-                  <td>{{ req.status }}</td>
+                  <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
                   <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
                 </tr>
               }

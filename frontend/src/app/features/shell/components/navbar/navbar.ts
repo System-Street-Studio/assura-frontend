@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./navbar.css'],
 })
 export class NavbarComponent {
-  roleName = 'Storekeeper';
+  roleName = 'Employee';
 
   toggleMenu() {
     // TODO: emit event to toggle sidebar

@@ -31,8 +31,6 @@
   padding-bottom: 30px;
 }
 
-
-
 h3{
   margin-bottom: 15px;
 }
@@ -53,16 +51,12 @@ h3{
   margin-bottom: 2.5rem;
 }
 
-
-
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 50px;
   margin-top: 1rem;
 }
-
-
 
 .stat-card {
   background: #fff;
