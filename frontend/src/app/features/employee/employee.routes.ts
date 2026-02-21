@@ -5,6 +5,7 @@ import { RequestsMainComponent } from './pages/requests-main/requests-main';
 import { NewAssetRequestComponent } from './pages/new-asset-request/new-asset-request';
 import { MaintenanceFormComponent } from './pages/maintenance-form/maintenance-form';
 import { DiscardFormComponent } from './pages/discard-form/discard-form';
+import { TransferFormComponent } from './pages/transfer-form/transfer-form';
 
 
 export const employeeRoutes: Routes = [
@@ -34,6 +35,11 @@ export const employeeRoutes: Routes = [
    {
         path: 'discard-form',
         component:DiscardFormComponent 
+
+   },
+   {
+        path: 'transfer-form',
+        component:TransferFormComponent 
 
    },
     
