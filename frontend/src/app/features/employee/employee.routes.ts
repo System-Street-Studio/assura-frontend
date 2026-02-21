@@ -4,6 +4,7 @@ import { EmployeeAssetsComponent } from './pages/employee-assets/employee-assets
 import { RequestsMainComponent } from './pages/requests-main/requests-main';
 import { NewAssetRequestComponent } from './pages/new-asset-request/new-asset-request';
 import { MaintenanceFormComponent } from './pages/maintenance-form/maintenance-form';
+import { DiscardFormComponent } from './pages/discard-form/discard-form';
 
 
 export const employeeRoutes: Routes = [
@@ -28,6 +29,11 @@ export const employeeRoutes: Routes = [
     {
         path: 'maintenance-form',
         component:MaintenanceFormComponent 
+
+   },
+   {
+        path: 'discard-form',
+        component:DiscardFormComponent 
 
    },
     
