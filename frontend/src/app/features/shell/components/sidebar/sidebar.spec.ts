@@ -8,9 +8,11 @@ describe('SidebarComponent', () => {
   let fixture: ComponentFixture<SidebarComponent>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
 
-  function setup(role: string | null) {
-    mockAuthService = jasmine.createSpyObj('AuthService', ['getRole', 'hasRole']);
-    mockAuthService.getRole.and.returnValue(role);
+  // setup now takes a string[] — matches getRoles() return type
+  function setup(roles: string[]) {
+    mockAuthService = jasmine.createSpyObj('AuthService', ['getRole', 'getRoles', 'hasRole']);
+    mockAuthService.getRoles.and.returnValue(roles);
+    mockAuthService.getRole.and.returnValue(roles.length > 0 ? roles[0] : null);
 
     TestBed.configureTestingModule({
       imports: [SidebarComponent],
@@ -26,19 +28,19 @@ describe('SidebarComponent', () => {
   }
 
   it('should create', async () => {
-    await setup('ADMIN');
+    await setup(['ADMIN']);
     expect(component).toBeTruthy();
   });
 
   it('should always show ANY items regardless of role', async () => {
-    await setup('HR');
+    await setup(['HR']);
     const labels = component.filteredMenuItems.map(i => i.label);
     expect(labels).toContain('Overview');
     expect(labels).toContain('My Assets');
   });
 
   it('should show PROCUREMENT items for PROCUREMENT role', async () => {
-    await setup('PROCUREMENT');
+    await setup(['PROCUREMENT']);
     const labels = component.filteredMenuItems.map(i => i.label);
     expect(labels).toContain('Suppliers');
     expect(labels).toContain('PO');
@@ -46,7 +48,7 @@ describe('SidebarComponent', () => {
   });
 
   it('should not show AUDITOR items for PROCUREMENT role', async () => {
-    await setup('PROCUREMENT');
+    await setup(['PROCUREMENT']);
     const labels = component.filteredMenuItems.map(i => i.label);
     expect(labels).not.toContain('Reports');
     expect(labels).not.toContain('Audit Logs');
@@ -54,13 +56,13 @@ describe('SidebarComponent', () => {
   });
 
   it('should only show ANY items when role is null', async () => {
-    await setup(null);
+    await setup([]);
     const labels = component.filteredMenuItems.map(i => i.label);
     expect(labels).toEqual(['Overview', 'My Assets']);
   });
 
   it('should show all items for ADMIN role', async () => {
-    await setup('ADMIN');
+    await setup(['ADMIN']);
     const labels = component.filteredMenuItems.map(i => i.label);
     expect(labels).toContain('Assets');
     expect(labels).toContain('Products');
@@ -68,8 +70,16 @@ describe('SidebarComponent', () => {
     expect(labels).toContain('Track Assets');
   });
 
+  it('should use the last role when multiple roles present', async () => {
+    // User has Admin + Procurement — primary role is PROCUREMENT (last)
+    await setup(['Admin', 'Procurement']);
+    const labels = component.filteredMenuItems.map(i => i.label);
+    expect(labels).toContain('PO');         // PROCUREMENT item
+    expect(labels).not.toContain('Track Assets'); // ADMIN-only item should NOT show
+  });
+
   it('should toggle isCollapsed when toggleMenu is called', async () => {
-    await setup('ADMIN');
+    await setup(['ADMIN']);
     expect(component.isCollapsed).toBeFalse();
     component.toggleMenu();
     expect(component.isCollapsed).toBeTrue();

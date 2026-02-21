@@ -30,33 +30,41 @@ export class AuthService {
     }
   }
 
-  getRole(): string | null {
+  // Returns all roles from the JWT as a string array.
+  // Handles both single role (string) and multiple roles (string[]) from .NET.
+  getRoles(): string[] {
     const token = this.getToken();
-    if (!token) return null;
+    if (!token) return [];
     try {
       const decoded: unknown = jwtDecode(token);
       const payload = decoded as {
-        role?: string;
-        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string;
+        role?: string | string[];
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string | string[];
       };
-      return (
-        payload.role ||
-        payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
-        null
-      );
+      const raw =
+        payload.role ??
+        payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
+        [];
+      return Array.isArray(raw) ? raw : [raw];
     } catch {
-      return null;
+      return [];
     }
   }
 
+  // Returns the first role for display purposes.
+  getRole(): string | null {
+    const roles = this.getRoles();
+    return roles.length > 0 ? roles[0] : null;
+  }
+
   hasRole(requiredRole: string | string[]): boolean {
-    const userRole = this.getRole();
-    if (!userRole) return false;
+    const userRoles = this.getRoles();
+    if (userRoles.length === 0) return false;
 
     if (Array.isArray(requiredRole)) {
-      return requiredRole.includes(userRole);
+      return requiredRole.some(r => userRoles.includes(r));
     }
-    return userRole === requiredRole;
+    return userRoles.includes(requiredRole);
   }
 
   logout(): void {

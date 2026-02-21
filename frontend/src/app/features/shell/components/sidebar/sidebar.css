@@ -84,15 +84,6 @@
     background-color: #c0eded;
 }
 
-.nav-item.active {
-    background-color: #004777;
-    color: #ffffff;
-}
-
-.nav-item.active .nav-icon {
-    color: #ffffff;
-}
-
 .nav-icon {
     font-size: 1.1rem;
     color: #000000;

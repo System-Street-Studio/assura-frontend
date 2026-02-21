@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 export const procurementRoutes: Routes = [
-    // { path: 'orders', loadComponent: ... },
     {
         path: 'purchase-orders',
         loadComponent: () => import('./pages/purchase-orders/purchase-orders.component').then(m => m.PurchaseOrdersComponent)
@@ -29,6 +28,14 @@ export const procurementRoutes: Routes = [
     {
         path: 'suppliers/:id',
         loadComponent: () => import('./pages/supplier-details/supplier-details.component').then(m => m.SupplierDetailsComponent)
+    },
+    {
+        path: 'maintenance',
+        loadComponent: () => import('./pages/maintenance/maintenance.component').then(m => m.ProcurementMaintenanceComponent)
+    },
+    {
+        path: 'new-arrivals',
+        loadComponent: () => import('./pages/new-arrivals/new-arrivals.component').then(m => m.NewArrivalsComponent)
     },
     { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];

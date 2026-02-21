@@ -22,73 +22,51 @@ export class SidebarComponent {
   private authService = inject(AuthService);
 
   menuItems: MenuItem[] = [
-    // Common
-    { label: 'Overview', icon: 'home', link: 'overview', roles: ['ANY'] },
-    { label: 'My Assets', icon: 'description', link: 'my-assets', roles: ['ANY'] },
+    // Common — absolute paths so they work from any active route
+    { label: 'Overview', icon: 'home', link: '/procurement/overview', roles: ['ANY'] },
+    { label: 'My Assets', icon: 'description', link: '/my-assets', roles: ['ANY'] },
 
     // Storekeeper-heavy items
-    {
-      label: 'Assets',
-      icon: 'inventory_2',
-      link: 'assets',
-      roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'],
-    },
-    { label: 'Products', icon: 'category', link: 'products', roles: ['STOREKEEPER', 'ADMIN'] },
-    {
-      label: 'Suppliers',
-      icon: 'local_shipping',
-      link: 'suppliers',
-      roles: ['PROCUREMENT', 'STOREKEEPER', 'ADMIN'],
-    },
-    { label: 'PO', icon: 'receipt_long', link: 'purchase-orders', roles: ['PROCUREMENT', 'ADMIN'] },
-    { label: 'Check In', icon: 'check_circle', link: 'check-in', roles: ['STOREKEEPER', 'ADMIN'] },
-    {
-      label: 'Check Out',
-      icon: 'exit_to_app',
-      link: 'check-out',
-      roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'],
-    },
-    {
-      label: 'Maintenance',
-      icon: 'build',
-      link: 'maintenance',
-      roles: ['PROCUREMENT', 'STOREKEEPER', 'ADMIN'],
-    },
-    {
-      label: 'Assets Requests',
-      icon: 'assignment',
-      link: 'assets-requests',
-      roles: ['STOREKEEPER', 'ADMIN'],
-    },
+    { label: 'Assets', icon: 'inventory_2', link: '/inventory/assets', roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'] },
+    { label: 'Products', icon: 'category', link: '/inventory/products', roles: ['STOREKEEPER', 'ADMIN'] },
+    { label: 'Suppliers', icon: 'local_shipping', link: '/procurement/suppliers', roles: ['PROCUREMENT', 'STOREKEEPER', 'ADMIN'] },
+    { label: 'PO', icon: 'receipt_long', link: '/procurement/purchase-orders', roles: ['PROCUREMENT', 'ADMIN'] },
+    { label: 'Check In', icon: 'check_circle', link: '/inventory/check-in', roles: ['STOREKEEPER', 'ADMIN'] },
+    { label: 'Check Out', icon: 'exit_to_app', link: '/inventory/check-out', roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'] },
+    { label: 'Maintenance', icon: 'build', link: '/procurement/maintenance', roles: ['PROCUREMENT', 'STOREKEEPER', 'ADMIN'] },
+    { label: 'Assets Requests', icon: 'assignment', link: '/inventory/assets-requests', roles: ['STOREKEEPER', 'ADMIN'] },
 
     // Admin
-    { label: 'Track Assets', icon: 'track_changes', link: 'track-assets', roles: ['ADMIN'] },
+    { label: 'Track Assets', icon: 'track_changes', link: '/inventory/track-assets', roles: ['ADMIN'] },
 
     // HR
-    { label: 'Pending', icon: 'pending_actions', link: 'pending', roles: ['HR'] },
-    { label: 'Assigned', icon: 'group', link: 'assigned', roles: ['HR'] },
+    { label: 'Pending', icon: 'pending_actions', link: '/hr/pending', roles: ['HR'] },
+    { label: 'Assigned', icon: 'group', link: '/hr/assigned', roles: ['HR'] },
 
     // Accountant
-    { label: 'Discarded', icon: 'cancel', link: 'discarded', roles: ['ACCOUNTANT'] },
+    { label: 'Discarded', icon: 'cancel', link: '/accountant/discarded', roles: ['ACCOUNTANT'] },
 
     // Auditor
-    { label: 'Reports', icon: 'assessment', link: 'reports', roles: ['AUDITOR'] },
-    { label: 'Audit Logs', icon: 'policy', link: 'audit-logs', roles: ['AUDITOR'] },
-    { label: 'Export', icon: 'file_download', link: 'export', roles: ['AUDITOR'] },
+    { label: 'Reports', icon: 'assessment', link: '/reporting/reports', roles: ['AUDITOR'] },
+    { label: 'Audit Logs', icon: 'policy', link: '/reporting/audit-logs', roles: ['AUDITOR'] },
+    { label: 'Export', icon: 'file_download', link: '/reporting/export', roles: ['AUDITOR'] },
 
     // Superintendent
-    {
-      label: 'Discarded Notes',
-      icon: 'note_alt',
-      link: 'discarded-notes',
-      roles: ['SUPERINTENDENT'],
-    },
+    { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['SUPERINTENDENT'] },
+
+    // Procurement
+    { label: 'New Arrivals', icon: 'new_releases', link: '/procurement/new-arrivals', roles: ['PROCUREMENT'] },
   ];
 
   get filteredMenuItems(): MenuItem[] {
-    const userRole = this.authService.getRole();
+    const allRoles = this.authService.getRoles();
+    // Use the last role — the most specific one (e.g. 'Procurement' from ['Admin', 'Procurement'])
+    const primaryRole = allRoles.length > 0
+      ? allRoles[allRoles.length - 1].toUpperCase()
+      : null;
     return this.menuItems.filter(item =>
-      item.roles.includes('ANY') || (userRole !== null && item.roles.includes(userRole))
+      item.roles.includes('ANY') ||
+      (primaryRole !== null && item.roles.includes(primaryRole))
     );
   }
 

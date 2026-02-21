@@ -13,6 +13,7 @@ export class NavbarComponent {
   private authService = inject(AuthService);
 
   get roleName(): string {
-    return this.authService.getRole() ?? 'Guest';
+    const roles = this.authService.getRoles();
+    return roles.length > 0 ? roles[roles.length - 1] : 'Guest';
   }
 }
