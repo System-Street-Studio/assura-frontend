@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,9 +10,9 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./navbar.css'],
 })
 export class NavbarComponent {
-  roleName = 'Storekeeper';
+  private authService = inject(AuthService);
 
-  toggleMenu() {
-    // TODO: emit event to toggle sidebar
+  get roleName(): string {
+    return this.authService.getRole() ?? 'Guest';
   }
 }
