@@ -1,0 +1,72 @@
+<div class="create-container">
+
+    <h1 class="page-title">Add New Supplier</h1>
+
+    <div class="form-card">
+
+        <h2 class="form-heading">Add New Supplier</h2>
+
+        <div class="form-body">
+
+            <!-- Supplier Name spans full width at the top -->
+            <div class="full-row">
+                <label class="field-label">Supplier Name:</label>
+                <input class="input-wide" type="text" [(ngModel)]="form.name" />
+            </div>
+
+            <!-- Two-column section -->
+            <div class="two-col">
+
+                <!-- Left Column -->
+                <div class="left-col">
+                    <div class="field-row">
+                        <label class="field-label">Supplier ID:</label>
+                        <input class="input-short" type="text" [(ngModel)]="form.id" />
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Contact No:</label>
+                        <input class="input-short" type="text" [(ngModel)]="form.contactNo" />
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">URL:</label>
+                        <input class="input-short" type="text" [(ngModel)]="form.url" />
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">email:</label>
+                        <input class="input-short" type="email" [(ngModel)]="form.email" />
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="right-col">
+                    <h3 class="address-heading">Address</h3>
+                    <div class="field-row">
+                        <label class="field-label">Address Line1:</label>
+                        <input class="input-short" type="text" [(ngModel)]="form.addressLine1" />
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Address Line2:</label>
+                        <input class="input-short" type="text" [(ngModel)]="form.addressLine2" />
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">City:</label>
+                        <input class="input-short" type="text" [(ngModel)]="form.city" />
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Postal Code:</label>
+                        <input class="input-short" type="text" [(ngModel)]="form.postalCode" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer Buttons -->
+        <div class="form-footer">
+            <button class="close-btn" (click)="close()">Cancel</button>
+            <button class="save-btn" (click)="saveAndExit()">Save &amp; Exit</button>
+        </div>
+
+    </div>
+
+</div>

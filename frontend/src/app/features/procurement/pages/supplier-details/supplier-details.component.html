@@ -1,0 +1,84 @@
+<div class="supplier-details-container">
+
+    <h2 class="page-title">Supplier Details</h2>
+
+    <div class="details-card" *ngIf="supplier; else notFound">
+
+        <div class="details-grid">
+
+            <!-- Left Column -->
+            <div class="details-column">
+                <div class="detail-row">
+                    <span class="label">Supplier ID:</span>
+                    <span class="value">{{ supplier.id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Supplier Name:</span>
+                    <span class="value">{{ supplier.name }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Contact Number:</span>
+                    <span class="value">{{ supplier.contactNumber }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">URL:</span>
+                    <span class="value">{{ supplier.url }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">email:</span>
+                    <span class="value">{{ supplier.email }}</span>
+                </div>
+                <div class="detail-row update-status-row">
+                    <span class="label">Update Status:</span>
+                    <label class="radio-label">
+                        <input type="radio" name="status" value="Active" [checked]="supplier.status === 'Active'" />
+                        Active
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="status" value="Inactive" [checked]="supplier.status === 'Inactive'" />
+                        Inactive
+                    </label>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="details-column">
+                <div class="detail-row">
+                    <span class="label">Address line 1:</span>
+                    <span class="value">{{ supplier.addressLine1 }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Address line 2:</span>
+                    <span class="value">{{ supplier.addressLine2 }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">City:</span>
+                    <span class="value">{{ supplier.city }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Postal Code:</span>
+                    <span class="value">{{ supplier.postalCode }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Date Registered:</span>
+                    <span class="value">{{ supplier.dateRegistered }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status:</span>
+                    <span class="value">{{ supplier.status }}</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-actions">
+            <button class="close-btn" (click)="goBack()">Close</button>
+        </div>
+
+    </div>
+
+    <ng-template #notFound>
+        <p class="not-found">Supplier not found.</p>
+    </ng-template>
+
+</div>

@@ -18,5 +18,17 @@ export const procurementRoutes: Routes = [
         path: 'purchase-orders/:id',
         loadComponent: () => import('./pages/purchase-order-details/purchase-order-details.component').then(m => m.PurchaseOrderDetailsComponent)
     },
+    {
+        path: 'suppliers',
+        loadComponent: () => import('./pages/suppliers/suppliers.component').then(m => m.SuppliersComponent)
+    },
+    {
+        path: 'suppliers/create',
+        loadComponent: () => import('./pages/supplier-create/supplier-create.component').then(m => m.SupplierCreateComponent)
+    },
+    {
+        path: 'suppliers/:id',
+        loadComponent: () => import('./pages/supplier-details/supplier-details.component').then(m => m.SupplierDetailsComponent)
+    },
     { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];

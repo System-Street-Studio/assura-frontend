@@ -1,0 +1,259 @@
+.suppliers-container {
+    padding: 2rem;
+    font-family: 'Jost', sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Page Header */
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 0 1.5rem 0;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: #E0E0E0;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    width: 240px;
+}
+
+.search-icon {
+    color: #757575;
+    margin-right: 0.5rem;
+    font-size: 20px;
+}
+
+.search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+.search-input::placeholder {
+    color: #9E9E9E;
+}
+
+/* Add New Button */
+.add-new-btn {
+    background-color: #00AFB5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.8rem;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Jost', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 175, 181, 0.3);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.add-new-btn:hover {
+    background-color: #009aa0;
+    box-shadow: 0 6px 14px rgba(0, 175, 181, 0.4);
+}
+
+/* Table Container */
+.table-container {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Suppliers Table */
+.suppliers-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.suppliers-table th {
+    text-align: center;
+    padding: 1rem;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.suppliers-table td {
+    text-align: center;
+    padding: 1.4rem 1rem;
+    font-size: 14px;
+    color: #000;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.suppliers-table tr:last-child td {
+    border-bottom: none;
+}
+
+.suppliers-table tbody tr:hover {
+    background-color: #f7fafa;
+    cursor: pointer;
+}
+
+/* Column widths */
+.suppliers-table th:nth-child(1),
+.suppliers-table td:nth-child(1) {
+    width: 30%;
+}
+
+.suppliers-table th:nth-child(2),
+.suppliers-table td:nth-child(2) {
+    width: 70%;
+}
+
+/* No results */
+.no-results {
+    text-align: center;
+    color: #999;
+    padding: 2rem;
+}
+
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    width: 720px;
+    max-width: 95vw;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.2s ease;
+    font-family: 'Jost', sans-serif;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(24px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 0 1.8rem 0;
+}
+
+/* Two-column layout */
+.modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 3rem;
+}
+
+.modal-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+/* Each label-value row */
+.detail-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+}
+
+.detail-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    white-space: nowrap;
+    min-width: 130px;
+}
+
+.detail-value {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Update Status row with radio buttons */
+.update-status-row {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+    accent-color: #00AFB5;
+    cursor: pointer;
+}
+
+/* Footer */
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.close-btn {
+    background-color: #D32F2F;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 2.5rem;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Jost', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.close-btn:hover {
+    background-color: #b71c1c;
+}
