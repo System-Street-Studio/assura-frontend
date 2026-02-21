@@ -48,11 +48,11 @@ Format: `{type}: {description}`
 
 ## 🚀 Pull Request (PR) Process
 
-1.  **Sync with `main`:** Ensure your branch is up-to-date.
+1.  **Sync with `develop`:** Ensure your branch is up-to-date.
     ```bash
-    git pull origin main
+    git pull origin develop
     ```
-2.  **Create PR:** Open a Pull Request targeting the `main` branch.
+2.  **Create PR:** Open a Pull Request targeting the `develop` branch.
 3.  **Description:** clearly describe the changes and link any related issues.
 4.  **Review:** Request a review from at least one team member.
 5.  **Merge:** Once approved and CI checks pass, squash and merge.
@@ -70,6 +70,41 @@ Format: `{type}: {description}`
   - Components: `kebab-case` for files (`user-profile.component.ts`), `PascalCase` for classes (`UserProfileComponent`).
   - Services: `auth.service.ts` -> `AuthService`.
   - Interfaces: `IUser` or just `User` (be consistent).
+
+## 🛡️ Coding Standards (Strict)
+
+We have enabled strict linting rules to maintain high code quality. Please follow these guidelines:
+
+1.  **No `any` Type**:
+    - ❌ `data: any`
+    - ✅ `data: User | unknown` (Use interfaces or `unknown` with type narrowing).
+
+2.  **Dependency Injection**:
+    - Use the modern `inject()` function instead of constructor injection.
+    - ❌ `constructor(private http: HttpClient) {}`
+    - ✅ `private http = inject(HttpClient);`
+
+3.  **Control Flow**:
+    - Use Angular 17+ control flow syntax.
+    - ❌ `*ngIf`, `*ngFor`, `[ngSwitch]`
+    - ✅ `@if`, `@for`, `@switch`
+
+4.  **Outputs**:
+    - Do not name outputs like native DOM events (e.g., avoid `click`, `submit`, `search`).
+    - ✅ Use `action`, `queryChange`, `submitted`.
+
+---
+
+## ✅ Pre-Push Checklist
+
+Before pushing your code, ALWAYS run:
+
+```bash
+npm run lint   # Must pass without errors
+npm run build  # Must build without errors
+```
+
+> **Note:** The CI pipeline will fail if these commands fail. Don't break the build!
 
 ---
 

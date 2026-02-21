@@ -13,14 +13,14 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 })
 export class SearchBarComponent implements OnDestroy {
   @Input() placeholder = 'Search...';
-  @Output() search = new EventEmitter<string>();
+  @Output() queryChange = new EventEmitter<string>();
 
   searchTerm = '';
   private searchSubject = new Subject<string>();
 
   constructor() {
     this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((term) => {
-      this.search.emit(term);
+      this.queryChange.emit(term);
     });
   }
 
