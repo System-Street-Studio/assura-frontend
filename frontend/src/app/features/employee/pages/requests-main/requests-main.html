@@ -43,26 +43,36 @@
 
       <div class="request-list">
 
-        @for (req of recentRequests; track req.id) {
-          <div class="request-item">
-            <div class="req-info">
-              <span class="req-id">Request ID: <b>#{{req.id}}</b></span>
-              <p class="req-name">{{req.assetName}}</p>
-              <span class="req-date">Submitted: {{req.submittedDate| date:'yyyy-MM-dd'}}</span>
-            </div>
-            <div class="req-status-area">
-              <span ><small>New asset Request</small></span>
-                <span [class]="'status-pill ' + req.status.toLowerCase()">{{req.status}}</span>
-              <button class="btn-details"> View Details</button>
+                <!-- Show list if recentRequests has items -->
+          <div *ngIf="recentRequests && recentRequests.length > 0; else emptyBlock">
+            <div *ngFor="let req of recentRequests" class="request-item">
+              <div class="req-info">
+                <span class="req-id">Request ID: <b>#{{ req.id }}</b></span>
+                <p class="req-name">{{ req.assetName }}</p>
+                <span class="req-date">Submitted: {{ req.submittedDate | date:'yyyy-MM-dd' }}</span>
+              </div>
+              <div class="req-status-area">
+                <span><small>New Asset Request</small></span>
+                <span [class]="'status-pill ' + req.status.toLowerCase()">{{ req.status }}</span>
+                <button class="btn-details">View Details</button>
+              </div>
             </div>
           </div>
 
-        } @empty {
-          <div class="request-item">
-            <p>No recent requests found.</p>
-          </div>
-        }
+          <!-- Empty message if no requests -->
+          <ng-template #emptyBlock>
+            <div class="request-item">
+             <!-- <p>No recent requests found.</p>-->
+            </div>
+          </ng-template>
+
+            
+          
+                  
+         
       </div>
     </div>
+
+
   </div>
 </div>

@@ -1,24 +1,40 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AssetService } from '../../services/asset.service';
 
-interface AssetRequest {
-  id: string;
-  assetName: string;
-  submittedDate: Date;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  type: string;
-}
 
 @Component({
   selector: 'app-requests-main',
+  standalone: true,
   imports: [CommonModule,RouterModule],
   templateUrl: './requests-main.html',
   styleUrl: './requests-main.css',
 })
-export class RequestsMainComponent {
+export class RequestsMainComponent implements OnInit {
+  
+  recentRequests: any[] = [];
 
-  recentRequests: AssetRequest[] = [
+  constructor(private assetService: AssetService,private cdr: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    this.loadHistory();
+  }
+
+  loadHistory() {
+  this.assetService.getRequests().subscribe({
+    next: (data: any[]) => {
+      // Backend returns submittedDate as string
+      this.recentRequests = data;
+      console.log('History Loaded:', data);
+      this.cdr.detectChanges();
+    },
+    error: (err: any) => console.error('Load failed', err)
+  });
+}
+
+
+ /* recentRequests: AssetRequest[] = [
     {
       id: 'REQ-1001',
       assetName: 'Dell Latitude 5420',
@@ -47,11 +63,12 @@ export class RequestsMainComponent {
     console.log('Navigating to details for request:', requestId);
     
     // this.router.navigate(['/requests/details', requestId]);
-  }
+  }*/
 
   
    /* Helper method to handle button clicks for new requests*/
-  onInitiateRequest(type: string) {
+ /* onInitiateRequest(type: string) {
     alert(`Initiating a new ${type}...`);
-  }
+  }*/
+
 }

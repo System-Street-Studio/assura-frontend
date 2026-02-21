@@ -93,12 +93,13 @@
 /* --- Recent Requests List --- */
 .request-item {
   display: flex;
+  background-color: white;
   justify-content: space-between;
   align-items: center;
   padding: 20px;
   border: 1px solid #cecbcb;
   border-radius: 12px;
-  margin-bottom: 1px;
+  margin-bottom: 10px;
 }
 
 .req-id {
