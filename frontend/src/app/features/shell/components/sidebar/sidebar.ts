@@ -1,7 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
+
+interface MenuItem {
+  label: string;
+  icon: string;
+  link: string;
+  roles: string[];
+}
 
 @Component({
   selector: 'app-sidebar',
@@ -11,7 +19,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrls: ['./sidebar.css'],
 })
 export class SidebarComponent {
-  menuItems = [
+  private authService = inject(AuthService);
+
+  menuItems: MenuItem[] = [
     // Common
     { label: 'Overview', icon: 'home', link: 'overview', roles: ['ANY'] },
     { label: 'My Assets', icon: 'description', link: 'my-assets', roles: ['ANY'] },
@@ -74,6 +84,13 @@ export class SidebarComponent {
       roles: ['SUPERINTENDENT'],
     },
   ];
+
+  get filteredMenuItems(): MenuItem[] {
+    const userRole = this.authService.getRole();
+    return this.menuItems.filter(item =>
+      item.roles.includes('ANY') || (userRole !== null && item.roles.includes(userRole))
+    );
+  }
 
   isCollapsed = false;
 
