@@ -1,0 +1,40 @@
+<div class="note-page-container">
+    <div class="popup-overlay" *ngIf="showSuccessPopup">
+        <app-status-card label="Added New Maintenance Note Successfully" icon="check_box"
+            color="#00AFB5"></app-status-card>
+    </div>
+    <h1 class="page-title">Add New Note</h1>
+
+    <div class="note-card">
+        <form (ngSubmit)="save()" #noteForm="ngForm">
+            <div class="note-grid">
+                <div class="note-item">
+                    <label for="asset">Asset:</label>
+                    <input type="text" id="asset" name="asset" [(ngModel)]="noteData.asset" required>
+                </div>
+                <div class="note-item">
+                    <label for="date">Date:</label>
+                    <input type="text" id="date" name="date" [(ngModel)]="noteData.date" required>
+                </div>
+                <div class="note-item">
+                    <label for="repairFirm">Repair Firm:</label>
+                    <input type="text" id="repairFirm" name="repairFirm" [(ngModel)]="noteData.repairFirm" required>
+                </div>
+                <div class="note-item">
+                    <label for="cost">Cost (LKR):</label>
+                    <input type="text" id="cost" name="cost" [(ngModel)]="noteData.cost" required>
+                </div>
+                <div class="note-item full-width">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" [(ngModel)]="noteData.description"
+                        required></textarea>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button type="button" class="action-btn close-btn" (click)="close()">Close</button>
+                <button type="submit" class="action-btn save-btn" [disabled]="!noteForm.form.valid">Save & Exit</button>
+            </div>
+        </form>
+    </div>
+</div>

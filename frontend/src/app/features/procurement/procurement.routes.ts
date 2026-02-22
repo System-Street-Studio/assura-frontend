@@ -34,6 +34,14 @@ export const procurementRoutes: Routes = [
         loadComponent: () => import('./pages/maintenance/maintenance.component').then(m => m.ProcurementMaintenanceComponent)
     },
     {
+        path: 'maintenance/note/:id',
+        loadComponent: () => import('./pages/maintenance-note/maintenance-note.component').then(m => m.MaintenanceNoteComponent)
+    },
+    {
+        path: 'maintenance/create',
+        loadComponent: () => import('./pages/maintenance-note-create/maintenance-note-create.component').then(m => m.MaintenanceNoteCreateComponent)
+    },
+    {
         path: 'new-arrivals',
         loadComponent: () => import('./pages/new-arrivals/new-arrivals.component').then(m => m.NewArrivalsComponent)
     },

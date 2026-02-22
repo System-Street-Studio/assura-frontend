@@ -1,0 +1,86 @@
+.note-page-container {
+    padding: 40px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    font-family: 'Jost', sans-serif;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 40px;
+}
+
+.note-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 60px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.note-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 80px;
+    margin-bottom: 60px;
+}
+
+.note-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.note-item.full-width {
+    grid-column: span 2;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.note-item label {
+    font-weight: 700;
+    font-size: 18px;
+    color: #000;
+    min-width: 120px;
+}
+
+.note-item .value {
+    font-size: 18px;
+    color: #333;
+}
+
+.description-box {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 40px;
+    padding: 30px 40px;
+    min-height: 120px;
+    font-size: 18px;
+    color: #333;
+    line-height: 1.6;
+}
+
+.action-row {
+    display: flex;
+    justify-content: center;
+}
+
+.close-btn {
+    background-color: #a00000;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 60px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background-color: #800000;
+}

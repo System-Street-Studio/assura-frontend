@@ -1,0 +1,34 @@
+<div class="note-page-container">
+    <h1 class="page-title">Maintenance Note</h1>
+
+    <div class="note-card">
+        <div class="note-grid">
+            <div class="note-item">
+                <label>Asset:</label>
+                <div class="value">{{ noteData.asset }}</div>
+            </div>
+            <div class="note-item">
+                <label>Date:</label>
+                <div class="value">{{ noteData.date }}</div>
+            </div>
+            <div class="note-item">
+                <label>Repair Firm:</label>
+                <div class="value">{{ noteData.repairFirm }}</div>
+            </div>
+            <div class="note-item">
+                <label>Cost (LKR):</label>
+                <div class="value">{{ noteData.cost }}</div>
+            </div>
+            <div class="note-item full-width">
+                <label>Description:</label>
+                <div class="description-box">
+                    {{ noteData.description }}
+                </div>
+            </div>
+        </div>
+
+        <div class="action-row">
+            <button class="close-btn" (click)="close()">Close</button>
+        </div>
+    </div>
+</div>
