@@ -1,7 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+
+interface NavItem {
+  label: string;
+  icon: string;
+  link: string;
+  roles: string[];
+}
 
 @Component({
   selector: 'app-sidebar',
@@ -11,73 +18,39 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrls: ['./sidebar.css'],
 })
 export class SidebarComponent {
-  menuItems = [
-    // Common
-    { label: 'Overview', icon: 'home', link: 'overview', roles: ['ANY'] },
-    { label: 'My Assets', icon: 'description', link: 'my-assets', roles: ['ANY'] },
+  menuItems: NavItem[] = [
+    // Storekeeper nav
+    { label: 'Dashboard', icon: 'grid_view', link: 'inventory/dashboard', roles: ['STOREKEEPER', 'ADMIN'] },
+    { label: 'Asset', icon: 'precision_manufacturing', link: 'inventory/assets', roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'] },
+    { label: 'products', icon: 'inventory_2', link: 'inventory/products', roles: ['STOREKEEPER', 'ADMIN'] },
+    { label: 'suppliers', icon: 'local_shipping', link: 'inventory/suppliers', roles: ['PROCUREMENT', 'STOREKEEPER', 'ADMIN'] },
+    { label: 'request list', icon: 'swap_horiz', link: 'inventory/asset-requests', roles: ['STOREKEEPER', 'ADMIN'] },
+    { label: 'Check out', icon: 'exit_to_app', link: 'inventory/check-out', roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'] },
+    { label: 'Check in', icon: 'login', link: 'inventory/check-in', roles: ['STOREKEEPER', 'ADMIN'] },
+    { label: 'Maintenance', icon: 'build', link: 'inventory/maintenance', roles: ['PROCUREMENT', 'STOREKEEPER', 'ADMIN'] },
+  ];
 
-    // Storekeeper-heavy items
-    {
-      label: 'Assets',
-      icon: 'inventory_2',
-      link: 'assets',
-      roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'],
-    },
-    { label: 'Products', icon: 'category', link: 'products', roles: ['STOREKEEPER', 'ADMIN'] },
-    {
-      label: 'Suppliers',
-      icon: 'local_shipping',
-      link: 'suppliers',
-      roles: ['PROCUREMENT', 'STOREKEEPER', 'ADMIN'],
-    },
-    { label: 'PO', icon: 'receipt_long', link: 'purchase-orders', roles: ['PROCUREMENT', 'ADMIN'] },
-    { label: 'Check In', icon: 'check_circle', link: 'check-in', roles: ['STOREKEEPER', 'ADMIN'] },
-    {
-      label: 'Check Out',
-      icon: 'exit_to_app',
-      link: 'check-out',
-      roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'],
-    },
-    {
-      label: 'Maintenance',
-      icon: 'build',
-      link: 'maintenance',
-      roles: ['PROCUREMENT', 'STOREKEEPER', 'ADMIN'],
-    },
-    {
-      label: 'Assets Requests',
-      icon: 'assignment',
-      link: 'assets-requests',
-      roles: ['STOREKEEPER', 'ADMIN'],
-    },
-
-    // Admin
-    { label: 'Track Assets', icon: 'track_changes', link: 'track-assets', roles: ['ADMIN'] },
-
-    // HR
-    { label: 'Pending', icon: 'pending_actions', link: 'pending', roles: ['HR'] },
-    { label: 'Assigned', icon: 'group', link: 'assigned', roles: ['HR'] },
-
-    // Accountant
-    { label: 'Discarded', icon: 'cancel', link: 'discarded', roles: ['ACCOUNTANT'] },
-
-    // Auditor
-    { label: 'Reports', icon: 'assessment', link: 'reports', roles: ['AUDITOR'] },
-    { label: 'Audit Logs', icon: 'policy', link: 'audit-logs', roles: ['AUDITOR'] },
-    { label: 'Export', icon: 'file_download', link: 'export', roles: ['AUDITOR'] },
-
-    // Superintendent
-    {
-      label: 'Discarded Notes',
-      icon: 'note_alt',
-      link: 'discarded-notes',
-      roles: ['SUPERINTENDENT'],
-    },
+  bottomLinks = [
+    { label: 'Settings', icon: 'settings', link: 'settings' },
+    { label: 'Profile', icon: 'account_circle', link: 'profile' },
   ];
 
   isCollapsed = false;
 
-  toggleMenu() {
+  constructor() {
+    this.updateCollapsedState();
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.updateCollapsedState();
+  }
+
+  toggleMenu(): void {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+  private updateCollapsedState(): void {
+    this.isCollapsed = window.innerWidth < 480;
   }
 }

@@ -3,10 +3,11 @@ import { OverviewComponent } from './pages/overview/overview';
 
 export const shellRoutes: Routes = [
   // { path: 'overview', component: OverviewComponent },
-  // {
-  //   path: 'inventory',
-  //   loadChildren: () => import('../../inventory/inventory.routes').then(m => m.inventoryRoutes)
-  // },
+  {
+    path: 'inventory',
+    loadChildren: () =>
+      import('../inventory/inventory.routes').then((m) => m.inventoryRoutes),
+  },
   // {
   //   path: 'employee',
   //   loadChildren: () => import('../../employee/employee.routes').then(m => m.employeeRoutes)
