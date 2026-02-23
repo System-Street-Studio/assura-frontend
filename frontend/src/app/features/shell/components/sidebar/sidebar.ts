@@ -32,7 +32,6 @@ export class SidebarComponent {
 
   bottomLinks = [
     { label: 'Settings', icon: 'settings', link: 'settings' },
-    { label: 'Profile', icon: 'account_circle', link: 'profile' },
   ];
 
   isCollapsed = false;
