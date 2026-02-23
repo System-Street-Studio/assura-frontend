@@ -1,0 +1,92 @@
+<div class="discarded-notes-container">
+    <div class="header-section">
+        <h1>Discarded Notes</h1>
+        <div class="controls">
+            <div class="search-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="search-icon">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Search Employee..." />
+            </div>
+            <button class="filter-btn" (click)="toggleFilter()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                </svg>
+                Filter
+            </button>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <table class="notes-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Division</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let note of filteredNotes" (click)="selectNote(note)">
+                    <td>{{ note.name }}</td>
+                    <td>{{ note.division }}</td>
+                    <td>{{ note.date }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination">
+            <span class="prev">« Previous</span>
+            <span class="page-num active">1</span>
+            <span class="page-num">2</span>
+            <span class="page-num">3</span>
+            <span class="next">Next »</span>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="detail-overlay" *ngIf="selectedNote" (click)="closeDetail()">
+        <div class="detail-card" (click)="$event.stopPropagation()">
+            <div class="detail-header">
+                <h2>Discarded Note</h2>
+            </div>
+            <div class="detail-body">
+                <h3 class="asset-name">Dell XPS 15 Laptop</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Division</label>
+                        <span>{{ selectedNote.division }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Date</label>
+                        <span>{{ selectedNote.date }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Status</label>
+                        <span class="status-badge">{{ selectedNote.status }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Time</label>
+                        <span>{{ selectedNote.time }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Asset Type</label>
+                        <span>{{ selectedNote.assetType }}</span>
+                    </div>
+                </div>
+                <div class="special-note">
+                    <label>Special Note</label>
+                    <div class="note-box">
+                        {{ selectedNote.specialNote }}
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="close-btn" (click)="closeDetail()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
