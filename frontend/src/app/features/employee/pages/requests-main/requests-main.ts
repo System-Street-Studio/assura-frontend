@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AssetService } from '../../services/asset.service';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
   selector: 'app-requests-main',
   standalone: true,
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule,MatIconModule],
   templateUrl: './requests-main.html',
   styleUrl: './requests-main.css',
 })

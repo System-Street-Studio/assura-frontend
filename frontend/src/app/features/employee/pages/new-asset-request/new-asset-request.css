@@ -82,22 +82,30 @@
   color: #888;
   cursor: pointer;
 }
+.upload-box {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  color: #888;
+}
 
 .upload-icon {
-  font-size: 30px;
-  margin-bottom: 10px;
+  font-size: 30px;     
+  height: 48px;       
+  width: 48px;
+  color: #afafaf;    
+ 
 }
+.browse { color: #3030e9; cursor: pointer; text-decoration: underline; }
 
-.upload-area p {
-  font-size: 12px;
-}
 
 .submit-btn {
   width: 100%;
   background-color: #00afb5;
   color: white;
   border: none;
-  padding: 15px;
+  padding: 10px;
   border-radius: 8px;
   font-weight: 650;
   font-size: 16px;

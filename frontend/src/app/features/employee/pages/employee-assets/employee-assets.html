@@ -10,6 +10,7 @@
       <div class="stat-card border-blue">
         <div class="stat-info">
           <div class="stat-top1">Total Assets</div>
+          <mat-icon class="inventory-icon">inventory</mat-icon>
         </div>
         <div class="stat-value">12</div>
         <p class="stat-desc">All assets assigned to you</p>
@@ -18,7 +19,7 @@
       <div class="stat-card border-yellow">
         <div class="stat-info">
           <div class="stat-top2">Assets In Use</div>
-          <i class="icon-check"></i>
+          <mat-icon class="check_circle">check_circle</mat-icon>
         </div>
         <div class="stat-value">4</div>
         <p class="stat-desc">Currently utilized assets</p>
@@ -27,6 +28,7 @@
       <div class="stat-card border-red">
         <div class="stat-info">
           <div class="stat-top3">Assets in maintenance</div>
+          <mat-icon class="build">build</mat-icon>
         </div>
         <div class="stat-value">2</div>
         <p class="stat-desc">Awaiting repair or service</p>
@@ -47,9 +49,11 @@
 
      <!--search section-->
       <div class="controls">
-        <div class="search-box">
+        <div class="search-container">
+          <mat-icon class="search-icon">search</mat-icon>
           <input type="text" placeholder="Search Assets..." [(ngModel)]="searchTerm">
         </div>
+        
         <select class="status-dropdown">
           <option>Filter By Status</option>
           <option>In Use</option>

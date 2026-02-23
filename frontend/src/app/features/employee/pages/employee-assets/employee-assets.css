@@ -60,7 +60,7 @@ h3{
 
 .stat-card {
   background: #fff;
-  padding: 1.5rem;
+  padding: 15px;
   border-radius: 12px;
 }
 
@@ -86,16 +86,14 @@ h3{
   display: flex;
   justify-content: space-between;
   font-weight: 600;
-  color: var(--primary-blue);
-  margin-bottom: 0.5rem;
+  margin-bottom:10px;
 }
-
-
-
+ mat-icon {font-size: 24px; color:#4a4a4a;}
+ 
 .stat-value {
   font-size: 32px;
   font-weight: 800;
-  margin: 20px 0px 20px 20px;
+  margin: 15px 0px 15px 15px;
   color:#004777
 }
 
@@ -122,14 +120,41 @@ h3{
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
-
-.search-box input {
-  padding: 0.6rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  width: 250px;
+/* Search box */
+.search-container {
+  position: relative;
+  width: 320px;
 }
 
+.search-container input {
+  width: 100%;
+  padding: 8px 12px 8px 40px;
+  border-radius: 12px;
+  border: 1px solid #c4c1c1;
+  outline: none;
+  font-size: 14px;
+  font-family: 'jost';
+  background-color: #f3f3f3;
+  transition: 0.3s ease;
+}
+
+.search-container input:focus {
+  border: 2px solid #00477775;
+  background-color: #ffffff;
+  
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #b0aeae;
+  pointer-events: none;
+}
+
+/* Status Dropdown */
 .status-dropdown {
   padding: 0.6rem;
   border: 1px solid #ddd;
@@ -138,7 +163,6 @@ h3{
 }
 
 /* --- Asset Grid and Cards --- */
-
 .assets-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

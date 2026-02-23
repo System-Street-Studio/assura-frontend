@@ -1,5 +1,5 @@
 <div class="main-content">
-
+<!-- Back link and page header -->
   <div class="content-padding">
     <h1 class="section-label">Requests </h1>
     <a routerLink="/employee/requests-main" class="back-link">←</a>
@@ -12,7 +12,7 @@
         <p>Please fill out the form below to submit your asset request.</p>
       </div>
 
-      
+      <!--select asset category-->
       <form (ngSubmit)="onSubmit()" class="asset-form">
         <div class="form-group">
           <label>Asset Category</label>
@@ -26,12 +26,14 @@
           </select>
         </div>
 
+          <!--asset name-->
         <div class="form-group">
           <label>Asset Name</label>
           <input type="text" [(ngModel)]="requestData.assetName" name="assetName" 
                  placeholder="e.g., Dell XPS 15" class="form-control">
         </div>
 
+          <!--description-->
         <div class="form-group">
           <label>Description</label>
           <textarea [(ngModel)]="requestData.description" name="description" 
@@ -39,11 +41,13 @@
                     class="form-control" rows="3"></textarea>
         </div>
 
+        <!--quantity-->
         <div class="form-group">
           <label>Quantity</label>
           <input type="number" [(ngModel)]="requestData.quantity" name="quantity" class="form-control">
         </div>
 
+        <!--priority-->
         <div class="form-group">
           <label>Priority</label>
           <select [(ngModel)]="requestData.priority" name="priority" class="form-control">
@@ -53,6 +57,7 @@
           </select>
         </div>
 
+          <!--reason/justification-->
         <div class="form-group">
           <label>Reason/ Justification</label>
           <textarea [(ngModel)]="requestData.reason" name="reason" 
@@ -60,16 +65,20 @@
                     class="form-control" rows="3"></textarea>
         </div>
 
+        <!--attachment-->
         <div class="form-group">
           <label>Attachment (Optional)</label>
           <div class="upload-area">
-            <div class="upload-icon">☁️</div>
-            <p>Drag files here or click to browse</p>
+            <mat-icon class="upload-icon">cloud_upload</mat-icon>
+            <p>Drag files here or <span class="browse">click to browse</span></p>
           </div>
         </div>
 
+        <!--submit button-->
         <button type="submit" class="submit-btn">Submit Request</button>
       </form>
     </div>
   </div>
 </div>
+
+

@@ -2,6 +2,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 interface Asset {
   assetId: string;
@@ -18,7 +19,7 @@ interface Asset {
 @Component({
   selector: 'app-employee-assets',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,MatIconModule],
   templateUrl: './employee-assets.html',
   styleUrls: ['./employee-assets.css']
 })

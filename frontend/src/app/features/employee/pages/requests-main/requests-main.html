@@ -8,19 +8,22 @@
     <div class="stats-grid">
     
       <div class="hub-card border-blue">
-        <p>All Requests</p>
+        <p>All Requests<mat-icon class="assignment">assignment</mat-icon> </p>
         <div class="hub-value">112</div>
       </div>
+
       <div class="hub-card border-orange">
-        <p>Pending Requests</p>
+        <p>Pending Requests <mat-icon class="schedule">schedule</mat-icon></p>
         <div class="hub-value">{{ recentRequests.length }}</div>
       </div>
+
       <div class="hub-card border-green">
-        <p>Approved Requests</p>
+        <p>Approved Requests <mat-icon class="check-circle">check_circle</mat-icon></p>
         <div class="hub-value">88</div>
       </div>
+
       <div class="hub-card border-red">
-        <p>Rejected Request</p>
+        <p>Rejected Request <mat-icon class="cancel">cancel</mat-icon></p>
         <div class="hub-value">11</div>
       </div>
     </div>
@@ -28,17 +31,17 @@
     <!--Initiate new requests-->
     <h3 class="section-label mt-30">Initiate New Requests</h3>
     <div class="action-grid">
-      <button class="btn-hub" routerLink="/employee/new-asset-request">New Asset Request</button>
-      <button class="btn-hub" routerLink="/employee/maintenance-form">Maintenance Request</button>
-      <button class="btn-hub" routerLink="/employee/discard-form">Discard Request</button>
-      <button class="btn-hub" routerLink="/employee/transfer-form">Temporary Transfer Requests</button>
+      <button class="btn-hub" routerLink="/employee/new-asset-request"><mat-icon class="add_box">add_box</mat-icon><span>New Asset Request</span></button>
+      <button class="btn-hub" routerLink="/employee/maintenance-form"><mat-icon class="handyman">handyman</mat-icon><span>Maintenance Request</span></button>
+      <button class="btn-hub" routerLink="/employee/discard-form"><mat-icon class="delete_sweep">delete_sweep</mat-icon><span>Discard Request</span></button>
+      <button class="btn-hub" routerLink="/employee/transfer-form"><mat-icon class="move_up">move_up</mat-icon><span>Temporary Transfer Requests</span></button>
     </div>
 
     <!--Recent requests list-->
     <div class="list-section mt-30">
       <div class="list-header">
         <h3 class="section-label">My Recent Requests</h3>
-        <a href="#" class="view-all">View All Requests ></a>
+        <a href="#" class="view-all"  routerLink="/employee/all-emp-requests">View All Requests ></a>
       </div>
 
       <div class="request-list">

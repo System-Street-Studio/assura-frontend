@@ -1,6 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge';
+import { RouterModule } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
 
 interface RequestItem {
   item: string;
@@ -17,7 +19,7 @@ interface Activity {
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, StatusBadgeComponent],
+  imports: [CommonModule, StatusBadgeComponent,RouterModule,MatIcon],
   templateUrl: './employee-overview.html',
   styleUrls: ['./employee-overview.css']
 })

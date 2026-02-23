@@ -3,11 +3,12 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AssetService } from '../../services/asset.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-new-asset-request',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule,MatIconModule],
   templateUrl: './new-asset-request.html',
   styleUrl: './new-asset-request.css',
 })
