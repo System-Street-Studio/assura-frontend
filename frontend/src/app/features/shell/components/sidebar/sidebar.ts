@@ -16,8 +16,10 @@ export class SidebarComponent {
     { label: 'Overview', icon: 'home', link: 'employee/employee-overview', roles: ['ANY'] },
 
     // Employee
-    { label: 'My Assets', icon: 'description', link: 'employee/employee-assets', roles: ['ANY'] },
+    { label: 'My Assets', icon: 'inventory', link: 'employee/employee-assets', roles: ['ANY'] },
      { label: 'My Requests', icon: 'assignment', link: 'employee/requests-main', roles: ['ANY'] },
+     { label: 'Transfers', icon: 'transfer_within_a_station', link: 'employee/transfers', roles: ['ANY'] },
+      { label: 'Notifications', icon: 'notifications', link: 'employee/notifications', roles: ['ANY'] },
 
     // Storekeeper-heavy items
     /*{
