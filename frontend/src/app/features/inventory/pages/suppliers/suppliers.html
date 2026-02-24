@@ -1,0 +1,271 @@
+<div class="page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Suppliers</h1>
+      <span class="item-count">{{ filteredSuppliers.length }} suppliers</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn outline" (click)="clearFilters()" *ngIf="hasActiveFilters">
+        <mat-icon class="btn-icon">filter_list_off</mat-icon> Clear
+      </button>
+      <button class="btn primary" (click)="onNewSupplier()">
+        <mat-icon class="btn-icon">add</mat-icon> Add Supplier
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Strip -->
+  <div class="stats-strip">
+    <div class="stat-card">
+      <div class="stat-icon-wrap all">
+        <mat-icon>groups</mat-icon>
+      </div>
+      <div>
+        <div class="stat-value">{{ totalSupplierCount }}</div>
+        <div class="stat-label">Total Suppliers</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrap active">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div>
+        <div class="stat-value">{{ activeCount }}</div>
+        <div class="stat-label">Active</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrap inactive">
+        <mat-icon>pause_circle</mat-icon>
+      </div>
+      <div>
+        <div class="stat-value">{{ inactiveCount }}</div>
+        <div class="stat-label">Inactive</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrap pending">
+        <mat-icon>hourglass_empty</mat-icon>
+      </div>
+      <div>
+        <div class="stat-value">{{ pendingCount }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrap blacklisted">
+        <mat-icon>block</mat-icon>
+      </div>
+      <div>
+        <div class="stat-value">{{ blacklistedCount }}</div>
+        <div class="stat-label">Blacklisted</div>
+      </div>
+    </div>
+    <div class="stat-card info-only">
+      <div class="stat-icon-wrap value">
+        <mat-icon>payments</mat-icon>
+      </div>
+      <div>
+        <div class="stat-value">{{ formatCurrency(totalOrderValue) }}</div>
+        <div class="stat-label">Total Order Value</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          class="search-input"
+          type="text"
+          placeholder="Search by name, ID, contact, email, city…"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+        />
+        <button class="search-clear" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <select class="filter-select" [(ngModel)]="filterCategory" (ngModelChange)="applyFilters()">
+        <option value="">All Categories</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+      <select class="filter-select" [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option *ngFor="let st of statuses" [value]="st">{{ st }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Selection banner -->
+  <div class="selection-banner" *ngIf="selectedCount > 0">
+    <mat-icon class="banner-icon">check_circle</mat-icon>
+    {{ selectedCount }} supplier{{ selectedCount > 1 ? 's' : '' }} selected
+    <button class="banner-clear" (click)="clearSelection()">Clear</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table class="suppliers-table" *ngIf="!loading">
+      <thead>
+        <tr>
+          <th class="col-check">
+            <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll()" />
+          </th>
+          <th class="col-avatar"></th>
+          <th>Supplier ID</th>
+          <th>Company</th>
+          <th>Category</th>
+          <th>Contact</th>
+          <th>Status</th>
+          <th>Rating</th>
+          <th class="col-num">Orders</th>
+          <th class="col-num">Total Value</th>
+          <th>Contract Expiry</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Empty state -->
+        <tr *ngIf="viewSuppliers.length === 0">
+          <td colspan="11" class="empty-state">
+            <mat-icon class="empty-icon">business_center</mat-icon>
+            <div class="empty-text">
+              {{ hasActiveFilters ? 'No suppliers match your filters' : 'No suppliers yet' }}
+            </div>
+            <button class="btn primary sm" *ngIf="!hasActiveFilters" (click)="onNewSupplier()">
+              <mat-icon class="btn-icon">add</mat-icon> Add First Supplier
+            </button>
+            <button class="btn sm" *ngIf="hasActiveFilters" (click)="clearFilters()">
+              Clear Filters
+            </button>
+          </td>
+        </tr>
+
+        <!-- Data rows -->
+        <tr
+          *ngFor="let s of viewSuppliers"
+          class="clickable-row"
+          [class.row-selected]="s.selected"
+          (click)="onRowClick(s)"
+        >
+          <td class="col-check" (click)="$event.stopPropagation()">
+            <input type="checkbox" [(ngModel)]="s.selected" />
+          </td>
+          <td class="col-avatar">
+            <div class="avatar" [ngClass]="getAvatarClass(s.id)">
+              {{ getInitials(s.companyName) }}
+            </div>
+          </td>
+          <td>
+            <span class="cell-id">{{ s.id }}</span>
+          </td>
+          <td>
+            <div class="cell-company">{{ s.companyName }}</div>
+            <div class="cell-sub">{{ s.city }}, {{ s.country }}</div>
+          </td>
+          <td>
+            <span class="category-tag">
+              <mat-icon class="category-icon">{{ getCategoryIcon(s.category) }}</mat-icon>
+              {{ s.category }}
+            </span>
+          </td>
+          <td>
+            <div class="cell-contact">{{ s.contactPerson }}</div>
+            <div class="cell-sub">{{ s.email }}</div>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(s.status)">
+              <span class="status-dot"></span>
+              {{ s.status }}
+            </span>
+          </td>
+          <td>
+            <div class="rating-stars" *ngIf="s.rating > 0">
+              <mat-icon
+                *ngFor="let star of getRatingStars(s.rating)"
+                class="star"
+                [class.filled]="star <= s.rating"
+              >
+                {{ star <= s.rating ? 'star' : 'star_border' }}
+              </mat-icon>
+            </div>
+            <span class="text-muted" *ngIf="s.rating === 0">—</span>
+          </td>
+          <td class="col-num">
+            <span class="cell-orders">{{ s.totalOrders }}</span>
+          </td>
+          <td class="col-num">
+            <span class="cell-value">{{ formatCurrency(s.totalValue) }}</span>
+          </td>
+          <td>
+            <span
+              class="cell-expiry"
+              [class.expiring]="isExpiringSoon(s.contractExpiry)"
+              [class.expired]="isExpired(s.contractExpiry)"
+            >
+              {{ formatDate(s.contractExpiry) }}
+              <mat-icon class="expiry-warn" *ngIf="isExpiringSoon(s.contractExpiry)">warning</mat-icon>
+              <mat-icon class="expiry-err" *ngIf="isExpired(s.contractExpiry)">error</mat-icon>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Skeleton loading -->
+    <table class="suppliers-table" *ngIf="loading">
+      <tbody>
+        <tr *ngFor="let row of [1,2,3,4,5,6,7,8]" class="skeleton-row">
+          <td colspan="11">
+            <div class="skeleton-table-row">
+              <div class="skel-check"></div>
+              <div class="skel-avatar"></div>
+              <div class="skel-line short"></div>
+              <div class="skel-line medium"></div>
+              <div class="skel-line short"></div>
+              <div class="skel-line medium"></div>
+              <div class="skel-line pill"></div>
+              <div class="skel-line short"></div>
+              <div class="skel-line short"></div>
+              <div class="skel-line short"></div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="!loading && filteredSuppliers.length > 0">
+    <span class="page-info">
+      Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredSuppliers.length }}
+    </span>
+
+    <div class="page-size-control">
+      <span class="page-size-label">Rows per page:</span>
+      <select class="page-size-select" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()">
+        <option *ngFor="let ps of pageSizes" [ngValue]="ps">{{ ps }}</option>
+      </select>
+    </div>
+
+    <div class="page-controls">
+      <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button
+        *ngFor="let p of pages"
+        class="page-btn"
+        [class.active]="p === currentPage"
+        (click)="goToPage(p)"
+      >
+        {{ p }}
+      </button>
+      <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
