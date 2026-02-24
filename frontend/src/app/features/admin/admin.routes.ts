@@ -11,7 +11,7 @@ export const adminRoutes: Routes = [
     },
     {
         path: 'track-assets',
-        loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) // Stub
+        loadComponent: () => import('./pages/track-assets/track-assets').then(m => m.TrackAssetsComponent)
     },
     { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];

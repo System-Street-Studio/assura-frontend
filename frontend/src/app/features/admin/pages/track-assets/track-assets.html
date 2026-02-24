@@ -1,0 +1,37 @@
+<div class="track-assets-container">
+    <div class="header-section">
+        <h1 class="page-title">Assets Overview</h1>
+
+        <div class="controls-row">
+            <div class="search-wrapper">
+                <app-search-bar placeholder="Search Assets..." (queryChange)="onSearch($event)">
+                </app-search-bar>
+            </div>
+
+            <div class="actions-wrapper">
+                <div class="filter-wrapper">
+                    <app-action-button label="Filter" icon="filter_alt" (clicked)="toggleFilters()">
+                    </app-action-button>
+                    <div class="filter-dropdown-overlay" *ngIf="showFilters">
+                        <app-filter-dropdown [groups]="filterGroups" (closed)="onFilterClosed($event)">
+                        </app-filter-dropdown>
+                    </div>
+                </div>
+
+                <app-action-button label="Update Asset" (clicked)="onUpdateAsset()">
+                </app-action-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <app-data-table [columns]="columns" [data]="paginatedAssets">
+        </app-data-table>
+
+        <div class="pagination-container" *ngIf="totalPages > 1">
+            <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pageNumbers"
+                (pageChange)="onPageChange($event)">
+            </app-pagination>
+        </div>
+    </div>
+</div>
