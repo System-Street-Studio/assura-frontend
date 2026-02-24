@@ -27,6 +27,7 @@ export class RegisterComponent {
     }, { validators: this.passwordMatchValidator });
 
     isLoading = false;
+    isSuccess = false;
 
     passwordMatchValidator(g: any) {
         return g.get('password').value === g.get('confirmPassword').value
@@ -40,7 +41,6 @@ export class RegisterComponent {
         const { firstName, lastName, email, password } = this.registerForm.value;
 
         // Combining names for specific API requirement if needed, or sending separately
-        // For now, mapping to typical registration payload
         const registerData = {
             name: `${firstName} ${lastName}`,
             email: email!,
@@ -48,15 +48,11 @@ export class RegisterComponent {
             confirmPassword: this.registerForm.value.confirmPassword!
         };
 
-        // Assuming AuthService has a register method. If not, it will be added/mocked.
-        // Since exact register logic is TODO in auth.service, we simulate success or call it if exists.
-
         // For Frontend Visualization Only (as requested):
         setTimeout(() => {
             this.isLoading = false;
-            // Navigate or show success
-            alert('Registration simulated!');
-            this.router.navigate(['/auth/login']);
+            this.isSuccess = true;
+            // No longer navigating immediately, showing success UI
         }, 1500);
 
         /* 

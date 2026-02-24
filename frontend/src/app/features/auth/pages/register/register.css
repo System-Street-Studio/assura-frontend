@@ -157,3 +157,36 @@
 .auth-footer a:hover {
     text-decoration: underline;
 }
+
+/* Success Card Styling */
+.success-card {
+    background-color: #EFD28D;
+    padding: 60px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+}
+
+.success-main {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+    font-family: 'Jost', sans-serif;
+}
+
+.success-sub {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    font-family: 'Jost', sans-serif;
+}
