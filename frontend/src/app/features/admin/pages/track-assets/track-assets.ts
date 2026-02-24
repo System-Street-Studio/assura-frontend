@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
 import { DataTableComponent, ColumnDef } from '../../../../shared/components/data-table/data-table';
 import { ActionButtonComponent } from '../../../../shared/components/action-button/action-button';
@@ -21,8 +22,10 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
     styleUrls: ['./track-assets.css']
 })
 export class TrackAssetsComponent {
+    private router = inject(Router);
+
     columns: ColumnDef[] = [
-        { key: 'id', label: 'ID', type: 'text' },
+        { key: 'id', label: 'ID', type: 'link' },
         { key: 'name', label: 'Name', type: 'text' },
         { key: 'category', label: 'Category', type: 'text' },
         { key: 'status', label: 'Status', type: 'status' }
@@ -94,6 +97,10 @@ export class TrackAssetsComponent {
 
     onPageChange(page: number): void {
         this.currentPage = page;
+    }
+
+    onAssetClick(asset: any): void {
+        this.router.navigate(['/admin/track-assets', asset.id]);
     }
 
     toggleFilters(): void {

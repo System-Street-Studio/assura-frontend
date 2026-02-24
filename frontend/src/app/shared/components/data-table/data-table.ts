@@ -5,7 +5,7 @@ import { StatusBadgeComponent } from '../status-badge/status-badge';
 export interface ColumnDef {
   key: string;
   label: string;
-  type?: 'text' | 'status';
+  type?: 'text' | 'status' | 'link';
 }
 
 @Component({

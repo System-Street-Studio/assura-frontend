@@ -13,5 +13,9 @@ export const adminRoutes: Routes = [
         path: 'track-assets',
         loadComponent: () => import('./pages/track-assets/track-assets').then(m => m.TrackAssetsComponent)
     },
+    {
+        path: 'track-assets/:id',
+        loadComponent: () => import('./pages/asset-details/asset-details').then(m => m.AssetDetailsComponent)
+    },
     { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];

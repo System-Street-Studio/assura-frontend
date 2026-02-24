@@ -25,7 +25,7 @@
     </div>
 
     <div class="table-card">
-        <app-data-table [columns]="columns" [data]="paginatedAssets">
+        <app-data-table [columns]="columns" [data]="paginatedAssets" (rowClick)="onAssetClick($event)">
         </app-data-table>
 
         <div class="pagination-container" *ngIf="totalPages > 1">
