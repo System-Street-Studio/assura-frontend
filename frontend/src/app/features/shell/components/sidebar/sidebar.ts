@@ -14,8 +14,10 @@ export class SidebarComponent {
   menuItems = [
     // Common
     { label: 'Overview', icon: 'home', link: 'overview', roles: ['ANY'] },
-    { label: 'My Assets', icon: 'description', link: 'my-assets', roles: ['ANY'] },
-
+    { label: 'Assets', icon: 'description', link: 'Assets', roles: ['ANY'] },
+    { label: 'Requests', icon: 'description', link: 'Requests', roles: ['ANY'] },
+    { label: 'Transfers', icon: 'description', link: 'Transfers', roles: ['ANY'] },
+/*
     // Storekeeper-heavy items
     {
       label: 'Assets',
@@ -73,6 +75,7 @@ export class SidebarComponent {
       link: 'discarded-notes',
       roles: ['SUPERINTENDENT'],
     },
+    */
   ];
 
   isCollapsed = false;

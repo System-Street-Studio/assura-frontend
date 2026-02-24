@@ -14,7 +14,6 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    StatusBadgeComponent,
     DataTableComponent,
     SearchBarComponent,
     ActionButtonComponent,
