@@ -13,19 +13,19 @@
 }
 
 .statics-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 360px);
     gap: 1.5rem;
-    align-items: center;
-    /* Centers the first row */
+    justify-content: center;
+    margin-top: 2rem;
 }
 
-.stat-row {
-    display: flex;
-    gap: 1.5rem;
-    width: 100%;
-    /* Or specific width to match design */
-    justify-content: center;
+/* First card (Total Suppliers) spans two columns and remains centered */
+.suppliers-card {
+    grid-column: span 2;
+    justify-self: center;
+    width: 360px;
+    /* Keep it same width as others to maintain balance or wider? image shows it centered */
 }
 
 .stat-card {
