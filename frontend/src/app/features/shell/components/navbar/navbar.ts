@@ -13,6 +13,13 @@ export class NavbarComponent {
   private authService = inject(AuthService);
 
   get roleName(): string {
-    return this.authService.getRole() ?? 'Guest';
+    const role = this.authService.getRole();
+    if (Array.isArray(role)) {
+      return role.includes('Admin') ? 'Admin' : role.join(', ');
+    }
+    if (typeof role === 'string' && role.toUpperCase().includes('ADMIN')) {
+      return 'Admin';
+    }
+    return role ?? 'Guest';
   }
 }
