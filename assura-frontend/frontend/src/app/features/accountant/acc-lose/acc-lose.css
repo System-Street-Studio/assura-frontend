@@ -1,0 +1,226 @@
+.acc-lose-container {
+    padding: 32px;
+    background-color: #f4f7f6;
+    min-height: calc(100vh - 56px);
+}
+
+.page-title {
+    font-family: 'Jost', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 28px 0;
+}
+
+/* ============ Layout ============ */
+.lose-layout {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+.table-wrapper {
+    background: white;
+    border-radius: 16px;
+    border: 2px solid #004777;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    flex: 1;
+}
+
+.lose-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Jost', sans-serif;
+}
+
+.lose-table thead {
+    background: #f8f9fa;
+}
+
+.lose-table th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    border-bottom: 1px solid #eee;
+}
+
+.lose-table td {
+    padding: 14px 20px;
+    font-size: 0.9rem;
+    color: #444;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.lose-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.lose-table tbody tr {
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.lose-table tbody tr:hover {
+    background: #f9fefe;
+}
+
+.lose-table tbody tr.active-row {
+    background: rgba(0, 71, 119, 0.06);
+    border-left: 3px solid #004777;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.status-badge.reported {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.status-badge.investigating {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.status-badge.confirmed {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.empty-row {
+    text-align: center;
+    color: #999;
+    padding: 40px 20px !important;
+}
+
+/* ============ Detail Panel ============ */
+.detail-panel {
+    width: 380px;
+    flex-shrink: 0;
+    animation: slideIn 0.2s ease;
+}
+
+.detail-panel-card {
+    background: rgb(255, 255, 255);
+    border-radius: 16px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 2px solid #004777;
+}
+
+.detail-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.detail-panel-name {
+    font-family: 'Jost', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.detail-badge {
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.btn-close-detail {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+
+.btn-close-detail:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.detail-panel-divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 12px 0 16px 0;
+}
+
+.detail-panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 24px;
+    margin-bottom: 20px;
+}
+
+.detail-panel-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.detail-panel-item label {
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.detail-panel-item span {
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #444;
+}
+
+.detail-panel-note {
+    margin-top: 4px;
+}
+
+.detail-panel-note label {
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.detail-panel-note-box {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #444;
+    min-height: 50px;
+    line-height: 1.5;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

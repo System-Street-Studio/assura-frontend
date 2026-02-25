@@ -28,9 +28,14 @@ export class NavbarComponent implements OnInit {
         if (url.includes('overview')) this.title = 'Overview';
         else if (url.includes('my-assets')) this.title = 'My Assets';
         else if (url.includes('discarded-notes')) this.title = 'Discarded Notes';
+        else if (url.includes('buyer')) this.title = 'Buyer';
     }
 
     toggleMenu() {
         // TODO: emit event to toggle sidebar
+    }
+
+    goToRoleSelect() {
+        this.router.navigate(['/']);
     }
 }

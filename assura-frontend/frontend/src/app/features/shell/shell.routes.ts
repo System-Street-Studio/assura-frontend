@@ -13,5 +13,9 @@ export const shellRoutes: Routes = [
         path: 'discarded-notes',
         loadChildren: () => import('../discarded-notes/discarded-notes.routes').then(m => m.discardedNotesRoutes)
     },
+    {
+        path: 'buyer',
+        loadComponent: () => import('../buyer/buyer').then(m => m.BuyerComponent)
+    },
     { path: '', redirectTo: 'discarded-notes', pathMatch: 'full' }
 ];

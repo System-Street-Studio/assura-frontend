@@ -1,0 +1,85 @@
+<div class="acc-discard-note-container">
+    <h1 class="page-title">Discard Note</h1>
+
+    <div class="table-wrapper">
+        <table class="note-table">
+            <thead>
+                <tr>
+                    <th>Asset Name</th>
+                    <th>Division</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of notes" [class.active-row]="selectedNote === item">
+                    <td>{{ item.assetName }}</td>
+                    <td>{{ item.division }}</td>
+                    <td>{{ item.date }}</td>
+                    <td>
+                        <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{ item.status }}</span>
+                    </td>
+                    <td>
+                        <button class="view-btn" (click)="viewNote(item)">View Note</button>
+                    </td>
+                </tr>
+                <tr *ngIf="notes.length === 0">
+                    <td colspan="5" class="empty-row">No discard notes found.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Note Detail Modal -->
+    <div class="modal-overlay" *ngIf="selectedNote" (click)="closeNote()">
+        <div class="modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>{{ selectedNote.assetName }}</h2>
+                <button class="close-btn" (click)="closeNote()">×</button>
+            </div>
+            <div class="modal-divider"></div>
+
+            <div class="modal-info-grid">
+                <div class="modal-info-item">
+                    <label>Division</label>
+                    <span>{{ selectedNote.division }}</span>
+                </div>
+                <div class="modal-info-item">
+                    <label>Date</label>
+                    <span>{{ selectedNote.date }}</span>
+                </div>
+                <div class="modal-info-item">
+                    <label>Status</label>
+                    <span class="status-badge" [ngClass]="getStatusClass(selectedNote.status)">{{ selectedNote.status
+                        }}</span>
+                </div>
+                <div class="modal-info-item">
+                    <label>Time</label>
+                    <span>{{ selectedNote.time }}</span>
+                </div>
+                <div class="modal-info-item">
+                    <label>Asset Type</label>
+                    <span>{{ selectedNote.assetType }}</span>
+                </div>
+                <div class="modal-info-item">
+                    <label>Current User</label>
+                    <span>{{ selectedNote.currentUser }}</span>
+                </div>
+                <div class="modal-info-item">
+                    <label>Value at Purchasing</label>
+                    <span>{{ selectedNote.valueAtPurchasing }}</span>
+                </div>
+                <div class="modal-info-item">
+                    <label>Current Value</label>
+                    <span>{{ selectedNote.currentValue }}</span>
+                </div>
+            </div>
+
+            <div class="modal-note">
+                <label>Discard Note</label>
+                <div class="note-content">{{ selectedNote.note }}</div>
+            </div>
+        </div>
+    </div>
+</div>
