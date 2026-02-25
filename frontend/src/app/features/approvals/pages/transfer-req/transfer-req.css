@@ -1,0 +1,79 @@
+.modal-overlay {
+  background: rgba(240, 248, 255, 0.8); /* Light blue tint from your UI */
+  padding: 40px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.request-card {
+  background: white;
+  width: 100%;
+  max-width: 800px;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.card-header h2 { font-size: 1.2rem; margin: 0; color: #333; }
+
+.close-btn { 
+  background: none; border: none; font-size: 24px; cursor: pointer; color: #666; 
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 15px;
+}
+
+.value.bold { font-weight: 700; color: #222; margin: 5px 0; }
+
+.description-box, .timeline-box {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.time-row { display: flex; gap: 10px; }
+
+.reason-section { margin-top: 25px; border-top: 1px solid #eee; padding-top: 15px; }
+
+.reason-text { font-size: 0.9rem; color: #444; margin-top: 10px; }
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 40px;
+  justify-content: center;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-approve { background-color: #00b5b5; }
+.btn-pool { background-color: #ff8c00; }
+.btn-reject { background-color: #b20000; }

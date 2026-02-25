@@ -1,0 +1,74 @@
+<div class="dashboard-wrapper">
+  <div class="content-padding">
+    <h1 class="page-title">Dashboard</h1>
+
+    <section class="section">
+      <h3 class="section-label">Overview</h3>
+      <div class="grid-4">
+        <div class="stat-card border-blue">
+          <div class="stat-top">Total Asset Value (NBV)</div>
+          <div class="stat-val">$4.8M</div>
+          <div class="stat-sub">+5.2% from last month</div>
+        </div>
+        <div class="stat-card border-green">
+          <div class="stat-top">Total Assets count</div>
+          <div class="stat-val-container">
+            <span class="stat-val">456</span>
+            <span class="badge badge-green">+9</span>
+          </div>
+          <div class="stat-sub">added in last 7 days</div>
+        </div>
+        <div class="stat-card border-yellow">
+          <div class="stat-top">Active Request Count</div>
+          <div class="stat-val-container">
+            <span class="stat-val">17</span>
+            <span class="badge badge-red">new</span>
+          </div>
+          <div class="stat-sub">new in last 24h</div>
+        </div>
+        <div class="stat-card border-red">
+          <div class="stat-top">Critical Alerts</div>
+          <div class="stat-val-text">3 Critical Breakdowns</div>
+          <div class="stat-sub">Immediate attention needed</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section mt-30">
+      <h3 class="section-label">Quick Action</h3>
+      <div class="grid-3">
+        <button class="action-btn" routerLink="/division-assets">
+          <mat-icon>domain</mat-icon>
+          <span>View My Division Assets</span>
+        </button>
+        <button class="action-btn" routerLink="/review-requests">
+          <mat-icon>assignment_turned_in</mat-icon>
+          <span>Review New Assets Requests</span>
+        </button>
+        <button class="action-btn" routerLink="/transferred-assets">
+          <mat-icon>compare_arrows</mat-icon>
+          <span>View All Transferred Assets</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="section mt-30">
+      <div class="white-panel activity-panel">
+        <h3 class="section-label">Recent Activities</h3>
+        <div class="activity-feed">
+          @for (act of recentActivities(); track act.description) {
+            <div class="activity-item">
+              <div class="act-content">
+                <p class="act-desc">{{ act.description }}</p>
+                <span class="act-time">{{ act.timestamp }}</span>
+              </div>
+              <span class="status-pill" [ngClass]="act.status.toLowerCase()">
+                {{ act.status }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

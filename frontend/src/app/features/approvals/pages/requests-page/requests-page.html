@@ -1,0 +1,279 @@
+<div class="container">
+  <header>
+    <h1>Requests</h1>
+    <div class="overview-section">
+      <h3>Overview</h3>
+      <p>Manage and track all incoming and outgoing asset requests across employees and divisions</p>
+    </div>
+  </header>
+
+        <div class="request-tabs">
+    <button class="tab-btn" [class.active]="activeTab() === 'new'" (click)="setTab('new')">New Asset Requests</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'transfer'" (click)="setTab('transfer')">Transfer Requests</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'maintenance'" (click)="setTab('maintenance')">Maintenance </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'discard'" (click)="setTab('discard')">Discard Requests</button>
+    </div>
+
+  <div class="stats-grid">
+    <div class="card blue-border" [class.highlight]="activeTab() === 'new'">
+      <div class="card-content" >
+        <div>
+          <p class="card-title">New Asset Request</p>
+          <h2 class="card-number">{{ newAssetCount() }}</h2>
+          <span class="card-sub">Pending</span>
+        </div>
+        <div class="icon-circle blue-bg">+</div>
+      </div>
+    </div>
+
+    <div class="card orange-border" [class.highlight]="activeTab() === 'transfer'">
+      <div class="card-content">
+        <div>
+          <p class="card-title">Transfer Requests</p>
+          <h2 class="card-number">{{ transferCount() }}</h2>
+          <span class="card-sub">Pending</span>
+        </div>
+        <div class="icon-box">📦</div>
+      </div>
+    </div>
+
+    <div class="card red-border"  [class.highlight]="activeTab() === 'maintenance'">
+      <div class="card-content">
+        <div>
+          <p class="card-title">Maintenance Requests</p>
+          <h2 class="card-number">{{ maintenanceCount() }}</h2>
+          <span class="card-sub">Pending</span>
+        </div>
+        <div class="icon-box red-text">🔧</div>
+      </div>
+    </div>
+
+    <div class="card green-border" [class.highlight]="activeTab() === 'discard'">
+      <div class="card-content">
+        <div>
+          <p class="card-title">Discard Requests</p>
+          <h2 class="card-number">{{ discardCount() }}</h2>
+          <span class="card-sub">Pending</span>
+        </div>
+        <div class="icon-box red-text">🗑️</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="table-container">
+  @if (activeTab() === 'new') {
+    <div class="table-header">
+      <h2>All Requests ({{ requests().length }})</h2>
+      <div class="table-actions">
+        <input type="text" placeholder="Search requests..." class="search-bar">
+        <select class="filter-dropdown">
+          <option>Filter by Priority</option>
+        </select>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Employee Name</th>
+          <th>Status</th>
+          <th>Requested Asset</th>
+          <th>Request Date</th>
+          <th>Priority</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of requests(); track item.id) {
+          <tr>
+            <td class="bold-text">{{ item.name }}</td>
+            <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
+            <td>{{ item.asset }}</td>
+            <td>{{ item.date }}</td>
+            <td class="priority-cell" [attr.data-priority]="item.priority">
+              {{ item.priority }}
+            </td>
+            <td>
+              @if (item.status === 'Pending') {
+               <a [routerLink]="['/new-asset-req', item.id]" class="btn-view" style="text-decoration: none;">
+              View Details
+                </a>
+             
+              } @else {
+                <button class="btn-check">Check</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    }
+ 
+
+
+    @if (activeTab() === 'transfer') {
+      <div class="table-header">
+        <h2 class="table-title">Temporary Transfer Requests</h2>
+        <div class="table-actions">
+           <div class="search-container">
+             <span class="search-icon">🔍</span>
+             <input type="text" placeholder="Search requests..." class="search-bar">
+           </div>
+           <select class="filter-dropdown">
+             <option>Filter by Priority</option>
+           </select>
+        </div>
+      </div>
+
+      <h3 class="all-req-text">All Requests ({{ transferRequests().length }})</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Submit date</th>
+            <th>Asset / Category</th>
+            <th>Employee Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (req of transferRequests(); track req.id) {
+            <tr>
+              <td>{{ req.date }}</td>
+              <td>
+                <div class="asset-info">
+                  <span class="asset-name">{{ req.asset }}</span>
+                  <span class="asset-cat">({{ req.category }})</span>
+                </div>
+              </td>
+              <td class="emp-name">{{ req.employee }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="req.status.toLowerCase()">{{ req.status }}</span>
+              </td>
+              <td>
+                @if (req.status === 'Pending') {
+                    <a [routerLink]="['/transfer-req', req.id]" class="btn-view" style="text-decoration: none;">
+                    👁 View Details
+                    </a>
+                } @else {
+                  <button class="btn-check">Check</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+
+
+    @if (activeTab() === 'maintenance') {
+      <div class="table-header">
+        <h2 class="table-title">Maintenance Requests</h2>
+        <div class="table-actions">
+           <div class="search-container">
+             <span class="search-icon">🔍</span>
+             <input type="text" placeholder="Search requests..." class="search-bar">
+           </div>
+           <select class="filter-dropdown">
+             <option>Filter by Priority</option>
+           </select>
+        </div>
+      </div>
+
+      <h3 class="all-req-text">All Requests ({{ maintenanceRequests().length }})</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Submit date</th>
+            <th>Asset / Category</th>
+            <th>Employee Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (req of maintenanceRequests(); track req.id) {
+            <tr>
+              <td>{{ req.date }}</td>
+              <td>
+                <div class="asset-info">
+                  <span class="asset-name">{{ req.asset }}</span>
+                </div>
+              </td>
+              <td class="emp-name">{{ req.employee }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="req.status.toLowerCase()">{{ req.status }}</span>
+              </td>
+              <td>
+                @if (req.status === 'Pending') {
+                    <a [routerLink]="['/maintenance-req', req.id]" class="btn-view" style="text-decoration: none;">
+                    👁 View Details
+                    </a>
+                } @else {
+                  <button class="btn-check">Check</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+
+    @if (activeTab() === 'discard') {
+      <div class="table-header">
+        <h2 class="table-title">Discard Requests</h2>
+        <div class="table-actions">
+           <div class="search-container">
+             <span class="search-icon">🔍</span>
+             <input type="text" placeholder="Search requests..." class="search-bar">
+           </div>
+           <select class="filter-dropdown">
+             <option>Filter by Priority</option>
+           </select>
+        </div>
+      </div>
+
+      <h3 class="all-req-text">All Requests ({{ discardRequests().length }})</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Submit date</th>
+            <th>Asset / Category</th>
+            <th>Employee Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (req of discardRequests(); track req.id) {
+            <tr>
+              <td>{{ req.date }}</td>
+              <td>
+                <div class="asset-info">
+                  <span class="asset-name">{{ req.asset }}</span>
+                </div>
+              </td>
+              <td class="emp-name">{{ req.employee }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="req.status.toLowerCase()">{{ req.status }}</span>
+              </td>
+              <td>
+                @if (req.status === 'Pending') {
+                    <a [routerLink]="['/discard-req', req.id]" class="btn-view" style="text-decoration: none;">
+                    👁 View Details
+                    </a>
+                } @else {
+                  <button class="btn-check">Check</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+
+</div>

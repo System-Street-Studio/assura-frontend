@@ -26,15 +26,6 @@ export class NotificationService {
     },
  
     {
-      id: '3',
-      title: 'Maintenance Complete',
-      message: 'ThinkPad E15 G4 repair has been completed.',
-      timestamp: new Date(Date.now() - 3 * 3_600_000),
-      read: false,
-      type: 'success',
-      icon: 'build',
-    },
-    {
       id: '4',
       title: 'New Asset Request',
       message: 'Richard K. Cornejo requested a laptop.',

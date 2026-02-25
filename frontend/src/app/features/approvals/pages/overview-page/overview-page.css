@@ -1,0 +1,97 @@
+:host {
+  --teal-btn: #00afb5;
+  --navy: #002b4e;
+  --bg-light: #f4f7f9;
+}
+
+.dashboard-wrapper {
+  background-color: var(--bg-light);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.content-padding { padding: 30px; }
+.page-title { font-size: 28px; font-weight: 800; margin-bottom: 25px; }
+.section-label { font-size: 18px; font-weight: 700; margin-bottom: 15px; }
+.mt-30 { margin-top: 30px; }
+
+/* Grid Systems */
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+/* Stat Cards */
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-top { font-size: 13px; color: #555; font-weight: 600; margin-bottom: 8px; }
+.stat-val { font-size: 26px; font-weight: 800; color: #333; }
+.stat-val-text { font-size: 18px; font-weight: 700; margin: 10px 0; }
+.stat-sub { font-size: 11px; color: #888; margin-top: 8px; }
+
+/* Badges inside cards */
+.stat-val-container { display: flex; align-items: center; gap: 10px; }
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+}
+.badge-green { background-color: #4cd137; }
+.badge-red { background-color: #ff3f34; }
+
+/* Border accents */
+.border-blue { border-bottom: 4px solid #70a1ff; }
+.border-green { border-bottom: 4px solid #7bed9f; }
+.border-yellow { border-bottom: 4px solid #eccc68; }
+.border-red { border-bottom: 4px solid #ff6b81; }
+
+/* Quick Action Buttons */
+.action-btn {
+  background: var(--teal-btn);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+
+.action-btn mat-icon { font-size: 30px; width: 30px; height: 30px; }
+.action-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+/* Activity Feed */
+.activity-panel { max-width: 800px; }
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.act-desc { margin: 0; font-size: 14px; color: #333; }
+.act-time { font-size: 12px; color: #999; }
+
+/* Status Pills matching the image */
+.status-pill {
+  padding: 4px 15px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.status-pill.approved { border: 1px solid #c49a6c; color: #c49a6c; }
+.status-pill.pending { border: 1px solid #d980fa; color: #d980fa; }
+.status-pill.transferred { border: 1px solid #44bd32; color: #44bd32; }

@@ -1,0 +1,61 @@
+<div class="modal-overlay">
+  @if (requestDetails(); as details) {
+  <div class="request-card">
+    <div class="card-header">
+      <h2>Request Details</h2>
+      <button class="close-btn" routerLink="/requests">×</button>
+    </div>
+
+    <div class="details-grid">
+      <div class="info-group">
+        <label>Asset</label>
+        <p class="value bold">{{ details.asset }}</p>
+
+        <label>Asset Category</label>
+        <p class="value bold">{{ details.category }}</p>
+
+        <label>Quantity</label>
+        <p class="value bold">{{ details.quantity }}</p>
+
+        <label>Description</label>
+        <div class="description-box">
+          <p>Height: {{ details.description.height }}</p>
+          <p>Width: {{ details.description.width }}</p>
+          <p>Depth: {{ details.description.depth }}</p>
+        </div>
+      </div>
+
+      <div class="info-group">
+        <label>Employee Name</label>
+        <p class="value bold">{{ details.employeeName }} (ID:{{ details.employeeId }})</p>
+
+        <label>Submitted Date</label>
+        <p class="value bold">{{ details.submittedDate }}</p>
+
+        <label>Time line</label>
+        <div class="timeline-box">
+          <div class="time-row"><span>From :</span> <strong>{{ details.timeline.from }}</strong></div>
+          <div class="time-row"><span>To :</span> <strong>{{ details.timeline.to }}</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reason-section">
+      <label>Reason</label>
+      <p class="reason-text">{{ details.reason }}</p>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-approve" (click)="approve()">
+        <span class="icon">✓</span> Approve Request
+      </button>
+      <button class="btn-pool" (click)="viewInPool()">
+        <span class="icon">🔍</span> View in Pool
+      </button>
+      <button class="btn-reject" (click)="reject()">
+        <span class="icon">×</span> Reject with Reason
+      </button>
+    </div>
+  </div>
+  }
+</div>

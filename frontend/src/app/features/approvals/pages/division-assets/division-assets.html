@@ -1,0 +1,182 @@
+<div class="assets-container">
+  <div class="content-padding">
+    
+    <div class="header-section">
+      <h1 class="page-title">Assets</h1>
+      @if (selectedAsset()) {
+        <button class="back-btn" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon> Back to All Assets
+        </button>
+      }
+    </div>
+
+    @if (selectedAsset(); as asset) {
+      <div class="details-view-container">
+        <h3 class="section-label">Asset Details: {{ asset.name }}</h3>
+        
+        <div class="details-layout">
+          <div class="card-panel main-info">
+            <h3>General Information</h3>
+            <div class="asset-identity">
+              <img [src]="asset.image" alt="Asset" class="detail-img">
+              <div class="identity-text">
+                <p class="name-bold">{{ asset.name }}</p>
+                <p class="id-sub">ID: {{ asset.id }}</p>
+                <p class="type-sub">{{ asset.type }}</p>
+              </div>
+            </div>
+            <hr class="divider">
+            
+            <div class="detail-row">
+              <span class="label">Asset Information :</span>
+              <span class="value">{{ asset.specs }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="label">Assigned Employee :</span>
+              <span class="value">{{ asset.assignedTo }} (EST001)</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="label">Asset Category :</span>
+              <span class="value">{{ asset.category }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="label">Owned Division :</span>
+              <span class="value">{{ asset.division }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="label">Status :</span>
+              <span class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
+                {{ asset.status }}
+              </span>
+            </div>
+
+            <button class="transfer-btn">Transfer</button>
+          </div>
+
+          <div class="side-column">
+            <div class="card-panel">
+              <h3>Asset Lifecycle</h3>
+              <div class="timeline">
+
+                <div class="timeline-item">
+                  <span class="date">2022-01-10</span>
+                  <p class="event">Purchased: Acquired new device</p>
+                </div>
+
+                <div class="timeline-item">
+                  <span class="date">2022-01-20</span>
+                  <p class="event">Assigned: Given to {{ asset.assignedTo }}</p>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="card-panel mt-20">
+
+              <h3>Condition Monitor</h3>
+              <div class="detail-row">
+                <span class="label">Health Indicator:</span>
+                <span class="health-pill">{{ asset.condition }}</span>
+              </div>
+
+              <div class="detail-row">
+                <span class="label">Purchased Date:</span>
+                <span class="value">2022-01-10</span>
+              </div>
+
+              <div class="detail-row">
+                <span class="label">Last Inspected:</span>
+                <span class="value">2024-11-15</span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    } @else {
+      <section class="overview-section">
+      <h3 class="section-label">Overview</h3>
+      <div class="stat-grid">
+        <div class="stat-card border-blue">
+          <div class="stat-header">
+            <span class="stat-title color-blue">Total Assets</span>
+            <mat-icon>content_copy</mat-icon>
+          </div>
+          <div class="stat-value">124</div>
+        </div>
+        <div class="stat-card border-yellow">
+          <div class="stat-header">
+            <span class="stat-title color-yellow">In Use</span>
+            <mat-icon>check_circle_outline</mat-icon>
+          </div>
+          <div class="stat-value">114</div>
+        </div>
+        <div class="stat-card border-red">
+          <div class="stat-header">
+            <span class="stat-title color-red">Under maintenance</span>
+            <mat-icon>build</mat-icon>
+          </div>
+          <div class="stat-value">12</div>
+        </div>
+      </div>
+    </section>
+
+      <section class="assets-list-section">
+      <h3 class="section-label">Your Division Assets</h3>
+      
+      <div class="filter-bar">
+        <div class="search-box">
+          <label>Search Assets</label>
+          <div class="input-wrapper">
+            <input type="text" placeholder="Search by name or Asset_ID">
+            <mat-icon>search</mat-icon>
+          </div>
+        </div>
+        
+        <div class="dropdown-group">
+          <select class="styled-select">
+            <option>Category</option>
+          </select>
+          <select class="styled-select">
+            <option>Status</option>
+          </select>
+        </div>
+
+        <div class="view-toggle">
+          <mat-icon>reorder</mat-icon>
+          <mat-icon class="active">grid_view</mat-icon>
+        </div>
+      </div>
+
+      <!--assets grid-->
+        <div class="asset-grid">
+        @for (asset of assets(); track asset.id) {
+          <div class="asset-card">
+            <div class="img-container">
+              <img [src]="asset.image" [alt]="asset.name">
+            </div>
+            
+            <div class="card-body">
+              <h4 class="asset-name">{{ asset.name }}</h4>
+              <p class="asset-id">ID: {{ asset.id }} · {{ asset.type }}</p>
+              
+              <div class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
+                {{ asset.status }}
+              </div>
+              
+              <p class="assigned-text">Assigned to {{ asset.assignedTo }}</p>
+            </div>
+            
+            <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
+          </div>
+        }
+      </div>
+    </section>
+    }
+  </div>
+</div>

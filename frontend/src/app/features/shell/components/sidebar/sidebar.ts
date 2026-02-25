@@ -13,10 +13,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class SidebarComponent {
   menuItems = [
     // Common
-    { label: 'Overview', icon: 'home', link: 'overview', roles: ['ANY'] },
-    { label: 'Assets', icon: 'description', link: 'Assets', roles: ['ANY'] },
-    { label: 'Requests', icon: 'description', link: 'Requests', roles: ['ANY'] },
-    { label: 'Transfers', icon: 'description', link: 'Transfers', roles: ['ANY'] },
+    { label: 'Overview', icon: 'home', link: 'approvals/overview', roles: ['ANY'] },
+    { label: 'Assets', icon: 'inventory', link: 'approvals/assets', roles: ['ANY'] },
+    { label: 'Requests', icon: 'request_quote', link: 'approvals/requests', roles: ['ANY'] },
+    { label: 'Transfers', icon: 'transfer_within_a_station', link: 'approvals/transfers', roles: ['ANY'] },
+    { label: 'Reports', icon: 'description', link: 'approvals/reports', roles: ['ANY'] },
+  
+
 /*
     // Storekeeper-heavy items
     {

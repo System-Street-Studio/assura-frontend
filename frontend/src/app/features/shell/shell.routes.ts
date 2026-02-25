@@ -1,8 +1,9 @@
 import { Routes } from '@angular/router';
 import { OverviewComponent } from './pages/overview/overview';
 
+
 export const shellRoutes: Routes = [
-  // { path: 'overview', component: OverviewComponent },
+   { path: 'overview', component: OverviewComponent },
   // {
   //   path: 'inventory',
   //   loadChildren: () => import('../../inventory/inventory.routes').then(m => m.inventoryRoutes)
@@ -27,10 +28,10 @@ export const shellRoutes: Routes = [
   //   path: 'superintendent',
   //   loadChildren: () => import('../../superintendent/superintendent.routes').then(m => m.superintendentRoutes)
   // },
-  // {
-  //   path: 'approvals',
-  //   loadChildren: () => import('../../approvals/approvals.routes').then(m => m.approvalsRoutes)
-  // },
+   {
+     path: 'approvals',
+     loadChildren: () => import('../approvals/approvals.routes').then(m => m.approvalsRoutes)
+   },
   // {
   //   path: 'reporting',
   //   loadChildren: () => import('../../reporting/reporting.routes').then(m => m.reportingRoutes)
