@@ -96,7 +96,7 @@
             </td>
             <td>
               @if (item.status === 'Pending') {
-               <a [routerLink]="['/new-asset-req', item.id]" class="btn-view" style="text-decoration: none;">
+               <a [routerLink]="['/approvals/new-asset-req', item.id]" class="btn-view" style="text-decoration: none;">
               View Details
                 </a>
              
@@ -154,7 +154,7 @@
               </td>
               <td>
                 @if (req.status === 'Pending') {
-                    <a [routerLink]="['/transfer-req', req.id]" class="btn-view" style="text-decoration: none;">
+                    <a [routerLink]="['/approvals/transfer-req', req.id]" class="btn-view" style="text-decoration: none;">
                     👁 View Details
                     </a>
                 } @else {
@@ -209,7 +209,7 @@
               </td>
               <td>
                 @if (req.status === 'Pending') {
-                    <a [routerLink]="['/maintenance-req', req.id]" class="btn-view" style="text-decoration: none;">
+                    <a [routerLink]="['/approvals/maintenance-req', req.id]" class="btn-view" style="text-decoration: none;">
                     👁 View Details
                     </a>
                 } @else {
@@ -263,7 +263,7 @@
               </td>
               <td>
                 @if (req.status === 'Pending') {
-                    <a [routerLink]="['/discard-req', req.id]" class="btn-view" style="text-decoration: none;">
+                    <a [routerLink]="['/approvals/discard-req', req.id]" class="btn-view" style="text-decoration: none;">
                     👁 View Details
                     </a>
                 } @else {

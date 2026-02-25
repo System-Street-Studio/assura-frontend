@@ -1,0 +1,76 @@
+<div class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>Request Details</h2>
+      <button class="close-btn" (click)="close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="details-grid">
+      <div class="column">
+        <div class="info-group">
+          <label>Asset</label>
+          <p class="bold-text">{{ request().asset }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Asset Category</label>
+          <p class="bold-text">{{ request().category }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Quantity</label>
+          <p class="bold-text">{{ request().quantity }}</p>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="info-group">
+          <label>Employee Name</label>
+          <p class="bold-text">{{ request().name }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Submitted Date</label>
+          <p class="bold-text">{{ request().submittedDate }}</p>
+        </div>
+      </div>
+
+      <div class="info-group full-width flex-row">
+        <div class="desc-box">
+          <label>Description</label>
+          <p class="specs-text">{{ request().specs }}</p>
+        </div>
+        <div class="timeline-box">
+          <label>Time line</label>
+          <div class="timeline-row">
+            <span>From :</span> <strong>{{ request().timelineFrom }}</strong>
+          </div>
+          <div class="timeline-row">
+            <span>To :</span> <strong>{{ request().timelineTo }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-group full-width">
+        <label>Reason</label>
+        <p class="reason-text">{{ request().reason }}</p>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-approve" (click)="approveRequest()">
+        <mat-icon>check_circle</mat-icon> Approve Request
+      </button>
+      
+      <button class="btn-pool" (click)="viewInPool()">
+        <mat-icon>search</mat-icon> View in Pool
+      </button>
+
+      <button class="btn-reject" (click)="rejectRequest()">
+        <mat-icon>close</mat-icon> Reject with Reason
+      </button>
+    </div>
+  </div>
+</div>

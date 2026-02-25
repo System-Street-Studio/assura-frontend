@@ -1,7 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink, RouterModule} from '@angular/router';
+import { Router, RouterLink, RouterModule} from '@angular/router';
 
 // Define the interface for a Request
 interface RequestItem {
@@ -16,7 +16,7 @@ interface RequestItem {
 @Component({
   selector: 'app-requests-page',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterModule],
+  imports: [CommonModule, MatIconModule, RouterModule,RouterLink],
   templateUrl: './requests-page.html',
   styleUrl: './requests-page.css',
 })
@@ -37,8 +37,8 @@ export class RequestsPageComponent {
   ]);
 
   transferRequests = signal([
-    { id: 101, date: '2024-10-26', asset: 'Laptop', category: 'Lenovo X1 Carbon', employee: 'Harry Ekanayeka', status: 'Pending' },
-    { id: 102, date: '2024-10-26', asset: 'Table', category: '3x4', employee: 'Jenny Athapaththu', status: 'Pending' },
+     { id: 101, date: '2024-10-26', asset: 'Table', category: '3x4', employee: 'Jenny Athapaththu', status: 'Pending' },
+    { id: 102, date: '2024-10-26', asset: 'Laptop', category: 'Lenovo X1 Carbon', employee: 'Harry Ekanayeka', status: 'Pending' },
     { id: 103, date: '2024-10-26', asset: 'Keyboard', category: 'Logitech MX Keys', employee: 'Sarah Kodithuwakku', status: 'Rejected' },
     { id: 104, date: '2024-10-26', asset: 'Mouse', category: 'Logitech MX Master 3', employee: 'Gavesh Gamage', status: 'Approved' }
   ]);
@@ -81,4 +81,13 @@ export class RequestsPageComponent {
     checkStatus(id: number) {
     console.log('Checking status for ID:', id);
   }
+
+  constructor(private router: Router) {}
+
+    viewDetails(request: any) {
+      this.router.navigate(
+        ['/approvals/transfer-req', request.id],
+        { state: { data: request } }
+      );
+    }
 }

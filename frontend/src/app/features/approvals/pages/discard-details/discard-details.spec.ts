@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NewAssetReqComponent } from './new-asset-req';
+import { DiscardDetailsComponent } from './discard-details';
 
-describe('NewAssetReqComponent', () => {
-  let component: NewAssetReqComponent;
-  let fixture: ComponentFixture<NewAssetReqComponent>;
+describe('DiscardDetails', () => {
+  let component: DiscardDetailsComponent;
+  let fixture: ComponentFixture<DiscardDetailsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NewAssetReqComponent]
+      imports: [DiscardDetailsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(NewAssetReqComponent);
+    fixture = TestBed.createComponent(DiscardDetailsComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

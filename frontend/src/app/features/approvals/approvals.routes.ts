@@ -2,8 +2,10 @@ import { Routes } from '@angular/router';
 import { OverviewComponent } from './pages/overview-page/overview-page';
 import { DivisionAssetsComponent } from './pages/division-assets/division-assets';
 import { RequestsPageComponent } from './pages/requests-page/requests-page';
-import { NewAssetReqComponent } from './pages/new-asset-req/new-asset-req';
-import { TransferReqComponent } from './pages/transfer-req/transfer-req';
+import { MaintenanceDetailsComponent } from './pages/maintenance-details/maintenance-details';
+import { DiscardDetailsComponent } from './pages/discard-details/discard-details';
+import { TransferDetailsComponent } from './pages/transfer-details/transfer-details';
+import { NewAssetDetailsComponent } from './pages/new-asset-details/new-asset-details';
 
 export const approvalsRoutes: Routes = [
     // { path: 'pending', loadComponent: ... },
@@ -22,13 +24,11 @@ export const approvalsRoutes: Routes = [
         component:  RequestsPageComponent
 
    },
-    { 
-    path: 'new-asset-req/:id', 
-    component: NewAssetReqComponent
-  },
    
-  { path: 'transfer-req/:id', 
-    component: TransferReqComponent },
+  { path: 'new-asset-req/:id', component: NewAssetDetailsComponent },
+  { path: 'transfer-req/:id', component: TransferDetailsComponent },
+  { path: 'maintenance-req/:id', component: MaintenanceDetailsComponent },
+  { path: 'discard-req/:id', component: DiscardDetailsComponent },
     
     {
         path: '',
