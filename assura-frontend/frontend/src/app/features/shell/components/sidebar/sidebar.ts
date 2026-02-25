@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 
@@ -10,7 +10,12 @@ import { RouterLink, RouterLinkActive } from "@angular/router";
     styleUrls: ['./sidebar.css']
 })
 export class SidebarComponent {
+    isCollapsed = false;
+
+    @Output() collapsedChange = new EventEmitter<boolean>();
+
     toggleMenu() {
-        // TODO: emit event to toggle sidebar
+        this.isCollapsed = !this.isCollapsed;
+        this.collapsedChange.emit(this.isCollapsed);
     }
 }
