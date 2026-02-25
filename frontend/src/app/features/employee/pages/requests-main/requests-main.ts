@@ -12,9 +12,9 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './requests-main.html',
   styleUrl: './requests-main.css',
 })
-export class RequestsMainComponent implements OnInit {
+export class RequestsMainComponent /*implements OnInit*/ {
   
-  recentRequests: any[] = [];
+  /*recentRequests: any[] = [];
 
   constructor(private assetService: AssetService,private cdr: ChangeDetectorRef) {}
 
@@ -31,11 +31,11 @@ export class RequestsMainComponent implements OnInit {
       this.cdr.detectChanges();
     },
     error: (err: any) => console.error('Load failed', err)
-  });
-}
+  });*/
 
 
- /* recentRequests: AssetRequest[] = [
+
+  recentRequests: any[] = [
     {
       id: 'REQ-1001',
       assetName: 'Dell Latitude 5420',
@@ -64,7 +64,7 @@ export class RequestsMainComponent implements OnInit {
     console.log('Navigating to details for request:', requestId);
     
     // this.router.navigate(['/requests/details', requestId]);
-  }*/
+  }
 
   
    /* Helper method to handle button clicks for new requests*/

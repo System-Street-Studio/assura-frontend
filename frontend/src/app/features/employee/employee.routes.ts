@@ -10,6 +10,11 @@ import { AllRequestsComponent } from './pages/all-emp-requests/all-emp-requests'
 
 
 export const employeeRoutes: Routes = [
+      {
+        path: '',
+        redirectTo: 'employee-overview',
+        pathMatch: 'full'
+    },
     {
         path: 'employee-overview',
         component: EmployeeOverviewComponent
@@ -49,9 +54,5 @@ export const employeeRoutes: Routes = [
 
    },
     
-    {
-        path: '',
-        redirectTo: 'employee-overview',
-        pathMatch: 'full'
-    }
+   
 ];

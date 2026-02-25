@@ -320,3 +320,18 @@ h3{
 }
 .btn-maint {background-color:#00afb5;}
 .btn-discard {background-color: #a30000;}
+
+
+
+/* make it slightly floating */
+/*.details-view {
+  margin: 30px 60px auto;     
+  width: 65%;
+  transform: scale(1.02); 
+  transition: 0.2s ease-in-out;
+}
+
+/* little hover lift effect (optional but nice) */
+/*.details-view:hover {
+  transform: scale(1.02) translateY(-5px);
+}*/
