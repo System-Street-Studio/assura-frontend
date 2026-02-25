@@ -4,6 +4,36 @@
     margin: 0 auto;
 }
 
+/* Greeting Banner */
+.greeting-banner {
+    background-color: #044b4b;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.greeting-text {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 600;
+    font-family: 'Jost', sans-serif;
+    margin: 0;
+}
+
+.greeting-content {
+    text-align: center;
+}
+
+.greeting-date {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 13px;
+    font-family: 'Jost', sans-serif;
+    margin: 4px 0 0 0;
+}
+
 .page-title {
     font-size: 30px;
     font-weight: 700;

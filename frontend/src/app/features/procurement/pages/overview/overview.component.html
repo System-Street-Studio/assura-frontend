@@ -1,4 +1,12 @@
 <div class="overview-container">
+    <!-- Greeting Banner -->
+    <div class="greeting-banner">
+        <div class="greeting-content">
+            <h2 class="greeting-text">{{ greeting }}, {{ firstName }}</h2>
+            <p class="greeting-date">{{ currentDate | date:'EEEE, MMMM d, y — h:mm a' }}</p>
+        </div>
+    </div>
+
     <h2 class="page-title">Statics</h2>
 
     <div class="statics-grid">

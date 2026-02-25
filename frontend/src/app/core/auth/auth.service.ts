@@ -67,6 +67,31 @@ export class AuthService {
     return userRoles.includes(requiredRole);
   }
 
+  // Returns the user's first name from the JWT token.
+  getFirstName(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const decoded: unknown = jwtDecode(token);
+      const payload = decoded as {
+        given_name?: string;
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'?: string;
+        unique_name?: string;
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'?: string;
+      };
+      const name =
+        payload.given_name ??
+        payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] ??
+        payload.unique_name ??
+        payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ??
+        null;
+      // If the name contains spaces, return only the first word
+      return name ? name.split(' ')[0] : null;
+    } catch {
+      return null;
+    }
+  }
+
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
   }
