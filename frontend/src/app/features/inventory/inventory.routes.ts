@@ -51,4 +51,9 @@ export const inventoryRoutes: Routes = [
     loadComponent: () =>
       import('./pages/asset-requests/asset-requests').then((m) => m.AssetRequestsComponent),
   },
+  {
+    path: 'maintenance',
+    loadComponent: () =>
+      import('./pages/maintenance/maintenance').then((m) => m.MaintenanceComponent),
+  },
 ];
