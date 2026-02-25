@@ -26,11 +26,71 @@ export class DiscardedNotesComponent implements OnInit {
             id: '2',
             name: 'Amarabandu Roopasinghe',
             division: 'Information Technology',
-            date: '10 Jan 2026',
+            date: '12 Jan 2026',
             status: 'In Progress',
             time: '09:15',
             assetType: 'Printer',
             specialNote: 'Old model, needs replacement'
+        },
+        {
+            id: '3',
+            name: 'Sarah Jenkins',
+            division: 'Human Resources',
+            date: '14 Jan 2026',
+            status: 'Completed',
+            time: '11:20',
+            assetType: 'Laptop',
+            specialNote: 'Screen flickering issue'
+        },
+        {
+            id: '4',
+            name: 'Michael Chen',
+            division: 'Engineering',
+            date: '15 Jan 2026',
+            status: 'Pending',
+            time: '16:05',
+            assetType: 'Mobile Device',
+            specialNote: 'Battery health degraded'
+        },
+        {
+            id: '5',
+            name: 'Emma Watson',
+            division: 'Finance',
+            date: '18 Jan 2026',
+            status: 'In Progress',
+            time: '10:30',
+            assetType: 'Desktop',
+            specialNote: 'HDD noise, possibly failing'
+        },
+        {
+            id: '6',
+            name: 'James Bond',
+            division: 'Security',
+            date: '20 Jan 2026',
+            status: 'Rejected',
+            time: '08:45',
+            assetType: 'Access Point',
+            specialNote: 'Hardware upgrade required'
+        },
+        {
+            id: '7',
+            name: 'Linda Belcher',
+            division: 'Administration',
+            date: '22 Jan 2026',
+            status: 'Pending',
+            time: '14:50',
+            assetType: 'Scanner',
+            specialNote: 'Network connectivity issues'
+        },
+        {
+            id: '8',
+            name: 'Robert Stark',
+            division: 'Logistics',
+            date: '25 Jan 2026',
+            status: 'Completed',
+            time: '15:15',
+            assetType: 'Tablet',
+            specialNote: 'Broken charging port'
         }
     ];
 

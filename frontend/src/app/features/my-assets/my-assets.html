@@ -1,0 +1,150 @@
+<div class="assets-container">
+    <div class="header-section">
+        <div class="title-area">
+            <h1>My Assets</h1>
+            <p>Manage and track your assigned equipment</p>
+        </div>
+        <div class="header-actions">
+            <div class="search-bar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Search assets..." />
+            </div>
+            <button class="add-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Add Asset
+            </button>
+        </div>
+    </div>
+
+    <div class="assets-grid">
+        <div class="asset-card" *ngFor="let asset of filteredAssets">
+            <div class="asset-icon">
+                <svg *ngIf="asset.type === 'Laptop'" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                    viewBox="0 0 24 24" fill="none" stroke="#00b2b2" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                    <line x1="2" y1="20" x2="22" y2="20" />
+                </svg>
+                <svg *ngIf="asset.type === 'Monitor'" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                    viewBox="0 0 24 24" fill="none" stroke="#00b2b2" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                    <line x1="8" y1="21" x2="16" y2="21" />
+                    <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+                <svg *ngIf="asset.type === 'Peripheral' || asset.type === 'Networking'"
+                    xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                    stroke="#00b2b2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v8" />
+                    <path d="m4.93 4.93 4.24 4.24" />
+                    <path d="M2 12h8" />
+                    <path d="m4.93 19.07 4.24-4.24" />
+                    <path d="M12 22v-8" />
+                    <path d="m19.07 19.07-4.24-4.24" />
+                    <path d="M22 12h-8" />
+                    <path d="m19.07 4.93-4.24 4.24" />
+                </svg>
+            </div>
+            <div class="asset-details">
+                <div class="top-row">
+                    <h3 class="asset-name">{{ asset.name }}</h3>
+                    <span class="status-badge" [ngClass]="getStatusClass(asset.status)">{{ asset.status }}</span>
+                </div>
+                <p class="serial-no">{{ asset.serialNumber }}</p>
+                <div class="bottom-row">
+                    <span class="type-tag">{{ asset.type }}</span>
+                    <span class="division-tag">{{ asset.division }}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="view-btn" (click)="selectAsset(asset)">View Details</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="detail-overlay" *ngIf="selectedAsset" (click)="closeDetail()">
+        <div class="detail-card" (click)="$event.stopPropagation()">
+            <div class="detail-header">
+                <button class="detail-close-x" (click)="closeDetail()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+                <h2>Asset Details</h2>
+            </div>
+            <div class="detail-body">
+                <div class="detail-icon-section">
+                    <div class="detail-icon">
+                        <svg *ngIf="selectedAsset.type === 'Laptop'" xmlns="http://www.w3.org/2000/svg" width="60"
+                            height="60" viewBox="0 0 24 24" fill="none" stroke="#00b2b2" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                            <line x1="2" y1="20" x2="22" y2="20" />
+                        </svg>
+                        <svg *ngIf="selectedAsset.type === 'Monitor'" xmlns="http://www.w3.org/2000/svg" width="60"
+                            height="60" viewBox="0 0 24 24" fill="none" stroke="#00b2b2" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                            <line x1="8" y1="21" x2="16" y2="21" />
+                            <line x1="12" y1="17" x2="12" y2="21" />
+                        </svg>
+                        <svg *ngIf="selectedAsset.type === 'Peripheral' || selectedAsset.type === 'Networking'"
+                            xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none"
+                            stroke="#00b2b2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v8" />
+                            <path d="m4.93 4.93 4.24 4.24" />
+                            <path d="M2 12h8" />
+                            <path d="m4.93 19.07 4.24-4.24" />
+                            <path d="M12 22v-8" />
+                            <path d="m19.07 19.07-4.24-4.24" />
+                            <path d="M22 12h-8" />
+                            <path d="m19.07 4.93-4.24 4.24" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="detail-name-section">
+                    <h3>{{ selectedAsset.name }}</h3>
+                    <span class="status-badge" [ngClass]="getStatusClass(selectedAsset.status)">
+                        {{ selectedAsset.status }}
+                    </span>
+                </div>
+
+                <div class="detail-info-grid">
+                    <div class="detail-info-item">
+                        <label>Asset Type</label>
+                        <span>{{ selectedAsset.type }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Serial Number</label>
+                        <span>{{ selectedAsset.serialNumber }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Division</label>
+                        <span>{{ selectedAsset.division }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Asset ID</label>
+                        <span>#{{ selectedAsset.id }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-actions">
+                    <button class="close-detail-btn" (click)="closeDetail()">Close</button>
+                    <button class="edit-asset-btn">Edit Asset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

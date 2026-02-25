@@ -1,0 +1,118 @@
+.role-select-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f4f7f6 0%, #e0f0ef 50%, #f4f7f6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+}
+
+.role-card-wrapper {
+    text-align: center;
+    max-width: 720px;
+    width: 100%;
+}
+
+.brand {
+    margin-bottom: 48px;
+}
+
+.brand-logo {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 12px;
+}
+
+.brand h1 {
+    font-family: 'Jost', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #004777;
+    margin: 0 0 8px 0;
+}
+
+.brand p {
+    font-family: 'Jost', sans-serif;
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+}
+
+.roles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+}
+
+.role-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 32px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.role-card:hover {
+    transform: translateY(-6px);
+    border-color: #00b2b2;
+    box-shadow: 0 16px 40px rgba(0, 178, 178, 0.15);
+}
+
+.role-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.superintendent-icon {
+    background: linear-gradient(135deg, #00b2b2, #004777);
+    color: white;
+}
+
+.accountant-icon {
+    background: linear-gradient(135deg, #004777, #002244);
+    color: white;
+}
+
+.role-card h2 {
+    font-family: 'Jost', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 10px 0;
+}
+
+.role-card p {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.role-arrow {
+    display: block;
+    margin-top: 20px;
+    font-size: 1.5rem;
+    color: #ccc;
+    transition: all 0.3s;
+}
+
+.role-card:hover .role-arrow {
+    color: #00b2b2;
+    transform: translateX(4px);
+}
+
+@media (max-width: 600px) {
+    .roles {
+        grid-template-columns: 1fr;
+    }
+}

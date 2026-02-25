@@ -1,0 +1,180 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.sidebar {
+    width: 228px;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border-right: 1px solid #e8e8e8;
+    transition: width 0.25s ease;
+    overflow: hidden;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    height: 62px;
+    box-sizing: border-box;
+}
+
+.sidebar-logo {
+    height: 25px;
+    width: 25px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.sidebar-title {
+    font-family: 'Jost', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: rgb(0, 71, 119);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.2s ease;
+}
+
+.menu-toggle {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    color: rgb(0, 0, 0);
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.menu-toggle:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 14px;
+    overflow-y: auto;
+    flex: 1;
+    gap: 4px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    font-family: 'Jost', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.nav-item svg {
+    flex-shrink: 0;
+}
+
+.nav-item:hover {
+    background: rgba(0, 188, 212, 0.08);
+}
+
+.nav-item.active {
+    background: rgb(209, 242, 242);
+    font-weight: 600;
+}
+
+.nav-item.active svg {
+    stroke: rgb(0, 71, 119);
+}
+
+.nav-label {
+    font-weight: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.2s ease, width 0.25s ease;
+}
+
+/* ============ Collapsed State ============ */
+.sidebar.collapsed {
+    width: 64px;
+}
+
+.sidebar.collapsed .sidebar-header {
+    justify-content: center;
+    padding: 14px 8px;
+    gap: 0;
+}
+
+.sidebar.collapsed .sidebar-logo,
+.sidebar.collapsed .sidebar-title {
+    display: none;
+}
+
+.sidebar.collapsed .menu-toggle {
+    margin: 0 auto;
+}
+
+.sidebar.collapsed .sidebar-nav {
+    padding: 12px 8px;
+    align-items: center;
+}
+
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 10px;
+    width: 44px;
+    height: 44px;
+    gap: 0;
+}
+
+.sidebar.collapsed .nav-label {
+    display: none;
+}
+
+/* Tooltip on hover when collapsed */
+.sidebar.collapsed .nav-item {
+    position: relative;
+}
+
+.sidebar.collapsed .nav-item:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 54px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgb(0, 71, 119);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 620px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 50;
+    }
+}
