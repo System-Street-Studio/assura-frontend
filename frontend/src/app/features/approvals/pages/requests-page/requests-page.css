@@ -34,7 +34,7 @@ header h1 {
 .overview-section p {
   color: var(--text-muted);
   font-size: 14px;
-  margin-bottom: 30px;
+  margin:10px 30px;
 }
 
 /* --- Perfectly Aligned Navigation Tabs --- */
@@ -52,6 +52,7 @@ header h1 {
   padding: 16px 32px;
   font-size: 15px;
   font-weight: 600;
+  font-family: 'jost';
   color: var(--text-dark);
   cursor: pointer;
   position: relative;
@@ -76,54 +77,63 @@ header h1 {
 }
 
 /* --- Ultra-Aligned Stats Grid --- */
+/* Grid container */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
   gap: 25px;
   margin-bottom: 50px;
 }
 
+/* Card styling */
 .card {
-  background: var(--white);
-  border-radius: 20px;
-  padding: 28px;
- 
-  box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6); 
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white; /* default background */
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 2px 5px 16px 2px rgba(203, 203, 204, 0.6);
+  transition: all 0.1s ease;
   display: flex;
   flex-direction: column;
 }
 
+/* Card hover effect */
 .card:hover {
-  transform: translateY(-10px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--secondary);
+  box-shadow: 10px 10px 32px 10px rgba(173, 173, 175, 0.2);
 }
 
+/* Optional gradient highlight card */
 .card.highlight {
   background: linear-gradient(135deg, #ffffff 0%, #f1f9ff 100%);
 }
 
+/* Card title */
 .card-title {
   font-size: 13px;
   font-weight: 700;
-  text-transform: uppercase;
-  color: var(--text-muted);
+  color: #888; /* muted text */
   letter-spacing: 0.05em;
 }
 
+/* Card main number/value */
 .card-number {
-  font-size: 42px;
+  font-size: 30px;
   font-weight: 800;
   margin: 15px 0;
-  color: var(--text-dark);
+  color: #333; /* main text color */
+  text-align: center;
 }
 
-/*.card blue-border { color: #d946ef;border: 1px solid #d946ef;background-color: #edd6ff;}
-.card orange-border { color: #22c55e; border: 1px solid #68d447;background-color: #e1f7d2;}
-.card red-border { color: #ef4444;border: 1px solid #ab3324;background-color: #fad3ce; }
-.card green-border { color: #64748b; border: 1px solid #5970f3;background-color: #ceb7fe;}
-*/
+/* Optional colored borders for cards */
+.card.border-blue { border: 2px solid #3498db; }
+.card.border-green { border: 2px solid #20b753; }
+.card.border-yellow { border: 2px solid #dfab26; }
+.card.border-red { border: 2px solid #ed706e; }
+
+/* Colored border hover effect */
+.card.border-blue:hover { box-shadow: 2px 5px 16px 2px rgba(157,157,237,0.6); }
+.card.border-green:hover { box-shadow: 2px 5px 16px 2px rgba(140,227,169,0.6); }
+.card.border-yellow:hover { box-shadow: 2px 5px 16px 2px rgba(253,220,118,0.6); }
+.card.border-red:hover { box-shadow: 2px 5px 16px 2px rgba(250,162,118,0.6); }
 
 /* --- Search & Filter Bar --- */
 .table-actions {
@@ -195,7 +205,7 @@ td {
   border: 1px solid #00a8cc;
   color: #00a8cc;
   background: white;
-  padding: 6px 12px;
+  padding: 6px 6px;
   border-radius: 6px;
   font-weight: 600;
   display: flex;
@@ -205,10 +215,6 @@ td {
   font-size: 13px;
 }
 
-.btn-view:hover {
-  background: #00a8cc;
-  color: white;
-}
 
 .btn-check {
   border: 1px solid #e2e8f0;

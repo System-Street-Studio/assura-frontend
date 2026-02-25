@@ -4,9 +4,9 @@
     <div class="header-section">
       <h1 class="page-title">Assets</h1>
       @if (selectedAsset()) {
-        <button class="back-btn" (click)="goBack()">
-          <mat-icon>arrow_back</mat-icon> Back to All Assets
-        </button>
+        <div class="back-btn" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon> 
+        </div>
       }
     </div>
 
@@ -127,7 +127,7 @@
     </section>
 
       <section class="assets-list-section">
-      <h3 class="section-label">Your Division Assets</h3>
+      <h3 class="section-label">Division Assets</h3>
       
       <div class="filter-bar">
         <div class="search-box">
@@ -138,18 +138,27 @@
           </div>
         </div>
         
+        <div class = "selected-filters">
         <div class="dropdown-group">
           <select class="styled-select">
             <option>Category</option>
+            <option>Electronics</option>
+            <option>Computers</option>
+            <option>Network</option>
+            <option>Vehicles</option>
           </select>
           <select class="styled-select">
-            <option>Status</option>
+           <option> Status</option>
+          <option>In Use</option>
+          <option>Transferred</option>
+          <option>In maintenance</option>
           </select>
         </div>
 
         <div class="view-toggle">
           <mat-icon>reorder</mat-icon>
           <mat-icon class="active">grid_view</mat-icon>
+        </div>
         </div>
       </div>
 

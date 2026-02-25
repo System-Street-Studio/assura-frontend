@@ -30,7 +30,7 @@ export class DivisionAssetsComponent {
   assets = signal<Asset[]>([
     { 
       id: 'AST001', name: 'Dell Laptop', type: 'Laptop', status: 'Maintenance', 
-      assignedTo: 'Harry Ekanayake', image: 'assets/dell.png',
+      assignedTo: 'Harry Ekanayake', image: 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220' ,
       specs: 'Intel Core i5, 16GB RAM, 512GB SSD', category: 'IT Equipment', division: 'IT', condition: 'Good'
     },
     { 
@@ -55,7 +55,7 @@ export class DivisionAssetsComponent {
     },
     { 
       id: 'AST002', name: 'HP ProDesk Mini', type: 'Desktop PC', status: 'In Use', 
-      assignedTo: 'Jenny Athapaththu', image: 'assets/hp.png',
+      assignedTo: 'Jenny Athapaththu', image: 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220' ,
       specs: 'Intel Core i7, 32GB RAM, 1TB SSD', category: 'IT Equipment', division: 'IT', condition: 'Excellent'
     },
     { 
@@ -77,4 +77,10 @@ export class DivisionAssetsComponent {
   goBack() {
     this.selectedAsset.set(null);
   }
+  /*
+  viewMode: 'grid' | 'list' = 'grid';
+
+toggleView(mode: 'grid' | 'list') {
+  this.viewMode = mode;
+}*/
 }

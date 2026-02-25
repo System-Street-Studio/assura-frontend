@@ -3,7 +3,7 @@ import { OverviewComponent } from './pages/overview/overview';
 
 
 export const shellRoutes: Routes = [
-   { path: 'overview', component: OverviewComponent },
+  // { path: 'overview', component: OverviewComponent },
   // {
   //   path: 'inventory',
   //   loadChildren: () => import('../../inventory/inventory.routes').then(m => m.inventoryRoutes)
@@ -40,5 +40,5 @@ export const shellRoutes: Routes = [
   //   path: 'accountant',
   //   loadChildren: () => import('../../accountant/accountant.routes').then(m => m.accountantRoutes)
   // },
-  // { path: '', redirectTo: 'overview', pathMatch: 'full' },
+  { path: '', redirectTo: 'approvals', pathMatch: 'full' },
 ];
