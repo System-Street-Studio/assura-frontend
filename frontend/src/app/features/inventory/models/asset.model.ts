@@ -5,6 +5,9 @@ export interface Asset {
   product: string;
   image?: string;
   status: AssetStatus;
+  category?: string;
+  location?: string;
+  purchaseCost?: number;
   checkedOutTo?: string;
   checkedOutAgo?: string;
   album?: string;
@@ -42,4 +45,8 @@ export interface AssetDetail {
   dueBack?: string;
   status: AssetStatus;
   owner?: AssetOwner;
+  location?: string;
+  purchaseCost?: number;
+  scheduleAudit?: string;
+  imageBase64?: string | null;
 }

@@ -68,19 +68,19 @@ export class NotificationService {
 
   getUnreadCount(): Observable<number> {
     return this.notifications$.pipe(
-      map((list) => list.filter((n) => !n.read).length)
+      map((list: AppNotification[]) => list.filter((n: AppNotification) => !n.read).length)
     );
   }
 
   markAsRead(id: string): void {
-    const updated = this.notifications$.value.map((n) =>
+    const updated = this.notifications$.value.map((n: AppNotification) =>
       n.id === id ? { ...n, read: true } : n
     );
     this.notifications$.next(updated);
   }
 
   markAllAsRead(): void {
-    const updated = this.notifications$.value.map((n) => ({ ...n, read: true }));
+    const updated = this.notifications$.value.map((n: AppNotification) => ({ ...n, read: true }));
     this.notifications$.next(updated);
   }
 

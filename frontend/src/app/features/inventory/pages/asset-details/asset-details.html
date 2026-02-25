@@ -55,7 +55,13 @@
       <section class="about" *ngIf="activeTab === 'about'">
         <div class="about-grid">
           <div class="qr-block">
-            <div class="qr-placeholder">
+            <img
+              *ngIf="qrDataUrl"
+              [src]="qrDataUrl"
+              alt="QR Code for {{ asset.assetId }}"
+              class="qr-image"
+            />
+            <div class="qr-placeholder" *ngIf="!qrDataUrl">
               <mat-icon class="qr-icon">qr_code_2</mat-icon>
             </div>
             <div class="serial">{{ asset.serial }}</div>
@@ -87,7 +93,7 @@
               <div class="label">Serial Number</div>
               <div class="value">
                 {{ asset.serial }}
-                <span class="edit-link">Edit</span>
+                <span class="edit-link" (click)="onEdit()">Edit</span>
               </div>
             </div>
             <div class="field">
@@ -98,14 +104,14 @@
               <div class="label">Category</div>
               <div class="value">
                 {{ asset.category || '—' }}
-                <span class="edit-link">Edit</span>
+                <span class="edit-link" (click)="onEdit()">Edit</span>
               </div>
             </div>
             <div class="field">
               <div class="label">Purchase Date</div>
               <div class="value">
                 {{ asset.purchaseDate || '—' }}
-                <span class="edit-link">Edit</span>
+                <span class="edit-link" (click)="onEdit()">Edit</span>
               </div>
             </div>
           </div>
@@ -115,7 +121,7 @@
               <div class="label">Product</div>
               <div class="value">
                 {{ asset.productName }}
-                <span class="edit-link">Edit</span>
+                <span class="edit-link" (click)="onEdit()">Edit</span>
               </div>
             </div>
             <div class="field">
@@ -126,14 +132,14 @@
               <div class="label">Department</div>
               <div class="value">
                 {{ asset.department || '—' }}
-                <span class="edit-link">Edit</span>
+                <span class="edit-link" (click)="onEdit()">Edit</span>
               </div>
             </div>
             <div class="field">
               <div class="label">Supplier</div>
               <div class="value">
                 {{ asset.supplier || '—' }}
-                <span class="edit-link">Edit</span>
+                <span class="edit-link" (click)="onEdit()">Edit</span>
               </div>
             </div>
           </div>
@@ -147,21 +153,21 @@
               <div class="label">Order Number</div>
               <div class="value">
                 {{ asset.orderNumber }}
-                <span class="edit-link">Edit</span>
+                <span class="edit-link" (click)="onEdit()">Edit</span>
               </div>
             </div>
             <div class="field">
               <div class="label">Value</div>
               <div class="value">
                 {{ asset.value || '—' }}
-                <span class="edit-link">Edit</span>
+                <span class="edit-link" (click)="onEdit()">Edit</span>
               </div>
             </div>
             <div class="field notes">
               <div class="label">Notes</div>
               <div class="value">
                 {{ asset.notes || 'No notes' }}
-                <span class="edit-link">Edit</span>
+                <span class="edit-link" (click)="onEdit()">Edit</span>
               </div>
             </div>
           </div>
@@ -193,7 +199,11 @@
           <mat-icon class="status-icon">calendar_today</mat-icon>
           <span class="status-txt">Due Back: {{ asset.dueBack || '—' }}</span>
         </div>
-        <button class="btn green" (click)="onCheckin()">
+        <button
+          class="btn green"
+          (click)="onCheckin()"
+          [disabled]="asset.status !== 'Deployed'"
+        >
           <mat-icon class="btn-icon">login</mat-icon>
           Checkin
         </button>
@@ -217,4 +227,103 @@
       </div>
     </aside>
   </div>
+
+  <!-- ═══ CHECK-IN MODAL ═══ -->
+  <div class="overlay" *ngIf="showCheckinModal" (click)="cancelCheckin()">
+    <div class="checkin-dialog" (click)="$event.stopPropagation()">
+      <!-- Icon -->
+      <div class="checkin-icon-wrap">
+        <mat-icon class="checkin-icon">assignment_return</mat-icon>
+      </div>
+
+      <h3>Check In Asset</h3>
+      <p class="checkin-subtitle">
+        Returning <strong>{{ asset.name }}</strong> ({{ asset.assetId }})
+        <span *ngIf="asset.checkedOutTo"> from <strong>{{ asset.checkedOutTo }}</strong></span>
+      </p>
+
+      <!-- Condition selector -->
+      <div class="checkin-field">
+        <label class="checkin-label">Return Condition</label>
+        <div class="condition-options">
+          <label class="condition-option" [class.selected]="checkinCondition === 'Good'">
+            <input type="radio" name="condition" value="Good" [(ngModel)]="checkinCondition" />
+            <mat-icon class="cond-icon good">check_circle</mat-icon>
+            <span>Good</span>
+          </label>
+          <label class="condition-option" [class.selected]="checkinCondition === 'Fair'">
+            <input type="radio" name="condition" value="Fair" [(ngModel)]="checkinCondition" />
+            <mat-icon class="cond-icon fair">info</mat-icon>
+            <span>Fair</span>
+          </label>
+          <label class="condition-option" [class.selected]="checkinCondition === 'Damaged'">
+            <input type="radio" name="condition" value="Damaged" [(ngModel)]="checkinCondition" />
+            <mat-icon class="cond-icon damaged">warning</mat-icon>
+            <span>Damaged</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Damaged notice -->
+      <div class="damage-notice" *ngIf="checkinCondition === 'Damaged'">
+        <mat-icon class="notice-icon">info</mat-icon>
+        Asset will be moved to <strong>In Repair</strong> status
+      </div>
+
+      <!-- Notes -->
+      <div class="checkin-field">
+        <label class="checkin-label">Notes <span class="optional">(optional)</span></label>
+        <textarea
+          class="checkin-textarea"
+          rows="3"
+          placeholder="Any observations about the asset condition…"
+          [(ngModel)]="checkinNotes"
+        ></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="checkin-actions">
+        <button class="btn outline" (click)="cancelCheckin()" [disabled]="checkinProcessing">
+          Cancel
+        </button>
+        <button class="btn green" (click)="confirmCheckin()" [disabled]="checkinProcessing">
+          <mat-icon class="btn-icon" *ngIf="!checkinProcessing">login</mat-icon>
+          <mat-icon class="btn-icon spin" *ngIf="checkinProcessing">sync</mat-icon>
+          {{ checkinProcessing ? 'Processing...' : 'Confirm Check-In' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation overlay -->
+  <div class="overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()">
+    <div class="confirm-dialog" (click)="$event.stopPropagation()">
+      <div class="confirm-icon-wrap">
+        <mat-icon class="confirm-icon">delete_forever</mat-icon>
+      </div>
+      <h3>Delete this asset?</h3>
+      <p>
+        You're about to permanently delete
+        <strong>{{ asset.name }}</strong> (ID: {{ asset.assetId }}).
+        This action cannot be undone.
+      </p>
+      <div class="confirm-actions">
+        <button class="btn outline" (click)="cancelDelete()" [disabled]="deleting">Cancel</button>
+        <button class="btn red" (click)="confirmDelete()" [disabled]="deleting">
+          <mat-icon class="btn-icon" *ngIf="!deleting">delete</mat-icon>
+          <mat-icon class="btn-icon spin" *ngIf="deleting">sync</mat-icon>
+          {{ deleting ? 'Deleting...' : 'Yes, Delete' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success/Error result overlay -->
+  <app-result-overlay
+    *ngIf="showResult"
+    [type]="resultType"
+    [title]="resultTitle"
+    [message]="resultMessage"
+    (closed)="onResultClosed()"
+  ></app-result-overlay>
 </div>
