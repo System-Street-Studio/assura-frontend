@@ -1,7 +1,12 @@
-<div class="modal-overlay">
+<div class="container">
+    <div class="header-section">
+      <div class ="page-title">Requests</div>      
+    </div>
+    
+  <div class="modal-overlay">
   <div class="modal-container">
     <div class="modal-header">
-      <h2>Request Details</h2>
+      <h2>Maintenance Request Details</h2>
       <button class="close-btn" (click)="close()">
         <mat-icon>close</mat-icon>
       </button>
@@ -51,10 +56,11 @@
         <label>Attachment</label>
         <p class="attachment-text">{{ request().attachment }}</p>
       </div>
-
-      <div class="info-group full-width temporary-info">
-        <p>Instead, need a asset for temporary use : <strong>{{ request().needTemporary }}</strong></p>
+       <div class="info-group full-width temporary-notice">
+        <mat-icon>info</mat-icon>
+        <p>Instead, need an asset for temporary use: <strong>{{ request().needTemporary }}</strong></p>
       </div>
+      
     </div>
 
     <div class="action-buttons">
@@ -65,5 +71,6 @@
         <mat-icon>close</mat-icon> Reject with Reason
       </button>
     </div>
+  </div>
   </div>
 </div>

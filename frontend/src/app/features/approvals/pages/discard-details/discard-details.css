@@ -2,13 +2,32 @@
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.container{
+  margin: 0px;
+  padding: 10px;
+  font-family: 'jost';
+  background-color: #efefef;
+}
+
+.page-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin:5px 35px 40px 5px ;
+  color: #333;
+}
+
+.header-section p{
+  margin:10px 100px 0px 120px;
+  font-size: 20px;
+  font-weight: 700;
+}
 
 .modal-overlay {
-  background-color: #f8f9fa;
-  padding: 40px 20px;
+  padding: 10px 20px;
   display: flex;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 60vh;
+   margin-left: 10px;
 }
 
 .modal-container {
@@ -20,6 +39,7 @@
   padding: 30px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   animation: slideUp 0.4s ease-out;
+  margin-left: 10px;
 }
 
 .modal-header {
@@ -68,7 +88,6 @@
 label {
   color: #868e96;
   font-size: 12px;
-  text-transform: uppercase;
   font-weight: 600;
   margin-bottom: 5px;
   display: block;
@@ -77,7 +96,7 @@ label {
 .bold-text {
   font-weight: 700;
   color: #212529;
-  margin: 0 0 10px 0;
+  margin: 0 0 10px 10px;
 }
 
 .reason-text, .description-text {
@@ -86,8 +105,10 @@ label {
   border-radius: 6px;
   font-size: 14px;
   line-height: 1.6;
-  color: #495057;
-  border-left: 4px solid #adb5bd;
+  color: #3e4348;
+  font-weight: 500;
+  border-left: 4px solid #00afb5;
+  margin-left: 10px;
 }
 
 .temporary-notice {
@@ -106,14 +127,16 @@ label {
 .action-buttons {
   display: flex;
   gap: 15px;
-  margin-top: 35px;
+  margin-top: 25px;
+  border-top:1px solid #ecebeb;
+  padding-top: 15px;
 }
 
 .btn-approve {
   background-color: #00bfa5;
   color: white;
   border: none;
-  padding: 14px;
+  padding: 10px;
   border-radius: 8px;
   flex: 1;
   display: flex;
@@ -128,7 +151,7 @@ label {
   background-color: #b71c1c;
   color: white;
   border: none;
-  padding: 14px;
+  padding: 10px;
   border-radius: 8px;
   flex: 1;
   display: flex;

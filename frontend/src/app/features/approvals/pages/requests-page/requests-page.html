@@ -7,274 +7,174 @@
     </div>
   </header>
 
-        <div class="request-tabs">
+  <div class="request-tabs">
     <button class="tab-btn" [class.active]="activeTab() === 'new'" (click)="setTab('new')">New Asset Requests</button>
     <button class="tab-btn" [class.active]="activeTab() === 'transfer'" (click)="setTab('transfer')">Transfer Requests</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'maintenance'" (click)="setTab('maintenance')">Maintenance </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'maintenance'" (click)="setTab('maintenance')">Maintenance</button>
     <button class="tab-btn" [class.active]="activeTab() === 'discard'" (click)="setTab('discard')">Discard Requests</button>
-    </div>
+  </div>
 
   <div class="stats-grid">
     <div class="card blue-border" [class.highlight]="activeTab() === 'new'">
-      <div class="card-content" >
+      <div class="card-content">
         <div>
-          <p class="card-title">New Asset Request </p>
-           <div class="icon-circle blue-bg"><mat-icon>content_copy</mat-icon></div>
+          <p class="card-title">New Asset Request</p>
+          <div class="icon-circle blue-bg"><mat-icon>content_copy</mat-icon></div>
           <h2 class="card-number">{{ newAssetCount() }}</h2>
           <span class="card-sub">Pending</span>
         </div>
-       
       </div>
     </div>
 
-    <div class="card orange-border" [class.highlight]="activeTab() === 'transfer'">
+    <div class="card green-border" [class.highlight]="activeTab() === 'transfer'">
       <div class="card-content">
         <div>
           <p class="card-title">Transfer Requests</p>
+          <div class="icon-box green-text"><mat-icon>swap_horiz</mat-icon></div>
           <h2 class="card-number">{{ transferCount() }}</h2>
           <span class="card-sub">Pending</span>
         </div>
-        <div class="icon-box"><mat-icon>swap_horiz</mat-icon></div>
       </div>
     </div>
 
-    <div class="card red-border"  [class.highlight]="activeTab() === 'maintenance'">
+    <div class="card orange-border" [class.highlight]="activeTab() === 'maintenance'">
       <div class="card-content">
         <div>
           <p class="card-title">Maintenance Requests</p>
+          <div class="icon-box orange-text"><mat-icon>build</mat-icon></div>
           <h2 class="card-number">{{ maintenanceCount() }}</h2>
           <span class="card-sub">Pending</span>
         </div>
-        <div class="icon-box red-text"><mat-icon>build</mat-icon></div>
       </div>
     </div>
 
-    <div class="card green-border" [class.highlight]="activeTab() === 'discard'">
+    <div class="card red-border" [class.highlight]="activeTab() === 'discard'">
       <div class="card-content">
         <div>
           <p class="card-title">Discard Requests</p>
+          <div class="icon-box red-text"><mat-icon>delete</mat-icon></div>
           <h2 class="card-number">{{ discardCount() }}</h2>
           <span class="card-sub">Pending</span>
         </div>
-        <div class="icon-box red-text"><mat-icon>delete</mat-icon></div>
       </div>
     </div>
   </div>
 
   <section class="table-container">
-  @if (activeTab() === 'new') {
     <div class="table-header">
-      <h2>All Requests ({{ requests().length }})</h2>
+      <h2 class="table-title">
+        All {{ activeTab() | titlecase }} Requests ({{ filteredResults().length }})
+      </h2>
+
       <div class="table-actions">
-        <input type="text" placeholder="Search requests..." class="search-bar">
-        <select class="filter-dropdown">
-          <option>Filter by Priority</option>
-        </select>
+        <div class="action-group">
+          <label class="group-label">Search Requests</label>
+          <div class="input-wrapper">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+                   placeholder="Search by Employee / Asset..." class="search-bar">
+          </div>
+        </div>
+
+        <div class="action-group">
+          <label class="group-label">Refine By</label>
+          <button class="filter-btn" [matMenuTriggerFor]="filterMenu">
+            <mat-icon>tune</mat-icon>
+            <span>Filter Options</span>
+            <span class="filter-badge" *ngIf="filterCount() > 0">{{ filterCount() }}</span>
+            <mat-icon class="arrow">expand_more</mat-icon>
+          </button>
+        </div>
       </div>
+
+      <mat-menu #filterMenu="matMenu" class="modern-dropdown-menu">
+        <div class="filter-container" (click)="$event.stopPropagation()">
+          <div class="filter-header">
+            <h4>Filter Requests</h4>
+            <button (click)="resetFilters()" class="reset-btn">Clear All</button>
+          </div>
+          <div class="filter-body">
+            <div *ngFor="let group of filterConfig" class="filter-section">
+              <span class="section-title">{{ group.label }}</span>
+              <div class="chips-grid">
+                <div *ngFor="let opt of group.options" class="filter-chip"
+                     [class.active]="selectedFilters()[group.key].includes(opt)"
+                     (click)="toggleFilter(group.key, opt)">
+                  <mat-icon *ngIf="selectedFilters()[group.key].includes(opt)">check</mat-icon>
+                  {{ opt }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-menu>
     </div>
 
     <table>
       <thead>
         <tr>
-          <th>Employee Name</th>
-          <th>Status</th>
-          <th>Requested Asset</th>
-          <th>Request Date</th>
-          <th>Priority</th>
+          @if (activeTab() === 'new') {
+            <th>Employee Name</th>
+            <th>Status</th>
+            <th>Requested Asset</th>
+            <th>Request Date</th>
+            <th>Priority</th>
+          } @else {
+            <th>Submit Date</th>
+            <th>Asset / Category</th>
+            <th>Employee Name</th>
+            <th>Status</th>
+            <th>Priority</th>
+          }
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        @for (item of requests(); track item.id) {
+        @for (item of filteredResults(); track item.id) {
           <tr>
-            <td class="bold-text">{{ item.name }}</td>
-            <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
-            <td>{{ item.asset }}</td>
-            <td>{{ item.date }}</td>
-            <td class="priority-cell" [attr.data-priority]="item.priority">
-              {{ item.priority }}
-            </td>
+            @if (activeTab() === 'new') {
+              <td class="bold-text">{{ item.name }}</td>
+              <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
+              <td>{{ item.asset }}</td>
+              <td>{{ item.date }}</td>
+              <td class="priority-cell" [attr.data-priority]="item.priority">{{ item.priority }}</td>
+            } @else {
+              <td>{{ item.date }}</td>
+              <td>
+                <div class="asset-info">
+                  <span class="asset-name">{{ item.asset }}</span>
+                  @if (item.category) { <span class="asset-cat">({{ item.category }})</span> }
+                </div>
+              </td>
+              <td class="emp-name">{{ item.employee || item.name }}</td>
+              <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
+              <td class="priority-cell" [attr.data-priority]="item.priority">{{ item.priority || 'Normal' }}</td>
+            }
             <td>
               @if (item.status === 'Pending') {
-               <a [routerLink]="['/approvals/new-asset-req', item.id]" class="btn-view" style="text-decoration: none;">
-              View Details
-                </a>
-             
+                @if (activeTab() === 'new') {
+                  <a [routerLink]="['/approvals/new-asset-req', item.id]" [queryParams]="{ tab: 'new' }" class="btn-view" style="text-decoration: none;">View Details</a>
+                } @else if (activeTab() === 'transfer') {
+                  <a [routerLink]="['/approvals/transfer-req', item.id]" [queryParams]="{ tab: 'transfer' }" class="btn-view" style="text-decoration: none;">👁 View Details</a>
+                } @else if (activeTab() === 'maintenance') {
+                  <a [routerLink]="['/approvals/maintenance-req', item.id]" [queryParams]="{ tab: 'maintenance' }" class="btn-view" style="text-decoration: none;">👁 View Details</a>
+                } @else if (activeTab() === 'discard') {
+                  <a [routerLink]="['/approvals/discard-req', item.id]" [queryParams]="{ tab: 'discard' }" class="btn-view" style="text-decoration: none;">👁 View Details</a>
+                }
               } @else {
                 <button class="btn-check">Check</button>
               }
             </td>
           </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 60px; color: #94a3b8;">
+              <mat-icon style="font-size: 48px; width: 48px; height: 48px;">search_off</mat-icon>
+              <p>No requests found matching your filters.</p>
+            </td>
+          </tr>
         }
       </tbody>
     </table>
-    }
- 
-
-
-    @if (activeTab() === 'transfer') {
-      <div class="table-header">
-        <h2 class="table-title">Temporary Transfer Requests</h2>
-        <div class="table-actions">
-           <div class="search-container">
-             <span class="search-icon">🔍</span>
-             <input type="text" placeholder="Search requests..." class="search-bar">
-           </div>
-           <select class="filter-dropdown">
-             <option>Filter by Priority</option>
-           </select>
-        </div>
-      </div>
-
-      <h3 class="all-req-text">All Requests ({{ transferRequests().length }})</h3>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Submit date</th>
-            <th>Asset / Category</th>
-            <th>Employee Name</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (req of transferRequests(); track req.id) {
-            <tr>
-              <td>{{ req.date }}</td>
-              <td>
-                <div class="asset-info">
-                  <span class="asset-name">{{ req.asset }}</span>
-                  <span class="asset-cat">({{ req.category }})</span>
-                </div>
-              </td>
-              <td class="emp-name">{{ req.employee }}</td>
-              <td>
-                <span class="status-badge" [ngClass]="req.status.toLowerCase()">{{ req.status }}</span>
-              </td>
-              <td>
-                @if (req.status === 'Pending') {
-                    <a [routerLink]="['/approvals/transfer-req', req.id]" class="btn-view" style="text-decoration: none;">
-                    👁 View Details
-                    </a>
-                } @else {
-                  <button class="btn-check">Check</button>
-                }
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
-
-
-    @if (activeTab() === 'maintenance') {
-      <div class="table-header">
-        <h2 class="table-title">Maintenance Requests</h2>
-        <div class="table-actions">
-           <div class="search-container">
-             <span class="search-icon">🔍</span>
-             <input type="text" placeholder="Search requests..." class="search-bar">
-           </div>
-           <select class="filter-dropdown">
-             <option>Filter by Priority</option>
-           </select>
-        </div>
-      </div>
-
-      <h3 class="all-req-text">All Requests ({{ maintenanceRequests().length }})</h3>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Submit date</th>
-            <th>Asset / Category</th>
-            <th>Employee Name</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (req of maintenanceRequests(); track req.id) {
-            <tr>
-              <td>{{ req.date }}</td>
-              <td>
-                <div class="asset-info">
-                  <span class="asset-name">{{ req.asset }}</span>
-                </div>
-              </td>
-              <td class="emp-name">{{ req.employee }}</td>
-              <td>
-                <span class="status-badge" [ngClass]="req.status.toLowerCase()">{{ req.status }}</span>
-              </td>
-              <td>
-                @if (req.status === 'Pending') {
-                    <a [routerLink]="['/approvals/maintenance-req', req.id]" class="btn-view" style="text-decoration: none;">
-                    👁 View Details
-                    </a>
-                } @else {
-                  <button class="btn-check">Check</button>
-                }
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
-
-    @if (activeTab() === 'discard') {
-      <div class="table-header">
-        <h2 class="table-title">Discard Requests</h2>
-        <div class="table-actions">
-           <div class="search-container">
-             <span class="search-icon">🔍</span>
-             <input type="text" placeholder="Search requests..." class="search-bar">
-           </div>
-           <select class="filter-dropdown">
-             <option>Filter by Priority</option>
-           </select>
-        </div>
-      </div>
-
-      <h3 class="all-req-text">All Requests ({{ discardRequests().length }})</h3>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Submit date</th>
-            <th>Asset / Category</th>
-            <th>Employee Name</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (req of discardRequests(); track req.id) {
-            <tr>
-              <td>{{ req.date }}</td>
-              <td>
-                <div class="asset-info">
-                  <span class="asset-name">{{ req.asset }}</span>
-                </div>
-              </td>
-              <td class="emp-name">{{ req.employee }}</td>
-              <td>
-                <span class="status-badge" [ngClass]="req.status.toLowerCase()">{{ req.status }}</span>
-              </td>
-              <td>
-                @if (req.status === 'Pending') {
-                    <a [routerLink]="['/approvals/discard-req', req.id]" class="btn-view" style="text-decoration: none;">
-                    👁 View Details
-                    </a>
-                } @else {
-                  <button class="btn-check">Check</button>
-                }
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
   </section>
-
 </div>

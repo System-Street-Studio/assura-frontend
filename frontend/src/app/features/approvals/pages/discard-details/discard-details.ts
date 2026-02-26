@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule ,ActivatedRoute} from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class DiscardDetailsComponent {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   // පෙර පිටුවෙන් එන දත්ත signal එකක් ලෙස ලබා ගැනීම
   request = signal<any>(history.state.data || {
@@ -34,6 +35,11 @@ export class DiscardDetailsComponent {
   }
   
   close() {
-    this.router.navigate(['/approvals/requests']);
+   const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'new';
+    
+    // නැවත Requests page එකට යන විට එම tab එකම open කරන්න
+    this.router.navigate(['/approvals/requests'], { 
+      queryParams: { tab: returnTab } 
+    });
   }
 }

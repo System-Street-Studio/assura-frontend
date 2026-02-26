@@ -51,16 +51,118 @@
 
 /* ================== FILTER BAR ================== */
 /* Filter Bar */
- .filter-bar { display: flex; justify-content: flex-end; align-items: flex-end; gap: 30px; margin-bottom: 30px;margin-right: 50px; } 
-.search-box{margin-right: 70px;}
- .search-box label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #666; } 
-.input-wrapper { position: relative; width: 400px; } 
-.input-wrapper input { width: 100%; padding: 10px 40px 10px 15px; border-radius: 10px; border: 1px solid #908e8e; background: #eee; }
- .input-wrapper mat-icon { position: absolute; right: 10px; top: 8px; color: #666; }
- .styled-select { padding: 10px 70px 10px 15px; border-radius: 10px; border: 1px solid #878686; background: #eee; min-width: 150px;margin-right: 40px; } 
- .selected-filters { display: flex; align-items: center; } /* --- View Toggle Buttons --- */
-  .view-toggle { display: flex; gap: 15px; /* consistent spacing from select/search */ color: #666; cursor: pointer; align-items: center; } 
- .view-toggle .active { color: #333; font-weight: 700; }
+ /* --- Filter Bar --- */
+
+.filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+/* --- Search Section --- */
+
+.search-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.search-box label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 400px;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 10px 40px 10px 15px;
+  border-radius: 10px;
+  border: 2px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+}
+
+.input-wrapper mat-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 20px;
+}
+
+/* --- Dropdown Filters --- */
+
+.selected-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.dropdown-group {
+  display: flex;
+  gap: 15px;
+}
+
+.styled-select {
+  padding: 10px 40px 10px 12px;
+  border-radius: 10px;
+  border: 2px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 14px;
+  color: #334155;
+  min-width: 160px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.styled-select:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+}
+
+/* --- View Toggle --- */
+
+.view-toggle {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding-left: 15px;
+  border-left: 1px solid #e2e8f0;
+}
+
+.view-toggle mat-icon {
+  font-size: 22px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.view-toggle mat-icon:hover {
+  color: #16a34a;
+}
+
+.view-toggle .active {
+  color: #16a34a;
+  font-weight: 700;
+}
 
 /* ================== ASSET GRID ================== */
 .asset-grid {

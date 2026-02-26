@@ -1,156 +1,213 @@
-/* Animation - මෑතකදී දුන් Modern Slide Up එක */
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+.container{
+  margin: 0px;
+  padding: 10px;
+  font-family: 'jost';
+  background-color: #efefef;
+}
+
+.page-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin:5px 35px 40px 5px ;
+  color: #333;
+}
+
+.header-section p{
+  margin:10px 100px 0px 120px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+
+/* Overlay */
 .modal-overlay {
-  background-color: #f8f9fa;
-  padding: 40px 20px;
+  background:#efefef;
+  padding: 5px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
 }
 
+/* Modal Container */
 .modal-container {
-  background: white;
+  background: #ffffff;
   border-radius: 12px;
   width: 100%;
-  max-width: 800px;
-  padding: 30px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  border: 1px solid #e0e0e0; /* Clean light border */
-  animation: slideUp 0.4s ease-out;
+  max-width: 750px; /* reduced for compact look */
+  font-family: 'jost', sans-serif;
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+  animation: slideUp 0.35s ease-out;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
+/* Header */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 18px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f1f1f1;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #333;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1f2937;
 }
 
-/* Close Button - Modern Style */
+/* Close Button */
 .close-btn {
-  background: #f7fafc;
+  background: #f1f5f9;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: #4a5568;
+  transition: 0.2s ease;
 }
 
 .close-btn:hover {
-  background: #edf2f7;
-  color: #e53e3e;
+  background: #e2e8f0;
+  color: #dc2626;
   transform: rotate(90deg);
 }
 
+/* Grid Layout */
 .details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 15px;
+  margin-top: 10px;
 }
 
-.full-width { grid-column: span 2; }
+.full-width {
+  grid-column: span 2;
+}
 
+/* Labels */
 label {
-  color: #888;
   font-size: 13px;
-  display: block;
+  font-weight: 600;
+  color: #6b7280;
   margin-bottom: 5px;
+  display: block;
+  margin-top: 20px;
 }
 
+/* Detail Text */
 .bold-text {
-  font-weight: 700;
-  margin: 0 0 15px 0;
-  color: #333;
+  font-weight: 600;
+  font-size: 14px;
+  color: #111827;
+  margin-left:10px;
 }
+
+/* Description / Reason Box */
 
 .description-text {
-  font-size: 14px;
-  color: #444;
-  background: #fdfdfd;
-  padding: 10px 0;
+  background: #f9fafb;
+  padding: 12px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #374151;
+  font-weight: 500;
+  border-left: 4px solid #00afb5;
+  margin-bottom: 1px;
+  margin-left: 10px;
 }
 
 .status-badge.pending {
-  background: #fff0f6;
-  color: #d63384;
-  padding: 4px 18px;
+  background: #fce4ec; /* පින්තූරයේ තිබූ ලා රෝස/දම් පැහැය */
+  color: #c2185b;
+  padding: 4px 15px;
   border-radius: 20px;
   font-size: 12px;
-  border: 1px solid #ffdeeb;
+  font-weight: 700;
+  margin-left: 10px;
   display: inline-block;
 }
 
-.attachment-text {
-  font-size: 14px;
+.attachment-text{
   font-weight: 600;
-  color: #444;
+  font-size: 14px;
+  color: #111827;
+  margin:10px;
+  
+}
+/* Temporary Notice */
+.temporary-notice {
+   display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff9db;
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: #856404;
 }
 
-.temporary-info {
-  margin-top: 20px;
-  padding-top: 15px;
-  font-size: 14px;
-}
 
 /* Buttons */
 .action-buttons {
   display: flex;
-  gap: 15px;
-  margin-top: 30px;
-  border-top: 1px solid #f0f0f0;
-  padding-top: 25px;
+  gap: 10px;
+  margin-top: 22px;
+  border-top: 1px solid #f1f1f1;
+  padding-top: 18px;
+}
+
+.btn-approve,
+.btn-reject {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .btn-approve {
   background-color: #00bfa5;
   color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  flex: 1;
-  justify-content: center;
-  font-weight: 600;
-  transition: transform 0.2s;
 }
 
 .btn-reject {
   background-color: #b71c1c;
   color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  flex: 1;
-  justify-content: center;
-  font-weight: 600;
-  transition: transform 0.2s;
 }
 
-.btn-approve:hover, .btn-reject:hover {
+.btn-approve:hover,
+.btn-reject:hover {
+  opacity: 0.9;
   transform: translateY(-1px);
-  opacity: 0.95;
+}
+
+/* Smooth Scrollbar */
+.modal-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-container::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
 }

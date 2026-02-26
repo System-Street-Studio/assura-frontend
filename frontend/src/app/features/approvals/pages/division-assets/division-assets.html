@@ -133,25 +133,27 @@
         <div class="search-box">
           <label>Search Assets</label>
           <div class="input-wrapper">
-            <input type="text" placeholder="Search by name or Asset_ID">
+            <input type="text" placeholder="Search by name or Asset_ID" [(ngModel)]="searchQuery"(input)="filterAssets()">
             <mat-icon>search</mat-icon>
           </div>
         </div>
         
         <div class = "selected-filters">
         <div class="dropdown-group">
-          <select class="styled-select">
-            <option>Category</option>
-            <option>Electronics</option>
-            <option>Computers</option>
-            <option>Network</option>
-            <option>Vehicles</option>
+          <select class="styled-select" (change)="filterAssets()"
+          [(ngModel)]="selectedCategory" >
+             <option value="">Category</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Computers">Computers</option>
+              <option value="Network">Network</option>
+              <option value="Vehicles">Vehicles</option>
           </select>
-          <select class="styled-select">
-           <option> Status</option>
-          <option>In Use</option>
-          <option>Transferred</option>
-          <option>In maintenance</option>
+          <select class="styled-select" (change)="filterAssets()"
+          [(ngModel)]="selectedCategory" >
+           <option value="">Status</option>
+          <option value="In Use">In Use</option>
+          <option value="Transferred">Transferred</option>
+          <option value="Maintenance">Maintenance</option>
           </select>
         </div>
 
@@ -164,7 +166,7 @@
 
       <!--assets grid-->
         <div class="asset-grid">
-        @for (asset of assets(); track asset.id) {
+        @for (asset of filteredAssets(); track asset.id) {
           <div class="asset-card">
             <div class="img-container">
               <img [src]="asset.image" [alt]="asset.name">

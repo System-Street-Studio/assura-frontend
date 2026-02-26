@@ -1,122 +1,193 @@
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+.container{
+  margin: 0px;
+  padding: 10px;
+  font-family: 'jost';
+  background-color: #efefef;
+}
+
+.page-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin:5px 35px 40px 5px ;
+  color: #333;
+}
+
+.header-section p{
+  margin:10px 100px 0px 120px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Overlay */
 .modal-overlay {
-  background-color: #f8f9fa;
-  padding: 40px 20px;
-  display: flex;
-  justify-content: center;
+  background-color: #efefef;
+  margin: 30px 50px;
+  align-items: flex-start;
   min-height: 100vh;
 }
 
+/* Modal Container - Compact Modern */
 .modal-container {
-  background: white;
-  border-radius: 8px;
+  background: #ffffff;
+  border-radius: 12px;
   width: 100%;
-  max-width: 850px;
-  padding: 30px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  border: 1.5px solid #00a4ff; /* Blue border as per image */
-  animation: slideUp 0.4s ease-out;
+  max-width: 750px; /* reduced */
+  padding: 22px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #e5e7eb; /* soft border */
+  animation: slideUp 0.35s ease-out;
+   margin-left: 90px;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
+/* Header */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 18px;
+  padding-bottom: 20px;
+  border-bottom: #e0e1e3 solid 1px;
 }
 
+.modal-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: #3b3a3a;
+}
+
+/* Close Button */
 .close-btn {
-  background: #f7fafc;
+  background: #f1f5f9;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: 0.2s ease;
 }
 
 .close-btn:hover {
-  background: #edf2f7;
-  color: #e53e3e;
+  background: #e2e8f0;
+  color: #dc2626;
   transform: rotate(90deg);
 }
 
+/* Grid Layout - Compact */
 .details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 25px;
+  gap: 15px;
 }
 
-.full-width { grid-column: span 2; }
+.full-width { 
+  grid-column: span 2; 
+  margin-top: 2px;
+}
 
+/* Labels */
 label {
-  color: #888;
   font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 8px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-top: 5px;
   display: block;
 }
 
+/* Detail Text */
 .bold-text {
   font-weight: 700;
-  margin: 0 0 15px 0;
-  color: #333;
+  font-size: 14px;
+  color: #111827;
+  margin: 0 0 20px 30px;
 }
 
-/* Timeline & Specs section layout */
+/* Timeline & Specs */
 .flex-row {
   display: flex;
-  gap: 40px;
+  gap: 25px;
+  flex-wrap: wrap;
 }
-
-.specs-text, .reason-text {
-  white-space: pre-line;
-  color: #444;
+ .desc-box .bold-text{
+   background: #f8f9fa;
+  padding: 10px;
+  border-radius: 6px;
   font-size: 14px;
   line-height: 1.6;
+  color: #495057;
+  margin-left: 10px;
+  font-weight: 500;
+  margin-bottom: 0px;
+  border-left: 4px solid #00afb5;
 }
 
-.timeline-row {
-  margin-bottom: 8px;
-  font-size: 14px;
-}
 
-.timeline-row span { color: #666; margin-right: 10px; }
 
-/* Buttons */
+/* Buttons Section */
 .action-buttons {
   display: flex;
-  gap: 12px;
-  margin-top: 40px;
-  border-top: 1px solid #eee;
-  padding-top: 25px;
+  gap: 10px;
+  margin-top: 20px;
+  border-top: 1px solid #dfdddd;
+  padding-top: 20px;
 }
 
-.btn-approve, .btn-pool, .btn-reject {
+/* Buttons - Compact Modern */
+.btn-approve, 
+.btn-pool, 
+.btn-reject {
   border: none;
-  padding: 12px 20px;
+  padding: 10px 16px;
   border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
   font-weight: 600;
+  font-size: 13px;
   flex: 1;
   justify-content: center;
-  transition: opacity 0.2s;
+  transition: all 0.2s ease;
 }
 
-.btn-approve { background-color: #00bfa5; color: white; }
-.btn-pool { background-color: #ff8f00; color: white; } /* Orange color for pool */
-.btn-reject { background-color: #b71c1c; color: white; }
+.btn-approve { 
+  background-color: #00bfa5; 
+  color: white; 
+}
 
-.btn-approve:hover, .btn-pool:hover, .btn-reject:hover {
+.btn-pool { 
+  background-color: #ff8f00; 
+  color: white; 
+}
+
+.btn-reject { 
+  background-color: #b71c1c; 
+  color: white; 
+}
+
+.btn-approve:hover, 
+.btn-pool:hover, 
+.btn-reject:hover {
   opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Smooth Scrollbar */
+.modal-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-container::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
 }

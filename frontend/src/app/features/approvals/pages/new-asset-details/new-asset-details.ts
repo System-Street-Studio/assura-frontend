@@ -21,24 +21,36 @@ export class NewAssetDetailsComponent {
     asset: 'Laptop',
     date: '15-08-2025',
     category: 'Electronics',
-    description: 'due to loose joints and surface damage',
-    specs: 'RAM: 16 GB, Processor: Intel Core i5 \n Storage: 512 GB SSD',
+    specs: 'RAM: 16 GB, Processor: Intel Core i5 , Storage: 512 GB SSD',
     priority: 'High',
     status: 'Pending',
     justification: 'New hire requires a development machine to begin projects.'
   });
 
+ showPopup = signal(false);
+popupMessage = signal('');
+
   approveRequest() {
-    console.log('Approved:', this.request().id);
+    console.log('Approved:', this.request().name);
+
+   this.popupMessage.set('Request Approved Successfully');
+  this.showPopup.set(true);
     // ඔබේ API Call එක මෙතැනට
   }
 
   rejectRequest() {
     console.log('Rejected:', this.request().id);
+    this.popupMessage.set('Request Rejected Successfully!');
+    this.showPopup.set(true);
     // Reject Logic එක මෙතැනට
   }
 
   close() {
     this.router.navigate(['approvals/requests']); // ආපසු යන මාවත (Route)
+  }
+
+  closePopup() {
+    this.showPopup.set(false);
+    this.router.navigate(['approvals/requests']);
   }
 }
