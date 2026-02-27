@@ -28,21 +28,21 @@ export class NewAssetDetailsComponent {
   });
 
  showPopup = signal(false);
-popupMessage = signal('');
+ popupMessage = signal('');
+ popupType = signal<'success' | 'reject'>('success');
 
   approveRequest() {
     console.log('Approved:', this.request().name);
-
    this.popupMessage.set('Request Approved Successfully');
-  this.showPopup.set(true);
-    // ඔබේ API Call එක මෙතැනට
+   this.popupType.set('success');
+   this.showPopup.set(true);
   }
 
   rejectRequest() {
     console.log('Rejected:', this.request().id);
     this.popupMessage.set('Request Rejected Successfully!');
+    this.popupType.set('reject');
     this.showPopup.set(true);
-    // Reject Logic එක මෙතැනට
   }
 
   close() {

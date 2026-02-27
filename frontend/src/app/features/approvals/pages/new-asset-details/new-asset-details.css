@@ -320,7 +320,7 @@ label {
 .btn-close:hover { background: #eee; color: #333; }
 
 .btn-done:active {
-  transform: scale(0.98); /* Click කරන වෙලාවට පොඩ්ඩක් ඇතුළට එබෙන ස්වභාවය */
+  transform: scale(0.98);
 }
 
 /* Button එක ඇතුළේ Icon එකක් තියෙනවා නම් ඒක ලස්සන කරන්න */
@@ -342,6 +342,35 @@ label {
   width: 100%;
   transform-origin: left;
   animation: progress 4s linear forwards;
+}
+
+/* Reject Mode Colors */
+.glass-card.reject .main-circle {
+  background: #e53935;
+  box-shadow: 0 8px 20px rgba(229, 57, 53, 0.3);
+}
+
+.glass-card.reject .icon-container {
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+}
+
+.glass-card.reject .gradient-text {
+  background: linear-gradient(90deg, #b71c1c, #e53935);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-card.reject .progress-bar {
+  background: #e53935;
+}
+
+.glass-card.reject .btn-done {
+  background: #e53935;
+}
+
+.glass-card.reject .btn-done:hover {
+  background: #b71c1c;
+  box-shadow: 0 10px 20px rgba(229, 57, 53, 0.25);
 }
 
 /* --- Animations --- */
