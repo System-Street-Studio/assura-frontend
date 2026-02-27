@@ -33,7 +33,7 @@ export class MaintenanceDetailsComponent {
     this.router.navigate(['/approvals/requests']);
     const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'new';
     
-    // නැවත Requests page එකට යන විට එම tab එකම open කරන්න
+    //return to previous tab
     this.router.navigate(['/approvals/requests'], { 
       queryParams: { tab: returnTab } 
     });

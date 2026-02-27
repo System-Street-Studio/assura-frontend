@@ -133,24 +133,23 @@
         <div class="search-box">
           <label>Search Assets</label>
           <div class="input-wrapper">
-            <input type="text" placeholder="Search by name or Asset_ID" [(ngModel)]="searchQuery"(input)="filterAssets()">
+            <input type="text" placeholder="Search by name or Asset_ID" [ngModel]="searchQuery()" (ngModelChange)="onSearchChange($event)">
             <mat-icon>search</mat-icon>
           </div>
         </div>
         
         <div class = "selected-filters">
         <div class="dropdown-group">
-          <select class="styled-select" (change)="filterAssets()"
-          [(ngModel)]="selectedCategory" >
-             <option value="">Category</option>
+          <select class="styled-select" [ngModel]="selectedCategory()" (ngModelChange)="updateCategory($event)" >
+             <option value="">All Categories</option>
               <option value="Electronics">Electronics</option>
               <option value="Computers">Computers</option>
               <option value="Network">Network</option>
               <option value="Vehicles">Vehicles</option>
           </select>
-          <select class="styled-select" (change)="filterAssets()"
-          [(ngModel)]="selectedCategory" >
-           <option value="">Status</option>
+
+          <select class="styled-select" [ngModel]="selectedStatus()" (ngModelChange)="updateCategory($event)">
+           <option value="">All Status</option>
           <option value="In Use">In Use</option>
           <option value="Transferred">Transferred</option>
           <option value="Maintenance">Maintenance</option>
@@ -166,8 +165,8 @@
 
       <!--assets grid-->
         <div class="asset-grid">
-        @for (asset of filteredAssets(); track asset.id) {
-          <div class="asset-card">
+          <div class="asset-card" *ngFor="let asset of filteredAssets()">
+         
             <div class="img-container">
               <img [src]="asset.image" [alt]="asset.name">
             </div>
@@ -185,9 +184,11 @@
             
             <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
           </div>
-        }
-      </div>
-    </section>
+        
+          </div>
+      </section>
     }
+
   </div>
+ 
 </div>

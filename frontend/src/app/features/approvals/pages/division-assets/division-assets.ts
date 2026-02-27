@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal ,computed} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
@@ -25,8 +25,7 @@ interface Asset {
   styleUrls: ['./division-assets.css']
 })
 export class DivisionAssetsComponent {
-  // Track the selected asset
-  selectedAsset = signal<Asset | null>(null);
+  
 
   assets = signal<Asset[]>([
     { 
@@ -76,11 +75,15 @@ export class DivisionAssetsComponent {
   ]);
 
 
-   filteredAssets = signal<Asset[]>([ ...this.assets() ]);
+   
 
   // Dropdown selections
-  selectedCategory: string = '';
-  selectedStatus: string = '';
+  selectedCategory = signal<string>('');
+  selectedStatus = signal<string>('');
+  searchQuery = signal<string>('');
+  
+   // Track the selected asset
+  selectedAsset = signal<Asset | null>(null);
 
   viewAsset(asset: Asset) {
     this.selectedAsset.set(asset);
@@ -96,21 +99,40 @@ toggleView(mode: 'grid' | 'list') {
   this.viewMode = mode;
 }*/
 
-   searchQuery: string = '';
+  
 
-filterAssets() {
-  const query = this.searchQuery.toLowerCase();
 
-  this.filteredAssets.set(
-    this.assets().filter(asset => {
-      const categoryMatch = this.selectedCategory ? asset.category === this.selectedCategory : true;
-      const statusMatch = this.selectedStatus ? asset.status === this.selectedStatus : true;
-      const searchMatch = query
-        ? asset.name.toLowerCase().includes(query) || asset.id.toLowerCase().includes(query)
-        : true;
+onSearchChange(value: string) {
+    this.searchQuery.set(value);
+  }
+
+  onCategoryChange(value: string) {
+    this.selectedCategory.set(value);
+  }
+
+  onStatusChange(value: string) {
+    this.selectedStatus.set(value);
+  }
+
+
+filteredAssets = computed(() => {
+    const query = this.searchQuery().toLowerCase();
+    const cat = this.selectedCategory();
+    const stat = this.selectedStatus();
+
+    return this.assets().filter(asset => {
+      const categoryMatch = !cat || asset.category === cat;
+      const statusMatch = !stat || asset.status === stat;
+      const searchMatch = !query || 
+                          asset.name.toLowerCase().includes(query) || 
+                          asset.id.toLowerCase().includes(query);
 
       return categoryMatch && statusMatch && searchMatch;
-    })
-  );
-}
+    });
+  });
+  // UI eken values set karanna me functions ona
+  updateSearch(val: string) { this.searchQuery.set(val); }
+  updateCategory(val: string) { this.selectedCategory.set(val); }
+  updateStatus(val: string) { this.selectedStatus.set(val); }
+
 }
