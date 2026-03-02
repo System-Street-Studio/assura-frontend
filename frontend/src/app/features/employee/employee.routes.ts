@@ -7,6 +7,7 @@ import { MaintenanceFormComponent } from './pages/maintenance-form/maintenance-f
 import { DiscardFormComponent } from './pages/discard-form/discard-form';
 import { TransferFormComponent } from './pages/transfer-form/transfer-form';
 import { AllRequestsComponent } from './pages/all-emp-requests/all-emp-requests';
+import { TransferPageComponent } from './pages/transfer-page/transfer-page';
 
 
 export const employeeRoutes: Routes = [
@@ -51,6 +52,11 @@ export const employeeRoutes: Routes = [
    {
         path: 'all-emp-requests',
         component:AllRequestsComponent 
+
+   },
+    {
+        path: 'transfer-page',
+        component:TransferPageComponent 
 
    },
     
