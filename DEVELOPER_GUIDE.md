@@ -134,4 +134,39 @@ Shortens long text.
 - Run **Format**: `npm run format`
 
 ---
+
+---
+
+## 4. 🌿 Git Branching Strategy
+
+We follow a structured branching model to keep our codebase clean and stable.
+
+### Main Branches
+- **`main`**: Production-ready code. Do not push directly to this branch.
+- **`develop`**: Integration branch. All new features are merged here first.
+
+### Feature Branches
+When working on a specific module, checkout the corresponding feature branch:
+
+| Feature | Branch Name |
+|---|---|
+| **Auth** | `feature/auth` |
+| **Shell** | `feature/shell` |
+| **Employee** | `feature/employee` |
+| **HR** | `feature/hr` |
+| **Inventory** | `feature/inventory` |
+| **Procurement** | `feature/procurement` |
+| **Maintenance** | `feature/maintenance` |
+| **Superintendent** | `feature/superintendent` |
+| **Approvals** | `feature/approvals` |
+| **Reporting** | `feature/reporting` |
+| **Accountant** | `feature/accountant` |
+
+### Workflow
+1.  **Checkout** the feature branch: `git checkout feature/inventory`
+2.  **Commit** your changes: `git commit -m "feat: added new asset form"`
+3.  **Push** to origin: `git push origin feature/inventory`
+4.  **Create PR** to merge into `develop`.
+
+---
 *Happy Coding! 🚀*

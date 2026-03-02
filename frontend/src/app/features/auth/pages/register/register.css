@@ -1,0 +1,192 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Jost', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background Circles */
+.auth-container::before {
+    content: '';
+    position: absolute;
+    top: -150px;
+    left: -150px;
+    width: 400px;
+    height: 400px;
+    background-color: #004777;
+    /* User Blue */
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.auth-container::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    right: -150px;
+    width: 400px;
+    height: 400px;
+    background-color: #FF7700;
+    /* User Orange */
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.auth-card {
+    background-color: #EFD28D;
+    /* Matching Login Page Card Color */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    /* Slightly wider for register form */
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-header h2 {
+    font-size: 24px;
+    margin-bottom: 4px;
+    color: #333;
+    font-weight: 500;
+}
+
+.auth-header h2 span {
+    color: #004777;
+    font-weight: 700;
+}
+
+.auth-header p {
+    color: #333;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /* Slightly tighter gap due to more fields */
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 10px;
+    color: #004777;
+    /* Slightly lighter icon color based on image */
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 12px 12px 36px;
+    /* Space for icon */
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    background-color: #D9D9D9;
+    color: #333;
+    font-family: 'Jost', sans-serif;
+}
+
+.form-control:focus {
+    outline: 2px solid #004777;
+}
+
+.form-control::placeholder {
+    color: #666;
+}
+
+.btn-primary {
+    background-color: #004777 !important;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #003355 !important;
+}
+
+.btn-primary:disabled {
+    background-color: #004777 !important;
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 11px;
+    margin-top: 2px;
+    text-align: left;
+}
+
+.auth-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #333;
+}
+
+.auth-footer a {
+    color: #004777;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Success Card Styling */
+.success-card {
+    background-color: #EFD28D;
+    padding: 60px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+}
+
+.success-main {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+    font-family: 'Jost', sans-serif;
+}
+
+.success-sub {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    font-family: 'Jost', sans-serif;
+}

@@ -2,21 +2,29 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th *ngFor="let col of columns">{{ col.label }}</th>
+        @for (col of columns; track col.key) {
+        <th>{{ col.label }}</th>
+        }
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let row of data" (click)="onRowClick(row)" class="data-row">
-        <td *ngFor="let col of columns">
-          <ng-container [ngSwitch]="col.type">
-            <app-status-badge *ngSwitchCase="'status'" [status]="row[col.key]"> </app-status-badge>
-            <span *ngSwitchDefault>{{ row[col.key] }}</span>
-          </ng-container>
+      @for (row of data; track row) {
+      <tr (click)="onRowClick(row)" class="data-row">
+        @for (col of columns; track col.key) {
+        <td>
+          @switch (col.type) { @case ('status') {
+          <app-status-badge [status]="row[col.key]"> </app-status-badge>
+          } @default {
+          <span>{{ row[col.key] }}</span>
+          } }
         </td>
+        }
       </tr>
-      <tr *ngIf="data.length === 0">
+      } @if (data.length === 0) {
+      <tr>
         <td [attr.colspan]="columns.length" class="empty-state">No data available</td>
       </tr>
+      }
     </tbody>
   </table>
 </div>

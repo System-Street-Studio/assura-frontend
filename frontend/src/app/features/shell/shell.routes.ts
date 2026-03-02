@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { OverviewComponent } from './pages/overview/overview';
+// import { OverviewComponent } from './pages/overview/overview';
 
 export const shellRoutes: Routes = [
   // { path: 'overview', component: OverviewComponent },
