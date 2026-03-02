@@ -133,35 +133,58 @@
         <div class="search-box">
           <label>Search Assets</label>
           <div class="input-wrapper">
-            <input type="text" placeholder="Search by name or Asset_ID" [ngModel]="searchQuery()" (ngModelChange)="onSearchChange($event)">
+            <input type="text" placeholder="Search by name or Asset_ID" [value]="searchQuery()" (input)="onSearchChange($event)">
             <mat-icon>search</mat-icon>
           </div>
         </div>
         
-        <div class = "selected-filters">
-        <div class="dropdown-group">
-          <select class="styled-select" [ngModel]="selectedCategory()" (ngModelChange)="updateCategory($event)" >
-             <option value="">All Categories</option>
-              <option value="Electronics">Electronics</option>
-              <option value="Computers">Computers</option>
-              <option value="Network">Network</option>
-              <option value="Vehicles">Vehicles</option>
-          </select>
-
-          <select class="styled-select" [ngModel]="selectedStatus()" (ngModelChange)="updateCategory($event)">
-           <option value="">All Status</option>
-          <option value="In Use">In Use</option>
-          <option value="Transferred">Transferred</option>
-          <option value="Maintenance">Maintenance</option>
-          </select>
+        <div class="selected-filters">
+    <div class="styled-select">
+      <button class="filter-btn" (click)="showCategoryMenu.set(!showCategoryMenu())">
+        <div class="filter-icon">
+          <mat-icon>tune</mat-icon>
+          <span>{{ selectedCategory() === 'all' ? 'All Categories' : selectedCategory() }}</span>
         </div>
+        <mat-icon class="arrow">expand_more</mat-icon>
+      </button>
+
+      @if (showCategoryMenu()) {
+        <div class="filter-menu-card">
+          <div class="filter-option" (click)="setFilterCategory('all')" [class.active]="selectedCategory() === 'all'">All Categories</div>
+          <div class="filter-option" (click)="setFilterCategory('Electronics')" [class.active]="selectedCategory() === 'Electronics'">Electronics</div>
+          <div class="filter-option" (click)="setFilterCategory('IT Equipment')" [class.active]="selectedCategory() === 'IT Equipment'">IT Equipment</div>
+          <div class="filter-option" (click)="setFilterCategory('Vehicles')" [class.active]="selectedCategory() === 'Vehicles'">Vehicles</div>
+        </div>
+      }
+    </div>
+
+    <div class="styled-select">
+      <button class="filter-btn" (click)="showStatusMenu.set(!showStatusMenu())">
+        <div class="filter-icon">
+          <mat-icon>filter_list</mat-icon>
+          <span>{{ selectedStatus() === 'all' ? 'All Status' : selectedStatus() }}</span>
+        </div>
+        <mat-icon class="arrow">expand_more</mat-icon>
+      </button>
+
+      @if (showStatusMenu()) {
+        <div class="filter-menu-card">
+          <div class="filter-option" (click)="setFilterStatus('all')" [class.active]="selectedStatus() === 'all'">All Status</div>
+          <div class="filter-option" (click)="setFilterStatus('In Use')" [class.active]="selectedStatus() === 'In Use'">In Use</div>
+          <div class="filter-option" (click)="setFilterStatus('Transferred')" [class.active]="selectedStatus() === 'Transferred'">Transferred</div>
+          <div class="filter-option" (click)="setFilterStatus('Maintenance')" [class.active]="selectedStatus() === 'Maintenance'">Maintenance</div>
+        </div>
+      }
+    </div>
+  </div>
 
         <div class="view-toggle">
           <mat-icon>reorder</mat-icon>
           <mat-icon class="active">grid_view</mat-icon>
         </div>
         </div>
-      </div>
+     
+        
 
       <!--assets grid-->
         <div class="asset-grid">

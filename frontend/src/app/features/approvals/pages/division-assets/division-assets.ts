@@ -78,12 +78,11 @@ export class DivisionAssetsComponent {
    
 
   // Dropdown selections
-  selectedCategory = signal<string>('');
-  selectedStatus = signal<string>('');
+  selectedCategory = signal<string>('all');
+  selectedStatus = signal<string>('all');
   searchQuery = signal<string>('');
   
-   // Track the selected asset
-  selectedAsset = signal<Asset | null>(null);
+   
 
   viewAsset(asset: Asset) {
     this.selectedAsset.set(asset);
@@ -102,18 +101,20 @@ toggleView(mode: 'grid' | 'list') {
   
 
 
-onSearchChange(value: string) {
-    this.searchQuery.set(value);
+// Action methods
+  setFilterCategory(val: string) {
+    this.selectedCategory.set(val);
+    this.showCategoryMenu.set(false);
   }
 
-  onCategoryChange(value: string) {
-    this.selectedCategory.set(value);
+  setFilterStatus(val: string) {
+    this.selectedStatus.set(val);
+    this.showStatusMenu.set(false);
   }
 
-  onStatusChange(value: string) {
-    this.selectedStatus.set(value);
+  onSearchChange(event: any) {
+    this.searchQuery.set(event.target.value);
   }
-
 
 filteredAssets = computed(() => {
     const query = this.searchQuery().toLowerCase();
@@ -121,8 +122,8 @@ filteredAssets = computed(() => {
     const stat = this.selectedStatus();
 
     return this.assets().filter(asset => {
-      const categoryMatch = !cat || asset.category === cat;
-      const statusMatch = !stat || asset.status === stat;
+      const categoryMatch = cat === 'all' || asset.category === cat;
+      const statusMatch = stat === 'all' || asset.status === stat;
       const searchMatch = !query || 
                           asset.name.toLowerCase().includes(query) || 
                           asset.id.toLowerCase().includes(query);
@@ -131,8 +132,8 @@ filteredAssets = computed(() => {
     });
   });
   // UI eken values set karanna me functions ona
-  updateSearch(val: string) { this.searchQuery.set(val); }
-  updateCategory(val: string) { this.selectedCategory.set(val); }
-  updateStatus(val: string) { this.selectedStatus.set(val); }
+ showCategoryMenu = signal<boolean>(false);
+  showStatusMenu = signal<boolean>(false);
+  selectedAsset = signal<Asset | null>(null);
 
 }

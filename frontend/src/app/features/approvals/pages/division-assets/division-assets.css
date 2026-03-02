@@ -115,28 +115,97 @@
   flex-wrap: wrap;
 }
 
-.dropdown-group {
-  display: flex;
-  gap: 15px;
+/* 1. මේකට අනිවාර්යයෙන්ම position: relative දෙන්න */
+.styled-select {
+  position: relative; 
+  min-width: 180px;
 }
 
-.styled-select {
-  padding: 10px 40px 10px 12px;
-  border-radius: 10px;
-  border: 2px solid #cbd5e1;
+/* 2. Button එකේ default styles reset කරලා ලස්සන කරන්න */
+.filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   background: #ffffff;
+  border: 2px solid #cbd5e1;
+  padding: 8px 15px;
+  border-radius: 10px;
+  cursor: pointer;
   font-size: 14px;
   color: #334155;
-  min-width: 160px;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
+  font-family: 'jost';
 }
 
-.styled-select:focus {
+.filter-btn:focus {
   outline: none;
   border-color: #16a34a;
-  box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
 }
+
+.filter-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-icon mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* 3. Dropdown Menu එක */
+.filter-menu-card {
+  position: absolute;
+  top: 100%; 
+  left: 0;
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 1000; 
+  margin-top: 8px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  animation: slideIn 0.2s ease-out; 
+}
+
+.filter-option {
+  padding: 12px 15px;
+  font-size: 14px;
+  color: #475569;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-option:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.filter-option.active {
+  background: #f0fdf4;
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.filter-option.active::after {
+  content: '✓';
+  font-size: 14px;
+}
+
+/* Animation */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
 
 /* --- View Toggle --- */
 
