@@ -179,7 +179,15 @@
         <!-- Active Transfers, Completed Transfers -->
         @if (activeTab() === 'active' || activeTab() === 'completed') {
           <div class="asset-item-card horizontal">
-            <div class="asset-img-placeholder"></div>
+            <div class="asset-img-container">
+                  @if (item.image) {
+                    <img [src]="item.image" [alt]="item.assetName" class="asset-image">
+                  } @else {
+                    <div class="asset-img-placeholder">
+                     
+                    </div>
+                  }
+                </div>
             <div class="asset-info-box">
               <div class="info-header">
                 <span class="asset-name-id">{{ item.assetName }}</span>   

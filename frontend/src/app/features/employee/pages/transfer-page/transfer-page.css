@@ -420,10 +420,9 @@ header h1 {
 /* Grid Details */
 
 .asset-img-container {
-  width:50px;
-  height: 40px;
+  width:60px;
+  height: 55px;
   flex-shrink: 0;
-  border-radius: 12px;
   overflow: hidden; 
   background-color: #f1f5f9;
   display: flex;

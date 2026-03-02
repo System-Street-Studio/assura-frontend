@@ -76,7 +76,7 @@ export class TransferPageComponent implements OnInit {
     status: 'Pending',
     timeAgo: '5 hours ago',
     type: 'Incoming',
-    image: 'https://tse1.mm.bing.net/th?id=OIP.M0Xo7J4B3S7L6-pT_v0X8AHaHa&pid=Api'
+    image: 'https://mediaserver.goepson.com/ImConvServlet/imconv/d88e7473145d30509d3628e505b6dbc0214c5cf7/1200Wx1200H?use=banner&hybrisId=B2C&assetDescr=W55_W_STD_01'
   },
   {
     id: 'AS012',
@@ -89,7 +89,7 @@ export class TransferPageComponent implements OnInit {
     status: 'Pending',
     timeAgo: '1 day ago',
     type: 'Outgoing',
-    image: 'https://tse3.mm.bing.net/th?id=OIP.UfT_Gz_9Nn4C0n2P6oX_FAHaHa&pid=Api'
+    image: 'https://tse3.mm.bing.net/th/id/OIP.USiAakfD7Sa6dc9GPxKTbQHaHa?pid=Api&P=0&h=220',
   },
   {
     id: 'AS015',
@@ -102,7 +102,7 @@ export class TransferPageComponent implements OnInit {
     status: 'Approved', // Approved ewath Pending tab ekata filter wenawa
     timeAgo: '3 hours ago',
     type: 'Incoming',
-    image: 'https://tse1.mm.bing.net/th?id=OIP.G6W_v_xW6l2z3-0X-7_88wHaHa&pid=Api'
+    image: 'https://tse3.mm.bing.net/th/id/OIP.XuUW43B4jiGI3WjzcU_PWwHaHa?pid=Api&P=0&h=220'
   },
 
   // --- Active Transfers (3) ---
@@ -118,7 +118,7 @@ export class TransferPageComponent implements OnInit {
     timeAgo: 'Active Now',
     type: 'Incoming',
     daysLeft: '25 days remaining',
-    image: 'https://tse2.mm.bing.net/th?id=OIP.rS-YvW-X_S-p6V-m88H7_UoM3AHaHa&pid=Api'
+    image: 'https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/e-series/e2425hsm/media-gallery/monitor-dell-pro-e2425hsm-bk-gallery-1.psd?fmt=png-alpha&pscan=auto&scl=1&hei=804&wid=868&qlt=100,1&resMode=sharp2&size=868,804&chrss=full'
   },
   {
     id: 'AS022',
@@ -132,7 +132,7 @@ export class TransferPageComponent implements OnInit {
     timeAgo: 'Active Now',
     type: 'Outgoing',
     daysLeft: '12 days remaining',
-    image: 'https://tse4.mm.bing.net/th?id=OIP.8l-8C_u-7L_Ho2CVPF-m88H7_UoM3AHaHa&pid=Api'
+    image: 'https://mediaserver.goepson.com/ImConvServlet/imconv/e381a1e16d14618eb2c208abe70e26c894553c9a/1200Wx1200H?use=banner&hybrisId=B2C&assetDescr=FY22_SCN_V39II_02Photo'
   },
   {
     id: 'AS025',
@@ -146,7 +146,7 @@ export class TransferPageComponent implements OnInit {
     timeAgo: 'Active Now',
     type: 'Incoming',
     daysLeft: '90 days remaining',
-    image: 'https://tse2.mm.bing.net/th?id=OIP.v6W_v_xW6l2z3-0X-7_88wHaHa&pid=Api'
+    image: 'https://m.media-amazon.com/images/I/61CGvHphrrL._AC_.jpg'
   },
 
   // --- Completed Transfers (4) ---
@@ -161,7 +161,7 @@ export class TransferPageComponent implements OnInit {
     status: 'Completed',
     timeAgo: 'Completed on 05 Jul',
     type: 'Incoming',
-    image: 'https://tse3.mm.bing.net/th?id=OIP.r-YvW-X_S-p6V-m88H7_UoM3AHaHa&pid=Api'
+    image: 'https://tse1.mm.bing.net/th/id/OIP.PYYetNBAsJApNmiwOof49wHaFR?pid=Api&P=0&h=220'
   },
   {
     id: 'AS105',
@@ -174,7 +174,7 @@ export class TransferPageComponent implements OnInit {
     status: 'Completed',
     timeAgo: 'Completed on 12 Jul',
     type: 'Outgoing',
-    image: 'https://tse1.mm.bing.net/th?id=OIP.U_KKE5Cp6OVgC8akAAmqPAHaHa&pid=Api'
+    image:  'https://tse1.mm.bing.net/th/id/OIP.vTX7YEF-ZTTFkY6_LkYfuwHaHZ?pid=Api&P=0&h=220',
   },
   {
     id: 'AS110',
@@ -187,7 +187,8 @@ export class TransferPageComponent implements OnInit {
     status: 'Completed',
     timeAgo: 'Completed on 20 Jul',
     type: 'Incoming',
-    image: 'https://tse4.mm.bing.net/th?id=OIP.M0Xo7J4B3S7L6-pT_v0X8AHaHa&pid=Api'
+    image: 'https://tse2.mm.bing.net/th/id/OIP.KmpJ_8lr1FWGFoTPFCUEJAHaHa?pid=Api&P=0&h=220',
+
   },
   {
     id: 'AS115',
@@ -200,7 +201,8 @@ export class TransferPageComponent implements OnInit {
     status: 'Completed',
     timeAgo: 'Completed on 30 Jun',
     type: 'Outgoing',
-    image: 'https://tse2.mm.bing.net/th?id=OIP.8l-8C_u-7L_Ho2CVPF-m88H7_UoM3AHaHa&pid=Api'
+    image: 'https://5.imimg.com/data5/SELLER/Default/2024/6/425614788/OC/LS/QA/6651995/eaton-10-kva-ups-1000x1000.jpg',
+
   }
 
 
