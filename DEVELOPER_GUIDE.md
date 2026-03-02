@@ -13,6 +13,9 @@ The **Shell** is the main layout for authenticated users. It wraps every feature
 - **Sidebar**: Left navigation menu (Role-based links).
 - **RouterOutlet**: Where feature pages (Dashboard, Inventory, etc.) are rendered.
 
+> [!TIP]
+> For a detailed guide on how to integrate new feature pages with the shell, see [SHELL_INTEGRATION_GUIDE.md](./SHELL_INTEGRATION_GUIDE.md).
+
 ---
 
 ## 2. 🚀 Feature Modules (`src/app/features`)

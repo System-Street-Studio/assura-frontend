@@ -4,6 +4,10 @@ import { Routes } from '@angular/router';
 export const shellRoutes: Routes = [
   { path: 'overview', loadComponent: () => import('./pages/overview/overview').then(m => m.OverviewComponent) },
   {
+    path: 'admin',
+    loadChildren: () => import('../admin/admin.routes').then(m => m.adminRoutes)
+  },
+  {
     path: 'inventory',
     loadChildren: () => import('../inventory/inventory.routes').then(m => m.inventoryRoutes)
   },

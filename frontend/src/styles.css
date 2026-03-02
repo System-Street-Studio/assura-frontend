@@ -18,8 +18,5 @@ body {
     height: 100%;
     width: 100%;
     overflow: hidden;
-}
-
-*{
-    font-family: 'Jost';
+    font-family: 'Jost', sans-serif;
 }

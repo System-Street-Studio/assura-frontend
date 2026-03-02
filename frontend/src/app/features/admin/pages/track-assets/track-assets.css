@@ -1,0 +1,84 @@
+.track-assets-container {
+    padding: 32px 40px;
+    background-color: #f7f9fb;
+    min-height: calc(100vh - 48px);
+    font-family: 'Jost', sans-serif;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 24px;
+}
+
+.header-section {
+    margin-bottom: 32px;
+}
+
+.controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.search-wrapper {
+    flex: 0 1 400px;
+}
+
+.actions-wrapper {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.filter-wrapper {
+    position: relative;
+}
+
+.filter-dropdown-overlay {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 100;
+    margin-top: 8px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.table-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pagination-container {
+    margin-top: auto;
+    padding-top: 32px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Overriding shared table styles locally if needed to match design specificity */
+:host ::ng-deep .data-table {
+    border-top: 1px solid #e2e8f0;
+}
+
+:host ::ng-deep th {
+    font-weight: 600;
+    color: #475569;
+    padding: 16px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+:host ::ng-deep td {
+    padding: 24px 16px;
+    color: #1e293b;
+    border-bottom: 1px solid #f1f5f9;
+}
