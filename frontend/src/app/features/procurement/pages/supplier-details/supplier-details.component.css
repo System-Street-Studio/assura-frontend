@@ -1,0 +1,105 @@
+.supplier-details-container {
+    padding: 2rem;
+    font-family: 'Jost', sans-serif;
+}
+
+.page-title {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: #000;
+}
+
+/* Card fills the whole content area, same as PO details */
+.details-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Two-column layout spread across the full card */
+.details-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 5rem;
+    margin-bottom: 1.5rem;
+}
+
+.details-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+/* Label-Value row */
+.detail-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: 14px;
+    color: #000;
+}
+
+.label {
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 145px;
+    margin-right: 0.5rem;
+}
+
+.value {
+    font-weight: 400;
+    color: #333;
+}
+
+/* Update Status radio row */
+.update-status-row {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+    accent-color: #00AFB5;
+    cursor: pointer;
+}
+
+/* Footer */
+.footer-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.close-btn {
+    background-color: #D32F2F;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 2.5rem;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Jost', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.close-btn:hover {
+    background-color: #b71c1c;
+}
+
+.not-found {
+    color: #888;
+    font-size: 15px;
+}

@@ -1,0 +1,79 @@
+<div class="page-container" [class.blurred]="showSuccess">
+    <h1 class="page-title">Inform New Arrivals</h1>
+
+    <div class="form-card">
+        <h2 class="form-title">Inform New Assets has arrived</h2>
+
+        <form class="arrival-form" [formGroup]="arrivalForm" (ngSubmit)="onSubmit()">
+            <!-- Item Name -->
+            <div class="form-group full-width">
+                <label for="itemName">Item Name:</label>
+                <input type="text" id="itemName" formControlName="itemName" placeholder="">
+            </div>
+
+            <!-- Model -->
+            <div class="form-group full-width">
+                <label for="model">Model:</label>
+                <input type="text" id="model" formControlName="model">
+            </div>
+
+            <!-- Warranty -->
+            <div class="form-group inline-group">
+                <label for="warranty">Warranty:</label>
+                <div class="warranty-input-group">
+                    <input type="number" id="warranty" formControlName="warranty">
+                    <div class="checkbox-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" formControlName="isYears">
+                            <span class="checkmark"></span>
+                            Years
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" formControlName="isMonths">
+                            <span class="checkmark"></span>
+                            Months
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="form-group small-width">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" formControlName="quantity">
+            </div>
+
+            <!-- Purchased Date & Department -->
+            <div class="row">
+                <div class="form-group half-width">
+                    <label for="purchasedDate">Purchased Date</label>
+                    <div class="date-input-wrapper">
+                        <input type="date" id="purchasedDate" formControlName="purchasedDate">
+                    </div>
+                </div>
+                <div class="form-group half-width flex-row">
+                    <label for="department">Division</label>
+                    <input type="text" id="department" formControlName="department">
+                </div>
+            </div>
+
+            <!-- Purchased Price -->
+            <div class="form-group half-width">
+                <label for="purchasedPrice">Purchased Price (LKR)</label>
+                <input type="number" id="purchasedPrice" formControlName="purchasedPrice">
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="button" class="btn btn-cancel" (click)="onCancel()">Cancel</button>
+                <button type="submit" class="btn btn-inform">Inform</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" *ngIf="showSuccess">
+        <app-status-card label="Informed Stores Successfully" icon="check_box" color="#00AFB5">
+        </app-status-card>
+    </div>
+</div>

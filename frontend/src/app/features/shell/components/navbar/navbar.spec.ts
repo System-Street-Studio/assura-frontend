@@ -8,9 +8,10 @@ describe('NavbarComponent', () => {
   let fixture: ComponentFixture<NavbarComponent>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
 
-  async function setup(role: string | null) {
-    mockAuthService = jasmine.createSpyObj('AuthService', ['getRole']);
-    mockAuthService.getRole.and.returnValue(role);
+  async function setup(roles: string[]) {
+    mockAuthService = jasmine.createSpyObj('AuthService', ['getRole', 'getRoles']);
+    mockAuthService.getRoles.and.returnValue(roles);
+    mockAuthService.getRole.and.returnValue(roles.length > 0 ? roles[0] : null);
 
     await TestBed.configureTestingModule({
       imports: [NavbarComponent],
@@ -26,22 +27,27 @@ describe('NavbarComponent', () => {
   }
 
   it('should create', async () => {
-    await setup('STOREKEEPER');
+    await setup(['STOREKEEPER']);
     expect(component).toBeTruthy();
   });
 
   it('should display the role from AuthService', async () => {
-    await setup('PROCUREMENT');
+    await setup(['PROCUREMENT']);
     expect(component.roleName).toBe('PROCUREMENT');
   });
 
+  it('should display the last role when multiple roles are present', async () => {
+    await setup(['Admin', 'Procurement']);
+    expect(component.roleName).toBe('Procurement');
+  });
+
   it('should display "Guest" when AuthService returns null', async () => {
-    await setup(null);
+    await setup([]);
     expect(component.roleName).toBe('Guest');
   });
 
   it('should render role name in the template', async () => {
-    await setup('AUDITOR');
+    await setup(['AUDITOR']);
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.role-name')?.textContent?.trim()).toBe('AUDITOR');
   });

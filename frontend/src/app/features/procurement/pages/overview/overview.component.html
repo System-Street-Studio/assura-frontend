@@ -1,0 +1,41 @@
+<div class="overview-container">
+    <!-- Greeting Banner -->
+    <div class="greeting-banner">
+        <div class="greeting-content">
+            <h2 class="greeting-text">{{ greeting }}, {{ firstName }}</h2>
+            <p class="greeting-date">{{ currentDate | date:'EEEE, MMMM d, y — h:mm a' }}</p>
+        </div>
+    </div>
+
+    <h2 class="page-title">Statics</h2>
+
+    <div class="statics-grid">
+        <!-- Row 1: Total Suppliers (Centered) -->
+        <div class="stat-card suppliers-card">
+            <div class="card-title">Total Suppliers (Active)</div>
+            <div class="card-value">{{ stats.totalSuppliers }}</div>
+        </div>
+
+        <!-- Row 2 & 3: Details in Grid -->
+        <div class="stat-card pos-not-completed-card">
+            <div class="card-title">POs - Not Completed</div>
+            <div class="card-value">{{ stats.posNotCompleted }}</div>
+        </div>
+
+        <div class="stat-card pos-completed-card">
+            <div class="card-title">POs - Completed</div>
+            <div class="card-value">{{ stats.posCompleted }}</div>
+        </div>
+
+        <div class="stat-card repairs-not-completed-card">
+            <div class="card-title">Repairs - Not Completed</div>
+            <div class="card-value">{{ stats.repairsNotCompleted }}</div>
+        </div>
+
+        <div class="stat-card repairs-completed-card">
+            <div class="card-title">Repairs - Completed</div>
+            <div class="card-value">{{ stats.repairsCompleted }}</div>
+        </div>
+
+    </div>
+</div>

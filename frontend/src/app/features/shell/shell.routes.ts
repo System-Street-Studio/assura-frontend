@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 // import { OverviewComponent } from './pages/overview/overview';
 
 export const shellRoutes: Routes = [
+  { path: 'overview', loadComponent: () => import('./pages/overview/overview').then(m => m.OverviewComponent) },
   {
     path: 'admin',
     loadChildren: () => import('../admin/admin.routes').then(m => m.adminRoutes)
@@ -42,5 +43,5 @@ export const shellRoutes: Routes = [
     path: 'accountant',
     loadChildren: () => import('../accountant/accountant.routes').then(m => m.accountantRoutes)
   },
-  { path: '', redirectTo: 'admin', pathMatch: 'full' },
+  { path: '', redirectTo: 'overview', pathMatch: 'full' },
 ];

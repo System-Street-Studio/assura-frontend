@@ -1,0 +1,245 @@
+.maintenance-container {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.section-title {
+    font-family: 'Jost', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 20px;
+}
+
+/* History Section */
+.history-controls {
+    margin-bottom: 20px;
+    max-width: 300px;
+}
+
+.table-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.maintenance-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.maintenance-history-table th {
+    text-align: center;
+    padding: 1rem;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.maintenance-history-table td {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: 14px;
+    color: #000;
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.clickable-id {
+    cursor: pointer;
+    font-weight: 500;
+    color: #000;
+    text-decoration: none;
+}
+
+.clickable-id:hover {
+    text-decoration: underline;
+}
+
+.empty-state {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+}
+
+/* Requests Section */
+.requests-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.requests-list {
+    flex: 0 0 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.request-card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.request-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.req-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 0.5rem;
+}
+
+.req-dept {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.req-time {
+    font-size: 12px;
+    color: #888;
+}
+
+/* List Pagination */
+.list-pagination {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.list-pagination .page-num {
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.list-pagination .page-num.active {
+    color: #008f97;
+    font-weight: 600;
+}
+
+.list-pagination .nav-btn {
+    cursor: pointer;
+}
+
+.list-pagination .nav-btn.active {
+    color: #000;
+    font-weight: 600;
+}
+
+/* Details Panel */
+.request-details-panel {
+    flex: 1;
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    min-height: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.panel-header h2 {
+    font-size: 24px;
+    margin: 0;
+    color: #000;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.detail-item label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.detail-item .value {
+    color: #666;
+    font-size: 14px;
+}
+
+.spec-box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.special-note {
+    margin-bottom: 30px;
+}
+
+.special-note label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.special-note textarea {
+    width: 100%;
+    height: 100px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 15px;
+    resize: none;
+    font-family: inherit;
+    font-size: 14px;
+    color: #666;
+}
+
+.action-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.create-note-btn {
+    background: #008f97;
+    color: #000000;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.create-note-btn:hover {
+    background: #007a82;
+}

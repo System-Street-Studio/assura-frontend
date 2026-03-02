@@ -53,33 +53,66 @@ export class AuthService {
     }
   }
 
+  // Returns all roles from the JWT as a string array.
+  // Handles both single role (string) and multiple roles (string[]) from .NET.
+  getRoles(): string[] {
+    const token = this.getToken();
+    if (!token) return [];
+    try {
+      const decoded: unknown = jwtDecode(token);
+      const payload = decoded as {
+        role?: string | string[];
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string | string[];
+      };
+      const raw =
+        payload.role ??
+        payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
+        [];
+      return Array.isArray(raw) ? raw : [raw];
+    } catch {
+      return [];
+    }
+  }
+
+  // Returns the first role for display purposes.
   getRole(): string | null {
+    const roles = this.getRoles();
+    return roles.length > 0 ? roles[0] : null;
+  }
+
+  hasRole(requiredRole: string | string[]): boolean {
+    const userRoles = this.getRoles();
+    if (userRoles.length === 0) return false;
+
+    if (Array.isArray(requiredRole)) {
+      return requiredRole.some(r => userRoles.includes(r));
+    }
+    return userRoles.includes(requiredRole);
+  }
+
+  // Returns the user's first name from the JWT token.
+  getFirstName(): string | null {
     const token = this.getToken();
     if (!token) return null;
     try {
       const decoded: unknown = jwtDecode(token);
       const payload = decoded as {
-        role?: string;
-        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string;
+        given_name?: string;
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'?: string;
+        unique_name?: string;
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'?: string;
       };
-      return (
-        payload.role ||
-        payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
-        null
-      );
+      const name =
+        payload.given_name ??
+        payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] ??
+        payload.unique_name ??
+        payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ??
+        null;
+      // If the name contains spaces, return only the first word
+      return name ? name.split(' ')[0] : null;
     } catch {
       return null;
     }
-  }
-
-  hasRole(requiredRole: string | string[]): boolean {
-    const userRole = this.getRole();
-    if (!userRole) return false;
-
-    if (Array.isArray(requiredRole)) {
-      return requiredRole.includes(userRole);
-    }
-    return userRole === requiredRole;
   }
 
   logout(): void {
