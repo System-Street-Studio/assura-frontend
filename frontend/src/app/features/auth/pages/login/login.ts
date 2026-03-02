@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { LoadingService } from '../../../../core/services/loading.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -17,6 +18,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class LoginComponent {
     private fb = inject(FormBuilder);
     private authService = inject(AuthService);
+    private loadingService = inject(LoadingService);
     private router = inject(Router);
 
     loginForm = this.fb.group({
@@ -41,6 +43,7 @@ export class LoginComponent {
         this.authService.login(credentials).subscribe({
             next: () => {
                 this.isLoading = false;
+                this.loadingService.show();
                 this.router.navigate(['/']); // Redirect to Shell
             },
             error: (err: HttpErrorResponse) => {

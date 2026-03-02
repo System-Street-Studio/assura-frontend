@@ -55,7 +55,7 @@ describe('RegisterComponent', () => {
         form.patchValue({
             firstName: 'John',
             lastName: 'Doe',
-            telephone: '0712870781',
+            username: 'johndoe',
             email: 'john@example.com',
             password: 'password123',
             confirmPassword: 'password123'
@@ -72,7 +72,7 @@ describe('RegisterComponent', () => {
         component.registerForm.patchValue({
             firstName: 'John',
             lastName: 'Doe',
-            telephone: '1234567890',
+            username: 'johndoe',
             email: 'john@example.com',
             password: 'password123',
             confirmPassword: 'password123'
@@ -84,7 +84,6 @@ describe('RegisterComponent', () => {
         tick(1500);
 
         expect(component.isLoading).toBeFalse();
-        expect(window.alert).toHaveBeenCalledWith('Registration simulated!');
-        expect(navigateSpy).toHaveBeenCalledWith(['/auth/login']);
+        expect(component.isSuccess).toBeTrue();
     }));
 });
