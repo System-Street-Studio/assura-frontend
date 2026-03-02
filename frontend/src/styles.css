@@ -5,6 +5,30 @@
     font-display: swap;
 }
 
+*:not(.material-icons):not(.mat-icon):not(mat-icon),
+*::before,
+*::after,
+*::placeholder,
+html,
+body,
+button,
+input,
+select,
+textarea,
+span:not(.material-icons):not(.mat-icon),
+div,
+p,
+a,
+label,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Jost', sans-serif !important;
+}
+
 *,
 *::before,
 *::after {
@@ -18,5 +42,4 @@ body {
     height: 100%;
     width: 100%;
     overflow: hidden;
-    font-family: 'Jost', sans-serif;
 }

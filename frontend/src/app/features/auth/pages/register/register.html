@@ -32,11 +32,11 @@
             <!-- Telephone -->
             <div class="form-group">
                 <div class="input-wrapper">
-                    <mat-icon class="input-icon">call</mat-icon>
-                    <input type="tel" formControlName="telephone" class="form-control" placeholder="Telephone No." />
+                    <mat-icon class="input-icon">person_outline</mat-icon>
+                    <input type="text" formControlName="username" class="form-control" placeholder="Username" />
                 </div>
-                @if (registerForm.get('telephone')?.touched && registerForm.get('telephone')?.invalid) {
-                <div class="error-message">Valid telephone is required</div>
+                @if (registerForm.get('username')?.touched && registerForm.get('username')?.invalid) {
+                <div class="error-message">Valid username is required</div>
                 }
             </div>
 
@@ -78,7 +78,7 @@
                 @if (isLoading) {
                 <span>Creating Account...</span>
                 } @else {
-                <span>Sign in</span>
+                <span>Register</span>
                 }
             </button>
 

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 
 interface MenuItem {
@@ -9,6 +9,7 @@ interface MenuItem {
   icon: string;
   link: string;
   roles: string[];
+  section?: string;
 }
 
 @Component({
@@ -20,99 +21,85 @@ interface MenuItem {
 })
 export class SidebarComponent {
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   menuItems: MenuItem[] = [
-    // Admin specific items matching screenshot
-    { label: 'Dashboard', icon: 'home', link: '/admin/overview', roles: ['ADMIN'] },
-    { label: 'My Assets', icon: 'inventory_2', link: '/admin/my-assets', roles: ['ADMIN'] },
-    { label: 'Track Assets', icon: 'track_changes', link: '/admin/track-assets', roles: ['ADMIN'] },
+    // Admin section
+    { label: 'Dashboard', icon: 'home', link: '/admin/overview', roles: ['ADMIN'], section: 'admin' },
+    { label: 'My Assets', icon: 'inventory_2', link: '/admin/my-assets', roles: ['ADMIN'], section: 'admin' },
+    { label: 'Track Assets', icon: 'track_changes', link: '/admin/track-assets', roles: ['ADMIN'], section: 'admin' },
 
-    // Common (Existing) - Roles adjusted to exclude ADMIN to avoid duplication
-    { label: 'Overview', icon: 'home', link: '/overview', roles: ['PROCUREMENT', 'STOREKEEPER', 'HR', 'ACCOUNTANT', 'AUDITOR', 'SUPERINTENDENT'] },
-    { label: 'My Assets', icon: 'description', link: '/my-assets', roles: ['PROCUREMENT', 'STOREKEEPER', 'HR', 'ACCOUNTANT', 'AUDITOR', 'SUPERINTENDENT'] },
+    // Procurement section
+    { label: 'Overview', icon: 'home', link: '/procurement/overview', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },
+    { label: 'PO', icon: 'receipt_long', link: '/procurement/purchase-orders', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },
+    { label: 'Suppliers', icon: 'local_shipping', link: '/procurement/suppliers', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },
+    { label: 'Maintenance', icon: 'build', link: '/procurement/maintenance', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },
+    { label: 'New Arrivals', icon: 'fiber_new', link: '/procurement/new-arrivals', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },
 
-    // Storekeeper-heavy items (Adjusted roles to exclude ADMIN where appropriate)
-    {
-      label: 'Assets',
-      icon: 'inventory_2',
-      link: '/assets',
-      roles: ['STOREKEEPER', 'AUDITOR'],
-    },
-    { label: 'Products', icon: 'category', link: '/products', roles: ['STOREKEEPER'] },
-    {
-      label: 'Suppliers',
-      icon: 'local_shipping',
-      link: '/suppliers',
-      roles: ['PROCUREMENT', 'STOREKEEPER'],
-    },
-    { label: 'PO', icon: 'receipt_long', link: '/purchase-orders', roles: ['PROCUREMENT'] },
-    { label: 'Check In', icon: 'check_circle', link: '/check-in', roles: ['STOREKEEPER'] },
-    {
-      label: 'Check Out',
-      icon: 'exit_to_app',
-      link: '/check-out',
-      roles: ['STOREKEEPER', 'AUDITOR'],
-    },
-    {
-      label: 'Maintenance',
-      icon: 'build',
-      link: '/maintenance',
-      roles: ['PROCUREMENT', 'STOREKEEPER'],
-    },
-    {
-      label: 'Assets Requests',
-      icon: 'assignment',
-      link: '/assets-requests',
-      roles: ['STOREKEEPER'],
-    },
+    // Inventory / Storekeeper section
+    { label: 'Assets', icon: 'inventory_2', link: '/inventory/assets', roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'], section: 'inventory' },
+    { label: 'Products', icon: 'category', link: '/inventory/products', roles: ['STOREKEEPER', 'ADMIN'], section: 'inventory' },
+    { label: 'Check In', icon: 'check_circle', link: '/inventory/check-in', roles: ['STOREKEEPER', 'ADMIN'], section: 'inventory' },
+    { label: 'Check Out', icon: 'exit_to_app', link: '/inventory/check-out', roles: ['STOREKEEPER', 'AUDITOR', 'ADMIN'], section: 'inventory' },
+    { label: 'Assets Requests', icon: 'assignment', link: '/inventory/assets-requests', roles: ['STOREKEEPER', 'ADMIN'], section: 'inventory' },
 
-    // HR
-    { label: 'Pending', icon: 'pending_actions', link: '/pending', roles: ['HR'] },
-    { label: 'Assigned', icon: 'group', link: '/assigned', roles: ['HR'] },
+    // HR section
+    { label: 'Pending', icon: 'pending_actions', link: '/hr/pending', roles: ['HR', 'ADMIN'], section: 'hr' },
+    { label: 'Assigned', icon: 'group', link: '/hr/assigned', roles: ['HR', 'ADMIN'], section: 'hr' },
 
-    // Accountant
-    { label: 'Discarded', icon: 'cancel', link: '/discarded', roles: ['ACCOUNTANT'] },
+    // Accountant section
+    { label: 'Discarded', icon: 'cancel', link: '/accountant/discarded', roles: ['ACCOUNTANT', 'ADMIN'], section: 'accountant' },
 
-    // Auditor
-    { label: 'Reports', icon: 'assessment', link: '/reports', roles: ['AUDITOR'] },
-    { label: 'Audit Logs', icon: 'policy', link: '/audit-logs', roles: ['AUDITOR'] },
-    { label: 'Export', icon: 'file_download', link: '/export', roles: ['AUDITOR'] },
+    // Reporting / Auditor section
+    { label: 'Reports', icon: 'assessment', link: '/reporting/reports', roles: ['AUDITOR', 'ADMIN'], section: 'reporting' },
+    { label: 'Audit Logs', icon: 'policy', link: '/reporting/audit-logs', roles: ['AUDITOR', 'ADMIN'], section: 'reporting' },
+    { label: 'Export', icon: 'file_download', link: '/reporting/export', roles: ['AUDITOR', 'ADMIN'], section: 'reporting' },
 
-    // Superintendent
-    {
-      label: 'Discarded Notes',
-      icon: 'note_alt',
-      link: '/discarded-notes',
-      roles: ['SUPERINTENDENT'],
-    },
+    // Superintendent section
+    { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['SUPERINTENDENT', 'ADMIN'], section: 'superintendent' },
+
+    // Common / General
+    { label: 'Global Overview', icon: 'dashboard', link: '/overview', roles: ['ANY'], section: 'general' }
   ];
 
   get filteredMenuItems(): MenuItem[] {
-    const rawRole = this.authService.getRole();
+    const userRoles = this.getUserRoles();
+    const currentUrl = this.router.url;
 
-    // Handle both single string, array, or comma-separated string from JWT
-    const userRoles: string[] = [];
-    if (Array.isArray(rawRole)) {
-      userRoles.push(...rawRole.map(r => r.toUpperCase()));
-    } else if (typeof rawRole === 'string') {
-      if (rawRole.includes(',')) {
-        userRoles.push(...rawRole.split(',').map(r => r.trim().toUpperCase()));
-      } else {
-        userRoles.push(rawRole.toUpperCase());
-      }
-    }
+    // 1. Identify current active section from URL
+    const sections = ['admin', 'procurement', 'inventory', 'hr', 'accountant', 'reporting', 'superintendent'];
+    const activeSection = sections.find(s => currentUrl.startsWith(`/${s}`));
 
-    const filtered = this.menuItems.filter(item =>
+    // 2. Filter by role
+    let filtered = this.menuItems.filter(item =>
       item.roles.includes('ANY') ||
       userRoles.some(role => item.roles.includes(role))
     );
 
-    // If the user is an Admin, show ONLY Admin items (to 'remove everything for procurement')
-    if (userRoles.includes('ADMIN')) {
-      return filtered.filter(item => item.roles.includes('ADMIN'));
+    // 3. Filter by active section if we are in one
+    if (activeSection) {
+      filtered = filtered.filter(item => item.section === activeSection);
+    } else {
+      // If on root/overview, show general items or items matching user's primary role section
+      filtered = filtered.filter(item => item.section === 'general' || !item.section);
     }
 
     return filtered;
+  }
+
+  private getUserRoles(): string[] {
+    const rawRole = this.authService.getRole();
+    const roles: string[] = [];
+    if (Array.isArray(rawRole)) {
+      roles.push(...rawRole.map(r => r.toUpperCase()));
+    } else if (typeof rawRole === 'string') {
+      if (rawRole.includes(',')) {
+        roles.push(...rawRole.split(',').map(r => r.trim().toUpperCase()));
+      } else {
+        roles.push(rawRole.toUpperCase());
+      }
+    }
+    return roles;
   }
 
   isCollapsed = false;

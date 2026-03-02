@@ -86,10 +86,12 @@
     position: absolute;
     left: 10px;
     color: #004777;
-    /* Slightly lighter icon color based on image */
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
+    font-size: 20px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .form-control {
