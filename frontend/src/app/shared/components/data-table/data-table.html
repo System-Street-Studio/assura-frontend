@@ -12,11 +12,17 @@
       <tr (click)="onRowClick(row)" class="data-row">
         @for (col of columns; track col.key) {
         <td>
-          @switch (col.type) { @case ('status') {
-          <app-status-badge [status]="row[col.key]"> </app-status-badge>
-          } @default {
+          @switch (col.type) {
+          @case ('status') {
+          <app-status-badge [status]="row[col.key]"></app-status-badge>
+          }
+          @case ('link') {
+          <span class="clickable-link" (click)="onRowClick(row); $event.stopPropagation()">{{ row[col.key] }}</span>
+          }
+          @default {
           <span>{{ row[col.key] }}</span>
-          } }
+          }
+          }
         </td>
         }
       </tr>
