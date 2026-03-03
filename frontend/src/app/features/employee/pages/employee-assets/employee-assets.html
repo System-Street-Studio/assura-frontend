@@ -48,17 +48,18 @@
     @if (!selectedAsset()) {
 
      <!--search section-->
-      <div class="controls">
-        <div class="search-container">
+      <div class="table-actions">
+        <div class="input-wrapper">
           <mat-icon class="search-icon">search</mat-icon>
-          <input type="text" placeholder="Search Assets..." [(ngModel)]="searchTerm">
+          <input type="text" placeholder="Search Assets..." [(ngModel)]="searchTerm" class="search-bar">
         </div>
         
-        <select class="status-dropdown">
-          <option>Filter By Status</option>
-          <option>In Use</option>
-          <option>Transferred</option>
-          <option>In Transferred</option>
+        <!-- Status Dropdown -->
+        <select class="filter-btn" [(ngModel)]="selectedStatus">
+          <option value="">Filter By Status</option>
+          <option value="In Use">In Use</option>
+          <option value="Transferred">Transferred</option>
+          <option value="Maintenance">Maintenance</option>
         </select>
       </div>
 

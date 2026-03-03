@@ -162,6 +162,186 @@ h3{
   background: white;
 }
 
+
+
+/* Search & Filter Bar (Active/Completed) */
+.table-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 10px 0;
+}
+.action-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6c7482;
+  letter-spacing: 0.5px;
+}
+
+/* Search Input Styling */
+
+.input-wrapper {
+  position: relative;
+  width: 320px;
+}
+.search-bar {
+  width: 100%;
+  padding: 8px 16px 8px 42px;
+  border-radius: 12px;
+  border: 2px solid #b0afaf;
+  background: #ffffff;
+  font-size: 14px;
+  font-family: 'jost';
+  transition: all 0.2s ease;
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: #16a34a;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(99, 241, 113, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+/* Filter Button Styling */
+
+
+
+/* Filter Section Layout */
+.action-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+/* Dropdown Container */
+.filter-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Main Filter Button Styling */
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background-color: #ffffff;
+  border: 1.5px solid #b0afaf;
+  border-radius: 12px;
+  color: #1e293b;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: 'jost';
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 180px;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+
+.filter-btn:focus {
+  outline: none;
+  border-color: #16a34a;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(99, 241, 113, 0.1);
+}
+.filter-btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #64748b;
+}
+
+.filter-btn .arrow {
+  transition: transform 0.3s ease;
+  font-size: 22px;
+}
+
+.filter-icon{
+  font-family: 'jost';
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+}
+/* Dropdown Menu Card */
+.filter-menu-card {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #ffffff;
+  min-width: 200px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  z-index: 100;
+  overflow: hidden;
+  padding: 6px;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Individual Filter Options */
+.filter-option {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #475569;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-option:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.filter-option.active {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.filter-option.active::after {
+  content: '✓';
+  font-size: 14px;
+}
+
+
+
+
+
+
+
+
 /* --- Asset Grid and Cards --- */
 .assets-grid {
   display: grid;
@@ -173,6 +353,10 @@ h3{
   background: white;
   border-radius: 15px;
   padding:20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; 
+  height: 100%;
   box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6);
 }
 
@@ -181,7 +365,7 @@ h3{
 }
 
 .card-header { display: flex; gap: 15px; margin-bottom: 15px; }
-.card-img { width: 100px; height: 80px; object-fit: contain; }
+.card-img { width: 80px; height: 60px; object-fit: contain; }
 .asset-id-info {padding-left: 40px; }
 .asset-id-info label { font-size: 11px; color: #64748b; display: block;}
 .id-val { font-weight: 700; display: block; margin-bottom: 5px; }
@@ -193,6 +377,7 @@ h3{
   border-top: 1px solid #f1f5f9;
   padding-top: 15px;
   margin-bottom: 15px;
+  flex-grow: 1; 
 }
 
 .detail-item label { font-size: 11px; color: #64748b; display: block; }
@@ -204,16 +389,32 @@ h3{
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  margin: 10px 0;
+  margin: 10px 10px;
+  background: #fffbe6;
+  border: 2px solid #eac13a;
+  color: #d59e12;
+  align-self: flex-start;
+}
+
+/* Default (In Use - Yellow) */
+.status-badge.in-use {
   background: #fffbe6;
   border: 2px solid #eac13a;
   color: #d59e12;
 }
 
+/* Transferred - Green */
 .status-badge.transferred {
   background: #f6ffed;
-  border: 1px solid #b7eb8f;
-  color: #52c41a;
+  border: 2px solid #52c41a;
+  color: #2e7d32;
+}
+
+/* Maintenance - Pink */
+.status-badge.maintenance {
+  background: #ffe6f0;
+  border: 2px solid #ff69b4;
+  color: #c2185b;
 }
 
 .view-btn {
@@ -225,7 +426,7 @@ h3{
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  margin-top: 10px;
+  margin-top:auto;
 
 }
 
@@ -239,6 +440,7 @@ h3{
   box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6); 
   width: 70%;
   margin: 30px;
+  animation: slideIn 0.4s ease forwards;
 
 }
 
