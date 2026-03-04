@@ -212,10 +212,13 @@
 
             <div class="action-buttons-cell">
                @if (activeTab() === 'active') {
-                 <button class="btn-return-outline">Return</button>
-               } @else {
-                 <button class="btn-view-outline">View</button>
-               }
+                  @if (item.type === 'Incoming') {
+                    <button class="btn-return-outline">Return</button>
+                  } 
+                } @else {
+                  <!-- For other tabs (optional, e.g., completed) -->
+                  <button class="btn-view-outline">View</button>
+              }
             </div>
           </div>
         }
