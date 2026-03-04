@@ -364,9 +364,9 @@ h3{
  box-shadow: 10px 10px 32px 10px rgba(195, 195, 198, 0.6);
 }
 
-.card-header { display: flex; gap: 15px; margin-bottom: 15px; }
+.card-header { display: flex; align-items: flex-start;width: 100%; margin-bottom: 15px; }
 .card-img { width: 80px; height: 60px; object-fit: contain; }
-.asset-id-info {padding-left: 40px; }
+.asset-id-info { margin-left: auto;  }
 .asset-id-info label { font-size: 11px; color: #64748b; display: block;}
 .id-val { font-weight: 700; display: block; margin-bottom: 5px; }
 .name-val { font-weight: 800; color: #0369a1; font-size: 16px; }
@@ -374,14 +374,26 @@ h3{
 .card-details {
   display: flex;
   justify-content: space-between;
+  width: 100%;
   border-top: 1px solid #f1f5f9;
   padding-top: 15px;
   margin-bottom: 15px;
-  flex-grow: 1; 
+ 
 }
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  width: 48%;
+} 
+
 
 .detail-item label { font-size: 11px; color: #64748b; display: block; }
 .detail-val { font-weight: 600; font-size: 13px; }
+
+.detail-item:last-child {
+  text-align: right;
+} 
 
 .status-badge {
   display: inline-block;

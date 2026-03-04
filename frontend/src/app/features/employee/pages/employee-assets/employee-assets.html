@@ -68,16 +68,17 @@
         @for (asset of filteredAssets(); track asset.assetId) {
         
           <div class="asset-card">
-            <div class="card-header">
+           <div class="card-header">
             <img [src]="asset.image" class="card-img">
-          
-                <div class="asset-id-info">
-                  <label>Asset ID</label>
-                  <span class="id-val">{{ asset.assetId }}</span>
-                  <label>Asset Name</label>
-                  <span class="name-val">{{ asset.assetName }}</span>
-                </div>
+
+            <div class="asset-id-info">
+              <label>Asset ID</label>
+              <span class="id-val">{{ asset.assetId }}</span>
+
+              <label>Asset Name</label>
+              <span class="name-val">{{ asset.assetName }}</span>
             </div>
+          </div>
 
             <div class="card-details">
               <div class="detail-item">
