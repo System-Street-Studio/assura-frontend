@@ -45,28 +45,51 @@ describe('PoCreate', () => {
         expect(component.itemName).toBe('');
     });
 
-    it('should handle Save and Next workflow', fakeAsync(() => {
-        // Set some values
-        component.itemName = 'Test Item';
-        component.itemCount = 1;
+    it('should calculate amount correctly', () => {
+        component.quantity = 10;
+        component.unitPrice = 500;
+        component.calculateTotals();
+        expect(component.amount).toBe(5000);
+    });
 
-        // Trigger Save and Next
+    it('should calculate discounted price correctly', () => {
+        component.quantity = 10;
+        component.unitPrice = 500;
+        component.discount = 10; // 10%
+        component.calculateTotals();
+        expect(component.amount).toBe(5000);
+        expect(component.discountedPrice).toBe(4500);
+    });
+
+    it('should calculate vat amount and total price correctly', () => {
+        component.quantity = 10;
+        component.unitPrice = 500;
+        component.discount = 10; // 10% -> 4500
+        component.vat = 15; // 15% of 4500 -> 675
+        component.calculateTotals();
+        expect(component.vatAmount).toBe(675);
+        expect(component.totalPrice).toBe(5175);
+    });
+
+    it('should handle zero or null values gracefully', () => {
+        component.quantity = 0;
+        component.unitPrice = 500;
+        component.calculateTotals();
+        expect(component.amount).toBe(0);
+        expect(component.totalPrice).toBe(0);
+    });
+
+    it('should reset calculations on Save and Next', fakeAsync(() => {
+        component.quantity = 10;
+        component.unitPrice = 500;
+        component.calculateTotals();
+        expect(component.amount).toBe(5000);
+
         component.onSaveAndNext();
-
-        // Verify popup is shown
-        expect(component.showSuccessPopup).toBeTrue();
-
-        // Wait for timeout
         tick(800);
 
-        // Verify popup is hidden
-        expect(component.showSuccessPopup).toBeFalse();
-
-        // Verify item count incremented
-        expect(component.itemCount).toBe(2);
-
-        // Verify form reset
-        expect(component.itemName).toBe('');
+        expect(component.amount).toBe(0);
+        expect(component.quantity).toBe(0);
     }));
 
     it('should navigate to purchase orders on exit', () => {

@@ -22,15 +22,30 @@ export class PoCreate {
   warrantyYears = false;
   warrantyMonths = false;
   warrantyDuration: number | null = null;
-  quantity: number | null = null;
-  unitPrice: number | null = null;
-  amount: number | null = null;
-  discount: number | null = null;
-  discountedPrice: number | null = null;
-  vat: number | null = null;
-  vatAmount: number | null = null;
-  totalPrice: number | null = null;
+  quantity: number = 0;
+  unitPrice: number = 0;
+  amount: number = 0;
+  discount: number = 0;
+  discountedPrice: number = 0;
+  vat: number = 0;
+  vatAmount: number = 0;
+  totalPrice: number = 0;
   specialNote = '';
+
+  calculateTotals() {
+    // 1. Calculate Amount
+    this.amount = (this.quantity || 0) * (this.unitPrice || 0);
+
+    // 2. Calculate Discounted Price
+    const discountVal = (this.amount * (this.discount || 0)) / 100;
+    this.discountedPrice = this.amount - discountVal;
+
+    // 3. Calculate VAT Amount based on Discounted Price
+    this.vatAmount = (this.discountedPrice * (this.vat || 0)) / 100;
+
+    // 4. Calculate Total Price
+    this.totalPrice = this.discountedPrice + this.vatAmount;
+  }
 
   onSaveAndNext() {
     console.log('Saving item:', this.itemCount);
@@ -51,14 +66,14 @@ export class PoCreate {
       this.warrantyYears = false;
       this.warrantyMonths = false;
       this.warrantyDuration = null;
-      this.quantity = null;
-      this.unitPrice = null;
-      this.amount = null;
-      this.discount = null;
-      this.discountedPrice = null;
-      this.vat = null;
-      this.vatAmount = null;
-      this.totalPrice = null;
+      this.quantity = 0;
+      this.unitPrice = 0;
+      this.amount = 0;
+      this.discount = 0;
+      this.discountedPrice = 0;
+      this.vat = 0;
+      this.vatAmount = 0;
+      this.totalPrice = 0;
       this.specialNote = '';
     }, 800);
   }

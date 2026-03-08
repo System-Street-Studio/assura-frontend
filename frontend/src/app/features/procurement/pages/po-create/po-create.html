@@ -39,7 +39,8 @@
             <!-- Row 4 -->
             <div class="form-group">
                 <label>Quantity:</label>
-                <input type="number" class="form-control short-input" [(ngModel)]="quantity">
+                <input type="number" class="form-control short-input" [(ngModel)]="quantity"
+                    (ngModelChange)="calculateTotals()">
             </div>
             <div class="form-group">
                 <!-- Spacer -->
@@ -48,7 +49,8 @@
             <!-- Row 5 -->
             <div class="form-group">
                 <label>Unit Price (LKR):</label>
-                <input type="number" class="form-control medium-input" [(ngModel)]="unitPrice">
+                <input type="number" class="form-control medium-input" [(ngModel)]="unitPrice"
+                    (ngModelChange)="calculateTotals()">
             </div>
             <div class="form-group">
                 <!-- Spacer -->
@@ -57,7 +59,7 @@
             <!-- Row 6 -->
             <div class="form-group">
                 <label>Amount (LKR):</label>
-                <input type="number" class="form-control medium-input" [(ngModel)]="amount">
+                <input type="number" class="form-control medium-input" [(ngModel)]="amount" readonly>
             </div>
             <div class="form-group">
                 <!-- Spacer -->
@@ -66,27 +68,29 @@
             <!-- Row 7 -->
             <div class="form-group">
                 <label>Discount:</label>
-                <input type="number" class="form-control short-input" [(ngModel)]="discount">
+                <input type="number" class="form-control short-input" [(ngModel)]="discount"
+                    (ngModelChange)="calculateTotals()">
             </div>
             <div class="form-group right-align">
                 <label>Discounted Price (LKR):</label>
-                <input type="number" class="form-control medium-input" [(ngModel)]="discountedPrice">
+                <input type="number" class="form-control medium-input" [(ngModel)]="discountedPrice" readonly>
             </div>
 
             <!-- Row 8 -->
             <div class="form-group">
                 <label>VAT:</label>
-                <input type="number" class="form-control short-input" [(ngModel)]="vat">
+                <input type="number" class="form-control short-input" [(ngModel)]="vat"
+                    (ngModelChange)="calculateTotals()">
             </div>
             <div class="form-group right-align">
                 <label>VAT (LKR):</label>
-                <input type="number" class="form-control medium-input" [(ngModel)]="vatAmount">
+                <input type="number" class="form-control medium-input" [(ngModel)]="vatAmount" readonly>
             </div>
 
             <!-- Total Price -->
             <div class="form-group full-width total-price-row">
                 <label>Total Price (LKR):</label>
-                <input type="number" class="form-control medium-input" [(ngModel)]="totalPrice">
+                <input type="number" class="form-control medium-input" [(ngModel)]="totalPrice" readonly>
             </div>
         </div>
 
