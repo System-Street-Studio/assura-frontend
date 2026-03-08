@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 

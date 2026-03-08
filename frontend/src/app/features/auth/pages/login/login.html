@@ -15,11 +15,11 @@
             <div class="form-group">
                 <div class="input-wrapper">
                     <mat-icon class="input-icon">person_outline</mat-icon>
-                    <input type="email" id="email" formControlName="email" class="form-control"
+                    <input type="text" id="username" formControlName="username" class="form-control"
                         placeholder="Username" />
                 </div>
-                @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
-                <div class="error-message">Valid email is required</div>
+                @if (loginForm.get('username')?.touched && loginForm.get('username')?.invalid) {
+                <div class="error-message">Username is required</div>
                 }
             </div>
 
