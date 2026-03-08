@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
 
-import { LoginRequest, LoginResponse } from '../../features/auth/models/auth.models';
+import { LoginRequest, LoginResponse, RegisterRequest } from '../../features/auth/models/auth.models';
 
 
 @Injectable({ providedIn: 'root' })
@@ -25,6 +25,13 @@ export class AuthService {
         }
       })
     );
+  }
+
+  /**
+   * Register a new user (POST Request)
+   */
+  register(userData: RegisterRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, userData);
   }
 
   isAuthenticated(): boolean {
