@@ -4,20 +4,8 @@ import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
 
-export interface LoginRequest {
-  username: string;
-  password: string;
-}
+import { LoginRequest, LoginResponse } from '../../features/auth/models/auth.models';
 
-export interface LoginResponse {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    roles: string[];
-  };
-}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
