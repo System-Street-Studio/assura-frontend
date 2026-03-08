@@ -38,12 +38,16 @@ export class LoginComponent {
             password: this.loginForm.value.password!
         };
 
+        console.log('[DEBUG] Login attempt started', credentials.username);
+
         this.authService.login(credentials).subscribe({
-            next: () => {
+            next: (response) => {
+                console.log('[DEBUG] Login success response received');
                 this.isLoading = false;
                 this.router.navigate(['/']); // Redirect to Shell
             },
             error: (err: HttpErrorResponse) => {
+                console.error('[DEBUG] Login error received', err);
                 this.isLoading = false;
                 this.errorMessage = err.error?.message || 'Login failed. Please check your credentials.';
             }
