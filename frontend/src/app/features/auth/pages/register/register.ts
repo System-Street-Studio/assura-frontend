@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { RegisterRequest } from '../../models/auth.models';
 
 @Component({
     selector: 'app-register',
@@ -38,34 +39,26 @@ export class RegisterComponent {
         if (this.registerForm.invalid) return;
 
         this.isLoading = true;
-        const { firstName, lastName, email, password } = this.registerForm.value;
+        const { firstName, lastName, username, email, password } = this.registerForm.value;
 
-        // Combining names for specific API requirement if needed, or sending separately
-        const registerData = {
-            name: `${firstName} ${lastName}`,
+        const registerData: RegisterRequest = {
+            firstName: firstName!,
+            lastName: lastName!,
+            username: username!,
             email: email!,
-            password: password!,
-            confirmPassword: this.registerForm.value.confirmPassword!
+            password: password!
         };
 
-        // For Frontend Visualization Only (as requested):
-        setTimeout(() => {
-            this.isLoading = false;
-            this.isSuccess = true;
-            // No longer navigating immediately, showing success UI
-        }, 1500);
-
-        /* 
         this.authService.register(registerData).subscribe({
-          next: () => {
-            this.isLoading = false;
-            this.router.navigate(['/auth/login']);
-          },
-          error: () => {
-            this.isLoading = false;
-            // Handle error
-          }
+            next: () => {
+                this.isLoading = false;
+                this.isSuccess = true;
+            },
+            error: (err) => {
+                this.isLoading = false;
+                // Handle error (optional: show error message)
+                console.error('Registration failed', err);
+            }
         });
-        */
     }
 }
