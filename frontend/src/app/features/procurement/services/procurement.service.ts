@@ -29,7 +29,15 @@ export class ProcurementService {
      * Get a single Purchasing Order by ID
      */
     getOrderById(id: number): Observable<PurchasingOrderDto> {
-        return this.http.get<PurchasingOrderDto>(`${this.apiUrl}/${id}`);
+        const url = `${this.apiUrl}/${id}`;
+        console.log(`[DEBUG] ProcurementService: Fetching order details from ${url}`);
+        return this.http.get<PurchasingOrderDto>(url).pipe(
+            tap(order => console.log(`[DEBUG] ProcurementService: Successfully fetched order ${order.orderNumber}`)),
+            catchError(err => {
+                console.error(`[DEBUG] ProcurementService: Error fetching order ${id}`, err);
+                return throwError(() => err);
+            })
+        );
     }
 
     /**
