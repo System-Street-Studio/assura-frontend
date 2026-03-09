@@ -19,34 +19,47 @@
         </div>
 
         <div class="table-container">
-            <table class="orders-table">
-                <thead>
-                    <tr>
-                        <th>PO ID</th>
-                        <th>Department</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let order of pagedOrders">
-                        <td (click)="navigateToDetails(order.id)"
-                            style="cursor: pointer; color: #000; font-weight: 500;">{{ order.id }}</td>
-                        <td>{{ order.department }}</td>
-                        <td>{{ order.date }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <ng-container *ngIf="!isLoading">
+                <table class="orders-table" *ngIf="orders.length > 0">
+                    <thead>
+                        <tr>
+                            <th>PO ID</th>
+                            <th>Department</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let order of pagedOrders">
+                            <td (click)="navigateToDetails(order.id)"
+                                style="cursor: pointer; color: #000; font-weight: 500;">{{ order.orderNumber }}</td>
+                            <td>{{ order.departmentName }}</td>
+                            <td>{{ order.issuedDate | date:'dd MMM yyyy' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
 
-            <!-- Orders Pagination -->
-            <app-pagination [currentPage]="ordersCurrentPage" [totalPages]="ordersTotalPages"
-                [pageNumbers]="ordersPageNumbers" (pageChange)="goToOrdersPage($event)">
-            </app-pagination>
+                <!-- Empty State -->
+                <div *ngIf="orders.length === 0" class="empty-state">
+                    No purchasing orders found.
+                </div>
+
+                <!-- Orders Pagination -->
+                <app-pagination *ngIf="orders.length > 0" [currentPage]="ordersCurrentPage"
+                    [totalPages]="ordersTotalPages" [pageNumbers]="ordersPageNumbers"
+                    (pageChange)="goToOrdersPage($event)">
+                </app-pagination>
+            </ng-container>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="loading-state">
+                Loading orders...
+            </div>
         </div>
     </section>
 
     <!-- Create Button -->
     <div class="action-row">
-        <button class="create-po-btn" (click)="navigateToCreate()">Save PO</button>
+        <button class="create-po-btn" (click)="navigateToCreate()">Create New PO</button>
     </div>
 
     <!-- Section 2: Requests Area -->
@@ -59,9 +72,12 @@
                 <div class="requests-list">
                     <div class="request-card" *ngFor="let req of pagedRequests" (click)="selectRequest(req)"
                         [class.active]="selectedRequest === req">
-                        <div class="req-name">{{ req.name }}</div>
-                        <div class="req-dept">{{ req.department }}</div>
-                        <div class="req-time">{{ req.time }}</div>
+                        <div class="req-name">{{ req.employeeName }}</div>
+                        <div class="req-dept">{{ req.divisionName }}</div>
+                        <div class="req-time">{{ req.date | date:'dd MMM' }}</div>
+                    </div>
+                    <div *ngIf="requests.length === 0" class="empty-state">
+                        No pending requests.
                     </div>
                 </div>
 
@@ -72,43 +88,44 @@
             </div>
 
             <!-- Right: Asset Request Details -->
-            <div class="request-details">
-                <h3 class="details-title">Asset Request</h3>
+            <div class="request-details" *ngIf="selectedRequest">
+                <h3 class="details-title">Asset Request #{{ selectedRequest.id }}</h3>
                 <hr class="divider">
 
                 <div class="details-grid">
                     <div class="detail-field">
                         <label>Employee</label>
-                        <div class="value">{{ selectedRequest.employee }}</div>
+                        <div class="value">{{ selectedRequest.employeeName }}</div>
                     </div>
                     <div class="detail-field">
                         <label>Specifications</label>
                         <div class="specs-box">
-                            <div>RAM : {{ selectedRequest.specs.ram }}</div>
-                            <div>Storage: {{ selectedRequest.specs.storage }}</div>
-                            <div>Processor: {{ selectedRequest.specs.processor }}</div>
+                            <div class="pre-wrap">{{ selectedRequest.specifications || 'N/A' }}</div>
                         </div>
                     </div>
                     <div class="detail-field">
                         <label>Division</label>
-                        <div class="value">{{ selectedRequest.division }}</div>
+                        <div class="value">{{ selectedRequest.divisionName }}</div>
                     </div>
                     <!-- Spacer for grid alignment if needed -->
                     <div></div>
 
                     <div class="detail-field">
                         <label>Date</label>
-                        <div class="value">{{ selectedRequest.date }}</div>
+                        <div class="value">{{ selectedRequest.date | date:'dd MMM yyyy' }}</div>
                     </div>
                 </div>
 
                 <div class="detail-field full-width">
                     <label>Special Note</label>
                     <div class="note-box">
-                        {{ selectedRequest.note }}
+                        {{ selectedRequest.specialNote || 'No special note.' }}
                     </div>
                 </div>
 
+            </div>
+            <div class="request-details empty" *ngIf="!selectedRequest && requests.length > 0">
+                <p>Select a request for details</p>
             </div>
         </div>
     </section>

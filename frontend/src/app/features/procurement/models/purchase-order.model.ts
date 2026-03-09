@@ -58,8 +58,21 @@ export interface PurchasingOrderItemDto {
 export interface PurchasingOrderSummaryDto {
     id: number;
     orderNumber: string;
-    orderDate: Date | string;
-    totalAmount: number;
+    issuedDate: Date | string;
+    departmentName: string;
+    totalAmount?: number;
     status?: string;
-    supplierName: string;
+    supplierName?: string;
+}
+
+/**
+ * Data for a pending asset request (Table view)
+ */
+export interface AssetRequestDto {
+    id: number;
+    employeeName: string;
+    divisionName: string;
+    date: Date | string;
+    specifications?: string;
+    specialNote?: string;
 }
