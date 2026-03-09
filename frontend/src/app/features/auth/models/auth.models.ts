@@ -34,3 +34,20 @@ export interface UserDto {
     name: string;
     roles: string[];
 }
+
+/**
+ * Request payload for Forgot Password
+ */
+export interface ForgotPasswordRequest {
+    email: string;
+}
+
+/**
+ * Request payload for Reset Password
+ */
+export interface ResetPasswordRequest {
+    email: string;
+    token: string;
+    newPassword: string;
+}
+

@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
 
-import { LoginRequest, LoginResponse, RegisterRequest } from '../../features/auth/models/auth.models';
+import { LoginRequest, LoginResponse, RegisterRequest, ForgotPasswordRequest, ResetPasswordRequest } from '../../features/auth/models/auth.models';
 
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +32,20 @@ export class AuthService {
    */
   register(userData: RegisterRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData);
+  }
+
+  /**
+   * Request a password reset link
+   */
+  forgotPassword(data: ForgotPasswordRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, data);
+  }
+
+  /**
+   * Reset the password using a token
+   */
+  resetPassword(data: ResetPasswordRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reset-password`, data);
   }
 
   isAuthenticated(): boolean {
