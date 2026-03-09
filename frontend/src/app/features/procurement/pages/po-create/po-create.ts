@@ -1,27 +1,35 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../../shared/components/button/button';
 import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
-import { Router } from '@angular/router';
+import { ProcurementService } from '../../services/procurement.service';
+import { CreatePurchasingOrderItemDto } from '../../models/purchase-order.model';
 
 @Component({
   selector: 'app-po-create',
+  standalone: true,
   imports: [CommonModule, ButtonComponent, FormsModule, StatusCardComponent],
   templateUrl: './po-create.html',
   styleUrl: './po-create.css',
 })
 export class PoCreate {
   private router = inject(Router);
+  private procurementService = inject(ProcurementService);
+
   itemCount = 1;
   showSuccessPopup = false;
+  isSubmitting = false;
 
-  // Form Fields
+  // Header Info
+  supplierName = '';
+
+  // Current Item Form Fields
   itemName = '';
   model = '';
-  warrantyYears = false;
-  warrantyMonths = false;
   warrantyDuration: number | null = null;
+  warrantyUnit: 'Years' | 'Months' = 'Years';
   quantity: number = 0;
   unitPrice: number = 0;
   amount: number = 0;
@@ -32,50 +40,87 @@ export class PoCreate {
   totalPrice: number = 0;
   specialNote = '';
 
-  calculateTotals() {
-    // 1. Calculate Amount
-    this.amount = (this.quantity || 0) * (this.unitPrice || 0);
+  // Collection of added items
+  addedItems: CreatePurchasingOrderItemDto[] = [];
 
-    // 2. Calculate Discounted Price
+  calculateTotals() {
+    this.amount = (this.quantity || 0) * (this.unitPrice || 0);
     const discountVal = (this.amount * (this.discount || 0)) / 100;
     this.discountedPrice = this.amount - discountVal;
-
-    // 3. Calculate VAT Amount based on Discounted Price
     this.vatAmount = (this.discountedPrice * (this.vat || 0)) / 100;
-
-    // 4. Calculate Total Price
     this.totalPrice = this.discountedPrice + this.vatAmount;
   }
 
   onSaveAndNext() {
-    console.log('Saving item:', this.itemCount);
+    if (!this.itemName || this.quantity <= 0 || this.unitPrice <= 0) {
+      alert('Please fill in all mandatory item fields.');
+      return;
+    }
 
-    // Show Popup
+    const newItem: CreatePurchasingOrderItemDto = {
+      itemName: this.itemName,
+      model: this.model,
+      warranty: this.warrantyDuration ? `${this.warrantyDuration} ${this.warrantyUnit}` : undefined,
+      quantity: this.quantity,
+      unitPrice: this.unitPrice,
+      discount: this.discount,
+      vatPercentage: this.vat,
+      specialNote: this.specialNote
+    };
+
+    this.addedItems.push(newItem);
     this.showSuccessPopup = true;
 
-    // Wait for 2 seconds then reset
     setTimeout(() => {
       this.showSuccessPopup = false;
-
-      // Increment item count
       this.itemCount++;
-
-      // Reset form fields
-      this.itemName = '';
-      this.model = '';
-      this.warrantyYears = false;
-      this.warrantyMonths = false;
-      this.warrantyDuration = null;
-      this.quantity = 0;
-      this.unitPrice = 0;
-      this.amount = 0;
-      this.discount = 0;
-      this.discountedPrice = 0;
-      this.vat = 0;
-      this.vatAmount = 0;
-      this.totalPrice = 0;
-      this.specialNote = '';
+      this.resetItemForm();
     }, 800);
+  }
+
+  resetItemForm() {
+    this.itemName = '';
+    this.model = '';
+    this.warrantyDuration = null;
+    this.quantity = 0;
+    this.unitPrice = 0;
+    this.amount = 0;
+    this.discount = 0;
+    this.discountedPrice = 0;
+    this.vat = 0;
+    this.vatAmount = 0;
+    this.totalPrice = 0;
+    this.specialNote = '';
+  }
+
+  onSubmitOrder() {
+    if (!this.supplierName) {
+      alert('Please enter a Supplier Name.');
+      return;
+    }
+
+    if (this.addedItems.length === 0) {
+      alert('Please add at least one item.');
+      return;
+    }
+
+    this.isSubmitting = true;
+    const request = {
+      supplierName: this.supplierName,
+      items: this.addedItems
+    };
+
+    this.procurementService.createOrder(request).subscribe({
+      next: (id) => {
+        console.log('Order created successfully with ID:', id);
+        this.router.navigate(['procurement', 'purchase-orders']);
+      },
+      error: (err) => {
+        console.error('Error creating order:', err);
+        alert('Failed to create order. Please check the console for details.');
+        this.isSubmitting = false;
+      }
+    });
   }
 
   exit() {

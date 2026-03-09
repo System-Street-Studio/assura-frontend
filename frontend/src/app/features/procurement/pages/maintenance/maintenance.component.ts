@@ -23,7 +23,7 @@ interface MaintenanceRequest {
 @Component({
   selector: 'app-procurement-maintenance',
   standalone: true,
-  imports: [CommonModule, SearchBarComponent, DataTableComponent, PaginationComponent],
+  imports: [CommonModule, SearchBarComponent, PaginationComponent],
   templateUrl: './maintenance.component.html',
   styleUrls: ['./maintenance.component.css']
 })

@@ -139,6 +139,82 @@
     justify-self: end;
 }
 
+/* Sections */
+.form-section {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #00AFB5;
+    /* Teal color to match theme */
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 25px 0;
+}
+
+/* Items Table */
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.items-table th,
+.items-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.items-table th {
+    background-color: #f9f9f9;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.items-table td {
+    font-size: 14px;
+    color: #333;
+}
+
+.items-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.items-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.popup-hint {
+    position: absolute;
+    bottom: 20%;
+    color: #666;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.popup-overlay {
+    cursor: pointer;
+}
+
 /* Popup Overlay */
 .popup-overlay {
     position: fixed;
