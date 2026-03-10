@@ -68,14 +68,12 @@ export class AuthService {
     const token = this.getToken();
     if (!token) return [];
     try {
-      const decoded: unknown = jwtDecode(token);
-      const payload = decoded as {
-        role?: string | string[];
-        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string | string[];
-      };
+      const decoded: any = jwtDecode(token);
       const raw =
-        payload.role ??
-        payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
+        decoded.role ??
+        decoded.roles ??
+        decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
+        decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role'] ??
         [];
       return Array.isArray(raw) ? raw : [raw];
     } catch {

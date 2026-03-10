@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
-import { SUPPLIERS, Supplier } from '../supplier-details/supplier-details.component';
+import { Supplier } from '../../../../core/models/supplier.model';
+import { SupplierService } from '../../../../core/services/supplier.service';
 
 @Component({
     selector: 'app-suppliers',
@@ -13,21 +14,41 @@ import { SUPPLIERS, Supplier } from '../supplier-details/supplier-details.compon
     templateUrl: './suppliers.component.html',
     styleUrls: ['./suppliers.component.css']
 })
-export class SuppliersComponent {
+export class SuppliersComponent implements OnInit {
     private router = inject(Router);
+    private supplierService = inject(SupplierService);
 
     searchQuery = '';
-    suppliers: Supplier[] = SUPPLIERS;
+    suppliers: Supplier[] = [];
+    isLoading = false;
 
     // Pagination
     pageSize = 5;
     currentPage = 1;
 
+    ngOnInit(): void {
+        this.loadSuppliers();
+    }
+
+    loadSuppliers(): void {
+        this.isLoading = true;
+        this.supplierService.getSuppliers().subscribe({
+            next: (data) => {
+                this.suppliers = data;
+                this.isLoading = false;
+            },
+            error: (err) => {
+                console.error('Error fetching suppliers:', err);
+                this.isLoading = false;
+            }
+        });
+    }
+
     get filteredSuppliers(): Supplier[] {
         const q = this.searchQuery.toLowerCase();
         if (!q) return this.suppliers;
         return this.suppliers.filter(s =>
-            s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+            s.id.toString().toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
         );
     }
 
@@ -52,7 +73,7 @@ export class SuppliersComponent {
         this.currentPage = 1;
     }
 
-    navigateToDetails(id: string) {
+    navigateToDetails(id: number) {
         this.router.navigate(['procurement', 'suppliers', id]);
     }
 

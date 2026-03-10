@@ -88,18 +88,7 @@ export class SidebarComponent {
   }
 
   private getUserRoles(): string[] {
-    const rawRole = this.authService.getRole();
-    const roles: string[] = [];
-    if (Array.isArray(rawRole)) {
-      roles.push(...rawRole.map(r => r.toUpperCase()));
-    } else if (typeof rawRole === 'string') {
-      if (rawRole.includes(',')) {
-        roles.push(...rawRole.split(',').map(r => r.trim().toUpperCase()));
-      } else {
-        roles.push(rawRole.toUpperCase());
-      }
-    }
-    return roles;
+    return this.authService.getRoles().map(role => role.toUpperCase());
   }
 
   isCollapsed = false;
