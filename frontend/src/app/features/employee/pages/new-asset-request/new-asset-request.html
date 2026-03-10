@@ -28,50 +28,62 @@
 
           <!--asset name-->
         <div class="form-group">
+         
           <label>Asset Name</label>
-          <input type="text" [(ngModel)]="requestData.assetName" name="assetName" 
+          <input [(ngModel)]="requestData.assetName" name="assetName" required 
                  placeholder="e.g., Dell XPS 15" class="form-control">
+            
         </div>
 
           <!--description-->
         <div class="form-group">
+       
           <label>Description</label>
           <textarea [(ngModel)]="requestData.description" name="description" 
                     placeholder="Clearly state what the specifications of asset you request." 
                     class="form-control" rows="3"></textarea>
+         
         </div>
 
         <!--quantity-->
         <div class="form-group">
+         
           <label>Quantity</label>
-          <input type="number" [(ngModel)]="requestData.quantity" name="quantity" class="form-control">
+          <input [(ngModel)]="requestData.quantity" name="quantity" class="form-control">
+        
         </div>
 
         <!--priority-->
         <div class="form-group">
+       
           <label>Priority</label>
           <select [(ngModel)]="requestData.priority" name="priority" class="form-control">
             <option value="Normal">Normal</option>
             <option value="High">High</option>
             <option value="Critical">Critical</option>
           </select>
+       
         </div>
 
           <!--reason/justification-->
         <div class="form-group">
+      
           <label>Reason/ Justification</label>
-          <textarea [(ngModel)]="requestData.reason" name="reason" 
+          <textarea  [(ngModel)]="requestData.reason" name="reason" 
                     placeholder="Clearly state why this asset is needed for your work." 
                     class="form-control" rows="3"></textarea>
+     
         </div>
 
         <!--attachment-->
         <div class="form-group">
+ 
           <label>Attachment (Optional)</label>
           <div class="upload-area">
             <mat-icon class="upload-icon">cloud_upload</mat-icon>
             <p>Drag files here or <span class="browse">click to browse</span></p>
           </div>
+      
         </div>
 
         <!--submit button-->

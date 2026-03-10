@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AssetService } from '../../services/asset.service';
 import { MatIconModule } from '@angular/material/icon';
 
+
 @Component({
   selector: 'app-new-asset-request',
   standalone: true,
@@ -14,8 +15,9 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class NewAssetRequestComponent {
 
-  requestData = {
+  requestData= {
     id: 0,
+    employeeId: 'AS001',
     assetCategory: '',
     assetName: '',
     description: '',
@@ -23,18 +25,15 @@ export class NewAssetRequestComponent {
     priority: 'Normal',
     reason: '',
     status: 'Pending',
-    submittedDate: new Date()
+    submittedDate: new Date().toISOString()
   };
 
   constructor(private router: Router, private assetService: AssetService) {}
 
- onSubmit() {
-  if (!this.requestData.assetName || !this.requestData.assetCategory) {
-    alert('Please fill in Asset Name and Category');
-    return;
-  }
+ 
 
-  this.assetService.saveAssetRequest(this.requestData).subscribe({
+ onSubmit() {
+  this.assetService.createRequest(this.requestData).subscribe({
     next: (res: any) => {
       console.log('Backend Response:', res);
       alert(res.message || 'Request submitted successfully!');
@@ -43,4 +42,6 @@ export class NewAssetRequestComponent {
     error: (err: any) => console.error('Save failed', err)
   });
 }
+
+
 }
