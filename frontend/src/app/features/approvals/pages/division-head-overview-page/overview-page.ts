@@ -16,7 +16,7 @@ interface Activity {
   templateUrl: './overview-page.html',
   styleUrls: ['./overview-page.css']
 })
-export class OverviewComponent {
+export class DivisionHeadOverviewComponent {
   recentActivities = signal<Activity[]>([
     { description: 'Transfer request from Harry Ekanayake approved.', timestamp: '5 minutes ago', status: 'Approved' },
     { description: 'New asset request received from Sarah.', timestamp: '30 minutes ago', status: 'Pending' },

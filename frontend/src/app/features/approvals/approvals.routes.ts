@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { OverviewComponent } from './pages/division-head-overview-page/overview-page';
+import { DivisionHeadOverviewComponent } from './pages/division-head-overview-page/overview-page';
 import { DivisionAssetsComponent } from './pages/division-assets/division-assets';
 import { RequestsPageComponent } from './pages/requests-page/requests-page';
 import { MaintenanceDetailsComponent } from './pages/maintenance-details/maintenance-details';
@@ -12,7 +12,7 @@ export const approvalsRoutes: Routes = [
     // { path: 'pending', loadComponent: ... },
      {
         path: 'overview',
-        component:  OverviewComponent
+        component:  DivisionHeadOverviewComponent
 
    },
     {
