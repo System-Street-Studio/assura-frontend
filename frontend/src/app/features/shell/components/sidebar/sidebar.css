@@ -72,6 +72,23 @@
   gap: 2px;
 }
 
+.sidebar-section-header {
+  padding: 16px 14px 4px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0d6d78;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  opacity: 0.8;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+  margin: 10px 10px;
+}
+
 .nav-item {
   display: flex;
   align-items: center;

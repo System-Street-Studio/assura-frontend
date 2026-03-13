@@ -57,10 +57,7 @@ export class SidebarComponent {
     { label: 'Export', icon: 'file_download', link: '/reporting/export', roles: ['Auditor', 'Admin'], section: 'reporting' },
 
     // Superintendent section
-    { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
-
-    // Common / General
-    { label: 'Global Overview', icon: 'dashboard', link: '/overview', roles: ['ANY'], section: 'general' }
+    { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'], section: 'superintendent' }
   ];
 
   get filteredMenuItems(): MenuItem[] {
@@ -80,10 +77,9 @@ export class SidebarComponent {
     // 3. Filter by active section if we are in one
     if (activeSection) {
       filtered = filtered.filter(item => item.section === activeSection);
-    } else {
-      // If on root/overview, show general items or items matching user's primary role section
-      filtered = filtered.filter(item => item.section === 'general' || !item.section);
     }
+    // If no active section (like on /overview), we show all accessible items
+    // This allows users to navigate to different sections from the home page.
 
     return filtered;
   }

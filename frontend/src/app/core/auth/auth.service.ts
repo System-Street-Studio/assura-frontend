@@ -69,18 +69,14 @@ export class AuthService {
     if (!token) return [];
     try {
       const decoded: any = jwtDecode(token);
-      console.log('[DEBUG] AuthService: decoded token', decoded);
       const raw =
         decoded.role ??
         decoded.roles ??
         decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
         decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role'] ??
         [];
-      const roles = Array.isArray(raw) ? raw : [raw];
-      console.log('[DEBUG] AuthService: extracted roles', roles);
-      return roles;
-    } catch (error) {
-      console.error('[DEBUG] AuthService: role extraction failed', error);
+      return Array.isArray(raw) ? raw : [raw];
+    } catch {
       return [];
     }
   }

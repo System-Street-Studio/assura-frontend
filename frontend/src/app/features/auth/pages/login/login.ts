@@ -42,12 +42,10 @@ export class LoginComponent {
 
         this.authService.login(credentials).subscribe({
             next: (response) => {
-                console.log('[DEBUG] Login success response received');
                 this.isLoading = false;
                 this.router.navigate(['/overview']); // Redirect to Shell
             },
             error: (err: HttpErrorResponse) => {
-                console.error('[DEBUG] Login error received', err);
                 this.isLoading = false;
                 this.errorMessage = err.error?.message || 'Login failed. Please check your credentials.';
             }
