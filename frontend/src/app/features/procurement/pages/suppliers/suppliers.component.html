@@ -18,15 +18,22 @@
                 <tr>
                     <th>Supplier ID</th>
                     <th>Name</th>
+                    <th>Email</th>
+                    <th>Contact No</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let supplier of pagedSuppliers">
-                    <td (click)="navigateToDetails(supplier.id)" style="cursor: pointer;">{{ supplier.id }}</td>
+                <tr *ngFor="let supplier of pagedSuppliers" class="supplier-row">
+                    <td (click)="navigateToDetails(supplier.id)" class="link-id">{{ supplier.id }}</td>
                     <td>{{ supplier.name }}</td>
+                    <td>{{ supplier.email }}</td>
+                    <td>{{ supplier.phone || supplier.contactNumber }}</td>
                 </tr>
-                <tr *ngIf="pagedSuppliers.length === 0">
-                    <td colspan="2" class="no-results">No suppliers found.</td>
+                <tr *ngIf="!isLoading && pagedSuppliers.length === 0">
+                    <td colspan="4" class="no-results">No suppliers found.</td>
+                </tr>
+                <tr *ngIf="isLoading">
+                    <td colspan="4" class="no-results">Loading suppliers...</td>
                 </tr>
             </tbody>
         </table>

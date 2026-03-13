@@ -1,8 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { Supplier } from '../../../../core/models/supplier.model';
 import { SupplierService } from '../../../../core/services/supplier.service';
@@ -17,6 +18,7 @@ import { SupplierService } from '../../../../core/services/supplier.service';
 export class SuppliersComponent implements OnInit {
     private router = inject(Router);
     private supplierService = inject(SupplierService);
+    private cdr = inject(ChangeDetectorRef);
 
     searchQuery = '';
     suppliers: Supplier[] = [];
@@ -27,29 +29,44 @@ export class SuppliersComponent implements OnInit {
     currentPage = 1;
 
     ngOnInit(): void {
+        console.log('[DEBUG] SuppliersComponent: ngOnInit started');
         this.loadSuppliers();
     }
 
     loadSuppliers(): void {
+        console.log('[DEBUG] SuppliersComponent: loadSuppliers calling service');
         this.isLoading = true;
-        this.supplierService.getSuppliers().subscribe({
-            next: (data) => {
-                this.suppliers = data;
+        this.cdr.detectChanges(); // Trigger show loading
+
+        this.supplierService.getSuppliers().pipe(
+            finalize(() => {
+                console.log('[DEBUG] SuppliersComponent: loadSuppliers request finalized');
                 this.isLoading = false;
+                this.cdr.detectChanges(); // Force UI update
+            })
+        ).subscribe({
+            next: (data: Supplier[]) => {
+                console.log('[DEBUG] SuppliersComponent: Received data:', data);
+                this.suppliers = data || [];
+                console.log('[DEBUG] SuppliersComponent: suppliers count:', this.suppliers.length);
+                this.cdr.detectChanges(); // Force UI update
             },
             error: (err) => {
-                console.error('Error fetching suppliers:', err);
-                this.isLoading = false;
+                console.error('[DEBUG] SuppliersComponent: Error fetching suppliers:', err);
+                this.cdr.detectChanges(); // Force UI update
             }
         });
     }
 
     get filteredSuppliers(): Supplier[] {
-        const q = this.searchQuery.toLowerCase();
+        if (!this.suppliers) return [];
+        const q = (this.searchQuery || '').toLowerCase();
         if (!q) return this.suppliers;
-        return this.suppliers.filter(s =>
-            s.id.toString().toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
-        );
+        return this.suppliers.filter(s => {
+            const idMatch = s.id?.toString().toLowerCase().includes(q);
+            const nameMatch = s.name?.toLowerCase().includes(q);
+            return idMatch || nameMatch;
+        });
     }
 
     get totalPages(): number {

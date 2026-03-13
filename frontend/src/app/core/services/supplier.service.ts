@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
-import { Supplier } from '../models/supplier.model';
+import { Supplier, CreateSupplierRequest } from '../models/supplier.model';
 
 @Injectable({
     providedIn: 'root'
@@ -15,5 +15,9 @@ export class SupplierService {
 
     getSupplierById(id: number): Observable<Supplier> {
         return this.apiService.get<Supplier>(`Suppliers/${id}`);
+    }
+
+    createSupplier(supplier: CreateSupplierRequest): Observable<number> {
+        return this.apiService.post<number>('Suppliers', supplier);
     }
 }

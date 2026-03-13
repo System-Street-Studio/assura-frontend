@@ -1,35 +1,30 @@
 <div class="supplier-details-container">
-
-    <h2 class="page-title">Supplier Details</h2>
+    <div class="page-header">
+        <h1 class="page-title">Supplier Details</h1>
+    </div>
 
     <div class="details-card" *ngIf="supplier; else notFound">
-
         <div class="details-grid">
-
             <!-- Left Column -->
             <div class="details-column">
                 <div class="detail-row">
-                    <span class="label">Supplier ID:</span>
+                    <span class="label">Supplier ID :</span>
                     <span class="value">{{ supplier.id }}</span>
                 </div>
                 <div class="detail-row">
-                    <span class="label">Supplier Name:</span>
+                    <span class="label">Supplier Name :</span>
                     <span class="value">{{ supplier.name }}</span>
                 </div>
                 <div class="detail-row">
-                    <span class="label">Contact Number:</span>
-                    <span class="value">{{ supplier.contactNumber }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="label">URL:</span>
-                    <span class="value">{{ supplier.url }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="label">email:</span>
+                    <span class="label">Email :</span>
                     <span class="value">{{ supplier.email }}</span>
                 </div>
+                <div class="detail-row">
+                    <span class="label">Address :</span>
+                    <span class="value">{{ supplier.address || 'N/A' }}</span>
+                </div>
                 <div class="detail-row update-status-row">
-                    <span class="label">Update Status:</span>
+                    <span class="label">Update Status :</span>
                     <label class="radio-label">
                         <input type="radio" name="status" value="Active" [checked]="supplier.status === 'Active'" />
                         Active
@@ -44,29 +39,38 @@
             <!-- Right Column -->
             <div class="details-column">
                 <div class="detail-row">
-                    <span class="label">Address:</span>
-                    <span class="value">{{ supplier.address }}</span>
+                    <span class="label">Contact Number :</span>
+                    <span class="value">{{ supplier.phone || supplier.contactNumber || 'N/A' }}</span>
                 </div>
                 <div class="detail-row">
-                    <span class="label">Date Registered:</span>
-                    <span class="value">{{ supplier.dateRegistered }}</span>
+                    <span class="label">Contact Person :</span>
+                    <span class="value">{{ supplier.contactPerson || 'N/A' }}</span>
                 </div>
                 <div class="detail-row">
-                    <span class="label">Status:</span>
+                    <span class="label">Website :</span>
+                    <span class="value">{{ supplier.website || supplier.url || 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Date Registered :</span>
+                    <span class="value">{{ supplier.dateRegistered || (supplier.createdAt | date:'yyyy MMM dd') || 'N/A'
+                        }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Status :</span>
                     <span class="value">{{ supplier.status }}</span>
                 </div>
             </div>
-
         </div>
 
         <div class="footer-actions">
             <button class="close-btn" (click)="goBack()">Close</button>
         </div>
-
     </div>
 
     <ng-template #notFound>
-        <p class="not-found">Supplier not found.</p>
+        <div class="details-card">
+            <p class="not-found" *ngIf="!isLoading">Supplier with ID "{{ routeId }}" not found.</p>
+            <p class="not-found" *ngIf="isLoading">Loading supplier details...</p>
+        </div>
     </ng-template>
-
 </div>

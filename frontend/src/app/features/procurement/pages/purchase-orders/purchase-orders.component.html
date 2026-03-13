@@ -7,15 +7,15 @@
         <div class="controls-row">
             <div class="search-bar">
                 <mat-icon class="search-icon">search</mat-icon>
-                <input type="text" placeholder="Search by Department..." class="search-input">
+                <input type="text" placeholder="Search" class="search-input">
             </div>
-            <div class="filter-wrapper">
+            <!-- <div class="filter-wrapper">
                 <button class="filter-btn" (click)="toggleFilter()">
                     <mat-icon>filter_list</mat-icon> Filter
                 </button>
                 <app-filter-dropdown *ngIf="isFilterOpen" [groups]="filterGroups"
                     (closed)="onFilterClose($event)"></app-filter-dropdown>
-            </div>
+            </div> -->
         </div>
 
         <div class="table-container">

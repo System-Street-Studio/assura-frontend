@@ -12,3 +12,11 @@ export interface Supplier {
     url?: string;
     dateRegistered?: string;
 }
+export interface CreateSupplierRequest {
+    Name: string;
+    ContactPerson?: string;
+    Email?: string;
+    Phone?: string;
+    Address?: string;
+    Website?: string;
+}

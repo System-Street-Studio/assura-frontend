@@ -7,11 +7,12 @@ export const adminRoutes: Routes = [
     },
     {
         path: 'my-assets',
-        loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) // Stub
+        loadComponent: () => import('./pages/my-assets/my-assets').then(m => m.MyAssetsComponent)
     },
     {
         path: 'track-assets',
-        loadComponent: () => import('./pages/track-assets/track-assets').then(m => m.TrackAssetsComponent)
+        loadComponent: () => import('./pages/track-assets/track-assets').then(m => m.TrackAssetsComponent),
+        pathMatch: 'full'
     },
     {
         path: 'track-assets/:id',

@@ -31,6 +31,7 @@ export class SidebarComponent {
 
     // Procurement section
     { label: 'Overview', icon: 'home', link: '/procurement/overview', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },
+    { label: 'My Assets', icon: 'inventory_2', link: '/procurement/my-assets', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },
     { label: 'PO', icon: 'receipt_long', link: '/procurement/purchase-orders', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },
     { label: 'Suppliers', icon: 'local_shipping', link: '/procurement/suppliers', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },
     { label: 'Maintenance', icon: 'build', link: '/procurement/maintenance', roles: ['PROCUREMENT', 'ADMIN'], section: 'procurement' },

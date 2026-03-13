@@ -107,7 +107,17 @@
 
 .suppliers-table tbody tr:hover {
     background-color: #f7fafa;
+}
+
+.link-id {
+    color: #00AFB5;
+    font-weight: 600;
     cursor: pointer;
+    text-decoration: underline;
+}
+
+.link-id:hover {
+    color: #008a8f;
 }
 
 /* Column widths */

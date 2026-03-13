@@ -45,5 +45,9 @@ export const procurementRoutes: Routes = [
         path: 'new-arrivals',
         loadComponent: () => import('./pages/new-arrivals/new-arrivals.component').then(m => m.NewArrivalsComponent)
     },
+    {
+        path: 'my-assets',
+        loadComponent: () => import('./pages/my-assets/my-assets').then(m => m.ProcurementMyAssetsComponent)
+    },
     { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];
