@@ -1,14 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
 import { DataTableComponent, ColumnDef } from '../../../../shared/components/data-table/data-table';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
-
-interface MaintenanceHistory {
-  id: string;
-  asset: string;
-}
+import { ProcurementService } from '../../services/procurement.service';
+import { MaintenanceDto } from '../../models/maintenance.model';
 
 interface MaintenanceRequest {
   id: string;
@@ -27,30 +24,36 @@ interface MaintenanceRequest {
   templateUrl: './maintenance.component.html',
   styleUrls: ['./maintenance.component.css']
 })
-export class ProcurementMaintenanceComponent {
+export class ProcurementMaintenanceComponent implements OnInit {
   private router = inject(Router);
+  private procurementService = inject(ProcurementService);
 
-  // History Table Config
-  historyColumns: ColumnDef[] = [
-    { key: 'id', label: 'ID', type: 'text' },
-    { key: 'asset', label: 'Asset', type: 'text' }
-  ];
-
-  maintenanceHistory: MaintenanceHistory[] = [
-    { id: 'N123', asset: 'Dell XPS 15' },
-    { id: 'N124', asset: 'MacBook Pro 14' },
-    { id: 'N125', asset: 'ThinkPad X1' },
-    { id: 'N126', asset: 'Logitech G502' },
-    { id: 'N127', asset: 'Dell UltraSharp' },
-    { id: 'N128', asset: 'Cisco Router' },
-    { id: 'N129', asset: 'HP LaserJet' },
-  ];
-
-  filteredHistory: MaintenanceHistory[] = [...this.maintenanceHistory];
+  maintenanceHistory: MaintenanceDto[] = [];
+  filteredHistory: MaintenanceDto[] = [];
+  isLoading = false;
 
   // History Table pagination
   historyPageSize = 5;
   historyCurrentPage = 1;
+
+  ngOnInit(): void {
+    this.loadMaintenanceHistory();
+  }
+
+  loadMaintenanceHistory(): void {
+    this.isLoading = true;
+    this.procurementService.getMaintenances().subscribe({
+      next: (data) => {
+        this.maintenanceHistory = data;
+        this.filteredHistory = [...this.maintenanceHistory];
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading maintenance history', err);
+        this.isLoading = false;
+      }
+    });
+  }
 
   get historyTotalPages(): number {
     return Math.max(1, Math.ceil(this.filteredHistory.length / this.historyPageSize));
@@ -60,7 +63,7 @@ export class ProcurementMaintenanceComponent {
     return Array.from({ length: this.historyTotalPages }, (_, i) => i + 1);
   }
 
-  get pagedHistory(): MaintenanceHistory[] {
+  get pagedHistory(): MaintenanceDto[] {
     const startIndex = (this.historyCurrentPage - 1) * this.historyPageSize;
     return this.filteredHistory.slice(startIndex, startIndex + this.historyPageSize);
   }
@@ -71,7 +74,7 @@ export class ProcurementMaintenanceComponent {
     }
   }
 
-  // Maintenance Requests Data
+  // Maintenance Requests Data (Still mock for now as backend for this is unclear)
   maintenanceRequests: MaintenanceRequest[] = [
     {
       id: '1',
@@ -85,67 +88,6 @@ export class ProcurementMaintenanceComponent {
         'Processor: Intel 14th gen i7'
       ],
       specialNote: 'Display is Broken'
-    },
-    {
-      id: '2',
-      assetName: 'MacBook Pro',
-      division: 'HR',
-      timestamp: '2 day ago',
-      date: '10 Jan 2026',
-      specifications: [
-        'RAM: 16GB',
-        'Storage: 512GB',
-        'Processor: M3 Pro'
-      ],
-      specialNote: 'Battery replacement needed'
-    },
-    {
-      id: '3',
-      assetName: 'Cisco Switch',
-      division: 'Admin',
-      timestamp: '12 . 12 . 2025',
-      date: '12 Dec 2025',
-      specifications: [
-        'Ports: 24',
-        'Type: Managed'
-      ],
-      specialNote: 'Port 5 is faulty'
-    },
-    {
-      id: '4',
-      assetName: 'HP LaserJet',
-      division: 'Finance',
-      timestamp: '3 days ago',
-      date: '08 Jan 2026',
-      specifications: [
-        'Model: Enterprise M507dn',
-        'Toner: Black'
-      ],
-      specialNote: 'Paper jam issue in tray 2'
-    },
-    {
-      id: '5',
-      assetName: 'Dell Monitor',
-      division: 'IT',
-      timestamp: '4 days ago',
-      date: '07 Jan 2026',
-      specifications: [
-        'Size: 27 inch',
-        'Resolution: 4K'
-      ],
-      specialNote: 'Flickering problem'
-    },
-    {
-      id: '6',
-      assetName: 'Logitech Mouse',
-      division: 'HR',
-      timestamp: '1 week ago',
-      date: '01 Jan 2026',
-      specifications: [
-        'Model: MX Master 3',
-        'Type: Wireless'
-      ],
-      specialNote: 'Left click not working'
     }
   ];
 
@@ -169,7 +111,6 @@ export class ProcurementMaintenanceComponent {
   goToRequestsPage(page: number): void {
     if (page >= 1 && page <= this.requestsTotalPages) {
       this.requestsCurrentPage = page;
-      // Optionally auto-select the first request on the new page
       if (this.pagedRequests.length > 0) {
         this.selectedRequest = this.pagedRequests[0];
       }
@@ -179,23 +120,19 @@ export class ProcurementMaintenanceComponent {
   selectedRequest: MaintenanceRequest | null = this.maintenanceRequests[0];
 
   onSearch(query: string): void {
-    this.historyCurrentPage = 1; // Reset to first page on search
+    this.historyCurrentPage = 1;
     if (!query) {
       this.filteredHistory = [...this.maintenanceHistory];
       return;
     }
     const lowerQuery = query.toLowerCase();
     this.filteredHistory = this.maintenanceHistory.filter(item =>
-      item.id.toLowerCase().includes(lowerQuery) ||
-      item.asset.toLowerCase().includes(lowerQuery)
+      item.maintenanceNumber.toLowerCase().includes(lowerQuery) ||
+      item.assetName.toLowerCase().includes(lowerQuery)
     );
   }
 
-  onHistoryRowClick(row: MaintenanceHistory): void {
-    console.log('History row clicked:', row);
-  }
-
-  navigateToNote(id: string): void {
+  navigateToNote(id: number): void {
     this.router.navigate(['/procurement/maintenance/note', id]);
   }
 
@@ -203,8 +140,11 @@ export class ProcurementMaintenanceComponent {
     this.router.navigate(['/procurement/maintenance/create']);
   }
 
+  navigateToFirms(): void {
+    this.router.navigate(['/procurement/maintenance/repairing-firms']);
+  }
+
   selectRequest(request: MaintenanceRequest): void {
     this.selectedRequest = request;
   }
 }
-

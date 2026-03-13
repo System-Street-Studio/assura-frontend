@@ -9,20 +9,40 @@
         <form (ngSubmit)="save()" #noteForm="ngForm">
             <div class="note-grid">
                 <div class="note-item">
+                    <label for="maintenanceNumber">Maintenance No:</label>
+                    <input type="text" id="maintenanceNumber" name="maintenanceNumber"
+                        [(ngModel)]="noteData.maintenanceNumber" readonly>
+                </div>
+                <div class="note-item">
                     <label for="asset">Asset:</label>
-                    <input type="text" id="asset" name="asset" [(ngModel)]="noteData.asset" required>
+                    <select id="asset" name="asset" [(ngModel)]="noteData.assetId" required>
+                        <option [ngValue]="null">Select Asset</option>
+                        <option *ngFor="let asset of assets" [ngValue]="asset.id">{{ asset.assetCode }} - {{
+                            asset.assetName }}</option>
+                    </select>
                 </div>
                 <div class="note-item">
                     <label for="date">Date:</label>
-                    <input type="text" id="date" name="date" [(ngModel)]="noteData.date" required>
+                    <input type="date" id="date" name="date" [(ngModel)]="noteData.date" required>
                 </div>
                 <div class="note-item">
                     <label for="repairFirm">Repair Firm:</label>
-                    <input type="text" id="repairFirm" name="repairFirm" [(ngModel)]="noteData.repairFirm" required>
+                    <select id="repairFirm" name="repairFirm" [(ngModel)]="noteData.repairingFirmId">
+                        <option [ngValue]="null">Select Repair Firm</option>
+                        <option *ngFor="let firm of repairingFirms" [ngValue]="firm.id">{{ firm.name }}</option>
+                    </select>
+                </div>
+                <div class="note-item">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" [(ngModel)]="noteData.status">
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
                 </div>
                 <div class="note-item">
                     <label for="cost">Cost (LKR):</label>
-                    <input type="text" id="cost" name="cost" [(ngModel)]="noteData.cost" required>
+                    <input type="number" id="cost" name="cost" [(ngModel)]="noteData.cost" required>
                 </div>
                 <div class="note-item full-width">
                     <label for="description">Description:</label>

@@ -4,6 +4,9 @@
         <h1 class="section-title">History of Maintenance</h1>
         <div class="history-controls">
             <app-search-bar (queryChange)="onSearch($event)" placeholder="Search Assets..."></app-search-bar>
+            <button class="manage-firms-btn" (click)="navigateToFirms()">
+                <span class="material-icons">business</span> Manage Repairing Firms
+            </button>
         </div>
 
         <div class="table-card">
@@ -16,8 +19,8 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let record of pagedHistory">
-                        <td class="clickable-id" (click)="navigateToNote(record.id)">{{ record.id }}</td>
-                        <td>{{ record.asset }}</td>
+                        <td class="clickable-id" (click)="navigateToNote(record.id)">{{ record.maintenanceNumber }}</td>
+                        <td>{{ record.assetName }}</td>
                     </tr>
                     <tr *ngIf="pagedHistory.length === 0">
                         <td colspan="2" class="empty-state">No data available</td>

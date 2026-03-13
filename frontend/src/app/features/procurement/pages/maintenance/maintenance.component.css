@@ -18,7 +18,27 @@
 /* History Section */
 .history-controls {
     margin-bottom: 20px;
-    max-width: 300px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.manage-firms-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.manage-firms-btn:hover {
+    background: #4338ca;
 }
 
 .table-card {
