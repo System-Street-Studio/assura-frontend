@@ -11,6 +11,8 @@
 
     <div class="controls-section">
         <app-search-bar (queryChange)="onSearch($event)" placeholder="Search Firms..."></app-search-bar>
+        <div style="font-size: 10px; color: gray;">[DEBUG] isLoading: {{ isLoading }}, pagedFirms.length: {{
+            pagedFirms.length }}</div>
     </div>
 
     <div class="table-card">
@@ -25,18 +27,22 @@
                 </tr>
             </thead>
             <tbody>
+                <tr *ngIf="isLoading">
+                    <td colspan="5" class="empty-state">
+                        <div>Loading firms...</div>
+                    </td>
+                </tr>
+                <tr *ngIf="!isLoading && pagedFirms.length === 0">
+                    <td colspan="5" class="empty-state">
+                        <div>No repairing firms found.</div>
+                    </td>
+                </tr>
                 <tr *ngFor="let firm of pagedFirms">
                     <td class="firm-name">{{ firm.name }}</td>
                     <td>{{ firm.contactPerson || '-' }}</td>
                     <td>{{ firm.email || '-' }}</td>
                     <td>{{ firm.phone || '-' }}</td>
                     <td>{{ firm.address || '-' }}</td>
-                </tr>
-                <tr *ngIf="pagedFirms.length === 0">
-                    <td colspan="5" class="empty-state">
-                        <div *ngIf="isLoading; else noData">Loading firms...</div>
-                        <ng-template #noData>No repairing firms found.</ng-template>
-                    </td>
                 </tr>
             </tbody>
         </table>

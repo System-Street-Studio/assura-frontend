@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ProcurementService } from '../../services/procurement.service';
@@ -16,6 +16,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 export class RepairingFirmsComponent implements OnInit {
     private router = inject(Router);
     private procurementService = inject(ProcurementService);
+    private cdr = inject(ChangeDetectorRef);
 
     firms: RepairingFirmDto[] = [];
     filteredFirms: RepairingFirmDto[] = [];
@@ -26,6 +27,7 @@ export class RepairingFirmsComponent implements OnInit {
     pageSize = 10;
     totalPages = 1;
     pageNumbers: number[] = [];
+    pagedFirms: RepairingFirmDto[] = [];
 
     ngOnInit(): void {
         this.loadFirms();
@@ -35,13 +37,16 @@ export class RepairingFirmsComponent implements OnInit {
         this.isLoading = true;
         this.procurementService.getRepairingFirms().subscribe({
             next: (data) => {
-                this.firms = data;
-                this.filteredFirms = [...data];
-                this.updatePagination();
+                console.log('[DEBUG] RepairingFirmsComponent: Data received', data);
+                this.firms = data || [];
+                this.filteredFirms = [...this.firms];
                 this.isLoading = false;
+                this.updatePagination();
+                this.cdr.detectChanges();
+                console.log('[DEBUG] RepairingFirmsComponent: isLoading set to false, firms count:', this.firms.length);
             },
             error: (err) => {
-                console.error('Error loading repairing firms', err);
+                console.error('[DEBUG] RepairingFirmsComponent: Error received', err);
                 this.isLoading = false;
             }
         });
@@ -59,18 +64,20 @@ export class RepairingFirmsComponent implements OnInit {
     }
 
     updatePagination(): void {
-        this.totalPages = Math.ceil(this.filteredFirms.length / this.pageSize);
+        this.totalPages = Math.ceil(this.filteredFirms.length / this.pageSize) || 1;
         this.pageNumbers = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+
+        const start = (this.currentPage - 1) * this.pageSize;
+        this.pagedFirms = this.filteredFirms.slice(start, start + this.pageSize);
+
+        console.log(`[DEBUG] RepairingFirmsComponent: Updated pagination. totalPages: ${this.totalPages}, pagedFirms count: ${this.pagedFirms.length}`);
     }
 
-    get pagedFirms(): RepairingFirmDto[] {
-        const start = (this.currentPage - 1) * this.pageSize;
-        return this.filteredFirms.slice(start, start + this.pageSize);
-    }
 
     goToPage(page: number): void {
         if (page >= 1 && page <= this.totalPages) {
             this.currentPage = page;
+            this.updatePagination();
         }
     }
 

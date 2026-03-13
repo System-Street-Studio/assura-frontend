@@ -114,7 +114,14 @@ export class ProcurementService {
      * Get all Repairing Firms
      */
     getRepairingFirms(): Observable<RepairingFirmDto[]> {
-        return this.http.get<RepairingFirmDto[]>(this.repairingFirmsUrl);
+        console.log(`[DEBUG] ProcurementService: Fetching repairing firms from ${this.repairingFirmsUrl}`);
+        return this.http.get<RepairingFirmDto[]>(this.repairingFirmsUrl).pipe(
+            tap(firms => console.log(`[DEBUG] ProcurementService: Successfully fetched ${firms.length} repairing firms`)),
+            catchError(err => {
+                console.error('[DEBUG] ProcurementService: Error fetching repairing firms', err);
+                return throwError(() => err);
+            })
+        );
     }
 
     /**
