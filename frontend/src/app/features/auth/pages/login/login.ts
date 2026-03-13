@@ -44,7 +44,7 @@ export class LoginComponent {
             next: (response) => {
                 console.log('[DEBUG] Login success response received');
                 this.isLoading = false;
-                this.router.navigate(['/']); // Redirect to Shell
+                this.router.navigate(['/overview']); // Redirect to Shell
             },
             error: (err: HttpErrorResponse) => {
                 console.error('[DEBUG] Login error received', err);
