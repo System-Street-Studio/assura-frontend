@@ -158,6 +158,21 @@ export class ProcurementService {
     }
 
     /**
+     * Get Procurement Statistics for Overview page
+     */
+    getProcurementStats(): Observable<any> {
+        const url = `${this.apiUrl}/stats`;
+        console.log(`[DEBUG] ProcurementService: Fetching stats from ${url}`);
+        return this.http.get<any>(url).pipe(
+            tap(stats => console.log(`[DEBUG] ProcurementService: Successfully fetched stats`, stats)),
+            catchError(err => {
+                console.error('[DEBUG] ProcurementService: Error fetching stats', err);
+                return throwError(() => err);
+            })
+        );
+    }
+
+    /**
      * Get all Divisions
      */
     getDivisions(): Observable<any[]> {
