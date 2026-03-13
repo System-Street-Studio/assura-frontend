@@ -4,6 +4,7 @@ import { Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CreatePurchasingOrderRequest, PurchasingOrderDto, PurchasingOrderSummaryDto, AssetRequestDto } from '../models/purchase-order.model';
 import { MaintenanceDto, CreateMaintenanceRequest, AssetSummaryDto, RepairingFirmDto, CreateRepairingFirmRequest } from '../models/maintenance.model';
+import { AssetInformingDto, InformStoresRequest } from '../models/arrival.model';
 
 @Injectable({
     providedIn: 'root'
@@ -14,6 +15,8 @@ export class ProcurementService {
     private maintenanceUrl = `${environment.apiUrl}/Maintenances`;
     private assetsUrl = `${environment.apiUrl}/Assets`;
     private repairingFirmsUrl = `${environment.apiUrl}/RepairingFirms`;
+    private informingUrl = `${environment.apiUrl}/Informing`;
+    private divisionsUrl = `${environment.apiUrl}/Divisions`;
 
     /**
      * Get all Purchasing Orders (Summary)
@@ -136,5 +139,28 @@ export class ProcurementService {
                 return throwError(() => err);
             })
         );
+    }
+
+    /**
+     * Get New Arrivals history
+     */
+    getAssetInformings(): Observable<AssetInformingDto[]> {
+        const url = `${this.informingUrl}/history`;
+        return this.http.get<AssetInformingDto[]>(url);
+    }
+
+    /**
+     * Inform stores about new arrivals
+     */
+    informStores(data: InformStoresRequest): Observable<number> {
+        const url = `${this.informingUrl}/inform-stores`;
+        return this.http.post<number>(url, data);
+    }
+
+    /**
+     * Get all Divisions
+     */
+    getDivisions(): Observable<any[]> {
+        return this.http.get<any[]>(this.divisionsUrl);
     }
 }

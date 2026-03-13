@@ -1,7 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
+import { ProcurementService } from '../../services/procurement.service';
+import { AssetInformingDto, InformStoresRequest } from '../../models/arrival.model';
 
 @Component({
   selector: 'app-new-arrivals',
@@ -10,35 +12,91 @@ import { StatusCardComponent } from '../../../../shared/components/status-card/s
   templateUrl: './new-arrivals.component.html',
   styleUrls: ['./new-arrivals.component.css']
 })
-export class NewArrivalsComponent {
+export class NewArrivalsComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private procurementService = inject(ProcurementService);
 
   showSuccess = false;
+  isSubmitting = false;
+  divisions: any[] = [];
+  history: AssetInformingDto[] = [];
 
   arrivalForm: FormGroup = this.fb.group({
     itemName: ['', Validators.required],
-    model: ['', Validators.required],
-    warranty: [null, Validators.required],
+    model: [''],
+    warranty: [null],
     isYears: [false],
     isMonths: [false],
     quantity: [null, [Validators.required, Validators.min(1)]],
-    purchasedDate: ['', Validators.required],
-    department: ['', Validators.required],
+    purchasedDate: [new Date().toISOString().split('T')[0], Validators.required],
+    divisionId: [null, Validators.required],
     purchasedPrice: [null, [Validators.required, Validators.min(0)]]
   });
 
-  onSubmit() {
-    if (this.arrivalForm.valid) {
-      console.log('Form Submitted:', this.arrivalForm.value);
+  ngOnInit() {
+    this.loadDivisions();
+    this.loadHistory();
+  }
 
-      // Show success card after 800ms delay as requested
-      setTimeout(() => {
-        this.showSuccess = true;
-      }, 800);
+  loadDivisions() {
+    this.procurementService.getDivisions().subscribe({
+      next: (data) => this.divisions = data,
+      error: (err) => console.error('Error loading divisions', err)
+    });
+  }
+
+  loadHistory() {
+    this.procurementService.getAssetInformings().subscribe({
+      next: (data) => this.history = data,
+      error: (err) => console.error('Error loading history', err)
+    });
+  }
+
+  onSubmit() {
+    if (this.arrivalForm.valid && !this.isSubmitting) {
+      this.isSubmitting = true;
+      const formValue = this.arrivalForm.value;
+
+      let warrantyStr = '';
+      if (formValue.warranty) {
+        warrantyStr = `${formValue.warranty} ${formValue.isYears ? 'Years' : formValue.isMonths ? 'Months' : ''}`.trim();
+      }
+
+      const request: InformStoresRequest = {
+        itemName: formValue.itemName,
+        model: formValue.model,
+        warranty: warrantyStr,
+        quantity: formValue.quantity,
+        purchasedDate: formValue.purchasedDate,
+        purchasedPrice: formValue.purchasedPrice,
+        divisionId: formValue.divisionId
+      };
+
+      this.procurementService.informStores(request).subscribe({
+        next: () => {
+          this.showSuccess = true;
+          this.isSubmitting = false;
+          this.loadHistory();
+          setTimeout(() => {
+            this.showSuccess = false;
+            this.arrivalForm.reset({
+              purchasedDate: new Date().toISOString().split('T')[0],
+              divisionId: null
+            });
+          }, 2000);
+        },
+        error: (err) => {
+          console.error('Error informing stores', err);
+          this.isSubmitting = false;
+          alert('Failed to inform stores. Please check the logs.');
+        }
+      });
     }
   }
 
   onCancel() {
-    this.arrivalForm.reset();
+    this.arrivalForm.reset({
+      purchasedDate: new Date().toISOString().split('T')[0]
+    });
   }
 }

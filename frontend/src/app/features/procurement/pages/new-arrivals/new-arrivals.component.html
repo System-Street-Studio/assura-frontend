@@ -43,7 +43,7 @@
                 <input type="number" id="quantity" formControlName="quantity">
             </div>
 
-            <!-- Purchased Date & Department -->
+            <!-- Purchased Date & Division -->
             <div class="row">
                 <div class="form-group half-width">
                     <label for="purchasedDate">Purchased Date</label>
@@ -51,9 +51,12 @@
                         <input type="date" id="purchasedDate" formControlName="purchasedDate">
                     </div>
                 </div>
-                <div class="form-group half-width flex-row">
-                    <label for="department">Division</label>
-                    <input type="text" id="department" formControlName="department">
+                <div class="form-group half-width">
+                    <label for="divisionId">Division</label>
+                    <select id="divisionId" formControlName="divisionId" class="custom-select">
+                        <option [ngValue]="null">Select Division</option>
+                        <option *ngFor="let division of divisions" [value]="division.id">{{ division.name }}</option>
+                    </select>
                 </div>
             </div>
 
@@ -65,10 +68,48 @@
 
             <!-- Buttons -->
             <div class="button-group">
-                <button type="button" class="btn btn-cancel" (click)="onCancel()">Cancel</button>
-                <button type="submit" class="btn btn-inform">Inform</button>
+                <button type="button" class="btn btn-cancel" (click)="onCancel()"
+                    [disabled]="isSubmitting">Cancel</button>
+                <button type="submit" class="btn btn-inform" [disabled]="!arrivalForm.valid || isSubmitting">{{
+                    isSubmitting ? 'Informing...' : 'Inform' }}</button>
             </div>
         </form>
+    </div>
+
+    <!-- History Section -->
+    <div class="history-card">
+        <h2 class="form-title">Recent New Arrivals</h2>
+        <div class="table-wrapper">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Item Name</th>
+                        <th>Model</th>
+                        <th>Qty</th>
+                        <th>Division</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of history">
+                        <td>{{ item.purchasedDate | date:'mediumDate' }}</td>
+                        <td>{{ item.itemName }}</td>
+                        <td>{{ item.model || '-' }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.divisionName }}</td>
+                        <td>
+                            <span class="status-badge" [class.pending]="item.status === 'Pending'">
+                                {{ item.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="history.length === 0">
+                        <td colspan="6" class="no-data">No history found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Success Overlay -->
