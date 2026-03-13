@@ -46,9 +46,13 @@ export class NewArrivalsComponent implements OnInit {
   }
 
   loadHistory() {
+    console.log('[DEBUG] NewArrivalsComponent: Loading history...');
     this.procurementService.getAssetInformings().subscribe({
-      next: (data) => this.history = data,
-      error: (err) => console.error('Error loading history', err)
+      next: (data) => {
+        console.log('[DEBUG] NewArrivalsComponent: History data received:', data);
+        this.history = data;
+      },
+      error: (err) => console.error('[DEBUG] NewArrivalsComponent: Error loading history:', err)
     });
   }
 

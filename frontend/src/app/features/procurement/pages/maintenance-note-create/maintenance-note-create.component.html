@@ -15,7 +15,7 @@
                 </div>
                 <div class="note-item">
                     <label for="asset">Asset:</label>
-                    <select id="asset" name="asset" [(ngModel)]="noteData.assetId" required>
+                    <select id="asset" name="asset" [(ngModel)]="noteData.assetId" class="custom-select" required>
                         <option [ngValue]="null">Select Asset</option>
                         <option *ngFor="let asset of assets" [ngValue]="asset.id">{{ asset.assetCode }} - {{
                             asset.assetName }}</option>
@@ -27,14 +27,15 @@
                 </div>
                 <div class="note-item">
                     <label for="repairFirm">Repair Firm:</label>
-                    <select id="repairFirm" name="repairFirm" [(ngModel)]="noteData.repairingFirmId">
+                    <select id="repairFirm" name="repairFirm" [(ngModel)]="noteData.repairingFirmId"
+                        class="custom-select">
                         <option [ngValue]="null">Select Repair Firm</option>
                         <option *ngFor="let firm of repairingFirms" [ngValue]="firm.id">{{ firm.name }}</option>
                     </select>
                 </div>
                 <div class="note-item">
                     <label for="status">Status:</label>
-                    <select id="status" name="status" [(ngModel)]="noteData.status">
+                    <select id="status" name="status" [(ngModel)]="noteData.status" class="custom-select">
                         <option value="Scheduled">Scheduled</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Completed">Completed</option>
