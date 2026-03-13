@@ -77,9 +77,10 @@
     </div>
 
     <!-- History Section -->
-    <div class="history-card">
-        <h2 class="form-title">Recent New Arrivals</h2>
-        <div class="table-wrapper">
+    <section class="history-section">
+        <h2 class="section-title">Recent New Arrivals</h2>
+
+        <div class="table-card">
             <table class="history-table">
                 <thead>
                     <tr>
@@ -93,24 +94,24 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let item of history">
-                        <td>{{ item.purchasedDate | date:'mediumDate' }}</td>
-                        <td>{{ item.itemName }}</td>
-                        <td>{{ item.model || '-' }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.divisionName }}</td>
-                        <td>
+                        <td class="date-col">{{ item.purchasedDate | date:'mediumDate' }}</td>
+                        <td class="item-name-col">{{ item.itemName }}</td>
+                        <td class="model-col">{{ item.model || '-' }}</td>
+                        <td class="qty-col">{{ item.quantity }}</td>
+                        <td class="division-col">{{ item.divisionName }}</td>
+                        <td class="status-col">
                             <span class="status-badge" [class.pending]="item.status === 'Pending'">
                                 {{ item.status }}
                             </span>
                         </td>
                     </tr>
                     <tr *ngIf="history.length === 0">
-                        <td colspan="6" class="no-data">No history found.</td>
+                        <td colspan="6" class="empty-state">No data available</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-    </div>
+    </section>
 
     <!-- Success Overlay -->
     <div class="success-overlay" *ngIf="showSuccess">
