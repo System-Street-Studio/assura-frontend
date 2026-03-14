@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AssetService } from '../../services/asset.service';
+import { AssetService } from '../../services/asset-request.service';
 import { MatIconModule } from '@angular/material/icon';
 
 
@@ -25,7 +25,9 @@ export class NewAssetRequestComponent {
     priority: 'Normal',
     reason: '',
     status: 'Pending',
-    submittedDate: new Date().toISOString()
+    requestType: 'New Asset',
+    submittedDate: new Date(),
+    submittedBy: 'John Doe'
   };
 
   constructor(private router: Router, private assetService: AssetService) {}

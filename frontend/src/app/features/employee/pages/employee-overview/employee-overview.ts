@@ -19,7 +19,7 @@ interface Activity {
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, StatusBadgeComponent,RouterModule,MatIcon],
+  imports: [CommonModule, RouterModule,MatIcon],
   templateUrl: './employee-overview.html',
   styleUrls: ['./employee-overview.css']
 })

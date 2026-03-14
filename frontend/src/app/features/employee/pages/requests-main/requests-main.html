@@ -55,7 +55,7 @@
                 <span class="req-date">Submitted: {{ req.submittedDate | date:'yyyy-MM-dd' }}</span>
               </div>
               <div class="req-status-area">
-                <span><small>New Asset Request</small></span>
+                <span><small>{{ req.requestType }}</small></span>
                 <span [class]="'status-pill ' + req.status.toLowerCase()">{{ req.status }}</span>
                 <button class="btn-details">View Details</button>
               </div>
