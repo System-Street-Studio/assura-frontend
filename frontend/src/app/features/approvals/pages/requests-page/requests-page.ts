@@ -4,18 +4,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
+import { RequestService } from '../../services/requests.service';
+import { RequestItem } from '../../models/request.model';
 
-// Universal interface for all request types
-interface RequestItem {
-  id: number;
-  name?: string;
-  employee?: string;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'In Progress';
-  asset: string;
-  category?: string;
-  date: string;
-  priority: 'High' | 'Normal' | 'Low';
-}
+
 
 @Component({
   selector: 'app-requests-page',
@@ -27,6 +19,9 @@ interface RequestItem {
 export class RequestsPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private requestService = inject(RequestService);
+
+  isLoading = signal<boolean>(true);
 
   // --- STATE SIGNALS ---
   activeTab = signal<'new' | 'transfer' | 'maintenance' | 'discard'>('new');
@@ -40,34 +35,19 @@ export class RequestsPageComponent implements OnInit {
   });
 
   // --- DATA SIGNALS ---
-  requests = signal<RequestItem[]>([
-    { id: 1, name: 'Harry Ekanayeka', status: 'Pending', asset: 'Laptop (1)', date: '2025-08-15', priority: 'High' },
-    { id: 2, name: 'Jenny Athapaththu', status: 'Pending', asset: 'Office Chair (2)', date: '2025-08-15', priority: 'Normal' },
-    { id: 3, name: 'Sarah Kodithuwakku', status: 'Approved', asset: 'Monitor (3)', date: '2025-08-15', priority: 'High' },
-    { id: 4, name: 'Gavesh Gamage', status: 'Pending', asset: 'Projector (1)', date: '2025-08-15', priority: 'Low' },
-    { id: 5, name: 'Rishmi Hans', status: 'Rejected', asset: 'Standing Desk (1)', date: '2025-08-15', priority: 'Low' }
-  ]);
+  requests = signal<RequestItem[]>([]);
 
-  transferRequests = signal<RequestItem[]>([
-    { id: 101, date: '2024-10-26', asset: 'Table', category: '3x4', employee: 'Jenny Athapaththu', status: 'Pending', priority: 'Normal' },
-    { id: 102, date: '2024-10-26', asset: 'Laptop', category: 'Lenovo X1 Carbon', employee: 'Harry Ekanayeka', status: 'Pending', priority: 'High' },
-    { id: 103, date: '2024-10-26', asset: 'Keyboard', category: 'Logitech MX Keys', employee: 'Sarah Kodithuwakku', status: 'Rejected', priority: 'Normal' }
-  ]);
+  transferRequests = signal<RequestItem[]>([]);
 
-  maintenanceRequests = signal<RequestItem[]>([
-    { id: 201, date: '2024-11-05', asset: 'Printer', category: 'Hardware', employee: 'Kamal Silva', status: 'Pending', priority: 'High' },
-    { id: 202, date: '2024-11-06', asset: 'A/C Unit', category: 'Infrastructure', employee: 'Nimal Perera', status: 'Approved', priority: 'Normal' }
-  ]);
+  maintenanceRequests = signal<RequestItem[]>([]);
 
-  discardRequests = signal<RequestItem[]>([
-    { id: 301, date: '2024-11-10', asset: 'Old Server', category: 'IT', employee: 'Sunil Shantha', status: 'Pending', priority: 'Low' }
-  ]);
+  discardRequests = signal<RequestItem[]>([]);
 
   // Summary Counts
-  newAssetCount = signal(3);
-  transferCount = signal(7);
-  maintenanceCount = signal(2);
-  discardCount = signal(1);
+  newAssetCount = signal(0);
+  transferCount = signal(0);
+  maintenanceCount = signal(0);
+  discardCount = signal(0);
 
   // --- FILTER CONFIG ---
   filterConfig = [
@@ -77,6 +57,7 @@ export class RequestsPageComponent implements OnInit {
   ];
 
   ngOnInit() {
+    this.loadData();
     this.route.queryParamMap.subscribe(params => {
       const tab = params.get('tab');
       if (tab) {
@@ -84,6 +65,49 @@ export class RequestsPageComponent implements OnInit {
       }
     });
   }
+
+  
+
+  // 1. Service Call
+  loadData() {
+    this.isLoading.set(true);
+   const isDivisionHead = true; 
+
+   this.requestService.getAllRequests(isDivisionHead).subscribe({
+      next: (allData: any[]) => {
+      console.log("All Data:", allData); 
+      
+      
+      const mappedData: RequestItem[] = allData.map(item => ({
+        id: item.id,
+        name: item.requesterName, 
+        employee: item.requesterId,
+        assetName: item.assetName,
+        category: item.assetCategory,
+        status: item.status,
+        date: item.submittedDate,
+        priority: item.priority,
+        type: item.requestType ,
+        quantity: item.quantity,
+        specs: item.description,
+        justification: item.reason
+      }));
+
+      this.requests.set(mappedData.filter(r => r.type?.toLowerCase().replace(/\s/g, '') === 'newasset'));
+      this.transferRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'transfer'));
+      this.maintenanceRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'maintenance'));
+      this.discardRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'discard'));
+
+        this.newAssetCount.set(this.requests().length);
+        this.transferCount.set(this.transferRequests().length);
+        this.maintenanceCount.set(this.maintenanceRequests().length);
+        this.discardCount.set(this.discardRequests().length);
+        this.isLoading.set(false);
+      },
+      
+    });
+  }
+
 
   // --- DYNAMIC FILTER ENGINE ---
   filteredResults = computed(() => {
@@ -101,7 +125,7 @@ export class RequestsPageComponent implements OnInit {
 
     return sourceList.filter(item => {
       const personName = (item.name || item.employee || '').toLowerCase();
-      const assetName = item.asset.toLowerCase();
+      const assetName = item.assetName.toLowerCase();
       
       const matchesSearch = !query || personName.includes(query) || assetName.includes(query);
       const matchesPriority = filters['priority'].length === 0 || filters['priority'].includes(item.priority);
@@ -149,4 +173,26 @@ export class RequestsPageComponent implements OnInit {
   checkStatus(id: number) {
     console.log('Checking status for ID:', id);
   }
+
+  viewDetails(item: RequestItem) {
+  this.requestService.selectedRequest = item;
+  console.log("sending data:", item);
+  const tab = this.activeTab();
+  let routePath = '';
+
+ 
+  switch (tab) {
+    case 'new': routePath = '/approvals/new-asset-req'; break;
+    case 'transfer': routePath = '/approvals/transfer-req'; break;
+    case 'maintenance': routePath = '/approvals/maintenance-req'; break;
+    case 'discard': routePath = '/approvals/discard-req'; break;
+  }
+
+
+  this.router.navigate([routePath, item.id], { 
+   
+    queryParams: { tab: tab } 
+  });
+}
+
 }

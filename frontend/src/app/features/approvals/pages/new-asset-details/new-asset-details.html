@@ -20,7 +20,7 @@
 
       <div class="info-group">
         <label>Employee ID</label>
-        <p class="bold-text">{{ request().employeeId || 'EST001' }}</p>
+        <p class="bold-text">{{ request().employee }}</p>
       </div>
 
       <div class="info-group">
@@ -30,7 +30,7 @@
 
       <div class="info-group">
         <label>Requested Asset</label>
-        <p class="bold-text">{{ request().asset }}</p>
+        <p class="bold-text">{{ request().assetName }}</p>
       </div>
 
       <div class="info-group">
@@ -40,7 +40,7 @@
 
       <div class="info-group">
         <label>Asset Category</label>
-        <p class="bold-text">{{ request().category || 'Furniture' }}</p>
+        <p class="bold-text">{{ request().category }}</p>
       </div>
 
       

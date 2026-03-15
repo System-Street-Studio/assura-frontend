@@ -238,16 +238,16 @@ header h1 {
   text-align: center;
 
 }
-.card.blue-border .card-title {
+.card.blue-border .card-title,.card.blue-border .mat-icon {
   color: #004777;
 }
-.card.green-border .card-title {
+.card.green-border .card-title ,.card.green-border .mat-icon {
   color: #0bad57;
 }
-.card.orange-border .card-title {
+.card.orange-border .card-title, .card.orange-border .mat-icon{
   color: #f9961c;
 }
-.card.red-border .card-title {
+.card.red-border .card-title,.card.red-border .mat-icon {
   color: #f0491b;
 }
 
@@ -696,7 +696,11 @@ tbody tr:hover {
 
 /* --- Table Buttons --- */
 
+
 .btn-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 6px 14px;
   border-radius: 6px;
   border: 1px solid #00a8cc;
@@ -705,6 +709,13 @@ tbody tr:hover {
   font-weight: 600;
   font-size: 13px;
   text-decoration: none;
+  
+}
+
+.btn-view mat-icon{
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 .btn-view:hover {
