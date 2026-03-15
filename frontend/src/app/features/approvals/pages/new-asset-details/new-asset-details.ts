@@ -52,6 +52,19 @@ export class NewAssetDetailsComponent implements OnInit {
   }
 
   rejectRequest() {
+    const id = this.request().id;
+    this.requestService.rejectRequest(id).subscribe({
+      next: () => {
+        this.popupMessage.set('Request Rejected Successfully!');
+        this.popupType.set('reject');
+        this.showPopup.set(true);
+      },
+      error: (err) => console.error("Reject error:", err)
+    });
+  }
+
+
+  /*rejectRequest() {
      
     const reason = prompt("Please provide a reason for rejecting this request:");
     
@@ -68,7 +81,7 @@ export class NewAssetDetailsComponent implements OnInit {
       },
       error: (err) => console.error("Reject error:", err)
     });
-  }
+  }*/
 
   close() {
     this.router.navigate(['approvals/requests']); // navigate to the requests page

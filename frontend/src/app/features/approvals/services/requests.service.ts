@@ -23,7 +23,13 @@ approveRequest(id: number): Observable<boolean> {
   return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/approve`, {});
 }
 
-rejectRequest(id: number, reason: string): Observable<boolean> {
-  return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, { reason });
+rejectRequest(id: number): Observable<boolean> {
+  return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, {});
 }
+
+/*rejectRequest(id: number, reason: string): Observable<boolean> {
+  return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, { reason });
+}*/
+
+
 }
