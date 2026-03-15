@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Fixed: Corrected the module path
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 import { RequestService } from '../../services/requests.service';
@@ -12,7 +12,7 @@ import { RequestItem } from '../../models/request.model';
 @Component({
   selector: 'app-requests-page',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterModule, RouterLink, MatMenuModule, FormsModule],
+  imports: [CommonModule, MatIconModule, RouterModule, MatMenuModule, FormsModule],
   templateUrl: './requests-page.html',
   styleUrl: './requests-page.css',
 })
