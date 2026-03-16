@@ -1,0 +1,227 @@
+.acc-discard-note-container {
+    padding: 32px;
+    background-color: #f4f7f6;
+    min-height: calc(100vh - 56px);
+}
+
+.page-title {
+    font-family: 'Jost', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 28px 0;
+}
+
+.table-wrapper {
+    background: white;
+    border-radius: 16px;
+    border: 2px solid #004777;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.note-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Jost', sans-serif;
+}
+
+.note-table thead {
+    background: #f8f9fa;
+}
+
+.note-table th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    border-bottom: 1px solid #eee;
+}
+
+.note-table td {
+    padding: 14px 20px;
+    font-size: 0.9rem;
+    color: #444;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.note-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.note-table tbody tr:hover {
+    background: #f9fefe;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.status-badge.approved {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.status-badge.pending {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.view-btn {
+    background: #004777;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.view-btn:hover {
+    background: #003355;
+}
+
+.empty-row {
+    text-align: center;
+    color: #999;
+    padding: 40px 20px !important;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    width: 90%;
+    max-width: 520px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.25s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-family: 'Jost', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.modal-divider {
+    height: 1px;
+    background: #eee;
+    margin: 16px 0;
+}
+
+.note-table tbody tr.active-row {
+    background: rgba(0, 71, 119, 0.06);
+}
+
+.modal-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 32px;
+    margin-bottom: 20px;
+}
+
+.modal-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.modal-info-item label {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.modal-info-item span {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.modal-note label {
+    display: block;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.note-content {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
