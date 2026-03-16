@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assura - Asset Discarding Workflow | Presentation Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+            line-height: 1.7;
+        }
+
+        /* Cover Page */
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #004777 0%, #0b6c78 50%, #00bcd4 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 40px;
+            page-break-after: always;
+        }
+
+        .cover-logo {
+            font-size: 72px;
+            margin-bottom: 16px;
+        }
+
+        .cover h1 {
+            font-size: 52px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .cover .subtitle {
+            font-size: 24px;
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .cover .topic {
+            font-size: 28px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 16px 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            margin-bottom: 48px;
+        }
+
+        .cover .meta {
+            font-size: 16px;
+            opacity: 0.7;
+            font-weight: 300;
+        }
+
+        /* Page Container */
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 48px;
+            background: white;
+            min-height: 100vh;
+            page-break-after: always;
+        }
+
+        .page:last-child {
+            page-break-after: avoid;
+        }
+
+        /* Section Numbers */
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #004777, #0b6c78);
+            color: white;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        /* Headings */
+        h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #004777;
+            margin-bottom: 8px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0b6c78;
+            margin: 28px 0 12px 0;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #666;
+            font-weight: 400;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e8e8e8;
+        }
+
+        /* Paragraphs */
+        p {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px 0;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #f0f7f7;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: #004777;
+            border-bottom: 2px solid #00bcd4;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        /* Flow Diagrams */
+        .flow {
+            background: #f8fafa;
+            border: 1px solid #e0e8e8;
+            border-radius: 12px;
+            padding: 28px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 4px;
+        }
+
+        .flow-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .flow-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #004777, #0b6c78);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .flow-dot.success {
+            background: linear-gradient(135deg, #059669, #10b981);
+        }
+
+        .flow-content {
+            flex: 1;
+            padding-bottom: 16px;
+            border-left: 2px solid #e0e8e8;
+            margin-left: -32px;
+            padding-left: 32px;
+        }
+
+        .flow-step:last-child .flow-content {
+            border-left: none;
+        }
+
+        .flow-content strong {
+            display: block;
+            font-size: 15px;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .flow-content span {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, #f0f9ff, #e8f5f5);
+            border-left: 4px solid #00bcd4;
+            border-radius: 0 10px 10px 0;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            font-style: italic;
+            color: #004777;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .highlight-box .label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #0b6c78;
+            margin-bottom: 6px;
+            font-style: normal;
+        }
+
+        /* Role Cards */
+        .role-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 24px 0;
+        }
+
+        .role-card {
+            display: flex;
+            gap: 20px;
+            padding: 24px;
+            border-radius: 14px;
+            border: 2px solid #e8e8e8;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+
+        .role-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .role-icon {
+            font-size: 36px;
+            flex-shrink: 0;
+        }
+
+        .role-info h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #004777;
+            margin-bottom: 4px;
+        }
+
+        .role-info p {
+            font-size: 14px;
+            color: #555;
+            margin: 0;
+        }
+
+        .arrow-down {
+            text-align: center;
+            font-size: 24px;
+            color: #00bcd4;
+            margin: -8px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Features List */
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+        }
+
+        .features-list li {
+            padding: 10px 0 10px 32px;
+            position: relative;
+            font-size: 15px;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #059669;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* Key Points */
+        .key-points {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin: 24px 0;
+        }
+
+        .key-points h3 {
+            margin-top: 0;
+            color: #004777;
+        }
+
+        .key-point-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .key-point-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .key-point-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: #e8f5f5;
+            color: #0b6c78;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .key-point-text {
+            font-size: 14px;
+            color: #333;
+            padding-top: 3px;
+        }
+
+        .key-point-text strong {
+            color: #004777;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .page {
+                box-shadow: none;
+                padding: 40px 32px;
+            }
+
+            .cover {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ======================== COVER PAGE ======================== -->
+    <div class="cover">
+        <div class="cover-logo">🏢</div>
+        <h1>Assura</h1>
+        <div class="subtitle">Asset Management System</div>
+        <div class="topic">Asset Discarding Workflow</div>
+        <div class="meta">System Street Project — Presentation Document</div>
+    </div>
+
+    <!-- ======================== PAGE 1: OVERVIEW ======================== -->
+    <div class="page">
+        <div class="section-icon">📋</div>
+        <h2>Overview</h2>
+        <p class="section-subtitle">Complete workflow for discarding assets from an organization</p>
+
+        <p>
+            The Asset Discarding Workflow in the Assura system covers the full lifecycle of removing an asset from
+            the organization's inventory. The process involves <strong>three key roles</strong> and ensures
+            proper documentation, accountability, and transparency at every step.
+        </p>
+
+        <h3>Roles Involved</h3>
+        <div class="role-flow">
+            <div class="role-card">
+                <div class="role-icon">👷</div>
+                <div class="role-info">
+                    <h4>Superintendent</h4>
+                    <p>Reviews and approves or rejects asset discard requests. Initiates the discarding process and
+                        provides the reason for discarding.</p>
+                </div>
+            </div>
+            <div class="arrow-down">▼</div>
+            <div class="role-card">
+                <div class="role-icon">🧾</div>
+                <div class="role-info">
+                    <h4>Accountant</h4>
+                    <p>Confirms the discard after Superintendent's approval. Updates store records, uploads receipts,
+                        and creates official discard notes.</p>
+                </div>
+            </div>
+            <div class="arrow-down">▼</div>
+            <div class="role-card">
+                <div class="role-icon">📦</div>
+                <div class="role-info">
+                    <h4>Storekeeper</h4>
+                    <p>Receives notification about discarded assets. Physically removes the asset from inventory
+                        storage.</p>
+                </div>
+            </div>
+        </div>
+
+        <h3>Modules Covered</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Depreciation Calculator</strong></td>
+                    <td>Calculates current asset value based on depreciation</td>
+                </tr>
+                <tr>
+                    <td><strong>Superintendent Dashboard</strong></td>
+                    <td>Reviews, approves, or rejects discard requests</td>
+                </tr>
+                <tr>
+                    <td><strong>System Notifications</strong></td>
+                    <td>Automatically informs Accountant after approval</td>
+                </tr>
+                <tr>
+                    <td><strong>Accountant Dashboard</strong></td>
+                    <td>Confirms, documents, and finalizes discarding</td>
+                </tr>
+                <tr>
+                    <td><strong>Storekeeper Notification</strong></td>
+                    <td>Alerts Storekeeper to remove asset from inventory</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ======================== PAGE 2: DEPRECIATION CALCULATOR ======================== -->
+    <div class="page">
+        <div class="section-number">1</div>
+        <h2>Depreciation Calculator</h2>
+        <p class="section-subtitle">Determining the current value of an asset before discarding</p>
+
+        <p>
+            Before an asset is discarded, it's essential to calculate its <strong>current value</strong> using
+            depreciation. This helps the organization make informed decisions about whether to repair, sell,
+            or discard the asset.
+        </p>
+
+        <h3>What is Depreciation?</h3>
+        <p>
+            Depreciation is the decrease in the value of an asset over time due to wear, tear, age, or
+            obsolescence. The depreciation calculator in Assura computes how much value an asset has lost
+            since it was purchased.
+        </p>
+
+        <h3>Example Calculation</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Asset Name</td>
+                    <td>Dell XPS 15 Laptop</td>
+                </tr>
+                <tr>
+                    <td>Purchase Date</td>
+                    <td>January 2023</td>
+                </tr>
+                <tr>
+                    <td>Value at Purchasing</td>
+                    <td>Rs. 150,000</td>
+                </tr>
+                <tr>
+                    <td>Useful Life</td>
+                    <td>5 years</td>
+                </tr>
+                <tr>
+                    <td><strong>Current Value</strong></td>
+                    <td><strong>Rs. 50,000</strong></td>
+                </tr>
+                <tr>
+                    <td>Total Depreciation</td>
+                    <td>Rs. 100,000 (67%)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Why It Matters</h3>
+        <ul class="features-list">
+            <li>Helps decide whether to <strong>repair or discard</strong> — if repair cost exceeds current value,
+                discarding is better</li>
+            <li>Provides <strong>financial justification</strong> for the discard decision</li>
+            <li>Maintains accurate <strong>asset valuation records</strong> for the organization</li>
+            <li>Required for <strong>audit compliance</strong> and financial reporting</li>
+        </ul>
+
+        <div class="highlight-box">
+            <p class="label">Key Takeaway</p>
+            <p>"The Depreciation Calculator ensures that every discard decision is backed by financial data, not
+                guesswork. It provides a clear picture of an asset's current worth to justify the discarding process."
+            </p>
+        </div>
+    </div>
+
+    <!-- ======================== PAGE 3: SUPERINTENDENT DASHBOARD ======================== -->
+    <div class="page">
+        <div class="section-number">2</div>
+        <h2>Superintendent Dashboard</h2>
+        <p class="section-subtitle">Discarding assets from the organization</p>
+
+        <p>
+            The Superintendent is the <strong>first point of action</strong> in the discarding process.
+            They review asset discard requests, verify the asset's condition and depreciation value,
+            and decide whether to approve or reject the discard.
+        </p>
+
+        <h3>Dashboard Features</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Summary Cards</strong></td>
+                    <td>Shows counts for Pending, Discarded, Unread, Rejected, and Approved items</td>
+                </tr>
+                <tr>
+                    <td><strong>Clickable Filters</strong></td>
+                    <td>Click any summary card to filter the queue by that status</td>
+                </tr>
+                <tr>
+                    <td><strong>Queue List</strong></td>
+                    <td>Scrollable list of all asset requests with status badges</td>
+                </tr>
+                <tr>
+                    <td><strong>Detail Panel</strong></td>
+                    <td>Full asset information — Division, Date, Time, Asset Type, Special Note</td>
+                </tr>
+                <tr>
+                    <td><strong>Review Flow</strong></td>
+                    <td>3-step process: Review → Choose Action → Add Note & Submit</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Review Flow — Step by Step</h3>
+        <div class="flow">
+            <div class="flow-step">
+                <div class="flow-dot">1</div>
+                <div class="flow-content">
+                    <strong>Select an asset from the queue</strong>
+                    <span>Click on any pending item to view its full details</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot">2</div>
+                <div class="flow-content">
+                    <strong>Click "Review"</strong>
+                    <span>Opens the action selection — Mark as Done or Reject</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot">3</div>
+                <div class="flow-content">
+                    <strong>Choose an action</strong>
+                    <span>"Mark as Done" (approve) or "Reject" the discard request</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot">4</div>
+                <div class="flow-content">
+                    <strong>Add a note</strong>
+                    <span>Write the reason for approving or rejecting</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot success">5</div>
+                <div class="flow-content">
+                    <strong>Submit</strong>
+                    <span>Success card appears — "Approved & Submitted" or "Rejected & Submitted"</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <p class="label">Key Takeaway</p>
+            <p>"The Superintendent reviews asset discard requests with full visibility into the asset's details and
+                depreciation value. After review, they can approve or reject with documented reasons, ensuring
+                accountability."</p>
+        </div>
+    </div>
+
+    <!-- ======================== PAGE 4: SYSTEM NOTIFICATION ======================== -->
+    <div class="page">
+        <div class="section-number">3</div>
+        <h2>Inform Accountant via System</h2>
+        <p class="section-subtitle">Automatic notification after Superintendent's approval</p>
+
+        <p>
+            Once the Superintendent approves a discard request, the system <strong>automatically notifies the
+                Accountant</strong>.
+            There is no need for manual communication — emails, phone calls, or physical documents.
+            The system handles everything digitally.
+        </p>
+
+        <h3>How It Works</h3>
+        <div class="flow">
+            <div class="flow-step">
+                <div class="flow-dot">1</div>
+                <div class="flow-content">
+                    <strong>Superintendent approves the discard</strong>
+                    <span>Clicks "Approve & Submit" with a note</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot">2</div>
+                <div class="flow-content">
+                    <strong>System processes the approval</strong>
+                    <span>Asset status changes from "Pending" to "Approved"</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot">3</div>
+                <div class="flow-content">
+                    <strong>Accountant is notified automatically</strong>
+                    <span>The approved item appears in the Accountant's dashboard queue</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot success">4</div>
+                <div class="flow-content">
+                    <strong>Item appears as "Pending (Waiting for Confirmation)"</strong>
+                    <span>Ready for the Accountant to review and confirm</span>
+                </div>
+            </div>
+        </div>
+
+        <h3>Benefits of System-Based Notification</h3>
+        <ul class="features-list">
+            <li><strong>No delays</strong> — notification is instant, no waiting for emails or messages</li>
+            <li><strong>No miscommunication</strong> — all details are passed automatically with full context</li>
+            <li><strong>Audit trail</strong> — every notification is logged with timestamps</li>
+            <li><strong>Paperless process</strong> — reduces physical document handling</li>
+            <li><strong>Accountability</strong> — system tracks who approved, when, and why</li>
+        </ul>
+
+        <div class="highlight-box">
+            <p class="label">Key Takeaway</p>
+            <p>"The system acts as the bridge between roles. No manual communication is needed — once the Superintendent
+                approves, the Accountant is immediately informed through the system, and the item appears in their
+                dashboard queue."</p>
+        </div>
+    </div>
+
+    <!-- ======================== PAGE 5: ACCOUNTANT DASHBOARD ======================== -->
+    <div class="page">
+        <div class="section-number">4</div>
+        <h2>Accountant Dashboard</h2>
+        <p class="section-subtitle">Update stores after Superintendent's confirmation about discarded assets</p>
+
+        <p>
+            The Accountant is responsible for <strong>finalizing the discarding process</strong>. After receiving
+            notification from the system, they verify the Superintendent's approval, confirm the discard,
+            upload receipts, and update the store records.
+        </p>
+
+        <h3>Dashboard Pages</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Page</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Overview</strong></td>
+                    <td>Queue of items with counter cards — Approved, Pending, Reject, To be Approved. Click items to
+                        view details and confirm discarding.</td>
+                </tr>
+                <tr>
+                    <td><strong>My Assets</strong></td>
+                    <td>View all assets currently assigned or managed by the Accountant.</td>
+                </tr>
+                <tr>
+                    <td><strong>Discarded</strong></td>
+                    <td>Table of all finalized discarded items. Click any row to see full details — Division, Date,
+                        Asset Type, Values, Special Note.</td>
+                </tr>
+                <tr>
+                    <td><strong>Receipt</strong></td>
+                    <td>Upload and manage receipts for discarded assets as proof of action.</td>
+                </tr>
+                <tr>
+                    <td><strong>Discard Note</strong></td>
+                    <td>Official discard notes with status badges (Approved / Pending). Click "View Note" for full
+                        details.</td>
+                </tr>
+                <tr>
+                    <td><strong>Lose</strong></td>
+                    <td>Track lost assets — Reported, Under Investigation, Confirmed Lost.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Confirm Discarding Flow</h3>
+        <div class="flow">
+            <div class="flow-step">
+                <div class="flow-dot">1</div>
+                <div class="flow-content">
+                    <strong>Accountant opens Overview</strong>
+                    <span>Sees approved items pending confirmation</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot">2</div>
+                <div class="flow-content">
+                    <strong>Selects an item and clicks "Confirm Discarding"</strong>
+                    <span>A confirmation modal appears with all asset details</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot">3</div>
+                <div class="flow-content">
+                    <strong>Reviews details and uploads receipt</strong>
+                    <span>Verifies asset information and attaches proof</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot">4</div>
+                <div class="flow-content">
+                    <strong>Clicks "Save as Discarded"</strong>
+                    <span>Item is finalized and moved to Discarded page</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot success">5</div>
+                <div class="flow-content">
+                    <strong>Success card appears — "Saved As Discarded"</strong>
+                    <span>Discard Note is created, store records updated, Storekeeper notified</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <p class="label">Key Takeaway</p>
+            <p>"The Accountant verifies the Superintendent's approval, updates the store records by confirming the
+                discard, and keeps a proper paper trail with receipts and discard notes. Every action is documented for
+                audit compliance."</p>
+        </div>
+    </div>
+
+    <!-- ======================== PAGE 6: STOREKEEPER NOTIFICATION ======================== -->
+    <div class="page">
+        <div class="section-number">5</div>
+        <h2>Inform Storekeeper via System</h2>
+        <p class="section-subtitle">Final step — notifying the Storekeeper about discarded assets</p>
+
+        <p>
+            After the Accountant confirms the discard and updates the store records, the system
+            <strong>automatically notifies the Storekeeper</strong>. This is the final step in the
+            discarding workflow, closing the loop from identification to physical removal.
+        </p>
+
+        <h3>Notification Flow</h3>
+        <div class="flow">
+            <div class="flow-step">
+                <div class="flow-dot">1</div>
+                <div class="flow-content">
+                    <strong>Accountant saves the item as discarded</strong>
+                    <span>Store records are updated in the system</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot">2</div>
+                <div class="flow-content">
+                    <strong>System sends notification to Storekeeper</strong>
+                    <span>Automatic alert with asset name, location, and discard details</span>
+                </div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-dot success">3</div>
+                <div class="flow-content">
+                    <strong>Storekeeper removes asset from physical inventory</strong>
+                    <span>Asset is physically removed from storage and marked as complete</span>
+                </div>
+            </div>
+        </div>
+
+        <h3>What the Storekeeper Receives</h3>
+        <ul class="features-list">
+            <li><strong>Asset name</strong> and identification details</li>
+            <li><strong>Division</strong> where the asset was located</li>
+            <li><strong>Discard reason</strong> from the Superintendent's note</li>
+            <li><strong>Accountant's confirmation</strong> details with timestamp</li>
+            <li><strong>Receipt reference</strong> for documentation</li>
+        </ul>
+
+        <div class="highlight-box">
+            <p class="label">Key Takeaway</p>
+            <p>"The Storekeeper is the final link in the chain. Upon receiving the system notification, they physically
+                remove the asset from inventory. This closes the loop — from identification to removal, everything is
+                tracked in the system."</p>
+        </div>
+    </div>
+
+    <!-- ======================== PAGE 7: COMPLETE FLOW SUMMARY ======================== -->
+    <div class="page">
+        <div class="section-icon">🔄</div>
+        <h2>Complete Workflow Summary</h2>
+        <p class="section-subtitle">End-to-end asset discarding process</p>
+
+        <!-- Visual Flow -->
+        <div style="text-align: center; margin: 32px 0;">
+            <div style="display: inline-block; text-align: left;">
+                <div class="role-card" style="border-color: #004777; margin-bottom: 0; border-radius: 14px 14px 0 0;">
+                    <div class="role-icon">📊</div>
+                    <div class="role-info">
+                        <h4>Step 1 — Depreciation Calculator</h4>
+                        <p>Calculate asset's current value to justify discarding</p>
+                    </div>
+                </div>
+                <div style="text-align: center; background: #f0f7f7; padding: 8px; font-size: 18px; color: #00bcd4;">▼
+                </div>
+                <div class="role-card" style="border-color: #0b6c78; margin-bottom: 0; border-radius: 0;">
+                    <div class="role-icon">👷</div>
+                    <div class="role-info">
+                        <h4>Step 2 — Superintendent Reviews</h4>
+                        <p>Approves or rejects the discard request with documented reasons</p>
+                    </div>
+                </div>
+                <div style="text-align: center; background: #f0f7f7; padding: 8px; font-size: 18px; color: #00bcd4;">▼
+                    System Notification</div>
+                <div class="role-card" style="border-color: #0b6c78; margin-bottom: 0; border-radius: 0;">
+                    <div class="role-icon">🧾</div>
+                    <div class="role-info">
+                        <h4>Step 3 — Accountant Confirms</h4>
+                        <p>Verifies approval, uploads receipt, updates store records</p>
+                    </div>
+                </div>
+                <div style="text-align: center; background: #f0f7f7; padding: 8px; font-size: 18px; color: #00bcd4;">▼
+                    System Notification</div>
+                <div class="role-card" style="border-color: #059669; margin-bottom: 0; border-radius: 0 0 14px 14px;">
+                    <div class="role-icon">📦</div>
+                    <div class="role-info">
+                        <h4>Step 4 — Storekeeper Removes</h4>
+                        <p>Physically removes the asset from inventory ✅</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-points">
+            <h3>💡 Key Talking Points</h3>
+            <div class="key-point-item">
+                <div class="key-point-num">1</div>
+                <div class="key-point-text"><strong>No manual communication</strong> — the system handles all
+                    notifications between roles automatically</div>
+            </div>
+            <div class="key-point-item">
+                <div class="key-point-num">2</div>
+                <div class="key-point-text"><strong>Complete paper trail</strong> — every action is documented with
+                    notes, receipts, and timestamps</div>
+            </div>
+            <div class="key-point-item">
+                <div class="key-point-num">3</div>
+                <div class="key-point-text"><strong>Data-driven decisions</strong> — depreciation calculator ensures
+                    assets are discarded based on calculated value, not guesswork</div>
+            </div>
+            <div class="key-point-item">
+                <div class="key-point-num">4</div>
+                <div class="key-point-text"><strong>Role-based access</strong> — each user only sees what's relevant to
+                    their role and responsibilities</div>
+            </div>
+            <div class="key-point-item">
+                <div class="key-point-num">5</div>
+                <div class="key-point-text"><strong>Real-time updates</strong> — status changes reflect immediately
+                    across all dashboards</div>
+            </div>
+            <div class="key-point-item">
+                <div class="key-point-num">6</div>
+                <div class="key-point-text"><strong>Audit compliance</strong> — full traceability from request to
+                    physical removal</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
