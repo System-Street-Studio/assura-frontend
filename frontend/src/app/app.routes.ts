@@ -7,7 +7,8 @@ import { accShellRoutes } from './features/accountant/acc-shell/acc-shell.routes
 export const routes: Routes = [
     {
         path: '',
-        loadComponent: () => import('./features/role-select/role-select').then(m => m.RoleSelectComponent)
+        redirectTo: 'superintendent',
+        pathMatch: 'full'
     },
     {
         path: 'superintendent',
