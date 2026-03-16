@@ -1,0 +1,236 @@
+﻿<div class="asset-detail-page" *ngIf="asset">
+  <!-- Back link -->
+  <button class="back-link" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Back to Assets
+  </button>
+
+  <!-- Header row -->
+  <div class="header-row">
+    <div class="left">
+      <div class="title-row">
+        <div class="thumb-placeholder">
+          <mat-icon class="thumb-icon">devices</mat-icon>
+        </div>
+        <div class="title">
+          <h2>{{ asset.name }}</h2>
+          <div class="meta">
+            Asset ID: {{ asset.assetId }} &bull; Asset Name: {{ asset.productName }}
+          </div>
+        </div>
+      </div>
+
+      <div class="action-tabs">
+        <button
+          class="tab"
+          *ngFor="let t of tabs"
+          [class.active]="activeTab === t.id"
+          (click)="setTab(t.id)"
+        >
+          {{ t.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="right-actions">
+      <button class="btn blue" (click)="onClone()">
+        <mat-icon class="btn-icon">content_copy</mat-icon>
+        Clone
+      </button>
+      <button class="btn orange" (click)="onEdit()">
+        <mat-icon class="btn-icon">edit</mat-icon>
+        Edit
+      </button>
+      <button class="btn red" (click)="onDelete()">
+        <mat-icon class="btn-icon">delete</mat-icon>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Content grid -->
+  <div class="content-grid">
+    <div class="main-col">
+      <!-- About / QR section -->
+      <section class="about" *ngIf="activeTab === 'about'">
+        <div class="about-grid">
+          <div class="qr-block">
+            <div class="qr-placeholder">
+              <mat-icon class="qr-icon">qr_code_2</mat-icon>
+            </div>
+            <div class="serial">{{ asset.serial }}</div>
+            <div class="assetid">{{ asset.assetId }}</div>
+            <div class="property">Property of Demo Company</div>
+            <button class="btn light" (click)="onPrint()">
+              <mat-icon class="btn-icon">print</mat-icon>
+              Print
+            </button>
+          </div>
+
+          <div class="about-text">
+            <p class="muted">You can customize the text and size in the Settings.</p>
+            <p class="tip">
+              Tip: To print labels in bulk, go to the main Assets table, select checkboxes and
+              click Print.
+            </p>
+          </div>
+        </div>
+
+        <hr class="section-divider" />
+
+        <!-- Details -->
+        <h3 class="section-title">Details</h3>
+
+        <div class="details-grid">
+          <div class="detail-col">
+            <div class="field">
+              <div class="label">Serial Number</div>
+              <div class="value">
+                {{ asset.serial }}
+                <span class="edit-link">Edit</span>
+              </div>
+            </div>
+            <div class="field">
+              <div class="label">Warranty</div>
+              <div class="value">{{ asset.warranty }}</div>
+            </div>
+            <div class="field">
+              <div class="label">Category</div>
+              <div class="value">
+                {{ asset.category || '—' }}
+                <span class="edit-link">Edit</span>
+              </div>
+            </div>
+            <div class="field">
+              <div class="label">Purchase Date</div>
+              <div class="value">
+                {{ asset.purchaseDate || '—' }}
+                <span class="edit-link">Edit</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-col">
+            <div class="field">
+              <div class="label">Product</div>
+              <div class="value">
+                {{ asset.productName }}
+                <span class="edit-link">Edit</span>
+              </div>
+            </div>
+            <div class="field">
+              <div class="label">End of Life</div>
+              <div class="value">{{ asset.endOfLife }}</div>
+            </div>
+            <div class="field">
+              <div class="label">Department</div>
+              <div class="value">
+                {{ asset.department || '—' }}
+                <span class="edit-link">Edit</span>
+              </div>
+            </div>
+            <div class="field">
+              <div class="label">Supplier</div>
+              <div class="value">
+                {{ asset.supplier || '—' }}
+                <span class="edit-link">Edit</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-col">
+            <div class="field">
+              <div class="label">Asset ID</div>
+              <div class="value">{{ asset.assetId }}</div>
+            </div>
+            <div class="field">
+              <div class="label">Order Number</div>
+              <div class="value">
+                {{ asset.orderNumber }}
+                <span class="edit-link">Edit</span>
+              </div>
+            </div>
+            <div class="field">
+              <div class="label">Value</div>
+              <div class="value">
+                {{ asset.value || '—' }}
+                <span class="edit-link">Edit</span>
+              </div>
+            </div>
+            <div class="field notes">
+              <div class="label">Notes</div>
+              <div class="value">
+                {{ asset.notes || 'No notes' }}
+                <span class="edit-link">Edit</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Placeholder for other tabs -->
+      <section class="tab-placeholder" *ngIf="activeTab !== 'about'">
+        <mat-icon class="placeholder-icon">construction</mat-icon>
+        <p class="placeholder-text">
+          {{ activeTab | titlecase }} content coming soon.
+        </p>
+      </section>
+    </div>
+
+    <!-- Right sidebar -->
+    <aside class="right-col">
+      <div class="status-card">
+        <h4>Current Status</h4>
+        <div class="status-row">
+          <span class="status-dot" [ngClass]="getStatusClass()"></span>
+          <span class="status-txt">{{ asset.status }}</span>
+        </div>
+        <div class="status-row">
+          <mat-icon class="status-icon">person</mat-icon>
+          <span class="status-txt">To: {{ asset.checkedOutTo || '—' }}</span>
+        </div>
+        <div class="status-row">
+          <mat-icon class="status-icon">calendar_today</mat-icon>
+          <span class="status-txt">Due Back: {{ asset.dueBack || '—' }}</span>
+        </div>
+        <button class="btn green" (click)="onCheckin()">
+          <mat-icon class="btn-icon">login</mat-icon>
+          Checkin
+        </button>
+      </div>
+
+      <div class="owner-card">
+        <h4>Ownership &amp; Location</h4>
+        <div class="owner" *ngIf="asset.owner">
+          <div class="avatar-circle">
+            <mat-icon>person</mat-icon>
+          </div>
+          <div>
+            <div class="owner-name">{{ asset.owner.name }}</div>
+            <div class="owner-dept">{{ asset.owner.department }}</div>
+          </div>
+        </div>
+        <div class="location" *ngIf="asset.owner?.location">
+          <mat-icon class="location-icon">location_on</mat-icon>
+          {{ asset.owner?.location }}
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Delete confirmation overlay -->
+  <div class="overlay" *ngIf="showDeleteConfirm">
+    <div class="confirm-dialog">
+      <mat-icon class="confirm-icon">warning</mat-icon>
+      <h3>Delete Asset?</h3>
+      <p>Are you sure you want to delete <strong>{{ asset.name }}</strong> ({{ asset.assetId }})? This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn outline" (click)="cancelDelete()">Cancel</button>
+        <button class="btn red" (click)="confirmDelete()">
+          <mat-icon class="btn-icon">delete</mat-icon>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

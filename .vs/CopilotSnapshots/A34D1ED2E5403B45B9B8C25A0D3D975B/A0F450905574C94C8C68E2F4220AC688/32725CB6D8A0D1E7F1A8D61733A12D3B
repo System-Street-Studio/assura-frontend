@@ -1,0 +1,14 @@
+﻿export interface Asset {
+  id: string;
+  product: string;
+  image?: string;
+  status: 'Deployed' | 'In Repair' | 'Available' | 'Retired';
+  checkedOutTo?: string;
+  checkedOutAgo?: string;
+  album?: string;
+  serial?: string;
+  warranty?: string;
+  endOfLife?: string;
+  orderNumber?: string;
+  selected?: boolean;
+}
