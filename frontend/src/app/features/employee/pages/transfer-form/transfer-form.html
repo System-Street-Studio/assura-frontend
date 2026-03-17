@@ -1,0 +1,98 @@
+<div class="main-content">
+  <div class="content-padding">
+    <h1 class="section-label">Requests</h1>
+    <a routerLink="/employee/requests-main" class="back-link">←</a>
+    <h2 class="page-title">Temporary Asset Transfer Requests</h2>
+
+    <div class="form-card">
+      <div class="form-header">
+        <h3>Request Details</h3>
+        <p>Please fill out the form below to submit your asset request.</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" class="asset-form">
+        
+        <div class="form-group">
+          <label>Asset Name</label>
+          <input type="text" [ngModel]="assetName()" (ngModelChange)="assetName.set($event)" 
+                 name="assetName" placeholder="e.g., Dell XPS 15" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Asset Category</label>
+          <select [ngModel]="category()" (ngModelChange)="category.set($event)" name="category" class="form-control">
+            <option value="" disabled selected>Select an asset category</option>
+            <option value="electronics">Electronics</option>
+            <option value="furniture">Furniture</option>
+            <option value="vehicles">Vehicles</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [ngModel]="description()" (ngModelChange)="description.set($event)" 
+                    name="description" placeholder="Clearly state what the specifications of asset you request." 
+                    class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" [ngModel]="quantity()" (ngModelChange)="quantity.set($event)" 
+                 name="quantity" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Priority</label>
+          <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority" class="form-control">
+            <option value="Normal">Normal</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Reason for transfer</label>
+          <textarea [ngModel]="reason()" (ngModelChange)="reason.set($event)" name="reason" 
+                    placeholder="Briefly explain why this asset transfer is needed..." 
+                    class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="duration-section">
+            <label class="section-title">Select Duration</label>
+            
+            <div class="date-picker-container">
+                <div class="date-field">
+                <label>From</label>
+                <div class="input-wrapper">
+                    <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #fromPicker></mat-datepicker>
+
+                    <input matInput [matDatepicker]="fromPicker" placeholder="Pick a date"
+                        [ngModel]="fromDate()" (dateChange)="fromDate.set($event.value)" name="fromDate">
+                   
+                    
+                </div>
+                </div>
+
+                <div class="date-field">
+                <label>To</label>
+                <div class="input-wrapper">
+                    <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #toPicker></mat-datepicker>
+                    
+                    <input matInput [matDatepicker]="toPicker" placeholder="Pick a date"
+                        [ngModel]="toDate()" (dateChange)="toDate.set($event.value)" name="toDate">
+                    
+                </div>
+                </div>
+            </div>
+            </div>
+
+        <div class="form-actions">
+          <button type="submit" class="submit-btn">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="content-padding">
+    
+    <h1 class="section-label">Requests</h1>
+    <a routerLink="/employee/requests-main" class="back-link">←</a>
+    <h2 class="page-title">Discard Requests</h2>
+
+    <div class="form-card">
+      <header>
+        <h3>Asset Discard Details</h3>
+        <p>Please provide details about the asset you want to discard</p>
+      </header>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label>Select Asset</label>
+          <select [ngModel]="asset()" (ngModelChange)="asset.set($event)" name="asset">
+            <option value="" disabled selected>Select asset should be discarded</option>
+            <option value="laptop-01">MacBook Pro (id:As001)</option>
+            <option value="monitor-01">Dell UltraSharp Monitor (id:As002)</option>
+            <option value="mouse-01">Logitech MX Master 3S (id:As003)</option>
+            <option value="phone-01">iPhone 15 Pro (Test Device) (id:As004)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Reason for Discard</label>
+          <textarea 
+            [ngModel]="reason()" 
+            (ngModelChange)="reason.set($event)" 
+            name="reason"
+            placeholder="Briefly explain why this asset discard is needed...">
+          </textarea>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+          <button type="submit" class="btn-primary">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

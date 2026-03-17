@@ -1,0 +1,120 @@
+.main-content {
+  background-color: #efefef;
+  min-height: 100vh;
+  font-family: 'jost';
+}
+
+.content-padding {
+  padding: 20px 20px;
+}
+
+.back-link {
+  text-decoration: none;
+  font-size: 24px;
+  color: #333;
+  display: block;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 30px;
+}
+
+/* --- Form Card --- */
+.form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 8px 8px 20px 8px rgba(195, 195, 198, 0.6); 
+  max-width: 700px;
+  margin: 0 auto;
+  margin-left: 100px;
+}
+
+.form-header h3 {
+  font-size: 18px;
+  font-weight: 650;
+  margin-bottom: 5px;
+}
+
+.form-header p {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 30px;
+  margin-left: 20px;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 13px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.form-control::placeholder {
+  color: #bbb;
+}
+
+.upload-area {
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  color: #888;
+  cursor: pointer;
+}
+.upload-box {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  color: #888;
+}
+
+.upload-icon {
+  font-size: 30px;     
+  height: 48px;       
+  width: 48px;
+  color: #afafaf;    
+ 
+}
+.browse { color: #3030e9; cursor: pointer; text-decoration: underline; }
+
+
+.submit-btn {
+  width: 100%;
+  background-color: #00afb5;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 650;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: 'jost'; 
+  
+}
+
+.submit-btn:hover {
+  background-color: #004777;
+}
