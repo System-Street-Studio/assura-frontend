@@ -42,8 +42,15 @@ export class NotificationService {
       type: 'success',
       icon: 'build',
     },
-  
-   
+    {
+      id: '4',
+      title: 'New Asset Request',
+      message: 'Richard K. Cornejo requested a laptop.',
+      timestamp: new Date(Date.now() - 6 * 3_600_000),
+      read: true,
+      type: 'info',
+      icon: 'swap_horiz',
+    },
   ]);
 
   getAll(): Observable<AppNotification[]> {

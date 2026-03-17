@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 
@@ -12,7 +12,7 @@
   font-family: 'Jost', sans-serif;
 }
 
-/* ΓöÇΓöÇ Left ΓöÇΓöÇ */
+/* ── Left ── */
 .navbar-left {
   display: flex;
   align-items: center;
@@ -37,7 +37,7 @@
   color: #6dd5ed;
 }
 
-/* ΓöÇΓöÇ Right ΓöÇΓöÇ */
+/* ── Right ── */
 .navbar-right {
   display: flex;
   align-items: center;
@@ -51,7 +51,7 @@
   margin: 0 6px;
 }
 
-/* ΓöÇΓöÇ Notification bell ΓöÇΓöÇ */
+/* ── Notification bell ── */
 .notif-wrapper {
   position: relative;
 }
@@ -100,7 +100,7 @@
   line-height: 1;
 }
 
-/* ΓöÇΓöÇ Notification panel ΓöÇΓöÇ */
+/* ── Notification panel ── */
 .notif-panel {
   position: absolute;
   top: calc(100% + 10px);
@@ -116,8 +116,15 @@
 }
 
 @keyframes panelIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .notif-header {
@@ -183,10 +190,25 @@
   flex-shrink: 0;
 }
 
-.notif-icon-wrap.info { background: #e8f4fd; color: #1a8bc7; }
-.notif-icon-wrap.warning { background: #fff5e6; color: #c76b00; }
-.notif-icon-wrap.success { background: #eef9f1; color: #1f9a5b; }
-.notif-icon-wrap.error { background: #ffecec; color: #d64545; }
+.notif-icon-wrap.info {
+  background: #e8f4fd;
+  color: #1a8bc7;
+}
+
+.notif-icon-wrap.warning {
+  background: #fff5e6;
+  color: #c76b00;
+}
+
+.notif-icon-wrap.success {
+  background: #eef9f1;
+  color: #1f9a5b;
+}
+
+.notif-icon-wrap.error {
+  background: #ffecec;
+  color: #d64545;
+}
 
 .notif-icon {
   font-size: 18px;
@@ -249,7 +271,7 @@
   color: #c8dede;
 }
 
-/* ΓöÇΓöÇ Profile trigger ΓöÇΓöÇ */
+/* ── Profile trigger ── */
 .profile-wrapper {
   position: relative;
 }
@@ -315,7 +337,7 @@
   transform: rotate(180deg);
 }
 
-/* ΓöÇΓöÇ Profile dropdown ΓöÇΓöÇ */
+/* ── Profile dropdown ── */
 .profile-menu {
   position: absolute;
   top: calc(100% + 10px);
@@ -357,8 +379,13 @@
   color: #7d8b8c;
 }
 
-.menu-item.logout { color: #d64545; }
-.menu-item.logout mat-icon { color: #d64545; }
+.menu-item.logout {
+  color: #d64545;
+}
+
+.menu-item.logout mat-icon {
+  color: #d64545;
+}
 
 .menu-divider {
   height: 1px;
@@ -366,9 +393,18 @@
   margin: 4px 0;
 }
 
-/* ΓöÇΓöÇ Responsive ΓöÇΓöÇ */
+/* ── Responsive ── */
 @media (max-width: 640px) {
-  .profile-info { display: none; }
-  .chevron { display: none; }
-  .notif-panel { width: 320px; right: -40px; }
+  .profile-info {
+    display: none;
+  }
+
+  .chevron {
+    display: none;
+  }
+
+  .notif-panel {
+    width: 320px;
+    right: -40px;
+  }
 }

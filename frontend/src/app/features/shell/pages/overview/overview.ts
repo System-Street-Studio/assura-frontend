@@ -4,10 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DataTableComponent, ColumnDef } from '../../../../shared/components/data-table/data-table';
 import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
 import { ActionButtonComponent } from '../../../../shared/components/action-button/action-button';
-import {
-  FilterDropdownComponent,
-  FilterGroup,
-} from '../../../../shared/components/filter-dropdown/filter-dropdown';
+import {FilterDropdownComponent,FilterGroup,} from '../../../../shared/components/filter-dropdown/filter-dropdown';
 
 @Component({
   selector: 'app-overview',

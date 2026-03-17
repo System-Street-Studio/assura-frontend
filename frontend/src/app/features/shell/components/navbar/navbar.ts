@@ -32,6 +32,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       'accountant': 'Accountant',
       'reporting': 'Reporting',
       'superintendent': 'Superintendent',
+      'approvals': 'Division Head',
       'employee': 'Employee',
     };
     const activeSectionKey = Object.keys(sections).find(s => currentUrl.startsWith(`/${s}`));

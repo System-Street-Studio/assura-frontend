@@ -60,36 +60,39 @@ export class SidebarComponent {
     { label: 'Overview', icon: 'home', link: '/superintendent/overview', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
     { label: 'My Assets', icon: 'inventory_2', link: '/superintendent/my-assets', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
     { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
-    { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'], section: 'superintendent' }
+    { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
+
+    // Approvals / Division Head section
+    { label: 'Overview', icon: 'home', link: '/approvals/overview', roles: ['Division Head', 'Admin'], section: 'approvals' },
+    { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['Division Head', 'Admin'], section: 'approvals' },
+    { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['Division Head', 'Admin'], section: 'approvals' },
+    { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['Division Head', 'Admin'], section: 'approvals' },
   ];
 
   get filteredMenuItems(): MenuItem[] {
     const userRoles = this.getUserRoles();
     const currentUrl = this.router.url;
 
-    // 1. Identify current active section from URL
-    const sections = ['admin', 'procurement', 'inventory', 'hr', 'accountant', 'reporting', 'superintendent'];
+    // Identify current active section from URL
+    const sections = ['admin', 'procurement', 'inventory', 'hr', 'accountant', 'reporting', 'superintendent', 'approvals'];
     const activeSection = sections.find(s => currentUrl.startsWith(`/${s}`));
 
-    // 2. Filter by role
+    // Filter by role
     let filtered = this.menuItems.filter(item =>
       item.roles.includes('ANY') ||
       userRoles.some(role => item.roles.includes(role))
     );
 
-    // 3. Filter by active section if we are in one
+    // Filter by active section if we are in one
     if (activeSection) {
       filtered = filtered.filter(item => item.section === activeSection);
     }
-    // If no active section (like on /overview), we show all accessible items
-    // This allows users to navigate to different sections from the home page.
 
     return filtered;
   }
 
   private getUserRoles(): string[] {
     // TODO: REMOVE THIS BYPASS — FOR TESTING ONLY
-    // Returns role based on current URL so all sections work without login
     const url = this.router.url;
     if (url.startsWith('/admin')) return ['Admin'];
     if (url.startsWith('/procurement')) return ['Procurement', 'Admin'];
@@ -98,9 +101,9 @@ export class SidebarComponent {
     if (url.startsWith('/accountant')) return ['Accountant', 'Admin'];
     if (url.startsWith('/reporting')) return ['Auditor', 'Admin'];
     if (url.startsWith('/superintendent')) return ['Superintendent', 'Admin'];
+    if (url.startsWith('/approvals')) return ['Division Head', 'Admin'];
     if (url.startsWith('/employee')) return ['Employee'];
     return ['Admin']; // default fallback
-    // return this.authService.getRoles();
   }
 
   isCollapsed = false;
