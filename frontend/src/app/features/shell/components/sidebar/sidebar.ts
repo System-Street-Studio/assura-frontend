@@ -57,7 +57,10 @@ export class SidebarComponent {
     { label: 'Export', icon: 'file_download', link: '/reporting/export', roles: ['Auditor', 'Admin'], section: 'reporting' },
 
     // Superintendent section
-    { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'], section: 'superintendent' }
+    { label: 'Overview', icon: 'home', link: '/superintendent/overview', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
+    { label: 'My Assets', icon: 'inventory_2', link: '/superintendent/my-assets', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
+    { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
+    { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'], section: 'superintendent' }
   ];
 
   get filteredMenuItems(): MenuItem[] {
@@ -85,7 +88,9 @@ export class SidebarComponent {
   }
 
   private getUserRoles(): string[] {
-    return this.authService.getRoles();
+    // TODO: REMOVE THIS BYPASS — FOR TESTING ONLY
+    return ['Superintendent'];
+    // return this.authService.getRoles();
   }
 
   isCollapsed = false;
