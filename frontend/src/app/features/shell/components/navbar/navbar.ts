@@ -1,20 +1,28 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { Subscription } from 'rxjs';
+import { AppNotification, NotificationService } from '../../../../shared/services/notification.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css'],
 })
-export class NavbarComponent {
-  private authService = inject(AuthService);
+export class NavbarComponent implements OnInit, OnDestroy {
+  private notifService = inject(NotificationService);
   private router = inject(Router);
+  private elRef = inject(ElementRef);
+  private authService = inject(AuthService);
 
-  get sectionName(): string {
+  employeeName = 'User';
+  initials = 'U';
+
+  get roleName(): string {
     const currentUrl = this.router.url;
     const sections: { [key: string]: string } = {
       'admin': 'Admin',
@@ -23,19 +31,77 @@ export class NavbarComponent {
       'hr': 'HR',
       'accountant': 'Accountant',
       'reporting': 'Reporting',
-      'superintendent': 'Superintendent'
+      'superintendent': 'Superintendent',
+      'employee': 'Employee',
     };
-
     const activeSectionKey = Object.keys(sections).find(s => currentUrl.startsWith(`/${s}`));
-    if (activeSectionKey) {
-      return sections[activeSectionKey];
-    }
-
-    // Default or Fallback to role if no section matched
+    if (activeSectionKey) return sections[activeSectionKey];
     const role = this.authService.getRole();
-    if (typeof role === 'string' && role.toUpperCase().includes('ADMIN')) {
-      return 'Admin';
+    return (typeof role === 'string' ? role : null) ?? 'Dashboard';
+  }
+
+  notifications: AppNotification[] = [];
+  unreadCount = 0;
+  showNotifPanel = false;
+  showProfileMenu = false;
+
+  private subs: Subscription[] = [];
+
+  ngOnInit(): void {
+    this.subs.push(
+      this.notifService.getAll().subscribe((n: AppNotification[]) => (this.notifications = n)),
+      this.notifService.getUnreadCount().subscribe((c: number) => (this.unreadCount = c))
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach((s) => s.unsubscribe());
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocClick(event: MouseEvent): void {
+    if (!this.elRef.nativeElement.contains(event.target)) {
+      this.showNotifPanel = false;
+      this.showProfileMenu = false;
     }
-    return role ?? 'Dashboard';
+  }
+
+  toggleNotifications(): void {
+    this.showNotifPanel = !this.showNotifPanel;
+    this.showProfileMenu = false;
+  }
+
+  toggleProfileMenu(): void {
+    this.showProfileMenu = !this.showProfileMenu;
+    this.showNotifPanel = false;
+  }
+
+  markAsRead(notif: AppNotification): void {
+    if (!notif.read) {
+      this.notifService.markAsRead(notif.id);
+    }
+  }
+
+  markAllRead(): void {
+    this.notifService.markAllAsRead();
+  }
+
+  getTimeAgo(date: Date): string {
+    return this.notifService.formatTimeAgo(date);
+  }
+
+  onProfile(): void {
+    this.showProfileMenu = false;
+    this.router.navigate(['/profile']);
+  }
+
+  onSettings(): void {
+    this.showProfileMenu = false;
+    this.router.navigate(['/settings']);
+  }
+
+  onLogout(): void {
+    this.showProfileMenu = false;
+    this.router.navigate(['/auth/login']);
   }
 }

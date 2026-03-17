@@ -89,7 +89,17 @@ export class SidebarComponent {
 
   private getUserRoles(): string[] {
     // TODO: REMOVE THIS BYPASS — FOR TESTING ONLY
-    return ['Superintendent'];
+    // Returns role based on current URL so all sections work without login
+    const url = this.router.url;
+    if (url.startsWith('/admin')) return ['Admin'];
+    if (url.startsWith('/procurement')) return ['Procurement', 'Admin'];
+    if (url.startsWith('/inventory')) return ['Storekeeper', 'Admin'];
+    if (url.startsWith('/hr')) return ['HR', 'Admin'];
+    if (url.startsWith('/accountant')) return ['Accountant', 'Admin'];
+    if (url.startsWith('/reporting')) return ['Auditor', 'Admin'];
+    if (url.startsWith('/superintendent')) return ['Superintendent', 'Admin'];
+    if (url.startsWith('/employee')) return ['Employee'];
+    return ['Admin']; // default fallback
     // return this.authService.getRoles();
   }
 

@@ -1,4 +1,4 @@
-:host {
+﻿:host {
   display: block;
 }
 
@@ -12,7 +12,7 @@
   font-family: 'Jost', sans-serif;
 }
 
-/* ── Left ── */
+/* ΓöÇΓöÇ Left ΓöÇΓöÇ */
 .navbar-left {
   display: flex;
   align-items: center;
@@ -37,7 +37,7 @@
   color: #6dd5ed;
 }
 
-/* ── Right ── */
+/* ΓöÇΓöÇ Right ΓöÇΓöÇ */
 .navbar-right {
   display: flex;
   align-items: center;
@@ -51,7 +51,7 @@
   margin: 0 6px;
 }
 
-/* ── Notification bell ── */
+/* ΓöÇΓöÇ Notification bell ΓöÇΓöÇ */
 .notif-wrapper {
   position: relative;
 }
@@ -100,7 +100,7 @@
   line-height: 1;
 }
 
-/* ── Notification panel ── */
+/* ΓöÇΓöÇ Notification panel ΓöÇΓöÇ */
 .notif-panel {
   position: absolute;
   top: calc(100% + 10px);
@@ -249,7 +249,7 @@
   color: #c8dede;
 }
 
-/* ── Profile trigger ── */
+/* ΓöÇΓöÇ Profile trigger ΓöÇΓöÇ */
 .profile-wrapper {
   position: relative;
 }
@@ -315,7 +315,7 @@
   transform: rotate(180deg);
 }
 
-/* ── Profile dropdown ── */
+/* ΓöÇΓöÇ Profile dropdown ΓöÇΓöÇ */
 .profile-menu {
   position: absolute;
   top: calc(100% + 10px);
@@ -366,7 +366,7 @@
   margin: 4px 0;
 }
 
-/* ── Responsive ── */
+/* ΓöÇΓöÇ Responsive ΓöÇΓöÇ */
 @media (max-width: 640px) {
   .profile-info { display: none; }
   .chevron { display: none; }
