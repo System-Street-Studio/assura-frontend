@@ -1,0 +1,86 @@
+﻿import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { AssetService } from '../../services/asset.service';
+import { AssetDetail } from '../../models/asset.model';
+import { ToastService } from '../../../../shared/services/toast.service';
+
+@Component({
+  selector: 'app-asset-details',
+  standalone: true,
+  imports: [CommonModule, MatIconModule],
+  templateUrl: './asset-details.html',
+  styleUrls: ['./asset-details.css'],
+})
+export class AssetDetailsComponent implements OnInit {
+  private assetService = inject(AssetService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private location = inject(Location);
+  private toast = inject(ToastService);
+
+  asset!: AssetDetail;
+  activeTab = 'about';
+  showDeleteConfirm = false;
+  deleting = false;
+
+  tabs = [
+    { id: 'about', label: 'About' },
+    { id: 'checkout-log', label: 'Checkout Log' },
+    { id: 'change-log', label: 'Change Log' },
+    { id: 'components', label: 'Components (1)' },
+    { id: 'licenses', label: 'Licenses (1)' },
+    { id: 'audits', label: 'Audits (2)' },
+    { id: 'maintenances', label: 'Maintenances (1)' },
+  ];
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id') || '100000';
+    this.assetService.getAssetById(id).subscribe((a: AssetDetail) => (this.asset = a));
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+
+  setTab(tabId: string): void {
+    this.activeTab = tabId;
+  }
+
+  getStatusClass(): string {
+    if (!this.asset) return '';
+    return this.asset.status.toLowerCase().replace(' ', '-');
+  }
+
+  onPrint(): void {
+    window.print();
+  }
+
+  onCheckin(): void {
+    // placeholder
+  }
+
+  onClone(): void {
+    this.router.navigate(['/inventory/assets', this.asset.id, 'clone']);
+  }
+
+  onEdit(): void {
+    this.router.navigate(['/inventory/assets', this.asset.id, 'edit']);
+  }
+
+  onDelete(): void {
+    this.showDeleteConfirm = true;
+  }
+
+  confirmDelete(): void {
+    this.assetService.deleteAsset(this.asset.id).subscribe(() => {
+      this.showDeleteConfirm = false;
+      this.router.navigate(['/inventory/assets']);
+    });
+  }
+
+  cancelDelete(): void {
+    this.showDeleteConfirm = false;
+  }
+}

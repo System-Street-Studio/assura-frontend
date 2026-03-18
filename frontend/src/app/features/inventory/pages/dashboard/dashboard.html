@@ -1,0 +1,299 @@
+<div class="page">
+
+  <!-- ── Loading Skeleton ── -->
+  <div class="skeleton-view" *ngIf="loading">
+    <div class="skeleton-banner"></div>
+    <div class="kpi-grid">
+      <div class="kpi-card skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line wide"></div>
+      </div>
+    </div>
+    <div class="charts-grid">
+      <div class="card skeleton-chart" *ngFor="let i of [1,2,3,4]">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-block"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Dashboard Content ── -->
+  <div class="dashboard-content" *ngIf="!loading">
+
+    <!-- Welcome Banner -->
+    <section class="welcome-banner">
+      <div class="banner-bg-shape"></div>
+      <div class="banner-bg-shape secondary"></div>
+      <div class="welcome-left">
+        <h1 class="welcome-title">Good {{ today.getHours() < 12 ? 'Morning' : today.getHours() < 17 ? 'Afternoon' : 'Evening' }}, Storekeeper</h1>
+        <p class="welcome-sub">Here's your inventory overview for {{ today | date:'MMMM d, yyyy' }}</p>
+        <div class="banner-stats">
+          <div class="banner-stat">
+            <span class="banner-stat-value">{{ utilizationRate }}%</span>
+            <span class="banner-stat-label">Utilization</span>
+          </div>
+          <div class="banner-stat-divider"></div>
+          <div class="banner-stat">
+            <span class="banner-stat-value">{{ kpis.totalAssets | number }}</span>
+            <span class="banner-stat-label">Total Assets</span>
+          </div>
+          <div class="banner-stat-divider"></div>
+          <div class="banner-stat">
+            <span class="banner-stat-value">{{ kpis.totalAssetValue }}</span>
+            <span class="banner-stat-label">Portfolio Value</span>
+          </div>
+        </div>
+      </div>
+      <div class="quick-actions">
+        <a class="quick-btn primary" routerLink="/inventory/assets/new">
+          <mat-icon>add_circle</mat-icon> New Asset
+        </a>
+        <a class="quick-btn outline" routerLink="/inventory/assets">
+          <mat-icon>inventory_2</mat-icon> View All
+        </a>
+      </div>
+    </section>
+
+    <!-- KPI Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card clickable" routerLink="/inventory/assets">
+        <div class="kpi-accent teal"></div>
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap teal"><mat-icon>inventory_2</mat-icon></div>
+          <span class="kpi-change positive"><mat-icon>arrow_upward</mat-icon> 3.2%</span>
+        </div>
+        <div class="kpi-value">{{ kpis.totalAssets | number }}</div>
+        <div class="kpi-label">Total Assets</div>
+        <div class="kpi-bar">
+          <div class="kpi-bar-fill teal" [style.width.%]="100"></div>
+        </div>
+      </div>
+
+      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'checked_out' }">
+        <div class="kpi-accent blue"></div>
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap blue"><mat-icon>logout</mat-icon></div>
+          <span class="kpi-change positive"><mat-icon>arrow_upward</mat-icon> 5.1%</span>
+        </div>
+        <div class="kpi-value">{{ kpis.checkedOut | number }}</div>
+        <div class="kpi-label">Checked Out</div>
+        <div class="kpi-bar">
+          <div class="kpi-bar-fill blue" [style.width.%]="utilizationRate"></div>
+        </div>
+      </div>
+
+      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'available' }">
+        <div class="kpi-accent green"></div>
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap green"><mat-icon>check_circle</mat-icon></div>
+          <span class="kpi-change neutral"><mat-icon>remove</mat-icon> 0.4%</span>
+        </div>
+        <div class="kpi-value">{{ kpis.available | number }}</div>
+        <div class="kpi-label">Available</div>
+        <div class="kpi-bar">
+          <div class="kpi-bar-fill green" [style.width.%]="availableRate"></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-accent purple"></div>
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap purple"><mat-icon>attach_money</mat-icon></div>
+          <span class="kpi-change positive"><mat-icon>arrow_upward</mat-icon> 1.8%</span>
+        </div>
+        <div class="kpi-value">{{ kpis.totalAssetValue }}</div>
+        <div class="kpi-label">Total Value</div>
+      </div>
+
+      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'pending' }">
+        <div class="kpi-accent orange"></div>
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap orange"><mat-icon>pending_actions</mat-icon></div>
+          <span class="kpi-change negative" *ngIf="kpis.pendingRequests > 15"><mat-icon>arrow_upward</mat-icon> 12%</span>
+        </div>
+        <div class="kpi-value">{{ kpis.pendingRequests }}</div>
+        <div class="kpi-label">Pending Requests</div>
+      </div>
+
+      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }">
+        <div class="kpi-accent red"></div>
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap red"><mat-icon>build_circle</mat-icon></div>
+          <span class="kpi-change negative" *ngIf="kpis.maintenanceDue > 10"><mat-icon>arrow_downward</mat-icon> 8%</span>
+        </div>
+        <div class="kpi-value">{{ kpis.maintenanceDue }}</div>
+        <div class="kpi-label">Maintenance Due</div>
+      </div>
+    </section>
+
+    <!-- Two-Column: Activity Feed + Warranty Alerts -->
+    <section class="two-column">
+      <!-- Recent Activity -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title"><mat-icon>history</mat-icon> Recent Activity</h2>
+          <a class="panel-link" routerLink="/inventory/assets">View all <mat-icon>arrow_forward</mat-icon></a>
+        </div>
+        <div class="activity-list" *ngIf="recentActivity.length; else emptyActivity">
+          <div class="activity-item" *ngFor="let item of recentActivity; let last = last">
+            <div class="activity-timeline">
+              <div class="timeline-dot" [style.background]="item.color"></div>
+              <div class="timeline-line" *ngIf="!last"></div>
+            </div>
+            <div class="activity-icon" [style.background]="item.color + '14'" [style.color]="item.color">
+              <mat-icon>{{ item.icon }}</mat-icon>
+            </div>
+            <div class="activity-body">
+              <div class="activity-main">
+                <strong>{{ item.assetName }}</strong>
+                <span class="activity-badge" [style.background]="item.color + '14'" [style.color]="item.color">
+                  {{ formatActionLabel(item.action) }}
+                </span>
+              </div>
+              <div class="activity-meta">
+                <span class="activity-id">{{ item.assetId }}</span>
+                <span class="activity-sep">·</span>
+                <span>{{ item.user }}</span>
+                <span class="activity-sep">·</span>
+                <span class="activity-time">{{ formatTimeAgo(item.timestamp) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #emptyActivity>
+          <div class="panel-empty">
+            <mat-icon>inbox</mat-icon>
+            <span>No recent activity</span>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Warranty Expiring -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title"><mat-icon>shield</mat-icon> Warranty Expiring</h2>
+          <span class="panel-badge">{{ warrantyAlerts.length }} alerts</span>
+        </div>
+        <div class="warranty-list" *ngIf="warrantyAlerts.length; else emptyWarranty">
+          <div class="warranty-item" *ngFor="let alert of warrantyAlerts" [class]="'severity-' + alert.severity">
+            <div class="warranty-severity-icon" [class]="alert.severity">
+              <mat-icon>{{ alert.severity === 'critical' ? 'error' : alert.severity === 'warning' ? 'warning' : 'info' }}</mat-icon>
+            </div>
+            <div class="warranty-left">
+              <div class="warranty-name">{{ alert.assetName }}</div>
+              <div class="warranty-meta">{{ alert.assetId }} · {{ alert.category }}</div>
+            </div>
+            <div class="warranty-right">
+              <span class="warranty-badge" [class]="alert.severity">
+                {{ alert.daysRemaining }}d left
+              </span>
+              <div class="warranty-date">{{ alert.expiryDate }}</div>
+            </div>
+          </div>
+        </div>
+        <ng-template #emptyWarranty>
+          <div class="panel-empty">
+            <mat-icon>verified</mat-icon>
+            <span>All warranties are up to date</span>
+          </div>
+        </ng-template>
+      </div>
+    </section>
+
+    <!-- Charts Grid -->
+    <section class="charts-grid">
+      <div class="card">
+        <div class="card-accent teal"></div>
+        <div class="card-header">
+          <div>
+            <div class="card-title">Assets by Category</div>
+            <div class="card-subtitle">Distribution across asset types</div>
+          </div>
+          <div class="card-icon-wrap teal"><mat-icon>pie_chart</mat-icon></div>
+        </div>
+        <div class="chart-area doughnut">
+          <canvas baseChart [data]="doughnutData" [options]="doughnutOptions" type="doughnut"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-accent blue"></div>
+        <div class="card-header">
+          <div>
+            <div class="card-title">Checkout Trend</div>
+            <div class="card-subtitle">Monthly asset checkout volume</div>
+          </div>
+          <div class="card-icon-wrap blue"><mat-icon>show_chart</mat-icon></div>
+        </div>
+        <div class="chart-area">
+          <canvas baseChart [data]="lineData" [options]="lineOptions" type="line"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-accent green"></div>
+        <div class="card-header">
+          <div>
+            <div class="card-title">Assets by Status</div>
+            <div class="card-subtitle">Current lifecycle distribution</div>
+          </div>
+          <div class="card-icon-wrap green"><mat-icon>bar_chart</mat-icon></div>
+        </div>
+        <div class="chart-area">
+          <canvas baseChart [data]="assetsByStatusData" [options]="barOptions" type="bar"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-accent purple"></div>
+        <div class="card-header">
+          <div>
+            <div class="card-title">Assets by Department</div>
+            <div class="card-subtitle">Allocation across departments</div>
+          </div>
+          <div class="card-icon-wrap purple"><mat-icon>groups</mat-icon></div>
+        </div>
+        <div class="chart-area">
+          <canvas baseChart [data]="assetsByDepartmentData" [options]="barOptions" type="bar"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Anomalies -->
+    <section class="anomalies">
+      <h2 class="section-title"><mat-icon>warning</mat-icon> Asset Anomalies</h2>
+      <div class="anomaly-row">
+        <div class="anomaly-card critical">
+          <div class="anomaly-icon-wrap critical-bg">
+            <span class="anomaly-pulse"></span>
+            <mat-icon>visibility_off</mat-icon>
+          </div>
+          <div class="anomaly-body">
+            <div class="anomaly-value">{{ anomalies.ghostAssets }}</div>
+            <div class="anomaly-label">Ghost assets detected — exist in records but not found physically</div>
+            <a class="anomaly-action" routerLink="/inventory/assets" [queryParams]="{ filter: 'ghost' }">Investigate <mat-icon>arrow_forward</mat-icon></a>
+          </div>
+        </div>
+
+        <div class="anomaly-card warning">
+          <div class="anomaly-icon-wrap warning-bg"><mat-icon>search_off</mat-icon></div>
+          <div class="anomaly-body">
+            <div class="anomaly-value">{{ anomalies.missingAssets }}</div>
+            <div class="anomaly-label">Assets missing physical verification during audit</div>
+            <a class="anomaly-action" routerLink="/inventory/assets" [queryParams]="{ filter: 'missing' }">Investigate <mat-icon>arrow_forward</mat-icon></a>
+          </div>
+        </div>
+
+        <div class="anomaly-card info">
+          <div class="anomaly-icon-wrap info-bg"><mat-icon>build_circle</mat-icon></div>
+          <div class="anomaly-body">
+            <div class="anomaly-value">{{ anomalies.maintenanceDue }}</div>
+            <div class="anomaly-label">Assets overdue for scheduled maintenance</div>
+            <a class="anomaly-action" routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }">View schedule <mat-icon>arrow_forward</mat-icon></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>

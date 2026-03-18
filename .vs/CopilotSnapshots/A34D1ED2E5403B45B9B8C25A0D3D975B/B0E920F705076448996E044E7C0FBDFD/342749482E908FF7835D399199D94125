@@ -1,0 +1,125 @@
+﻿<div class="page">
+  <h1 class="page-title">Reporting &amp; Analytics Dashboard</h1>
+
+  <!-- Loading skeleton -->
+  <div class="skeleton-view" *ngIf="loading">
+    <div class="kpi-row">
+      <div class="kpi-card skeleton-card" *ngFor="let i of [1,2,3,4]">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line wide"></div>
+      </div>
+    </div>
+    <div class="charts-grid">
+      <div class="card skeleton-chart" *ngFor="let i of [1,2,3,4]">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-block"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real content -->
+  <div *ngIf="!loading">
+    <section class="kpi-row">
+      <div class="kpi-card clickable" routerLink="/inventory/assets">
+        <div class="kpi-icon-wrap blue"><mat-icon>devices</mat-icon></div>
+        <div class="kpi-info">
+          <div class="label">Total Assets</div>
+          <div class="value">{{ kpis.totalAssets | number }}</div>
+        </div>
+      </div>
+
+      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'ghost' }">
+        <div class="kpi-icon-wrap orange"><mat-icon>visibility_off</mat-icon></div>
+        <div class="kpi-info">
+          <div class="label">Ghost Assets</div>
+          <div class="value">{{ kpis.ghostAssets }}</div>
+        </div>
+      </div>
+
+      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'missing' }">
+        <div class="kpi-icon-wrap red"><mat-icon>search_off</mat-icon></div>
+        <div class="kpi-info">
+          <div class="label">Missing Assets</div>
+          <div class="value">{{ kpis.missingAssets }}</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap teal"><mat-icon>attach_money</mat-icon></div>
+        <div class="kpi-info">
+          <div class="label">Total Asset Value</div>
+          <div class="value">{{ kpis.totalAssetValue }}</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="charts-grid">
+      <div class="card">
+        <div class="card-title">Assets by Category</div>
+        <div class="chart-area doughnut">
+          <canvas
+            baseChart
+            [data]="doughnutData"
+            [options]="doughnutOptions"
+            type="doughnut"
+          ></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Assets by Status</div>
+        <div class="chart-area">
+          <canvas
+            baseChart
+            [data]="assetsByStatusData"
+            [options]="barOptions"
+            type="bar"
+          ></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Assets by Department</div>
+        <div class="chart-area">
+          <canvas
+            baseChart
+            [data]="assetsByDepartmentData"
+            [options]="barOptions"
+            type="bar"
+          ></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Asset Value by Category</div>
+        <div class="chart-area">
+          <canvas
+            baseChart
+            [data]="assetValueByCategoryData"
+            [options]="barOptions"
+            type="bar"
+          ></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="anomalies">
+      <h2 class="section-title">Asset Anomalies</h2>
+      <div class="anomaly-row">
+        <div class="anomaly-card warn">
+          <div class="anomaly-icon-wrap"><mat-icon>visibility_off</mat-icon></div>
+          <div class="anomaly-text">
+            <strong>{{ anomalies.ghostAssets }}</strong> Ghost assets detected during audit
+          </div>
+        </div>
+
+        <div class="anomaly-card warn">
+          <div class="anomaly-icon-wrap"><mat-icon>search_off</mat-icon></div>
+          <div class="anomaly-text">
+            <strong>{{ anomalies.missingAssets }}</strong> Assets missing physical verification
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,445 @@
+<div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-left">
+            <h1 class="page-title">Maintenance</h1>
+            <span class="item-count">{{ filteredRequests.length }} of {{ allRequests.length }} requests</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn outline" title="Export to CSV">
+                <mat-icon class="btn-icon">file_download</mat-icon>
+                Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Stat cards -->
+    <section class="stats-strip">
+        <div class="stat-card" (click)="filterStatus = ''; applyFilters();" [class.active]="!filterStatus">
+            <div class="stat-icon-wrap all"><mat-icon>build_circle</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ totalCount }}</div>
+                <div class="stat-label">All Requests</div>
+            </div>
+        </div>
+        <div class="stat-card" (click)="filterStatus = 'Pending'; applyFilters();"
+            [class.active]="filterStatus === 'Pending'">
+            <div class="stat-icon-wrap pending"><mat-icon>schedule</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ pendingCount }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+        <div class="stat-card" (click)="filterStatus = 'In Progress'; applyFilters();"
+            [class.active]="filterStatus === 'In Progress'">
+            <div class="stat-icon-wrap in-progress"><mat-icon>autorenew</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ inProgressCount }}</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+        </div>
+        <div class="stat-card" (click)="filterStatus = 'Completed'; applyFilters();"
+            [class.active]="filterStatus === 'Completed'">
+            <div class="stat-icon-wrap completed"><mat-icon>check_circle</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ completedCount }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+        <div class="stat-card" (click)="filterStatus = 'Forwarded'; applyFilters();"
+            [class.active]="filterStatus === 'Forwarded'">
+            <div class="stat-icon-wrap forwarded"><mat-icon>send</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ forwardedCount }}</div>
+                <div class="stat-label">Forwarded</div>
+            </div>
+        </div>
+        <div class="stat-card" (click)="filterStatus = 'Rejected'; applyFilters();"
+            [class.active]="filterStatus === 'Rejected'">
+            <div class="stat-icon-wrap rejected"><mat-icon>cancel</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ rejectedCount }}</div>
+                <div class="stat-label">Rejected</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <div class="search-box">
+                <mat-icon class="search-icon">search</mat-icon>
+                <input class="search-input" placeholder="Search by ID, asset, requester, issue..."
+                    [(ngModel)]="searchTerm" (input)="applyFilters()" />
+                <button class="search-clear" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <select class="filter-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
+                <option value="">All Status</option>
+                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+            </select>
+
+            <select class="filter-select" [(ngModel)]="filterPriority" (change)="applyFilters()">
+                <option value="">All Priorities</option>
+                <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+            </select>
+
+            <select class="filter-select" [(ngModel)]="filterDepartment" (change)="applyFilters()">
+                <option value="">All Departments</option>
+                <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+            </select>
+
+            <button class="btn-text" *ngIf="hasActiveFilters" (click)="clearFilters()">
+                <mat-icon>filter_list_off</mat-icon> Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- Selection banner -->
+    <div class="selection-banner" *ngIf="selectedCount > 0">
+        <mat-icon class="banner-icon">check_circle</mat-icon>
+        {{ selectedCount }} request(s) selected
+        <button class="banner-clear" (click)="clearSelection()">Clear selection</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        <table class="mnt-table">
+            <thead>
+                <tr>
+                    <th class="col-check">
+                        <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll()" />
+                    </th>
+                    <th>Request ID</th>
+                    <th>Asset</th>
+                    <th>Category</th>
+                    <th>Requested By</th>
+                    <th>Issue</th>
+                    <th>Type</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loading skeleton -->
+                <tr *ngIf="loading" class="skeleton-row">
+                    <td colspan="11">
+                        <div class="skeleton-table-row" *ngFor="let i of [1,2,3,4,5,6,7,8]">
+                            <div class="skel-check"></div>
+                            <div class="skel-line short"></div>
+                            <div class="skel-line medium"></div>
+                            <div class="skel-line short"></div>
+                            <div class="skel-line medium"></div>
+                            <div class="skel-line short"></div>
+                            <div class="skel-line pill"></div>
+                            <div class="skel-line pill"></div>
+                            <div class="skel-line short"></div>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Data rows -->
+                <tr *ngFor="let req of viewRequests" [class.row-selected]="req.selected" class="clickable-row"
+                    (click)="openDetail(req)">
+                    <td class="col-check" (click)="$event.stopPropagation()">
+                        <input type="checkbox" [checked]="req.selected" (change)="req.selected = !req.selected" />
+                    </td>
+                    <td class="cell-id">{{ req.id }}</td>
+                    <td>
+                        <div class="asset-info">
+                            <div class="asset-name">{{ req.assetName }}</div>
+                            <div class="asset-id-sub">{{ req.assetId }}</div>
+                        </div>
+                    </td>
+                    <td><span class="category-tag">{{ req.category }}</span></td>
+                    <td>
+                        <div class="requester-info">
+                            <span class="requester-name">{{ req.requestedBy }}</span>
+                            <span class="requester-dept">{{ req.department }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="issue-cell">
+                            <mat-icon class="issue-icon">{{ getIssueIcon(req.issueType) }}</mat-icon>
+                            <span>{{ req.issueType }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="type-badge" [ngClass]="req.type.toLowerCase()">
+                            <mat-icon class="type-icon">{{ getTypeIcon(req.type) }}</mat-icon>
+                            {{ req.type }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="priority-badge" [ngClass]="getPriorityClass(req.priority)">
+                            <mat-icon class="priority-icon">{{ getPriorityIcon(req.priority) }}</mat-icon>
+                            {{ req.priority }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge" [ngClass]="getStatusClass(req.status)">
+                            {{ req.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="date-cell">
+                            <span class="date-main">{{ formatDate(req.requestDate) }}</span>
+                            <span class="date-ago">{{ getTimeAgo(req.requestDate) }}</span>
+                        </div>
+                    </td>
+                    <td class="col-actions" (click)="$event.stopPropagation()">
+                        <div class="action-btns" *ngIf="req.status === 'Pending'">
+                            <button class="action-btn start" title="Start Repair"
+                                (click)="openAction('start', req, $event)">
+                                <mat-icon>build</mat-icon>
+                            </button>
+                            <button class="action-btn assign" title="Assign Replacement"
+                                (click)="openAssign(req, $event)">
+                                <mat-icon>swap_horiz</mat-icon>
+                            </button>
+                            <button class="action-btn forward" title="Forward to Procurement"
+                                (click)="openAction('forward', req, $event)">
+                                <mat-icon>send</mat-icon>
+                            </button>
+                            <button class="action-btn reject" title="Reject"
+                                (click)="openAction('reject', req, $event)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                        <div class="action-btns" *ngIf="req.status === 'In Progress'">
+                            <button class="action-btn complete" title="Mark Completed"
+                                (click)="openAction('complete', req, $event)">
+                                <mat-icon>check_circle</mat-icon>
+                            </button>
+                        </div>
+                        <span class="text-muted"
+                            *ngIf="req.status !== 'Pending' && req.status !== 'In Progress'">—</span>
+                    </td>
+                </tr>
+
+                <!-- Empty state -->
+                <tr *ngIf="viewRequests.length === 0 && !loading">
+                    <td colspan="11" class="empty-state">
+                        <mat-icon class="empty-icon">build_circle</mat-icon>
+                        <div class="empty-text">{{ hasActiveFilters ? 'No requests match your filters' : 'No maintenance
+                            requests' }}</div>
+                        <button class="btn outline" *ngIf="hasActiveFilters" (click)="clearFilters()">
+                            Clear filters
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="filteredRequests.length > 0">
+        <div class="page-info">
+            Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredRequests.length }}
+        </div>
+        <div class="page-size-control">
+            <label class="page-size-label">Rows per page:</label>
+            <select class="page-size-select" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+                <option *ngFor="let s of pageSizes" [ngValue]="s">{{ s }}</option>
+            </select>
+        </div>
+        <div class="page-controls">
+            <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+                title="Previous page">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+            <button class="page-btn" *ngFor="let p of pages" [class.active]="currentPage === p" (click)="goToPage(p)">
+                {{ p }}
+            </button>
+            <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+                title="Next page">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══ ACTION MODAL ═══ -->
+    <div class="overlay" *ngIf="showActionModal" (click)="cancelAction()">
+        <div class="action-dialog" (click)="$event.stopPropagation()">
+            <div class="action-icon-wrap" [ngClass]="actionType">
+                <mat-icon class="action-modal-icon">{{ getActionIcon() }}</mat-icon>
+            </div>
+            <h3>{{ getActionTitle() }}</h3>
+            <p class="action-subtitle" *ngIf="actionRequest">
+                <strong>{{ actionRequest.assetName }}</strong> ({{ actionRequest.id }})
+                requested by <strong>{{ actionRequest.requestedBy }}</strong>
+            </p>
+
+            <div class="modal-field">
+                <label class="modal-label">Notes <span class="optional">(optional)</span></label>
+                <textarea class="modal-textarea" rows="3" placeholder="Add notes about this action…"
+                    [(ngModel)]="actionNotes"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn outline" (click)="cancelAction()" [disabled]="actionProcessing">Cancel</button>
+                <button class="btn primary" [ngClass]="actionType" (click)="confirmAction()"
+                    [disabled]="actionProcessing">
+                    <mat-icon class="btn-icon" *ngIf="!actionProcessing">{{ getActionIcon() }}</mat-icon>
+                    <mat-icon class="btn-icon spin" *ngIf="actionProcessing">sync</mat-icon>
+                    {{ actionProcessing ? 'Processing...' : getActionTitle() }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ ASSIGN REPLACEMENT MODAL ═══ -->
+    <div class="overlay" *ngIf="showAssignModal" (click)="cancelAssign()">
+        <div class="action-dialog" (click)="$event.stopPropagation()">
+            <div class="action-icon-wrap assign">
+                <mat-icon class="action-modal-icon">swap_horiz</mat-icon>
+            </div>
+            <h3>Assign Replacement</h3>
+            <p class="action-subtitle" *ngIf="assignRequest">
+                Replace <strong>{{ assignRequest.assetName }}</strong> ({{ assignRequest.id }})
+                for <strong>{{ assignRequest.requestedBy }}</strong>
+            </p>
+
+            <div class="modal-field">
+                <label class="modal-label">Replacement Asset ID <span class="required">*</span></label>
+                <input class="modal-input" type="text" placeholder="e.g. 100005" [(ngModel)]="replacementAssetId" />
+            </div>
+
+            <div class="modal-field">
+                <label class="modal-label">Notes <span class="optional">(optional)</span></label>
+                <textarea class="modal-textarea" rows="3" placeholder="Add notes about the replacement…"
+                    [(ngModel)]="assignNotes"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn outline" (click)="cancelAssign()" [disabled]="assignProcessing">Cancel</button>
+                <button class="btn primary assign" (click)="confirmAssign()"
+                    [disabled]="assignProcessing || !replacementAssetId.trim()">
+                    <mat-icon class="btn-icon" *ngIf="!assignProcessing">swap_horiz</mat-icon>
+                    <mat-icon class="btn-icon spin" *ngIf="assignProcessing">sync</mat-icon>
+                    {{ assignProcessing ? 'Processing...' : 'Assign Replacement' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ DETAIL DRAWER ═══ -->
+    <div class="drawer-overlay" *ngIf="showDetail" (click)="closeDetail()">
+        <aside class="detail-drawer" (click)="$event.stopPropagation()" *ngIf="detailRequest">
+            <div class="drawer-header">
+                <h3>{{ detailRequest.id }}</h3>
+                <button class="drawer-close" (click)="closeDetail()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <div class="drawer-body">
+                <!-- Status & priority -->
+                <div class="drawer-row">
+                    <span class="status-badge lg" [ngClass]="getStatusClass(detailRequest.status)">
+                        {{ detailRequest.status }}
+                    </span>
+                    <span class="priority-badge lg" [ngClass]="getPriorityClass(detailRequest.priority)">
+                        <mat-icon class="priority-icon">{{ getPriorityIcon(detailRequest.priority) }}</mat-icon>
+                        {{ detailRequest.priority }}
+                    </span>
+                </div>
+
+                <hr class="drawer-divider" />
+
+                <!-- Asset Info -->
+                <h4 class="drawer-section-title">Asset Information</h4>
+                <div class="drawer-field">
+                    <span class="drawer-label">Asset</span>
+                    <span class="drawer-value">{{ detailRequest.assetName }}</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Asset ID</span>
+                    <span class="drawer-value mono">{{ detailRequest.assetId }}</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Category</span>
+                    <span class="drawer-value">{{ detailRequest.category }}</span>
+                </div>
+
+                <hr class="drawer-divider" />
+
+                <!-- Request Info -->
+                <h4 class="drawer-section-title">Request Details</h4>
+                <div class="drawer-field">
+                    <span class="drawer-label">Requested By</span>
+                    <span class="drawer-value">{{ detailRequest.requestedBy }}</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Department</span>
+                    <span class="drawer-value">{{ detailRequest.department }}</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Issue Type</span>
+                    <span class="drawer-value">
+                        <mat-icon class="inline-icon">{{ getIssueIcon(detailRequest.issueType) }}</mat-icon>
+                        {{ detailRequest.issueType }}
+                    </span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Request Type</span>
+                    <span class="drawer-value">
+                        <mat-icon class="inline-icon">{{ getTypeIcon(detailRequest.type) }}</mat-icon>
+                        {{ detailRequest.type }}
+                    </span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Date</span>
+                    <span class="drawer-value">{{ formatDate(detailRequest.requestDate) }}</span>
+                </div>
+
+                <hr class="drawer-divider" />
+
+                <!-- Description -->
+                <h4 class="drawer-section-title">Description</h4>
+                <p class="drawer-description">{{ detailRequest.description }}</p>
+
+                <!-- Notes -->
+                <div *ngIf="detailRequest.storekeeperNotes">
+                    <hr class="drawer-divider" />
+                    <h4 class="drawer-section-title">Storekeeper Notes</h4>
+                    <p class="drawer-description">{{ detailRequest.storekeeperNotes }}</p>
+                </div>
+
+                <!-- Resolution -->
+                <div *ngIf="detailRequest.resolvedDate">
+                    <hr class="drawer-divider" />
+                    <h4 class="drawer-section-title">Resolution</h4>
+                    <div class="drawer-field">
+                        <span class="drawer-label">Resolved Date</span>
+                        <span class="drawer-value">{{ formatDate(detailRequest.resolvedDate) }}</span>
+                    </div>
+                    <div class="drawer-field" *ngIf="detailRequest.assignedTo">
+                        <span class="drawer-label">Assigned To</span>
+                        <span class="drawer-value">{{ detailRequest.assignedTo }}</span>
+                    </div>
+                    <div class="drawer-field" *ngIf="detailRequest.replacementAssetId">
+                        <span class="drawer-label">Replacement Asset</span>
+                        <span class="drawer-value mono">{{ detailRequest.replacementAssetId }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drawer actions -->
+            <div class="drawer-actions" *ngIf="detailRequest.status === 'Pending'">
+                <button class="btn primary" (click)="closeDetail(); openAction('start', detailRequest, $event)">
+                    <mat-icon class="btn-icon">build</mat-icon> Start Repair
+                </button>
+                <button class="btn outline" (click)="closeDetail(); openAssign(detailRequest, $event)">
+                    <mat-icon class="btn-icon">swap_horiz</mat-icon> Assign Replacement
+                </button>
+            </div>
+        </aside>
+    </div>
+
+</div>

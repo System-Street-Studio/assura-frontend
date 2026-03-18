@@ -1,0 +1,52 @@
+export type AssetStatus = 'Deployed' | 'In Repair' | 'Available' | 'Retired';
+
+export interface Asset {
+  id: string;
+  product: string;
+  image?: string;
+  status: AssetStatus;
+  category?: string;
+  location?: string;
+  purchaseCost?: number;
+  checkedOutTo?: string;
+  checkedOutAgo?: string;
+  album?: string;
+  serial?: string;
+  warranty?: string;
+  endOfLife?: string;
+  orderNumber?: string;
+  selected?: boolean;
+}
+
+export interface AssetOwner {
+  name: string;
+  department: string;
+  avatar?: string;
+  location?: string;
+}
+
+export interface AssetDetail {
+  id: string;
+  name: string;
+  assetId: string;
+  productName: string;
+  serial: string;
+  warranty: string;
+  endOfLife: string;
+  orderNumber: string;
+  album: string;
+  value?: string;
+  category?: string;
+  department?: string;
+  purchaseDate?: string;
+  supplier?: string;
+  notes?: string;
+  checkedOutTo?: string;
+  dueBack?: string;
+  status: AssetStatus;
+  owner?: AssetOwner;
+  location?: string;
+  purchaseCost?: number;
+  scheduleAudit?: string;
+  imageBase64?: string | null;
+}

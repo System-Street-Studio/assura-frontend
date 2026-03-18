@@ -1,0 +1,209 @@
+<div class="page">
+
+    <!-- Back navigation -->
+    <div class="back-row">
+        <button class="back-btn" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            <span>Back to Checkouts</span>
+        </button>
+    </div>
+
+    <!-- Loading skeleton -->
+    <div class="checkin-skeleton" *ngIf="loading">
+        <div class="skel-header">
+            <div class="skel-block title"></div>
+            <div class="skel-block badge"></div>
+        </div>
+        <div class="skel-cards">
+            <div class="skel-block card"></div>
+            <div class="skel-block card"></div>
+        </div>
+        <div class="skel-block form-card"></div>
+    </div>
+
+    <!-- Not found -->
+    <div class="not-found-card" *ngIf="!loading && notFound">
+        <div class="not-found-icon-wrap">
+            <mat-icon>search_off</mat-icon>
+        </div>
+        <h2>Record Not Found</h2>
+        <p>The checkout record you're looking for doesn't exist or has already been returned.</p>
+        <button class="btn primary" (click)="goBack()">
+            <mat-icon class="btn-icon">arrow_back</mat-icon>
+            Back to Checkouts
+        </button>
+    </div>
+
+    <!-- Main content -->
+    <div class="checkin-content" *ngIf="!loading && !notFound && record">
+
+        <!-- Page Header -->
+        <div class="checkin-header">
+            <div class="header-left">
+                <h1 class="page-title">Check In Asset</h1>
+                <span class="record-id">{{ record.id }}</span>
+            </div>
+            <div class="status-badge" [ngClass]="getStatusClass()">
+                <span class="status-dot"></span>
+                {{ record.status }}
+            </div>
+        </div>
+
+        <!-- Alert banner for overdue -->
+        <div class="alert-banner overdue" *ngIf="isOverdue()">
+            <mat-icon class="alert-icon">warning</mat-icon>
+            <div class="alert-content">
+                <strong>This asset is overdue!</strong>
+                <span>It was due on {{ formatDate(record.dueDate) }} — {{ getDaysInfo() }}.</span>
+            </div>
+        </div>
+
+        <!-- Info Cards Row -->
+        <div class="info-cards">
+            <!-- Asset Card -->
+            <div class="info-card">
+                <div class="card-header">
+                    <div class="card-icon-wrap asset-icon">
+                        <mat-icon>devices</mat-icon>
+                    </div>
+                    <h3>Asset Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <div class="asset-visual">
+                            <div class="asset-thumb" [ngClass]="getCategoryThumbClass()">
+                                <mat-icon class="thumb-icon">{{ getCategoryIcon() }}</mat-icon>
+                            </div>
+                            <div>
+                                <div class="asset-name">{{ record.assetName }}</div>
+                                <div class="asset-category">{{ record.category }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Asset ID</span>
+                            <span class="detail-value mono">{{ record.assetId }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Serial Number</span>
+                            <span class="detail-value mono">{{ record.serial }}</span>
+                        </div>
+                    </div>
+                    <div class="detail-item detail-item-spaced" *ngIf="record.checkoutNotes">
+                        <span class="detail-label">Checkout Notes</span>
+                        <p class="detail-notes">{{ record.checkoutNotes }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignment Card -->
+            <div class="info-card">
+                <div class="card-header">
+                    <div class="card-icon-wrap person-icon">
+                        <mat-icon>person</mat-icon>
+                    </div>
+                    <h3>Assignment Details</h3>
+                </div>
+                <div class="card-body">
+                    <div class="person-row">
+                        <div class="avatar">{{ getInitials(record.checkedOutTo) }}</div>
+                        <div>
+                            <div class="person-name">{{ record.checkedOutTo }}</div>
+                            <div class="person-sub">{{ record.department }} · {{ record.email }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Checkout Date</span>
+                            <span class="detail-value">{{ formatDate(record.checkoutDate) }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Due Date</span>
+                            <span class="detail-value" [class.text-overdue]="isOverdue()">
+                                {{ formatDate(record.dueDate) }}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Duration</span>
+                            <span class="detail-value">{{ getDuration() }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Checked Out By</span>
+                            <span class="detail-value">{{ record.checkedOutBy }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Check-In Form Card -->
+        <div class="form-card">
+            <div class="card-header">
+                <div class="card-icon-wrap checkin-icon">
+                    <mat-icon>login</mat-icon>
+                </div>
+                <div>
+                    <h3>Check-In Details</h3>
+                    <p class="card-subtitle">Confirm the asset condition and add any return notes.</p>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Condition select (visual) -->
+                <div class="form-field">
+                    <label class="field-label">Asset Condition *</label>
+                    <div class="condition-options">
+                        <div class="condition-option" [class.selected]="checkinForm.condition === 'Good'"
+                            [class.good]="checkinForm.condition === 'Good'" (click)="checkinForm.condition = 'Good'">
+                            <mat-icon class="condition-opt-icon">check_circle</mat-icon>
+                            <div>
+                                <span class="condition-title">Good</span>
+                                <span class="condition-desc">No damage, fully functional</span>
+                            </div>
+                        </div>
+                        <div class="condition-option" [class.selected]="checkinForm.condition === 'Fair'"
+                            [class.fair]="checkinForm.condition === 'Fair'" (click)="checkinForm.condition = 'Fair'">
+                            <mat-icon class="condition-opt-icon">info</mat-icon>
+                            <div>
+                                <span class="condition-title">Fair</span>
+                                <span class="condition-desc">Minor wear or cosmetic issues</span>
+                            </div>
+                        </div>
+                        <div class="condition-option" [class.selected]="checkinForm.condition === 'Damaged'"
+                            [class.damaged]="checkinForm.condition === 'Damaged'"
+                            (click)="checkinForm.condition = 'Damaged'">
+                            <mat-icon class="condition-opt-icon">warning</mat-icon>
+                            <div>
+                                <span class="condition-title">Damaged</span>
+                                <span class="condition-desc">Needs repair or replacement</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-field">
+                    <label class="field-label">Return Notes <span class="optional">(optional)</span></label>
+                    <textarea class="form-textarea" rows="4"
+                        placeholder="Describe the condition, any issues found, or actions taken…"
+                        [(ngModel)]="checkinForm.notes"></textarea>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="form-actions">
+                    <button class="btn outline" (click)="goBack()" [disabled]="processing">Cancel</button>
+                    <button class="btn primary lg" (click)="confirmCheckin()" [disabled]="processing">
+                        <mat-icon class="btn-icon" *ngIf="!processing">login</mat-icon>
+                        <mat-icon class="btn-icon spin" *ngIf="processing">sync</mat-icon>
+                        {{ processing ? 'Processing...' : 'Confirm Check-In' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Overlay -->
+    <app-result-overlay *ngIf="showResult" [type]="resultType" [title]="resultTitle" [message]="resultMessage"
+        (closed)="onResultClosed()"></app-result-overlay>
+</div>

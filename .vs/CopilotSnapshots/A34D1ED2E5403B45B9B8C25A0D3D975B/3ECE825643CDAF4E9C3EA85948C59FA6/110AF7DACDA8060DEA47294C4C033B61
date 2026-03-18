@@ -1,0 +1,33 @@
+﻿import { Routes } from '@angular/router';
+
+export const inventoryRoutes: Routes = [
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./pages/dashboard/dashboard').then((m) => m.DashboardComponent),
+  },
+  {
+    path: 'assets',
+    loadComponent: () =>
+      import('./pages/assets/assets').then((m) => m.AssetsComponent),
+  },
+  {
+    path: 'assets/:id',
+    loadComponent: () =>
+      import('./pages/asset-details/asset-details').then((m) => m.AssetDetailsComponent),
+  },
+  {
+    path: 'assets/:id/edit',
+    loadComponent: () =>
+      import('./pages/asset-form/asset-form').then((m) => m.AssetFormComponent),
+    data: { mode: 'edit' },
+  },
+  {
+    path: 'assets/:id/clone',
+    loadComponent: () =>
+      import('./pages/asset-form/asset-form').then((m) => m.AssetFormComponent),
+    data: { mode: 'clone' },
+  },
+];

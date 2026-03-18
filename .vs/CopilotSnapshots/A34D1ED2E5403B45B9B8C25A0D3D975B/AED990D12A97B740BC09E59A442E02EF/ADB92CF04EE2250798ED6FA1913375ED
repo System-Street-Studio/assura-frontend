@@ -1,0 +1,100 @@
+﻿<div class="asset-form-page">
+  <button class="back-link" (click)="onCancel()">
+    <mat-icon>arrow_back</mat-icon>
+    Back
+  </button>
+
+  <div class="form-header">
+    <h2>{{ pageTitle }}</h2>
+  </div>
+
+  <form class="form-grid" (ngSubmit)="onSave()">
+    <!-- Left column -->
+    <div class="form-col">
+      <div class="form-group" [class.has-error]="submitted && !form.productName.trim()">
+        <label for="productName">Product Name *</label>
+        <input id="productName" type="text" [(ngModel)]="form.productName" name="productName" required />
+        <span class="error-text" *ngIf="submitted && !form.productName.trim()">Product name is required</span>
+      </div>
+
+      <div class="form-group" [class.has-error]="submitted && !form.serial.trim()">
+        <label for="serial">Serial Number *</label>
+        <input id="serial" type="text" [(ngModel)]="form.serial" name="serial" required />
+        <span class="error-text" *ngIf="submitted && !form.serial.trim()">Serial number is required</span>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category</label>
+        <input id="category" type="text" [(ngModel)]="form.category" name="category" />
+      </div>
+
+      <div class="form-group">
+        <label for="department">Department</label>
+        <input id="department" type="text" [(ngModel)]="form.department" name="department" />
+      </div>
+
+      <div class="form-group">
+        <label for="supplier">Supplier</label>
+        <input id="supplier" type="text" [(ngModel)]="form.supplier" name="supplier" />
+      </div>
+
+      <div class="form-group">
+        <label for="value">Value</label>
+        <input id="value" type="text" [(ngModel)]="form.value" name="value" />
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div class="form-col">
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" [(ngModel)]="form.status" name="status">
+          <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="album">Album</label>
+        <input id="album" type="text" [(ngModel)]="form.album" name="album" />
+      </div>
+
+      <div class="form-group">
+        <label for="orderNumber">Order Number</label>
+        <input id="orderNumber" type="text" [(ngModel)]="form.orderNumber" name="orderNumber" />
+      </div>
+
+      <div class="form-group">
+        <label for="warranty">Warranty</label>
+        <input id="warranty" type="text" [(ngModel)]="form.warranty" name="warranty" />
+      </div>
+
+      <div class="form-group">
+        <label for="endOfLife">End of Life</label>
+        <input id="endOfLife" type="text" [(ngModel)]="form.endOfLife" name="endOfLife" />
+      </div>
+
+      <div class="form-group">
+        <label for="purchaseDate">Purchase Date</label>
+        <input id="purchaseDate" type="text" [(ngModel)]="form.purchaseDate" name="purchaseDate" />
+      </div>
+    </div>
+
+    <!-- Full width notes -->
+    <div class="form-full">
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes" [(ngModel)]="form.notes" name="notes" rows="3"></textarea>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn outline" (click)="onCancel()">Cancel</button>
+      <button type="submit" class="btn primary" [disabled]="saving">
+        <mat-icon class="btn-icon" *ngIf="!saving">save</mat-icon>
+        <mat-icon class="btn-icon spin" *ngIf="saving">sync</mat-icon>
+        {{ saving ? 'Saving...' : (mode === 'clone' ? 'Create Clone' : 'Save Changes') }}
+      </button>
+    </div>
+  </form>
+</div>

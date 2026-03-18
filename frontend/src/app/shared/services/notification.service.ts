@@ -51,6 +51,33 @@ export class NotificationService {
       type: 'info',
       icon: 'swap_horiz',
     },
+    {
+      id: '5',
+      title: 'Asset Checked Out',
+      message: 'XPS 13" was checked out to Elliott Nolan.',
+      timestamp: new Date(Date.now() - 10 * 60_000),
+      read: false,
+      type: 'info',
+      icon: 'exit_to_app',
+    },
+    {
+      id: '6',
+      title: 'Warranty Expiring',
+      message: 'iPhone 15 Pro Max warranty expires in 7 days.',
+      timestamp: new Date(Date.now() - 45 * 60_000),
+      read: false,
+      type: 'warning',
+      icon: 'schedule',
+    },
+    {
+      id: '7',
+      title: 'Audit Scheduled',
+      message: 'Quarterly audit starts next Monday.',
+      timestamp: new Date(Date.now() - 24 * 3_600_000),
+      read: true,
+      type: 'info',
+      icon: 'fact_check',
+    },
   ]);
 
   getAll(): Observable<AppNotification[]> {
@@ -70,7 +97,7 @@ export class NotificationService {
     this.notifications$.next(updated);
   }
 
-  markAllAsRead(): void {
+  markAllRead(): void {
     const updated = this.notifications$.value.map((n: AppNotification) => ({ ...n, read: true }));
     this.notifications$.next(updated);
   }

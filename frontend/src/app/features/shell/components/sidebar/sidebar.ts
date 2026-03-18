@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -38,11 +38,14 @@ export class SidebarComponent {
     { label: 'New Arrivals', icon: 'fiber_new', link: '/procurement/new-arrivals', roles: ['Procurement', 'Admin'], section: 'procurement' },
 
     // Inventory / Storekeeper section
-    { label: 'Assets', icon: 'inventory_2', link: '/inventory/assets', roles: ['Storekeeper', 'Auditor', 'Admin'], section: 'inventory' },
+    { label: 'Dashboard', icon: 'grid_view', link: '/inventory/assets', roles: ['Storekeeper', 'Auditor', 'Admin'], section: 'inventory' },
+    { label: 'Asset', icon: 'precision_manufacturing', link: '/inventory/assets', roles: ['Storekeeper', 'Auditor', 'Admin'], section: 'inventory' },
     { label: 'Products', icon: 'category', link: '/inventory/products', roles: ['Storekeeper', 'Admin'], section: 'inventory' },
-    { label: 'Check In', icon: 'check_circle', link: '/inventory/check-in', roles: ['Storekeeper', 'Admin'], section: 'inventory' },
+    { label: 'Suppliers', icon: 'local_shipping', link: '/inventory/suppliers', roles: ['Procurement', 'Storekeeper', 'Admin'], section: 'inventory' },
+    { label: 'Request List', icon: 'swap_horiz', link: '/inventory/assets-requests', roles: ['Storekeeper', 'Admin'], section: 'inventory' },
     { label: 'Check Out', icon: 'exit_to_app', link: '/inventory/check-out', roles: ['Storekeeper', 'Auditor', 'Admin'], section: 'inventory' },
-    { label: 'Assets Requests', icon: 'assignment', link: '/inventory/assets-requests', roles: ['Storekeeper', 'Admin'], section: 'inventory' },
+    { label: 'Check In', icon: 'login', link: '/inventory/check-in', roles: ['Storekeeper', 'Admin'], section: 'inventory' },
+    { label: 'Maintenance', icon: 'build', link: '/inventory/maintenance', roles: ['Procurement', 'Storekeeper', 'Admin'], section: 'inventory' },
 
     // HR section
     { label: 'Pending', icon: 'pending_actions', link: '/hr/pending', roles: ['HR', 'Admin'], section: 'hr' },
@@ -67,6 +70,10 @@ export class SidebarComponent {
     { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['Division Head', 'Admin'], section: 'approvals' },
     { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['Division Head', 'Admin'], section: 'approvals' },
     { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['Division Head', 'Admin'], section: 'approvals' },
+  ];
+
+  bottomLinks = [
+    { label: 'Settings', icon: 'settings', link: '/settings' },
   ];
 
   get filteredMenuItems(): MenuItem[] {
@@ -108,7 +115,20 @@ export class SidebarComponent {
 
   isCollapsed = false;
 
-  toggleMenu() {
+  constructor() {
+    this.updateCollapsedState();
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.updateCollapsedState();
+  }
+
+  toggleMenu(): void {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+  private updateCollapsedState(): void {
+    this.isCollapsed = window.innerWidth < 480;
   }
 }
