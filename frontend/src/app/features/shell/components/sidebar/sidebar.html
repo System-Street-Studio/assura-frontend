@@ -24,16 +24,4 @@
     </a>
     }
   </nav>
-
-  <div class="sidebar-bottom">
-    <a class="nav-item" *ngFor="let link of bottomLinks" [routerLink]="link.link" routerLinkActive="active"
-      [title]="link.label">
-      <mat-icon class="nav-icon">{{ link.icon }}</mat-icon>
-      <span class="nav-label" *ngIf="!isCollapsed">{{ link.label }}</span>
-    </a>
-
-    <div class="sidebar-footer" *ngIf="!isCollapsed">
-      <small>&copy; 2025 Assura. All rights reserved.</small>
-    </div>
-  </div>
 </aside>

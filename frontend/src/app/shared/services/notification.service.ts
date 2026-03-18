@@ -97,7 +97,7 @@ export class NotificationService {
     this.notifications$.next(updated);
   }
 
-  markAllRead(): void {
+  markAllAsRead(): void {
     const updated = this.notifications$.value.map((n: AppNotification) => ({ ...n, read: true }));
     this.notifications$.next(updated);
   }

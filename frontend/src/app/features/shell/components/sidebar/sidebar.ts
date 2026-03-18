@@ -72,10 +72,6 @@ export class SidebarComponent {
     { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['Division Head', 'Admin'], section: 'approvals' },
   ];
 
-  bottomLinks = [
-    { label: 'Settings', icon: 'settings', link: '/settings' },
-  ];
-
   get filteredMenuItems(): MenuItem[] {
     const userRoles = this.getUserRoles();
     const currentUrl = this.router.url;
