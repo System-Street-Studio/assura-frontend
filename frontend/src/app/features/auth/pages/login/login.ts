@@ -43,7 +43,8 @@ export class LoginComponent {
         this.authService.login(credentials).subscribe({
             next: (response) => {
                 this.isLoading = false;
-                this.router.navigate(['/overview']); // Redirect to Shell
+                const dashboardUrl = this.authService.getDashboardUrl();
+                this.router.navigate([dashboardUrl]);
             },
             error: (err: HttpErrorResponse) => {
                 this.isLoading = false;

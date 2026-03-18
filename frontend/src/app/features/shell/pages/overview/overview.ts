@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge';
 import { DataTableComponent, ColumnDef } from '../../../../shared/components/data-table/data-table';
 import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
 import { ActionButtonComponent } from '../../../../shared/components/action-button/action-button';
-import {FilterDropdownComponent,FilterGroup,} from '../../../../shared/components/filter-dropdown/filter-dropdown';
+import { FilterDropdownComponent, FilterGroup, } from '../../../../shared/components/filter-dropdown/filter-dropdown';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-overview',
@@ -86,8 +88,19 @@ import {FilterDropdownComponent,FilterGroup,} from '../../../../shared/component
     `,
   ],
 })
-export class OverviewComponent {
+export class OverviewComponent implements OnInit {
+  private router = inject(Router);
+  private authService = inject(AuthService);
+
+  ngOnInit(): void {
+    const dashboardUrl = this.authService.getDashboardUrl();
+    if (dashboardUrl !== '/overview') {
+      this.router.navigate([dashboardUrl]);
+    }
+  }
+
   showFilter = false;
+  // ...
 
   columns: ColumnDef[] = [
     { key: 'id', label: 'ID' },

@@ -125,4 +125,17 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
   }
+
+  getDashboardUrl(): string {
+    const roles = this.getRoles();
+    if (roles.includes('Admin')) return '/admin/overview';
+    if (roles.includes('Procurement')) return '/procurement/overview';
+    if (roles.includes('Storekeeper') || roles.includes('Auditor')) return '/inventory/assets';
+    if (roles.includes('HR')) return '/hr/pending';
+    if (roles.includes('Accountant')) return '/accountant/discarded';
+    if (roles.includes('Superintendent')) return '/superintendent/overview';
+    if (roles.includes('Division Head')) return '/approvals/overview';
+    if (roles.includes('Employee')) return '/employee/employee-overview';
+    return '/overview';
+  }
 }

@@ -73,7 +73,7 @@ export class SidebarComponent {
   ];
 
   get filteredMenuItems(): MenuItem[] {
-    const userRoles = this.getUserRoles();
+    const userRoles = this.authService.getRoles();
     const currentUrl = this.router.url;
 
     // Identify current active section from URL
@@ -92,21 +92,6 @@ export class SidebarComponent {
     }
 
     return filtered;
-  }
-
-  private getUserRoles(): string[] {
-    // TODO: REMOVE THIS BYPASS — FOR TESTING ONLY
-    const url = this.router.url;
-    if (url.startsWith('/admin')) return ['Admin'];
-    if (url.startsWith('/procurement')) return ['Procurement', 'Admin'];
-    if (url.startsWith('/inventory')) return ['Storekeeper', 'Admin'];
-    if (url.startsWith('/hr')) return ['HR', 'Admin'];
-    if (url.startsWith('/accountant')) return ['Accountant', 'Admin'];
-    if (url.startsWith('/reporting')) return ['Auditor', 'Admin'];
-    if (url.startsWith('/superintendent')) return ['Superintendent', 'Admin'];
-    if (url.startsWith('/approvals')) return ['Division Head', 'Admin'];
-    if (url.startsWith('/employee')) return ['Employee'];
-    return ['Admin']; // default fallback
   }
 
   isCollapsed = false;
