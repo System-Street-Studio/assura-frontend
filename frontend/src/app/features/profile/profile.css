@@ -1,0 +1,255 @@
+.profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: 'Jost', sans-serif;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-header {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.cover-photo {
+  height: 180px;
+  background: linear-gradient(135deg, #004777, #0b6c78);
+  position: relative;
+}
+
+.cover-photo::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.header-content {
+  display: flex;
+  align-items: flex-end;
+  padding: 0 40px 30px;
+  margin-top: -60px;
+  position: relative;
+  gap: 24px;
+}
+
+.avatar-container {
+  padding: 6px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #0b6c78, #16a4a4);
+  border-radius: 20px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.user-main-info {
+  flex: 1;
+  padding-bottom: 10px;
+}
+
+.user-display-name {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1a2a3a;
+  letter-spacing: -0.5px;
+}
+
+.user-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 4px 12px;
+  background: rgba(11, 108, 120, 0.08);
+  color: #0b6c78;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.user-role-badge mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.header-actions {
+  padding-bottom: 12px;
+}
+
+.edit-btn {
+  border-radius: 12px;
+  padding: 8px 24px;
+  font-weight: 600;
+  height: 48px;
+  box-shadow: 0 4px 12px rgba(11, 108, 120, 0.25);
+}
+
+.profile-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-header mat-icon {
+  color: #0b6c78;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a2a3a;
+}
+
+.card-body {
+  padding: 32px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-item .label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #8b9a9b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-item .value {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #2c3e3f;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row mat-form-field {
+  flex: 1;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.static-field {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8fcfc;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.static-field .field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #5a6b6c;
+}
+
+.static-field .field-value {
+  font-weight: 700;
+  color: #1a2a3a;
+}
+
+.static-field .field-hint {
+  font-size: 0.75rem;
+  color: #8b9a9b;
+  font-style: italic;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.form-actions button {
+  padding: 10px 24px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: #8b9a9b;
+  gap: 16px;
+}
+
+mat-spinner[diameter="20"] {
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px 30px;
+  }
+  
+  .user-main-info {
+    padding-bottom: 0;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

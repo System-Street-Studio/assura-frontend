@@ -63,5 +63,6 @@ export const shellRoutes: Routes = [
     data: { roles: [ROLES.ACCOUNTANT, ROLES.ADMIN] },
     loadChildren: () => import('../accountant/accountant.routes').then(m => m.accountantRoutes)
   },
+  { path: 'profile', loadComponent: () => import('../profile/profile').then(m => m.ProfileComponent) },
   { path: '', redirectTo: 'overview', pathMatch: 'full' },
 ];

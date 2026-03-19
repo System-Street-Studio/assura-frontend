@@ -11,10 +11,9 @@ import { approvalsRoutes } from './features/approvals/approvals.routes';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
-    provideRouter(approvalsRoutes, withComponentInputBinding()),
     provideCharts(withDefaultRegisterables()),
   ],
 };
