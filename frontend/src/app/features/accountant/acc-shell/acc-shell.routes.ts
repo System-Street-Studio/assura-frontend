@@ -25,9 +25,5 @@ export const accShellRoutes: Routes = [
         path: 'lose',
         loadComponent: () => import('../acc-lose/acc-lose').then(m => m.AccLoseComponent)
     },
-    {
-        path: 'profile',
-        loadComponent: () => import('../../profile/profile').then(m => m.ProfileComponent)
-    },
     { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];

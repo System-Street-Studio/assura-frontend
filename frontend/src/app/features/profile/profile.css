@@ -7,8 +7,15 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .profile-header {
@@ -29,8 +36,11 @@
 .cover-photo::after {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
   background-size: 24px 24px;
 }
 
@@ -98,6 +108,23 @@
 
 .header-actions {
   padding-bottom: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.back-btn {
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-weight: 600;
+  height: 48px;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #5a6b6c !important;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 .edit-btn {
@@ -238,16 +265,16 @@ mat-spinner[diameter="20"] {
     text-align: center;
     padding: 0 20px 30px;
   }
-  
+
   .user-main-info {
     padding-bottom: 0;
   }
-  
+
   .form-row {
     flex-direction: column;
     gap: 0;
   }
-  
+
   .info-grid {
     grid-template-columns: 1fr;
     gap: 20px;

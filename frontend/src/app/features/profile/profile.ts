@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,6 +34,7 @@ export class ProfileComponent implements OnInit {
     private profileService = inject(ProfileService);
     private fb = inject(FormBuilder);
     private toastService = inject(ToastService);
+    private location = inject(Location);
 
     profile: UserProfile | null = null;
     profileForm: FormGroup;
@@ -51,6 +52,10 @@ export class ProfileComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadProfile();
+    }
+
+    goBack(): void {
+        this.location.back();
     }
 
     loadProfile(): void {
