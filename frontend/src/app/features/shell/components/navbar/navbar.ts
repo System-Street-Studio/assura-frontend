@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 import { AppNotification, NotificationService } from '../../../../shared/services/notification.service';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { ProfileService } from '../../../../core/services/profile.service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,9 +19,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private elRef = inject(ElementRef);
   private authService = inject(AuthService);
+  private profileService = inject(ProfileService);
 
-  employeeName = 'User';
-  initials = 'U';
+  get employeeName(): string {
+    const profile = this.profileService.profile();
+    return profile ? `${profile.firstName} ${profile.lastName}` : 'User';
+  }
+
+  get initials(): string {
+    const profile = this.profileService.profile();
+    if (!profile) return 'U';
+    return (profile.firstName[0] || '') + (profile.lastName[0] || '');
+  }
 
   get roleName(): string {
     const currentUrl = this.router.url;
@@ -53,6 +63,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.notifService.getAll().subscribe((n: AppNotification[]) => (this.notifications = n)),
       this.notifService.getUnreadCount().subscribe((c: number) => (this.unreadCount = c))
     );
+
+    // Load profile if not already cached
+    if (!this.profileService.profile()) {
+      this.profileService.getProfile().subscribe();
+    }
   }
 
   ngOnDestroy(): void {
@@ -103,6 +118,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   onLogout(): void {
     this.showProfileMenu = false;
+    this.authService.logout();
+    this.profileService.clearCache();
     this.router.navigate(['/auth/login']);
   }
 }

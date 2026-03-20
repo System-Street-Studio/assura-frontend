@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,7 +9,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProfileService } from '../../core/services/profile.service';
-import { UserProfile } from './models/profile.models';
 import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
@@ -31,15 +30,17 @@ import { ToastService } from '../../shared/services/toast.service';
     styleUrls: ['./profile.css']
 })
 export class ProfileComponent implements OnInit {
-    private profileService = inject(ProfileService);
+    public profileService = inject(ProfileService);
     private fb = inject(FormBuilder);
     private toastService = inject(ToastService);
     private location = inject(Location);
 
-    profile: UserProfile | null = null;
+    // Signals from service
+    profile = this.profileService.profile;
+    loading = this.profileService.loading;
+
     profileForm: FormGroup;
     isEditing = false;
-    loading = true;
     saving = false;
 
     constructor() {
@@ -47,6 +48,18 @@ export class ProfileComponent implements OnInit {
             firstName: ['', [Validators.required]],
             lastName: ['', [Validators.required]],
             email: ['', [Validators.required, Validators.email]]
+        });
+
+        // Update form when profile data changes
+        effect(() => {
+            const data = this.profile();
+            if (data && !this.isEditing) {
+                this.profileForm.patchValue({
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    email: data.email
+                });
+            }
         });
     }
 
@@ -59,52 +72,39 @@ export class ProfileComponent implements OnInit {
     }
 
     loadProfile(): void {
-        this.loading = true;
+        // Just call getProfile, the service handles caching and loading state signal
         this.profileService.getProfile().subscribe({
-            next: (profile) => {
-                this.profile = profile;
-                this.profileForm.patchValue({
-                    firstName: profile.firstName,
-                    lastName: profile.lastName,
-                    email: profile.email
-                });
-                this.loading = false;
-            },
             error: (err: any) => {
                 console.error('Error loading profile', err);
                 this.toastService.show('Failed to load profile details', 'error');
-                this.loading = false;
             }
         });
     }
 
     toggleEdit(): void {
         this.isEditing = !this.isEditing;
-        if (!this.isEditing && this.profile) {
+        if (!this.isEditing && this.profile()) {
+            const data = this.profile()!;
             this.profileForm.patchValue({
-                firstName: this.profile.firstName,
-                lastName: this.profile.lastName,
-                email: this.profile.email
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email
             });
         }
     }
 
     saveProfile(): void {
-        if (this.profileForm.invalid || !this.profile) return;
+        const currentProfile = this.profile();
+        if (this.profileForm.invalid || !currentProfile) return;
 
         this.saving = true;
         const request = {
-            userId: this.profile.id,
+            userId: currentProfile.id,
             ...this.profileForm.value
         };
 
         this.profileService.updateProfile(request).subscribe({
             next: () => {
-                if (this.profile) {
-                    this.profile.firstName = request.firstName;
-                    this.profile.lastName = request.lastName;
-                    this.profile.email = request.email;
-                }
                 this.isEditing = false;
                 this.saving = false;
                 this.toastService.show('Profile updated successfully', 'success');
@@ -118,7 +118,8 @@ export class ProfileComponent implements OnInit {
     }
 
     get initials(): string {
-        if (!this.profile) return 'U';
-        return (this.profile.firstName[0] || '') + (this.profile.lastName[0] || '');
+        const data = this.profile();
+        if (!data) return 'U';
+        return (data.firstName[0] || '') + (data.lastName[0] || '');
     }
 }

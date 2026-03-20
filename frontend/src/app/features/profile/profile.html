@@ -1,4 +1,4 @@
-<div class="profile-container" *ngIf="!loading; else loadingTemplate">
+<div class="profile-container" *ngIf="!loading(); else loadingTemplate">
   <div class="profile-header">
     <div class="cover-photo"></div>
     <div class="header-content">
@@ -6,10 +6,10 @@
         <div class="profile-avatar">{{ initials }}</div>
       </div>
       <div class="user-main-info">
-        <h1 class="user-display-name">{{ profile?.firstName }} {{ profile?.lastName }}</h1>
+        <h1 class="user-display-name">{{ profile()?.firstName }} {{ profile()?.lastName }}</h1>
         <p class="user-role-badge">
           <mat-icon>verified_user</mat-icon>
-          {{ profile?.role }}
+          {{ profile()?.role }}
         </p>
       </div>
       <div class="header-actions">
@@ -61,7 +61,7 @@
 
           <div class="static-field">
             <span class="field-label">Username</span>
-            <span class="field-value">{{ profile?.username }}</span>
+            <span class="field-value">{{ profile()?.username }}</span>
             <span class="field-hint">(Cannot be changed)</span>
           </div>
 
@@ -78,23 +78,23 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="label">First Name</span>
-              <span class="value">{{ profile?.firstName }}</span>
+              <span class="value">{{ profile()?.firstName }}</span>
             </div>
             <div class="info-item">
               <span class="label">Last Name</span>
-              <span class="value">{{ profile?.lastName }}</span>
+              <span class="value">{{ profile()?.lastName }}</span>
             </div>
             <div class="info-item">
               <span class="label">Email Address</span>
-              <span class="value">{{ profile?.email }}</span>
+              <span class="value">{{ profile()?.email }}</span>
             </div>
             <div class="info-item">
               <span class="label">Username</span>
-              <span class="value">{{ profile?.username }}</span>
+              <span class="value">{{ profile()?.username }}</span>
             </div>
-            <div class="info-item" *ngIf="profile?.divisionName">
+            <div class="info-item" *ngIf="profile()?.divisionName">
               <span class="label">Division</span>
-              <span class="value">{{ profile?.divisionName }}</span>
+              <span class="value">{{ profile()?.divisionName }}</span>
             </div>
             <div class="info-item">
               <span class="label">Member Since</span>
