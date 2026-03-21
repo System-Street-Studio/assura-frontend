@@ -4,14 +4,14 @@
     <button class="back-link" (click)="onCancel()">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <span class="breadcrumb">{{ breadcrumb }}</span>
+    <span class="breadcrumb">Assets / {{ pageTitle }}</span>
   </div>
 
   <div class="form-header">
     <h2>{{ pageTitle }}</h2>
-    <span class="asset-id-badge" *ngIf="form.assetId">
+    <span class="asset-id-badge" *ngIf="form.assetCode">
       <mat-icon class="badge-icon">tag</mat-icon>
-      {{ form.assetId }}
+      {{ form.assetCode }}
     </span>
   </div>
 
@@ -21,15 +21,25 @@
       <div class="form-col">
         <div class="section-label">Basic Information</div>
 
-        <div class="form-group" [class.has-error]="submitted && !form.productName.trim()">
-          <label for="productName">Product *</label>
-          <div class="select-row">
-            <select id="productName" [(ngModel)]="form.productName" name="productName" required>
-              <option value="">Select Product</option>
-              <option *ngFor="let p of products" [value]="p">{{ p }}</option>
-            </select>
-          </div>
-          <span class="error-text" *ngIf="submitted && !form.productName.trim()">Product is required</span>
+        <div class="form-group" [class.has-error]="submitted && !form.assetCode.trim()">
+          <label for="assetCode">Asset Code *</label>
+          <input id="assetCode" type="text" [(ngModel)]="form.assetCode" name="assetCode" placeholder="e.g. ASSET-001"
+            required />
+          <span class="error-text" *ngIf="submitted && !form.assetCode.trim()">Asset Code is required</span>
+        </div>
+
+        <div class="form-group">
+          <label for="assetTag">Asset Tag</label>
+          <input id="assetTag" type="text" [(ngModel)]="form.assetTag" name="assetTag" placeholder="e.g. TAG-123" />
+        </div>
+
+        <div class="form-group" [class.has-error]="submitted && !form.productId">
+          <label for="productId">Product *</label>
+          <select id="productId" [(ngModel)]="form.productId" name="productId" required>
+            <option [value]="0">Select Product</option>
+            <option *ngFor="let p of products" [value]="p.id">{{ p.name }}</option>
+          </select>
+          <span class="error-text" *ngIf="submitted && !form.productId">Product is required</span>
         </div>
 
         <div class="form-group" [class.has-error]="submitted && !form.status">
@@ -40,76 +50,40 @@
           </select>
           <span class="error-text" *ngIf="submitted && !form.status">Status is required</span>
         </div>
-
-        <div class="form-group">
-          <label for="category">Category</label>
-          <select id="category" [(ngModel)]="form.category" name="category">
-            <option value="">Select Category</option>
-            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="supplier">Supplier</label>
-          <select id="supplier" [(ngModel)]="form.supplier" name="supplier">
-            <option value="">Select Supplier</option>
-            <option *ngFor="let s of suppliers" [value]="s">{{ s }}</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="department">Department</label>
-          <select id="department" [(ngModel)]="form.department" name="department">
-            <option value="">Select Department</option>
-            <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="location">Location</label>
-          <select id="location" [(ngModel)]="form.location" name="location">
-            <option value="">Select Location</option>
-            <option *ngFor="let l of locations" [value]="l">{{ l }}</option>
-          </select>
-        </div>
       </div>
 
       <!-- ── Right Column ── -->
       <div class="form-col">
         <div class="section-label">Details</div>
 
-        <div class="form-group" [class.has-error]="submitted && !form.serial.trim()">
-          <label for="serial">Serial Number *</label>
-          <input id="serial" type="text" [(ngModel)]="form.serial" name="serial" placeholder="e.g. GC15JL3" required />
-          <span class="error-text" *ngIf="submitted && !form.serial.trim()">Serial number is required</span>
+        <div class="form-group">
+          <label for="categoryId">Category</label>
+          <select id="categoryId" [(ngModel)]="form.categoryId" name="categoryId">
+            <option [value]="0">Select Category</option>
+            <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+          </select>
         </div>
 
         <div class="form-group">
-          <label for="orderNumber">Order Number</label>
-          <input id="orderNumber" type="text" [(ngModel)]="form.orderNumber" name="orderNumber" placeholder="e.g. S6C2IQ2" />
+          <label for="supplierId">Supplier</label>
+          <select id="supplierId" [(ngModel)]="form.supplierId" name="supplierId">
+            <option [value]="0">Select Supplier</option>
+            <option *ngFor="let s of suppliers" [value]="s.id">{{ s.name }}</option>
+          </select>
         </div>
 
         <div class="form-group">
-          <label for="warranty">Warranty Expiration</label>
-          <input id="warranty" type="date" [(ngModel)]="form.warranty" name="warranty" />
+          <label for="divisionId">Division</label>
+          <select id="divisionId" [(ngModel)]="form.divisionId" name="divisionId">
+            <option [value]="0">Select Division</option>
+            <option *ngFor="let d of divisions" [value]="d.id">{{ d.name }}</option>
+          </select>
         </div>
 
         <div class="form-group">
-          <label for="purchaseDate">Purchase Date</label>
-          <input id="purchaseDate" type="date" [(ngModel)]="form.purchaseDate" name="purchaseDate" />
-        </div>
-
-        <div class="form-group">
-          <label for="purchaseCost">Purchase Cost</label>
-          <div class="money-row">
-            <span class="currency-badge">USD</span>
-            <input id="purchaseCost" type="number" [(ngModel)]="form.purchaseCost" name="purchaseCost" placeholder="0.00" min="0" step="0.01" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="endOfLife">End of Life</label>
-          <input id="endOfLife" type="date" [(ngModel)]="form.endOfLife" name="endOfLife" />
+          <label for="serialNumber">Serial Number</label>
+          <input id="serialNumber" type="text" [(ngModel)]="form.serialNumber" name="serialNumber"
+            placeholder="e.g. SN123456" />
         </div>
       </div>
     </div>
@@ -120,40 +94,23 @@
 
       <div class="form-row-pair">
         <div class="form-group">
-          <label for="album">Album</label>
-          <input id="album" type="text" [(ngModel)]="form.album" name="album" placeholder="Album name" />
+          <label for="assetDate">Asset Date</label>
+          <input id="assetDate" type="date" [(ngModel)]="form.assetDate" name="assetDate" />
         </div>
         <div class="form-group">
-          <label for="scheduleAudit">Schedule Audit</label>
-          <select id="scheduleAudit" [(ngModel)]="form.scheduleAudit" name="scheduleAudit">
-            <option value="">Select Audit Frequency</option>
-            <option *ngFor="let a of auditSchedules" [value]="a">{{ a }}</option>
-          </select>
+          <label for="purchaseValue">Purchase Value</label>
+          <div class="money-row">
+            <span class="currency-badge">LKR</span>
+            <input id="purchaseValue" type="number" [(ngModel)]="form.purchaseValue" name="purchaseValue"
+              placeholder="0" min="0" step="1" />
+          </div>
         </div>
       </div>
 
       <div class="form-group">
         <label for="notes">Notes</label>
-        <textarea id="notes" [(ngModel)]="form.notes" name="notes" rows="3" placeholder="Additional notes about this asset..."></textarea>
-      </div>
-
-      <!-- Image upload -->
-      <div class="form-group">
-        <label>Image</label>
-        <div class="image-upload-area">
-          <div class="image-preview-box" *ngIf="imagePreview">
-            <img [src]="imagePreview" alt="Asset preview" class="image-preview" />
-            <button type="button" class="remove-image" (click)="removeImage()">
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-          <label class="upload-trigger" for="imageInput" *ngIf="!imagePreview">
-            <mat-icon class="upload-icon">cloud_upload</mat-icon>
-            <span class="upload-text">Click to upload image</span>
-            <span class="upload-hint">PNG, JPG up to 5 MB</span>
-          </label>
-          <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" (change)="onFileChange($event)" class="file-input" />
-        </div>
+        <textarea id="notes" [(ngModel)]="form.notes" name="notes" rows="3"
+          placeholder="Additional notes about this asset..."></textarea>
       </div>
     </div>
 
@@ -163,16 +120,12 @@
       <button type="submit" class="btn primary" [disabled]="saving">
         <mat-icon class="btn-icon" *ngIf="!saving">save</mat-icon>
         <mat-icon class="btn-icon spin" *ngIf="saving">sync</mat-icon>
-        {{ saving ? 'Saving...' : (mode === 'create' ? 'Create Asset' : mode === 'clone' ? 'Create Clone' : 'Save Changes') }}
+        {{ saving ? 'Saving...' : (mode === 'create' ? 'Create Asset' : mode === 'clone' ? 'Create Clone' : 'Save
+        Changes') }}
       </button>
     </div>
   </form>
 </div>
 
-<app-result-overlay
-  *ngIf="showResult"
-  [type]="resultType"
-  [title]="resultTitle"
-  [message]="resultMessage"
-  (closed)="onResultClosed()"
-></app-result-overlay>
+<app-result-overlay *ngIf="showResult" [type]="resultType" [title]="resultTitle" [message]="resultMessage"
+  (closed)="onResultClosed()"></app-result-overlay>
