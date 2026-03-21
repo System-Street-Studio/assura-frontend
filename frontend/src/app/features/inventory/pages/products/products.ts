@@ -16,7 +16,6 @@ import { ToastService } from '../../../../shared/services/toast.service';
 })
 export class ProductsComponent implements OnInit {
   private productService = inject(ProductService);
-  private router = inject(Router);
   private toast = inject(ToastService);
 
   allProducts: Product[] = [];
@@ -25,44 +24,10 @@ export class ProductsComponent implements OnInit {
   loading = true;
 
   search = '';
-  filterCategory = '';
-  filterManufacturer = '';
   pageSize = 10;
   currentPage = 1;
   totalPages = 1;
   allSelected = false;
-
-  get totalProductCount(): number {
-    return this.allProducts.length;
-  }
-
-  get totalAssetUnits(): number {
-    return this.allProducts.reduce((sum, p) => sum + p.totalAssets, 0);
-  }
-
-  get totalAvailable(): number {
-    return this.allProducts.reduce((sum, p) => sum + p.availableAssets, 0);
-  }
-
-  get lowStockCount(): number {
-    return this.allProducts.filter((p) => p.availableAssets < p.minQuantity).length;
-  }
-
-  get outOfStockCount(): number {
-    return this.allProducts.filter((p) => p.availableAssets === 0).length;
-  }
-
-  get totalCatalogValue(): number {
-    return this.allProducts.reduce((sum, p) => sum + p.unitCost * p.totalAssets, 0);
-  }
-
-  get categories(): string[] {
-    return [...new Set(this.allProducts.map((p) => p.category))].sort();
-  }
-
-  get manufacturers(): string[] {
-    return [...new Set(this.allProducts.map((p) => p.manufacturer))].sort();
-  }
 
   ngOnInit(): void {
     this.productService.getAll().subscribe({
@@ -87,18 +52,9 @@ export class ProductsComponent implements OnInit {
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.id.toLowerCase().includes(q) ||
-          p.manufacturer.toLowerCase().includes(q) ||
-          p.modelNumber.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q)
+          (p.manufacturer || '').toLowerCase().includes(q) ||
+          (p.modelNumber || '').toLowerCase().includes(q)
       );
-    }
-
-    if (this.filterCategory) {
-      result = result.filter((p) => p.category === this.filterCategory);
-    }
-
-    if (this.filterManufacturer) {
-      result = result.filter((p) => p.manufacturer === this.filterManufacturer);
     }
 
     this.filteredProducts = result;
@@ -109,8 +65,6 @@ export class ProductsComponent implements OnInit {
 
   clearFilters(): void {
     this.search = '';
-    this.filterCategory = '';
-    this.filterManufacturer = '';
     this.currentPage = 1;
     this.applyFilters();
   }
@@ -150,60 +104,6 @@ export class ProductsComponent implements OnInit {
 
   get selectedCount(): number {
     return this.allProducts.filter((p) => p.selected).length;
-  }
-
-  formatCurrency(value: number): string {
-    return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 0 });
-  }
-
-  getStockStatus(product: Product): 'healthy' | 'low' | 'out' {
-    if (product.availableAssets === 0) return 'out';
-    if (product.availableAssets < product.minQuantity) return 'low';
-    return 'healthy';
-  }
-
-  getStockLabel(product: Product): string {
-    const status = this.getStockStatus(product);
-    if (status === 'out') return 'Out of Stock';
-    if (status === 'low') return 'Low Stock';
-    return 'In Stock';
-  }
-
-  getCategoryIcon(category: string): string {
-    const map: Record<string, string> = {
-      Laptops: 'laptop',
-      'Mobile Devices': 'smartphone',
-      Tablets: 'tablet',
-      Monitors: 'desktop_windows',
-      Accessories: 'keyboard',
-      Networking: 'lan',
-      Printers: 'print',
-      Desktops: 'computer',
-    };
-    return map[category] || 'devices';
-  }
-
-  getThumbClass(category: string): string {
-    const map: Record<string, string> = {
-      Laptops: 'thumb laptop',
-      'Mobile Devices': 'thumb phone',
-      Tablets: 'thumb tablet',
-      Monitors: 'thumb monitor',
-      Accessories: 'thumb accessory',
-      Networking: 'thumb network',
-      Printers: 'thumb printer',
-      Desktops: 'thumb desktop',
-    };
-    return map[category] || 'thumb laptop';
-  }
-
-  formatEol(months: number): string {
-    if (months >= 12) {
-      const years = Math.floor(months / 12);
-      const rem = months % 12;
-      return rem > 0 ? `${years}y ${rem}m` : `${years}y`;
-    }
-    return `${months}m`;
   }
 
   onRowClick(product: Product): void {

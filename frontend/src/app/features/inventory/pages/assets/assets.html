@@ -1,5 +1,4 @@
 <div class="page">
-
   <!-- Header -->
   <div class="page-header">
     <div class="header-left">
@@ -27,32 +26,35 @@
         <div class="stat-label">All Assets</div>
       </div>
     </div>
-    <div class="stat-card" (click)="filterStatus = 'Deployed'; applyFilters();" [class.active]="filterStatus === 'Deployed'">
+    <div class="stat-card" (click)="filterStatus = 'InUse'; applyFilters();" [class.active]="filterStatus === 'InUse'">
       <div class="stat-icon-wrap deployed"><mat-icon>check_circle</mat-icon></div>
       <div class="stat-info">
-        <div class="stat-value">{{ statusCounts['Deployed'] }}</div>
-        <div class="stat-label">Deployed</div>
+        <div class="stat-value">{{ statusCounts['InUse'] }}</div>
+        <div class="stat-label">In Use</div>
       </div>
     </div>
-    <div class="stat-card" (click)="filterStatus = 'Available'; applyFilters();" [class.active]="filterStatus === 'Available'">
+    <div class="stat-card" (click)="filterStatus = 'InStore'; applyFilters();"
+      [class.active]="filterStatus === 'InStore'">
       <div class="stat-icon-wrap available"><mat-icon>shelves</mat-icon></div>
       <div class="stat-info">
-        <div class="stat-value">{{ statusCounts['Available'] }}</div>
-        <div class="stat-label">Available</div>
+        <div class="stat-value">{{ statusCounts['InStore'] }}</div>
+        <div class="stat-label">In Store</div>
       </div>
     </div>
-    <div class="stat-card" (click)="filterStatus = 'In Repair'; applyFilters();" [class.active]="filterStatus === 'In Repair'">
+    <div class="stat-card" (click)="filterStatus = 'UnderMaintenance'; applyFilters();"
+      [class.active]="filterStatus === 'UnderMaintenance'">
       <div class="stat-icon-wrap repair"><mat-icon>build</mat-icon></div>
       <div class="stat-info">
-        <div class="stat-value">{{ statusCounts['In Repair'] }}</div>
-        <div class="stat-label">In Repair</div>
+        <div class="stat-value">{{ statusCounts['UnderMaintenance'] }}</div>
+        <div class="stat-label">Maintenance</div>
       </div>
     </div>
-    <div class="stat-card" (click)="filterStatus = 'Retired'; applyFilters();" [class.active]="filterStatus === 'Retired'">
+    <div class="stat-card" (click)="filterStatus = 'Discarded'; applyFilters();"
+      [class.active]="filterStatus === 'Discarded'">
       <div class="stat-icon-wrap retired"><mat-icon>cancel</mat-icon></div>
       <div class="stat-info">
-        <div class="stat-value">{{ statusCounts['Retired'] }}</div>
-        <div class="stat-label">Retired</div>
+        <div class="stat-value">{{ statusCounts['Discarded'] }}</div>
+        <div class="stat-label">Discarded</div>
       </div>
     </div>
     <div class="stat-card value-card">
@@ -69,12 +71,8 @@
     <div class="toolbar-left">
       <div class="search-box">
         <mat-icon class="search-icon">search</mat-icon>
-        <input
-          class="search-input"
-          placeholder="Search by name, ID, serial, category, location..."
-          [(ngModel)]="search"
-          (input)="applyFilters()"
-        />
+        <input class="search-input" placeholder="Search by name, code, serial, category..." [(ngModel)]="search"
+          (input)="applyFilters()" />
         <button class="search-clear" *ngIf="search" (click)="search = ''; applyFilters()">
           <mat-icon>close</mat-icon>
         </button>
@@ -82,10 +80,12 @@
 
       <select class="filter-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
         <option value="">All Status</option>
-        <option value="Deployed">Deployed</option>
-        <option value="In Repair">In Repair</option>
-        <option value="Available">Available</option>
-        <option value="Retired">Retired</option>
+        <option value="InUse">In Use</option>
+        <option value="InStore">In Store</option>
+        <option value="UnderMaintenance">Under Maintenance</option>
+        <option value="Discarded">Discarded</option>
+        <option value="Transferred">Transferred</option>
+        <option value="Lost">Lost</option>
       </select>
 
       <select class="filter-select" [(ngModel)]="filterCategory" (change)="applyFilters()">
@@ -97,28 +97,6 @@
         <mat-icon>filter_list_off</mat-icon> Clear
       </button>
     </div>
-
-    <div class="toolbar-right">
-      <button class="btn outline sm" [disabled]="selectedCount === 0" title="Check in selected">
-        <mat-icon class="btn-icon">login</mat-icon>
-        Check in
-      </button>
-      <button class="btn outline sm" [disabled]="selectedCount === 0" title="Check out selected">
-        <mat-icon class="btn-icon">exit_to_app</mat-icon>
-        Check out
-      </button>
-      <button class="btn outline sm" [disabled]="selectedCount === 0" title="Bulk edit selected">
-        <mat-icon class="btn-icon">edit</mat-icon>
-        Bulk Edit
-      </button>
-    </div>
-  </div>
-
-  <!-- Selected count banner -->
-  <div class="selection-banner" *ngIf="selectedCount > 0">
-    <mat-icon class="banner-icon">check_circle</mat-icon>
-    {{ selectedCount }} asset(s) selected
-    <button class="banner-clear" (click)="clearFilters()">Clear selection</button>
   </div>
 
   <!-- Table -->
@@ -127,99 +105,41 @@
       <thead>
         <tr>
           <th class="col-check">
-            <input
-              type="checkbox"
-              [checked]="allSelected"
-              (change)="toggleSelectAll($event)"
-            />
+            <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll($event)" />
           </th>
-          <th class="col-image"></th>
-          <th>Asset ID</th>
+          <th>Asset Code</th>
           <th>Product</th>
           <th>Category</th>
           <th>Status</th>
           <th>Assigned To</th>
-          <th>Location</th>
+          <th>Division</th>
           <th>Serial</th>
           <th>Value</th>
         </tr>
       </thead>
       <tbody>
-        <!-- Loading skeleton rows -->
-        <tr *ngIf="loading" class="skeleton-row">
-          <td colspan="10">
-            <div class="skeleton-table-row" *ngFor="let i of [1,2,3,4,5,6,7,8]">
-              <div class="skel-check"></div>
-              <div class="skel-thumb"></div>
-              <div class="skel-line short"></div>
-              <div class="skel-line medium"></div>
-              <div class="skel-line short"></div>
-              <div class="skel-line pill"></div>
-              <div class="skel-line medium"></div>
-              <div class="skel-line short"></div>
-            </div>
-          </td>
-        </tr>
-
-        <tr
-          *ngFor="let asset of viewAssets"
-          [class.row-selected]="asset.selected"
-          class="clickable-row"
-          (click)="onRowClick(asset)"
-        >
+        <tr *ngFor="let asset of viewAssets" [class.row-selected]="asset.selected" class="clickable-row"
+          (click)="onRowClick(asset)">
           <td class="col-check" (click)="$event.stopPropagation()">
-            <input
-              type="checkbox"
-              [checked]="asset.selected"
-              (change)="onRowSelect(asset, $event)"
-            />
+            <input type="checkbox" [checked]="asset.selected" (change)="onRowSelect(asset, $event)" />
           </td>
-          <td class="col-image">
-            <div [class]="getThumbClass(asset.product)">
-              <mat-icon class="thumb-icon">{{ getThumbIcon(asset.product) }}</mat-icon>
-            </div>
-          </td>
-          <td class="cell-id">{{ asset.id }}</td>
+          <td class="cell-id">{{ asset.assetCode }}</td>
+          <td>{{ asset.productName }}</td>
+          <td>{{ asset.categoryName }}</td>
           <td>
-            <div class="cell-product">{{ asset.product }}</div>
-          </td>
-          <td>
-            <span class="category-tag" *ngIf="asset.category">{{ asset.category }}</span>
-            <span class="text-muted" *ngIf="!asset.category">—</span>
-          </td>
-          <td>
-            <span
-              class="status-badge"
-              [ngClass]="asset.status.toLowerCase().replace(' ', '-')"
-            >
-              {{ asset.status }}
+            <span class="status-badge" [ngClass]="asset.status.toLowerCase()">
+              {{ getStatusLabel(asset.status) }}
             </span>
           </td>
-          <td>
-            <div class="checkout-info" *ngIf="asset.checkedOutTo">
-              <span class="checkout-name">{{ asset.checkedOutTo }}</span>
-              <span class="checkout-ago">{{ asset.checkedOutAgo }}</span>
-            </div>
-            <span class="text-muted" *ngIf="!asset.checkedOutTo">—</span>
-          </td>
-          <td>
-            <div class="cell-location" *ngIf="asset.location">
-              <mat-icon class="location-icon">location_on</mat-icon>
-              {{ asset.location }}
-            </div>
-            <span class="text-muted" *ngIf="!asset.location">—</span>
-          </td>
-          <td class="cell-serial">{{ asset.serial || '—' }}</td>
-          <td class="cell-value">{{ formatCurrency(asset.purchaseCost) }}</td>
+          <td>{{ asset.assignedUserName || '—' }}</td>
+          <td>{{ asset.divisionName }}</td>
+          <td>{{ asset.serialNumber || '—' }}</td>
+          <td>{{ formatCurrency(asset.purchaseValue) }}</td>
         </tr>
-
         <tr *ngIf="viewAssets.length === 0 && !loading">
-          <td colspan="10" class="empty-state">
+          <td colspan="9" class="empty-state">
             <mat-icon class="empty-icon">inventory_2</mat-icon>
-            <div class="empty-text">{{ search || filterStatus || filterCategory ? 'No assets match your filters' : 'No assets found' }}</div>
-            <button class="btn outline" *ngIf="search || filterStatus || filterCategory" (click)="clearFilters()">
-              Clear filters
-            </button>
+            <div class="empty-text">No assets match your filters</div>
           </td>
         </tr>
       </tbody>
@@ -228,43 +148,14 @@
 
   <!-- Pagination -->
   <div class="pagination" *ngIf="filteredAssets.length > 0">
-    <div class="page-info">
-      Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredAssets.length }}
-    </div>
-    <div class="page-size-control">
-      <label class="page-size-label">Rows per page:</label>
-      <select class="page-size-select" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-        <option [ngValue]="5">5</option>
-        <option [ngValue]="10">10</option>
-        <option [ngValue]="25">25</option>
-        <option [ngValue]="50">50</option>
-      </select>
-    </div>
+    <div class="page-info">Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredAssets.length }}</div>
     <div class="page-controls">
-      <button
-        class="page-btn"
-        (click)="setPage(currentPage - 1)"
-        [disabled]="currentPage === 1"
-        title="Previous page"
-      >
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-      <button
-        class="page-btn"
-        *ngFor="let p of pageNumbers"
-        [class.active]="currentPage === p"
-        (click)="setPage(p)"
-      >
-        {{ p }}
-      </button>
-      <button
-        class="page-btn"
-        (click)="setPage(currentPage + 1)"
-        [disabled]="currentPage === totalPages"
-        title="Next page"
-      >
-        <mat-icon>chevron_right</mat-icon>
-      </button>
+      <button class="page-btn" (click)="setPage(currentPage - 1)"
+        [disabled]="currentPage === 1"><mat-icon>chevron_left</mat-icon></button>
+      <button class="page-btn" *ngFor="let p of pageNumbers" [class.active]="currentPage === p" (click)="setPage(p)">{{
+        p }}</button>
+      <button class="page-btn" (click)="setPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"><mat-icon>chevron_right</mat-icon></button>
     </div>
   </div>
 </div>

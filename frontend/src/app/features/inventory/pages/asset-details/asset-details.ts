@@ -43,19 +43,19 @@ export class AssetDetailsComponent implements OnInit {
   tabs = [
     { id: 'about', label: 'About' },
     { id: 'checkout-log', label: 'Checkout Log' },
-    { id: 'change-log', label: 'Change Log' },
-    { id: 'components', label: 'Components (1)' },
-    { id: 'licenses', label: 'Licenses (1)' },
-    { id: 'audits', label: 'Audits (2)' },
-    { id: 'maintenances', label: 'Maintenances (1)' },
+    { id: 'maintenances', label: 'Maintenances' },
   ];
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id') || '100000';
+    const id = this.route.snapshot.paramMap.get('id') || '';
+    if (!id) {
+      this.router.navigate(['/inventory/assets']);
+      return;
+    }
     this.assetService.getAssetById(id).subscribe({
       next: (a: AssetDetail) => {
         this.asset = a;
-        this.generateQr(a.assetId);
+        this.generateQr(a.assetCode);
       },
       error: () => {
         this.toast.error('Failed to load asset details');
@@ -115,23 +115,18 @@ export class AssetDetailsComponent implements OnInit {
           this.asset = {
             ...this.asset,
             status: updated.status,
-            checkedOutTo: '',
-            dueBack: '',
+            assignedUserName: undefined,
           };
 
-          const label = this.checkinCondition === 'Damaged' ? 'sent to repair' : 'checked in';
           this.resultType = 'success';
           this.resultTitle = 'Checked In!';
-          this.resultMessage = `"${this.asset.name}" has been ${label} successfully.`;
+          this.resultMessage = `Asset ${this.asset.assetCode} has been checked in successfully.`;
           this.showResult = true;
         },
         error: () => {
           this.checkinProcessing = false;
           this.showCheckinModal = false;
-          this.resultType = 'error';
-          this.resultTitle = 'Check-In Failed';
-          this.resultMessage = 'Something went wrong. Please try again.';
-          this.showResult = true;
+          this.toast.error('Check-in failed');
         },
       });
   }
@@ -156,7 +151,7 @@ export class AssetDetailsComponent implements OnInit {
         this.deleting = false;
         this.resultType = 'success';
         this.resultTitle = 'Deleted!';
-        this.resultMessage = `"${this.asset.name}" has been permanently removed.`;
+        this.resultMessage = `Asset ${this.asset.assetCode} has been removed.`;
         this.showResult = true;
         setTimeout(() => this.onResultClosed(), 2000);
       },

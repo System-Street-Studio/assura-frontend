@@ -42,11 +42,6 @@ export const inventoryRoutes: Routes = [
       import('./pages/products/products').then((m) => m.ProductsComponent),
   },
   {
-    path: 'suppliers',
-    loadComponent: () =>
-      import('./pages/suppliers/suppliers').then((m) => m.SuppliersComponent),
-  },
-  {
     path: 'asset-requests',
     loadComponent: () =>
       import('./pages/asset-requests/asset-requests').then((m) => m.AssetRequestsComponent),
