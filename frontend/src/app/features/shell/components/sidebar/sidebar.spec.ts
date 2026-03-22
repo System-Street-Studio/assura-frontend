@@ -40,7 +40,6 @@ describe('SidebarComponent', () => {
     await setup(['Admin'], '/admin/overview');
     const labels = component.filteredMenuItems.map(i => i.label);
     expect(labels).toContain('Dashboard');
-    expect(labels).toContain('My Assets');
     expect(labels).toContain('Track Assets');
     expect(labels).not.toContain('PO'); // Procurement item
   });
@@ -89,5 +88,23 @@ describe('SidebarComponent', () => {
     expect(component.isCollapsed).toBeTrue();
     component.toggleMenu();
     expect(component.isCollapsed).toBeFalse();
+  });
+
+  it('should show global employee features regardless of path', async () => {
+    // When on Admin path, should see Admin items AND the global Employee items
+    await setup(['Admin'], '/admin/overview');
+    const links = component.filteredMenuItems.map(i => i.link);
+    expect(links).not.toContain('/admin/my-assets'); // Admin's own should be removed
+    expect(links).toContain('/employee/employee-assets'); // Global one should be there
+    expect(links).toContain('/employee/employee-overview');
+  });
+
+  it('should show Employee items for user with no roles (default fallback)', async () => {
+    // AuthService.getRoles() should return ['Employee'] as fallback
+    // In our mock, we need to pass [] to simulate no roles
+    await setup([], '/employee/employee-overview');
+    const labels = component.filteredMenuItems.map(i => i.label);
+    expect(labels).toContain('Dashboard');
+    expect(labels).toContain('My Assets');
   });
 });

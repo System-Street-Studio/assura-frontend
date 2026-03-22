@@ -10,6 +10,7 @@ interface MenuItem {
   link: string;
   roles: string[];
   section?: string;
+  isGlobal?: boolean;
 }
 
 @Component({
@@ -26,12 +27,10 @@ export class SidebarComponent {
   menuItems: MenuItem[] = [
     // Admin section
     { label: 'Dashboard', icon: 'home', link: '/admin/overview', roles: ['Admin'], section: 'admin' },
-    { label: 'My Assets', icon: 'inventory_2', link: '/admin/my-assets', roles: ['Admin'], section: 'admin' },
     { label: 'Track Assets', icon: 'track_changes', link: '/admin/track-assets', roles: ['Admin'], section: 'admin' },
 
     // Procurement section
     { label: 'Overview', icon: 'home', link: '/procurement/overview', roles: ['Procurement', 'Admin'], section: 'procurement' },
-    { label: 'My Assets', icon: 'inventory_2', link: '/procurement/my-assets', roles: ['Procurement', 'Admin'], section: 'procurement' },
     { label: 'PO', icon: 'receipt_long', link: '/procurement/purchase-orders', roles: ['Procurement', 'Admin'], section: 'procurement' },
     { label: 'Suppliers', icon: 'local_shipping', link: '/procurement/suppliers', roles: ['Procurement', 'Admin'], section: 'procurement' },
     { label: 'Maintenance', icon: 'build', link: '/procurement/maintenance', roles: ['Procurement', 'Admin'], section: 'procurement' },
@@ -60,7 +59,6 @@ export class SidebarComponent {
 
     // Superintendent section
     { label: 'Overview', icon: 'home', link: '/superintendent/overview', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
-    { label: 'My Assets', icon: 'inventory_2', link: '/superintendent/my-assets', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
     { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
     { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
 
@@ -69,12 +67,12 @@ export class SidebarComponent {
     { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['Division Head', 'Admin'], section: 'approvals' },
     { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['Division Head', 'Admin'], section: 'approvals' },
     { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['Division Head', 'Admin'], section: 'approvals' },
-    
+
     // Employee section
-    { label: 'Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['Employee', 'Admin'], section: 'employee' },
-    { label: 'My Assets', icon: 'inventory_2', link: '/employee/employee-assets', roles: ['Employee', 'Admin'], section: 'employee' },
-    { label: 'Asset Request', icon: 'add_circle', link: '/employee/requests-main', roles: ['Employee', 'Admin'], section: 'employee' },
-    { label: 'Activity', icon: 'history', link: '/employee/all-emp-requests', roles: ['Employee', 'Admin'], section: 'employee' },
+    { label: 'Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'My Assets', icon: 'inventory_2', link: '/employee/employee-assets', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'Asset Request', icon: 'add_circle', link: '/employee/requests-main', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'Activity', icon: 'history', link: '/employee/all-emp-requests', roles: ['ANY'], section: 'employee', isGlobal: true },
   ];
 
   get filteredMenuItems(): MenuItem[] {
@@ -91,9 +89,9 @@ export class SidebarComponent {
       userRoles.some(role => item.roles.includes(role))
     );
 
-    // Filter by active section if we are in one
+    // Filter by active section if we are in one, but always show global items
     if (activeSection) {
-      filtered = filtered.filter(item => item.section === activeSection);
+      filtered = filtered.filter(item => item.section === activeSection || item.isGlobal === true);
     }
 
     return filtered;

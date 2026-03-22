@@ -75,9 +75,10 @@ export class AuthService {
         decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
         decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role'] ??
         [];
-      return Array.isArray(raw) ? raw : [raw];
+      const roles = Array.isArray(raw) ? raw : [raw];
+      return roles.length > 0 ? roles : ['Employee'];
     } catch {
-      return [];
+      return ['Employee'];
     }
   }
 
