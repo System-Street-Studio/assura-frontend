@@ -69,6 +69,12 @@ export class SidebarComponent {
     { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['Division Head', 'Admin'], section: 'approvals' },
     { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['Division Head', 'Admin'], section: 'approvals' },
     { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['Division Head', 'Admin'], section: 'approvals' },
+    
+    // Employee section
+    { label: 'Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['Employee', 'Admin'], section: 'employee' },
+    { label: 'My Assets', icon: 'inventory_2', link: '/employee/employee-assets', roles: ['Employee', 'Admin'], section: 'employee' },
+    { label: 'Asset Request', icon: 'add_circle', link: '/employee/requests-main', roles: ['Employee', 'Admin'], section: 'employee' },
+    { label: 'Activity', icon: 'history', link: '/employee/all-emp-requests', roles: ['Employee', 'Admin'], section: 'employee' },
   ];
 
   get filteredMenuItems(): MenuItem[] {
@@ -76,7 +82,7 @@ export class SidebarComponent {
     const currentUrl = this.router.url;
 
     // Identify current active section from URL
-    const sections = ['admin', 'procurement', 'inventory', 'hr', 'accountant', 'reporting', 'superintendent', 'approvals'];
+    const sections = ['admin', 'procurement', 'inventory', 'hr', 'accountant', 'reporting', 'superintendent', 'approvals', 'employee'];
     const activeSection = sections.find(s => currentUrl.startsWith(`/${s}`));
 
     // Filter by role

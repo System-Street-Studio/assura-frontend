@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AllEmpRequests } from './all-emp-requests';
+import { AllRequestsComponent } from './all-emp-requests';
 
-describe('AllEmpRequests', () => {
-  let component: AllEmpRequests;
-  let fixture: ComponentFixture<AllEmpRequests>;
+describe('AllRequestsComponent', () => {
+  let component: AllRequestsComponent;
+  let fixture: ComponentFixture<AllRequestsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AllEmpRequests]
+      imports: [AllRequestsComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
-    fixture = TestBed.createComponent(AllEmpRequests);
+    fixture = TestBed.createComponent(AllRequestsComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
