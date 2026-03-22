@@ -6,11 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent],
   templateUrl: './products.html',
   styleUrls: ['./products.css'],
 })

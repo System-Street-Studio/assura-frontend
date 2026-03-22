@@ -5,11 +5,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { RequestService } from '../../services/request.service';
 import { AssetRequest, RequestPriority, RequestStatus } from '../../models/request.model';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-asset-requests',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent],
   templateUrl: './asset-requests.html',
   styleUrls: ['./asset-requests.css'],
 })

@@ -6,11 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { AssetService } from '../../services/asset.service';
 import { AssetDetail } from '../../models/asset.model';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-assets',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent],
   templateUrl: './assets.html',
   styleUrls: ['./assets.css'],
 })

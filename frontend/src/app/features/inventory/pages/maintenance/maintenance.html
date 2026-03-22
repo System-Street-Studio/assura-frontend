@@ -146,17 +146,9 @@
     </div>
 
     <!-- Pagination -->
-    <div class="pagination" *ngIf="filteredRequests.length > 0">
-        <div class="page-info">Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredRequests.length }}</div>
-        <div class="page-controls">
-            <button class="page-btn" (click)="goToPage(currentPage - 1)"
-                [disabled]="currentPage === 1"><mat-icon>chevron_left</mat-icon></button>
-            <button class="page-btn" *ngFor="let p of pages" [class.active]="currentPage === p" (click)="goToPage(p)">{{
-                p }}</button>
-            <button class="page-btn" (click)="goToPage(currentPage + 1)"
-                [disabled]="currentPage === totalPages"><mat-icon>chevron_right</mat-icon></button>
-        </div>
-    </div>
+    <app-pagination *ngIf="filteredRequests.length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
+        [pageNumbers]="pages" (pageChange)="goToPage($event)">
+    </app-pagination>
 </div>
 
 <!-- Action Modal -->

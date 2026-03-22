@@ -8,11 +8,12 @@ import {
     MaintenanceStatus,
 } from '../../models/maintenance.model';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 @Component({
     selector: 'app-maintenance',
     standalone: true,
-    imports: [CommonModule, FormsModule, MatIconModule],
+    imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent],
     templateUrl: './maintenance.html',
     styleUrls: ['./maintenance.css'],
 })

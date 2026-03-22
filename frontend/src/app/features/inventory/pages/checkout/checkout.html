@@ -232,28 +232,9 @@
     </div>
 
     <!-- Pagination -->
-    <div class="pagination" *ngIf="!loading && filteredRecords.length > 0">
-        <span class="page-info">
-            Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredRecords.length }}
-        </span>
-        <div class="page-size-control">
-            <span class="page-size-label">Rows per page:</span>
-            <select class="page-size-select" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()">
-                <option *ngFor="let ps of pageSizes" [ngValue]="ps">{{ ps }}</option>
-            </select>
-        </div>
-        <div class="page-controls">
-            <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
-                <mat-icon>chevron_left</mat-icon>
-            </button>
-            <button *ngFor="let p of pages" class="page-btn" [class.active]="p === currentPage" (click)="goToPage(p)">
-                {{ p }}
-            </button>
-            <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
-                <mat-icon>chevron_right</mat-icon>
-            </button>
-        </div>
-    </div>
+    <app-pagination *ngIf="!loading && filteredRecords.length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
+        [pageNumbers]="pages" (pageChange)="goToPage($event)">
+    </app-pagination>
 
     <!-- ═══ NEW CHECKOUT MODAL ═══ -->
     <div class="overlay" *ngIf="showCheckoutModal" (click)="cancelCheckout()">

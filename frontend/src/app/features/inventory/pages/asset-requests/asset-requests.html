@@ -70,13 +70,8 @@
     <div class="toolbar-left">
       <div class="search-box">
         <mat-icon class="search-icon">search</mat-icon>
-        <input
-          class="search-input"
-          type="text"
-          placeholder="Search by name, ID, asset, department…"
-          [(ngModel)]="searchTerm"
-          (ngModelChange)="applyFilters()"
-        />
+        <input class="search-input" type="text" placeholder="Search by name, ID, asset, department…"
+          [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" />
         <button class="search-clear" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
           <mat-icon>close</mat-icon>
         </button>
@@ -139,11 +134,8 @@
         </tr>
 
         <!-- Data rows -->
-        <tr
-          *ngFor="let r of viewRequests"
-          [class.row-selected]="r.selected"
-          [class.row-urgent]="r.priority === 'Urgent' && r.status === 'Pending'"
-        >
+        <tr *ngFor="let r of viewRequests" [class.row-selected]="r.selected"
+          [class.row-urgent]="r.priority === 'Urgent' && r.status === 'Pending'">
           <td class="col-check" (click)="$event.stopPropagation()">
             <input type="checkbox" [(ngModel)]="r.selected" />
           </td>
@@ -186,27 +178,14 @@
           </td>
           <td class="col-actions" (click)="$event.stopPropagation()">
             <div class="action-btns" *ngIf="r.status === 'Pending'">
-              <button
-                class="action-btn approve"
-                title="Approve"
-                (click)="openAction('approve', r)"
-              >
+              <button class="action-btn approve" title="Approve" (click)="openAction('approve', r)">
                 <mat-icon>check</mat-icon>
               </button>
-              <button
-                class="action-btn reject"
-                title="Reject"
-                (click)="openAction('reject', r)"
-              >
+              <button class="action-btn reject" title="Reject" (click)="openAction('reject', r)">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
-            <button
-              class="action-btn view"
-              title="View Details"
-              (click)="openDetail(r)"
-              *ngIf="r.status !== 'Pending'"
-            >
+            <button class="action-btn view" title="View Details" (click)="openDetail(r)" *ngIf="r.status !== 'Pending'">
               <mat-icon>visibility</mat-icon>
             </button>
           </td>
@@ -237,44 +216,15 @@
   </div>
 
   <!-- Pagination -->
-  <div class="pagination" *ngIf="!loading && filteredRequests.length > 0">
-    <span class="page-info">
-      Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredRequests.length }}
-    </span>
-
-    <div class="page-size-control">
-      <span class="page-size-label">Rows per page:</span>
-      <select class="page-size-select" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()">
-        <option *ngFor="let ps of pageSizes" [ngValue]="ps">{{ ps }}</option>
-      </select>
-    </div>
-
-    <div class="page-controls">
-      <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-      <button
-        *ngFor="let p of pages"
-        class="page-btn"
-        [class.active]="p === currentPage"
-        (click)="goToPage(p)"
-      >
-        {{ p }}
-      </button>
-      <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
-    </div>
-  </div>
+  <app-pagination *ngIf="!loading && filteredRequests.length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
+    [pageNumbers]="pages" (pageChange)="goToPage($event)">
+  </app-pagination>
 
   <!-- ═══ APPROVE / REJECT MODAL ═══ -->
   <div class="overlay" *ngIf="showActionModal" (click)="cancelAction()">
     <div class="action-dialog" (click)="$event.stopPropagation()">
-      <div
-        class="action-icon-wrap"
-        [class.approve-icon]="actionType === 'approve'"
-        [class.reject-icon]="actionType === 'reject'"
-      >
+      <div class="action-icon-wrap" [class.approve-icon]="actionType === 'approve'"
+        [class.reject-icon]="actionType === 'reject'">
         <mat-icon class="action-modal-icon">
           {{ actionType === 'approve' ? 'check_circle' : 'cancel' }}
         </mat-icon>
@@ -312,12 +262,9 @@
           <span class="optional" *ngIf="actionType === 'approve'">(optional)</span>
           <span class="required" *ngIf="actionType === 'reject'">*</span>
         </label>
-        <textarea
-          class="action-textarea"
-          rows="3"
+        <textarea class="action-textarea" rows="3"
           [placeholder]="actionType === 'approve' ? 'Add any notes for the requester…' : 'Provide a reason for rejection…'"
-          [(ngModel)]="actionNotes"
-        ></textarea>
+          [(ngModel)]="actionNotes"></textarea>
       </div>
 
       <!-- Actions -->
@@ -325,12 +272,8 @@
         <button class="btn outline" (click)="cancelAction()" [disabled]="actionProcessing">
           Cancel
         </button>
-        <button
-          class="btn"
-          [ngClass]="actionType === 'approve' ? 'green' : 'red'"
-          (click)="confirmAction()"
-          [disabled]="actionProcessing || (actionType === 'reject' && !actionNotes.trim())"
-        >
+        <button class="btn" [ngClass]="actionType === 'approve' ? 'green' : 'red'" (click)="confirmAction()"
+          [disabled]="actionProcessing || (actionType === 'reject' && !actionNotes.trim())">
           <mat-icon class="btn-icon" *ngIf="!actionProcessing">
             {{ actionType === 'approve' ? 'check' : 'close' }}
           </mat-icon>
