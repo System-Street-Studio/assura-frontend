@@ -1,8 +1,7 @@
-
 <div class="page-container">
   <h1 class="main-title">Assets</h1>
 
-<!--status  card details -->
+  <!--status  card details -->
   <section class="overview-section">
     <h3 class="sub-label">Asset Overview</h3>
     <div class="stats-grid">
@@ -15,7 +14,7 @@
         <div class="stat-value">12</div>
         <p class="stat-desc">All assets assigned to you</p>
       </div>
-      
+
       <div class="stat-card border-yellow">
         <div class="stat-info">
           <div class="stat-top2">Assets In Use</div>
@@ -35,131 +34,138 @@
       </div>
 
     </div>
-  </section>  
-  
-      <div class="title-group">
-        <h2>My Assigned Assets</h2>
-        <p>A list of all assets currently assigned to you.</p>
-      </div>
+  </section>
+
+  <div class="title-group">
+    <h2>My Assigned Assets</h2>
+    <p>A list of all assets currently assigned to you.</p>
+  </div>
 
 
 
   <div class="dynamic-content">
     @if (!selectedAsset()) {
 
-     <!--search section-->
-      <div class="table-actions">
-        <div class="input-wrapper">
-          <mat-icon class="search-icon">search</mat-icon>
-          <input type="text" placeholder="Search Assets..." [(ngModel)]="searchTerm" class="search-bar">
-        </div>
-        
-        <!-- Status Dropdown -->
-        <select class="filter-btn" [(ngModel)]="selectedStatus">
-          <option value="">Filter By Status</option>
-          <option value="In Use">In Use</option>
-          <option value="Transferred">Transferred</option>
-          <option value="Maintenance">Maintenance</option>
-        </select>
+    <!--search section-->
+    <div class="table-actions">
+      <div class="input-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" placeholder="Search Assets..." [ngModel]="searchTerm()"
+          (ngModelChange)="onSearchChange($event)" class="search-bar">
       </div>
 
-     <!--assets cards section-->
-      <div class="assets-grid">
-        @for (asset of filteredAssets(); track asset.assetId) {
-        
-          <div class="asset-card">
-           <div class="card-header">
-            <img [src]="asset.image" class="card-img">
+      <!-- Status Dropdown -->
+      <select class="filter-btn" [(ngModel)]="selectedStatus">
+        <option value="">Filter By Status</option>
+        <option value="In Use">In Use</option>
+        <option value="Transferred">Transferred</option>
+        <option value="Maintenance">Maintenance</option>
+      </select>
+    </div>
 
-            <div class="asset-id-info">
-              <label>Asset ID</label>
-              <span class="id-val">{{ asset.assetId }}</span>
+    <!--assets cards section-->
+    <div class="assets-grid">
+      @for (asset of paginatedAssets(); track asset.assetId) {
 
-              <label>Asset Name</label>
-              <span class="name-val">{{ asset.assetName }}</span>
-            </div>
+      <div class="asset-card">
+        <div class="card-header">
+          <img [src]="asset.image" class="card-img">
+
+          <div class="asset-id-info">
+            <label>Asset ID</label>
+            <span class="id-val">{{ asset.assetId }}</span>
+
+            <label>Asset Name</label>
+            <span class="name-val">{{ asset.assetName }}</span>
           </div>
-
-            <div class="card-details">
-              <div class="detail-item">
-                <label>Condition</label>
-                <span class="detail-val">{{ asset.conditionStatus }}</span>
-              </div>
-              <div class="detail-item text-right">
-                <label>Assigned Date :</label>
-                <span class="detail-val">{{ asset.assignedDate | date:'yyyy-MM-dd'}}</span>
-              </div>
-            </div>
-                  
-             <div class="status-badge" [ngClass]="asset.status.replace(' ', '-').toLowerCase()">
-                {{asset.status}}
-             </div>
-
-              <button class="view-btn" (click)="viewDetails(asset)">View Asset Details</button>
-          </div>
-        
-        }
-      </div>
-     } @else {
-      
-      <!--asset details section-->
-      <div class="details-view">
-        <button (click)="backToList()" class="back-link"> back </button>
-        
-        <div class="info-card">
-            <div class ="title"><h2>General Information</h2></div>
-          <div class="info-header">
-            <img [src]="selectedAsset()?.image" class="info-img">
-            <div class="info-title">
-              <h2>{{ selectedAsset()?.assetName }}</h2>
-              <p><strong>Asset ID: {{ selectedAsset()?.assetId }}</strong></p>
-            </div>
-          </div>
-
-          <div class="info-body">
-
-            <div class="info-row">
-              <span class="label">Asset Informations :</span>
-              <div class="val">
-                <p> {{ selectedAsset()?.description}}</p>
-              </div>
-            </div>
-
-            <div class="info-row">
-              <span class="label">Assigned Employee :</span>
-              <span class="val">{{ selectedAsset()?.assignedEmployee }}</span>
-            </div>
-
-            <div class="info-row">
-              <span class="label">Asset Category:</span>
-              <span class="val">{{ selectedAsset()?.category }}</span>
-            </div>
-
-            <div class="info-row">
-              <span class="label">Assigned Date :</span>
-              <span class="val">{{ selectedAsset()?.assignedDate }}</span>
-            </div>
-
-            <div class="info-row">
-              <span class="label">Status :</span>
-              <span class="status-badge">{{ selectedAsset()?.status }}</span>
-            </div>
-
-            <div class="info-row">
-              <span class="label">Condition :</span>
-              <span class="val">{{ selectedAsset()?.conditionStatus }}</span>
-            </div>
-
-          </div>
-
-          <div class="info-actions">
-            <button class="btn-maint">Request to Maintenance</button>
-            <button class="btn-discard">Request to Discard</button>
-          </div>
-
         </div>
 
+        <div class="card-details">
+          <div class="detail-item">
+            <label>Condition</label>
+            <span class="detail-val">{{ asset.conditionStatus }}</span>
+          </div>
+          <div class="detail-item text-right">
+            <label>Assigned Date :</label>
+            <span class="detail-val">{{ asset.assignedDate | date:'yyyy-MM-dd'}}</span>
+          </div>
+        </div>
+
+        <div class="status-badge" [ngClass]="asset.status.replace(' ', '-').toLowerCase()">
+          {{asset.status}}
+        </div>
+
+        <button class="view-btn" (click)="viewDetails(asset)">View Asset Details</button>
       </div>
+
+      }
+    </div>
+
+    <app-pagination [currentPage]="currentPage()" [totalPages]="totalPages()" [pageNumbers]="pageNumbers()"
+      (pageChange)="onPageChange($event)">
+    </app-pagination>
+    } @else {
+
+    <!--asset details section-->
+    <div class="details-view">
+      <button (click)="backToList()" class="back-link"> back </button>
+
+      <div class="info-card">
+        <div class="title">
+          <h2>General Information</h2>
+        </div>
+        <div class="info-header">
+          <img [src]="selectedAsset()?.image" class="info-img">
+          <div class="info-title">
+            <h2>{{ selectedAsset()?.assetName }}</h2>
+            <p><strong>Asset ID: {{ selectedAsset()?.assetId }}</strong></p>
+          </div>
+        </div>
+
+        <div class="info-body">
+
+          <div class="info-row">
+            <span class="label">Asset Informations :</span>
+            <div class="val">
+              <p> {{ selectedAsset()?.description}}</p>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Assigned Employee :</span>
+            <span class="val">{{ selectedAsset()?.assignedEmployee }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Asset Category:</span>
+            <span class="val">{{ selectedAsset()?.category }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Assigned Date :</span>
+            <span class="val">{{ selectedAsset()?.assignedDate }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Status :</span>
+            <span class="status-badge">{{ selectedAsset()?.status }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Condition :</span>
+            <span class="val">{{ selectedAsset()?.conditionStatus }}</span>
+          </div>
+
+        </div>
+
+        <div class="info-actions">
+          <button class="btn-maint">Request to Maintenance</button>
+          <button class="btn-discard">Request to Discard</button>
+        </div>
+
+      </div>
+
+    </div>
     }
   </div>
 </div>
