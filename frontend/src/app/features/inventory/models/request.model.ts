@@ -1,15 +1,19 @@
 export interface AssetRequest {
-  id: string;
+  id: number | string;
+  requestNumber?: string;
   requestedBy: string;
+  requesterName?: string;
   department: string;
   email: string;
   assetName: string;
   category: string;
   quantity: number;
   reason: string;
+  description?: string;
   priority: RequestPriority;
   status: RequestStatus;
   requestDate: string;
+  createdAt?: string;
   responseDate?: string;
   respondedBy?: string;
   approverNotes?: string;

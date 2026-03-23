@@ -127,7 +127,8 @@ export class AssetRequestsComponent implements OnInit {
       const matchesSearch =
         !term ||
         r.requestedBy.toLowerCase().includes(term) ||
-        r.id.toLowerCase().includes(term) ||
+        String(r.id).toLowerCase().includes(term) ||
+        (r.requestNumber || '').toLowerCase().includes(term) ||
         r.assetName.toLowerCase().includes(term) ||
         r.department.toLowerCase().includes(term) ||
         r.reason.toLowerCase().includes(term);
