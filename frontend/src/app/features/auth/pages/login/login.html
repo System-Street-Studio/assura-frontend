@@ -1,4 +1,12 @@
 <div class="auth-container">
+    @if (isLoading) {
+    <div class="loading-overlay">
+        <div class="spinner-container">
+            <img src="assets/images/LOGO2.png" alt="Loading..." class="logo-spinner" />
+            <p class="loading-text">Logging into the system...</p>
+        </div>
+    </div>
+    }
     <div class="auth-card">
         <div class="auth-header">
             <h2>Assura</h2>
