@@ -296,8 +296,8 @@ export class AssetRequestsComponent implements OnInit {
       .toUpperCase();
   }
 
-  getAvatarClass(id: string): string {
-    const num = parseInt(id.replace('REQ-', ''), 10) || 0;
+  getAvatarClass(id: string | number): string {
+    const num = parseInt(String(id).replace('REQ-', ''), 10) || 0;
     const variants = ['teal', 'blue', 'purple', 'green', 'orange', 'indigo'];
     return variants[num % variants.length];
   }
