@@ -1,7 +1,7 @@
 export type AssetStatus = 'InUse' | 'InStore' | 'UnderMaintenance' | 'Discarded' | 'Transferred' | 'Lost' | 'Deployed'; // Added 'Deployed' for compatibility
 
 export interface Asset {
-  id: string; // Internal frontend ID
+  id: number | string; // Internal frontend ID
   assetCode: string;
   assetId?: string; // Alias for assetCode
   name?: string;     // Alias for productName or custom name

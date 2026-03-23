@@ -52,7 +52,7 @@ export class ProductsComponent implements OnInit {
       result = result.filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
-          p.id.toLowerCase().includes(q) ||
+          String(p.id).toLowerCase().includes(q) ||
           (p.manufacturer || '').toLowerCase().includes(q) ||
           (p.modelNumber || '').toLowerCase().includes(q)
       );

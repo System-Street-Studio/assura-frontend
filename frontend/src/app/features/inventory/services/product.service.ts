@@ -1,50 +1,31 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Product } from '../models/product.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private products: Product[] = [
-    {
-      id: 'PRD-001',
-      name: 'Dell XPS 13',
-      manufacturer: 'Dell',
-      modelNumber: 'XPS 13 9315',
-      description: 'Standard issue laptop.',
-    },
-    {
-      id: 'PRD-002',
-      name: 'ThinkPad E15 G4',
-      manufacturer: 'Lenovo',
-      modelNumber: 'E15 Gen4 21ED',
-      description: 'General office use.',
-    },
-  ];
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/products`;
 
   getAll(): Observable<Product[]> {
-    return of(this.products);
+    return this.http.get<Product[]>(this.apiUrl);
   }
 
-  getById(id: string): Observable<Product | undefined> {
-    return of(this.products.find((p) => p.id === id));
+  getById(id: number | string): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
 
-  create(product: Product): Observable<Product> {
-    this.products.push(product);
-    return of(product);
+  create(product: Partial<Product>): Observable<Product> {
+    return this.http.post<Product>(this.apiUrl, product);
   }
 
   update(product: Product): Observable<Product> {
-    const idx = this.products.findIndex((p) => p.id === product.id);
-    if (idx !== -1) {
-      this.products[idx] = product;
-    }
-    return of(product);
+    return this.http.put<Product>(`${this.apiUrl}/${product.id}`, product);
   }
 
-  delete(id: string): Observable<boolean> {
-    const idx = this.products.findIndex((p) => p.id === id);
-    if (idx !== -1) this.products.splice(idx, 1);
-    return of(true);
+  delete(id: number | string): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
   }
 }
