@@ -19,6 +19,7 @@ export interface Asset {
   productId: number;
   supplierId: number;
   assignedUserId?: number;
+  qrCode?: string;
   selected?: boolean;
 
   // Compatibility fields for old pages if any
