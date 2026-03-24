@@ -144,7 +144,7 @@
         <h4>Current Status</h4>
         <div class="status-row">
           <span class="status-dot" [ngClass]="getStatusClass()"></span>
-          <span class="status-txt">{{ asset.status }}</span>
+          <span class="status-txt">{{ getStatusLabel(asset.status) }}</span>
         </div>
         <div class="status-row" *ngIf="asset.assignedUserName">
           <mat-icon class="status-icon">person</mat-icon>

@@ -127,7 +127,7 @@
           <td>{{ asset.productName }}</td>
           <td>{{ asset.categoryName }}</td>
           <td>
-            <span class="status-badge" [ngClass]="asset.status.toLowerCase()">
+            <span class="status-badge" [ngClass]="(asset.status?.toString() || '').toLowerCase()">
               {{ getStatusLabel(asset.status) }}
             </span>
           </td>

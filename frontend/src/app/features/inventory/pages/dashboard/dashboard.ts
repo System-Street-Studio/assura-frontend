@@ -6,7 +6,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { forkJoin } from 'rxjs';
 import { DashboardService } from '../../services/dashboard.service';
-import { Kpi, ChartDatasets, RecentActivity, WarrantyAlert } from '../../models/dashboard.model';
+import { Kpi, ChartDatasets, RecentActivity, WarrantyAlert, DashboardData } from '../../models/dashboard.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
@@ -80,18 +80,13 @@ export class DashboardComponent implements OnInit {
   assetsByDepartmentData!: ChartConfiguration<'bar'>['data'];
 
   ngOnInit(): void {
-    forkJoin({
-      kpis: this.svc.getKpis(),
-      charts: this.svc.getCharts(),
-      activity: this.svc.getRecentActivity(),
-      warranty: this.svc.getWarrantyAlerts(),
-    }).subscribe({
-      next: ({ kpis, charts, activity, warranty }: { kpis: Kpi; charts: ChartDatasets; activity: RecentActivity[]; warranty: WarrantyAlert[] }) => {
-        this.kpis = kpis;
-        this.charts = charts;
-        this.recentActivity = activity;
-        this.warrantyAlerts = warranty;
-        this.anomalies = charts.anomalies;
+    this.svc.getDashboardData().subscribe({
+      next: (data: DashboardData) => {
+        this.kpis = data.kpis;
+        this.charts = data.charts;
+        this.recentActivity = data.recentActivity.map(a => ({ ...a, timestamp: new Date(a.timestamp) }));
+        this.warrantyAlerts = data.warrantyAlerts;
+        this.anomalies = data.charts.anomalies;
         this.prepareCharts();
         this.loading = false;
       },

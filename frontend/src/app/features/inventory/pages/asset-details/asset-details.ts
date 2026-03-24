@@ -85,8 +85,8 @@ export class AssetDetailsComponent implements OnInit {
   }
 
   getStatusClass(): string {
-    if (!this.asset) return '';
-    return this.asset.status.toLowerCase().replace(' ', '-');
+    if (!this.asset || !this.asset.status) return '';
+    return this.asset.status.toString().toLowerCase().replace(' ', '-');
   }
 
   onPrint(): void {
@@ -165,6 +165,19 @@ export class AssetDetailsComponent implements OnInit {
 
   cancelDelete(): void {
     this.showDeleteConfirm = false;
+  }
+
+  getStatusLabel(status: string | number): string {
+    const s = status?.toString() || '';
+    switch (s) {
+      case 'InUse': return 'In Use';
+      case 'InStore': return 'In Store';
+      case 'UnderMaintenance': return 'Under Maintenance';
+      case '1': return 'In Use';
+      case '2': return 'In Store';
+      case '3': return 'Under Maintenance';
+      default: return s;
+    }
   }
 
   onResultClosed(): void {
