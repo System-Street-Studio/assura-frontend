@@ -4,7 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetService } from '../../services/asset.service';
+import { ProductService } from '../../services/product.service';
+import { SupplierService } from '../../services/supplier.service';
+import { DivisionService } from '../../services/division.service';
+import { CategoryService } from '../../services/category.service';
 import { AssetDetail, AssetStatus } from '../../models/asset.model';
+import { Product } from '../../models/product.model';
+import { Supplier } from '../../models/supplier.model';
+import { Division } from '../../models/division.model';
+import { Category } from '../../models/category.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 
@@ -17,6 +25,10 @@ import { ResultOverlayComponent } from '../../../../shared/components/result-ove
 })
 export class AssetFormComponent implements OnInit {
   private assetService = inject(AssetService);
+  private productService = inject(ProductService);
+  private supplierService = inject(SupplierService);
+  private divisionService = inject(DivisionService);
+  private categoryService = inject(CategoryService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private location = inject(Location);
@@ -39,23 +51,10 @@ export class AssetFormComponent implements OnInit {
 
   statuses: AssetStatus[] = ['InUse', 'InStore', 'UnderMaintenance', 'Discarded', 'Transferred', 'Lost'];
 
-  products = [
-    { id: 1, name: 'Dell XPS 13' },
-    { id: 2, name: 'ThinkPad E15 G4' },
-    { id: 3, name: 'iPhone 15 Pro Max' }
-  ];
-  suppliers = [
-    { id: 1, name: 'Dell' },
-    { id: 2, name: 'Apple' }
-  ];
-  divisions = [
-    { id: 1, name: 'HQ - Floor 3' },
-    { id: 2, name: 'Branch - East Wing' }
-  ];
-  categories = [
-    { id: 1, name: 'Laptops' },
-    { id: 2, name: 'Mobile Devices' }
-  ];
+  products: Product[] = [];
+  suppliers: Supplier[] = [];
+  divisions: Division[] = [];
+  categories: Category[] = [];
 
   form: AssetDetail = {
     id: '',
@@ -80,6 +79,8 @@ export class AssetFormComponent implements OnInit {
   ngOnInit(): void {
     this.mode = this.route.snapshot.data['mode'] || 'edit';
     this.assetId = this.route.snapshot.paramMap.get('id') || '';
+
+    this.loadDropdownData();
 
     if (this.assetId) {
       this.assetService.getAssetById(this.assetId).subscribe({
@@ -146,6 +147,25 @@ export class AssetFormComponent implements OnInit {
         },
       });
     }
+  }
+
+  private loadDropdownData(): void {
+    this.productService.getAll().subscribe({
+      next: (data) => this.products = data,
+      error: () => this.toast.error('Failed to load products')
+    });
+    this.supplierService.getAll().subscribe({
+      next: (data) => this.suppliers = data,
+      error: () => this.toast.error('Failed to load suppliers')
+    });
+    this.divisionService.getAll().subscribe({
+      next: (data) => this.divisions = data,
+      error: () => this.toast.error('Failed to load divisions')
+    });
+    this.categoryService.getAll().subscribe({
+      next: (data) => this.categories = data,
+      error: () => this.toast.error('Failed to load categories')
+    });
   }
 
   onCancel(): void {
