@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 export interface AppNotification {
   id: string;
@@ -14,71 +16,30 @@ export interface AppNotification {
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-  private notifications$ = new BehaviorSubject<AppNotification[]>([
-    {
-      id: '1',
-      title: 'New Asset Assigned',
-      message: 'You have been assigned a new asset: Dell XPS 13.',
-      timestamp: new Date(Date.now() - 10 * 60_000),
-      read: false,
-      type: 'info',
-      icon: 'exit_to_app',
-    },
-    {
-      id: '2',
-      title: 'Transfer Request Approved',
-      message: 'Your transfer request for MacBook Pro is approved.',
-      timestamp: new Date(Date.now() - 45 * 60_000),
-      read: false,
-      type: 'info',
-      icon: 'swap_horiz',
-    },
-    {
-      id: '3',
-      title: 'Maintenance Complete',
-      message: 'ThinkPad E15 G4 repair has been completed.',
-      timestamp: new Date(Date.now() - 3 * 3_600_000),
-      read: false,
-      type: 'success',
-      icon: 'build',
-    },
-    {
-      id: '4',
-      title: 'New Asset Request',
-      message: 'Richard K. Cornejo requested a laptop.',
-      timestamp: new Date(Date.now() - 6 * 3_600_000),
-      read: true,
-      type: 'info',
-      icon: 'swap_horiz',
-    },
-    {
-      id: '5',
-      title: 'Asset Checked Out',
-      message: 'XPS 13" was checked out to Elliott Nolan.',
-      timestamp: new Date(Date.now() - 10 * 60_000),
-      read: false,
-      type: 'info',
-      icon: 'exit_to_app',
-    },
-    {
-      id: '6',
-      title: 'Warranty Expiring',
-      message: 'iPhone 15 Pro Max warranty expires in 7 days.',
-      timestamp: new Date(Date.now() - 45 * 60_000),
-      read: false,
-      type: 'warning',
-      icon: 'schedule',
-    },
-    {
-      id: '7',
-      title: 'Audit Scheduled',
-      message: 'Quarterly audit starts next Monday.',
-      timestamp: new Date(Date.now() - 24 * 3_600_000),
-      read: true,
-      type: 'info',
-      icon: 'fact_check',
-    },
-  ]);
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/Notifications`;
+  private notifications$ = new BehaviorSubject<AppNotification[]>([]);
+
+  constructor() {
+    this.fetchNotifications();
+    // Refresh notifications every minute
+    setInterval(() => this.fetchNotifications(), 60000);
+  }
+
+  fetchNotifications(): void {
+    this.http.get<any[]>(this.apiUrl).subscribe(data => {
+      const mapped = data.map(n => ({
+        id: n.id.toString(),
+        title: n.title,
+        message: n.message,
+        timestamp: new Date(n.createdAt),
+        read: n.isRead,
+        type: (n.type?.toLowerCase() as any) || 'info',
+        icon: n.icon || 'info'
+      }));
+      this.notifications$.next(mapped);
+    });
+  }
 
   getAll(): Observable<AppNotification[]> {
     return this.notifications$.asObservable();
@@ -91,15 +52,19 @@ export class NotificationService {
   }
 
   markAsRead(id: string): void {
-    const updated = this.notifications$.value.map((n: AppNotification) =>
-      n.id === id ? { ...n, read: true } : n
-    );
-    this.notifications$.next(updated);
+    this.http.post(`${this.apiUrl}/${id}/mark-as-read`, {}).subscribe(() => {
+      const updated = this.notifications$.value.map((n: AppNotification) =>
+        n.id === id ? { ...n, read: true } : n
+      );
+      this.notifications$.next(updated);
+    });
   }
 
   markAllAsRead(): void {
-    const updated = this.notifications$.value.map((n: AppNotification) => ({ ...n, read: true }));
-    this.notifications$.next(updated);
+    this.http.post(`${this.apiUrl}/mark-all-as-read`, {}).subscribe(() => {
+      const updated = this.notifications$.value.map((n: AppNotification) => ({ ...n, read: true }));
+      this.notifications$.next(updated);
+    });
   }
 
   formatTimeAgo(date: Date): string {
