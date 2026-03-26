@@ -23,12 +23,16 @@ export class RequestService {
         status: r.status,
         requestDate: r.createdAt,
         createdAt: r.createdAt,
-        department: 'N/A', // These would normally come from backend
+        department: r.department || 'N/A',
         email: 'N/A',
-        category: 'N/A',
+        category: r.type || 'N/A',
         quantity: 1
       } as AssetRequest)))
     );
+  }
+
+  process(id: number | string, command: any): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${id}/process`, command);
   }
 
   getById(id: number | string): Observable<AssetRequest> {

@@ -178,12 +178,20 @@
           </td>
           <td class="col-actions" (click)="$event.stopPropagation()">
             <div class="action-btns" *ngIf="r.status === 'Pending'">
-              <button class="action-btn approve" title="Approve" (click)="openAction('approve', r)">
-                <mat-icon>check</mat-icon>
+              <!-- Storekeeper Process Button -->
+              <button *ngIf="isStorekeeper" class="action-btn process" title="Process" (click)="openProcess(r)">
+                <mat-icon>inventory_2</mat-icon>
               </button>
-              <button class="action-btn reject" title="Reject" (click)="openAction('reject', r)">
-                <mat-icon>close</mat-icon>
-              </button>
+
+              <!-- Regular Admin Actions -->
+              <ng-container *ngIf="!isStorekeeper">
+                <button class="action-btn approve" title="Approve" (click)="openAction('approve', r)">
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button class="action-btn reject" title="Reject" (click)="openAction('reject', r)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </ng-container>
             </div>
             <button class="action-btn view" title="View Details" (click)="openDetail(r)" *ngIf="r.status !== 'Pending'">
               <mat-icon>visibility</mat-icon>

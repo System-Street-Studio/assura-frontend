@@ -6,6 +6,7 @@ import { RequestService } from '../../services/request.service';
 import { AssetRequest, RequestPriority, RequestStatus } from '../../models/request.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-asset-requests',
@@ -17,6 +18,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 export class AssetRequestsComponent implements OnInit {
   private requestService = inject(RequestService);
   private toast = inject(ToastService);
+  private authService = inject(AuthService);
 
   allRequests: AssetRequest[] = [];
   filteredRequests: AssetRequest[] = [];
@@ -38,6 +40,14 @@ export class AssetRequestsComponent implements OnInit {
   actionRequest: AssetRequest | null = null;
   actionNotes = '';
   actionProcessing = false;
+
+  /* ── Process modal ── */
+  showProcessModal = false;
+  processRequest: AssetRequest | null = null;
+  processIsInStock = true;
+  processAssetId: number | null = null;
+  processRemarks = '';
+  processLoading = false;
 
   /* ── Detail drawer ── */
   showDetail = false;
@@ -71,6 +81,10 @@ export class AssetRequestsComponent implements OnInit {
   get departments(): string[] {
     const depts = new Set(this.allRequests.map((r) => r.department));
     return Array.from(depts).sort();
+  }
+
+  get isStorekeeper(): boolean {
+    return this.authService.hasRole(['Storekeeper', 'Admin']);
   }
 
   get statuses(): RequestStatus[] {
@@ -300,5 +314,44 @@ export class AssetRequestsComponent implements OnInit {
     const num = parseInt(String(id).replace('REQ-', ''), 10) || 0;
     const variants = ['teal', 'blue', 'purple', 'green', 'orange', 'indigo'];
     return variants[num % variants.length];
+  }
+
+  /* ── Process ── */
+  openProcess(request: AssetRequest): void {
+    this.processRequest = request;
+    this.processIsInStock = true;
+    this.processAssetId = null;
+    this.processRemarks = '';
+    this.showProcessModal = true;
+  }
+
+  cancelProcess(): void {
+    this.showProcessModal = false;
+    this.processRequest = null;
+  }
+
+  confirmProcess(): void {
+    if (!this.processRequest) return;
+    this.processLoading = true;
+
+    const command = {
+      id: Number(this.processRequest.id),
+      assetId: this.processAssetId,
+      isInStock: this.processIsInStock,
+      remarks: this.processRemarks
+    };
+
+    this.requestService.process(this.processRequest.id, command).subscribe({
+      next: () => {
+        this.toast.show('Request processed successfully', 'success');
+        this.showProcessModal = false;
+        this.processLoading = false;
+        this.ngOnInit(); // Refresh list
+      },
+      error: () => {
+        this.toast.show('Failed to process request', 'error');
+        this.processLoading = false;
+      }
+    });
   }
 }
