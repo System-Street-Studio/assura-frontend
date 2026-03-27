@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { AssetRequest, AssetService } from '../../services/asset-request.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 
 @Component({
@@ -31,12 +32,17 @@ export class AllRequestsComponent {
   currentPage = signal(1);
 
 
+  private authService = inject(AuthService);
+
   constructor(private assetService: AssetService) { }
+  
   ngOnInit() {
-    // 'AS001' කියන ID එක වෙනුවට ඔයාගේ logged-in user ID එක දාන්න
-    this.assetService.getEmployeeRequests('AS001').subscribe((data: AssetRequest[]) => {
-      this.requests.set(data);
-    });
+    const userId = this.authService.getUserId();
+    if (userId) {
+      this.assetService.getEmployeeRequests(userId).subscribe((data: AssetRequest[]) => {
+        this.requests.set(data);
+      });
+    }
   }
 
   /*// Mock Data 

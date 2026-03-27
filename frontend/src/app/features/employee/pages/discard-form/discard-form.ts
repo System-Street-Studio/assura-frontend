@@ -1,8 +1,10 @@
-import { CommonModule,Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { AssetService } from '../../services/asset-request.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-discard-form',
@@ -12,30 +14,43 @@ import { RouterLink } from '@angular/router';
   styleUrl: './discard-form.css',
 })
 export class DiscardFormComponent {
-
-  // Services inject 
   private location = inject(Location);
+  private assetService = inject(AssetService);
+  private authService = inject(AuthService);
 
   // Form Signals
   asset = signal('');
   reason = signal('');
 
-
   // Submit logic
   onSubmit() {
-    const formData = {
-      asset: this.asset(),
+    const requestData = {
+      employeeId: this.authService.getUserId() || '',
+      submittedBy: this.authService.getUserName() || 'Employee',
+      assetCategory: 'N/A',
+      assetName: this.asset(),
+      description: 'Discard Request',
       reason: this.reason(),
+      quantity: 1,
+      priority: 'Normal',
+      requestType: 'Discard',
+      submittedDate: new Date()
     };
-    console.log('Form Submitted:', formData);
-    alert('Request Submitted Successfully!');
-    this.location.back();
+
+    this.assetService.createRequest(requestData).subscribe({
+      next: () => {
+        alert('Discard Request Submitted Successfully!');
+        this.location.back();
+      },
+      error: (err) => {
+        console.error('Submission failed', err);
+        alert('Failed to submit request.');
+      }
+    });
   }
 
-  
   // Cancel button logic 
   onCancel() {
     this.location.back();
   }
 }
-

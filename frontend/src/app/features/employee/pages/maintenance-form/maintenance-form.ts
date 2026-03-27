@@ -3,6 +3,8 @@ import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { AssetService } from '../../services/asset-request.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-maintenance-form',
@@ -12,8 +14,9 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./maintenance-form.css']
 })
 export class MaintenanceFormComponent {
-  // Services inject 
   private location = inject(Location);
+  private assetService = inject(AssetService);
+  private authService = inject(AuthService);
 
   // Form Signals
   asset = signal('');
@@ -23,18 +26,31 @@ export class MaintenanceFormComponent {
 
   // Submit logic
   onSubmit() {
-    const formData = {
-      asset: this.asset(),
-      issueType: this.issueType(),
+    const requestData = {
+      employeeId: this.authService.getUserId() || '',
+      submittedBy: this.authService.getUserName() || 'Employee',
+      assetCategory: 'N/A',
+      assetName: this.asset(),
       description: this.description(),
-      tempAsset: this.needsTempAsset()
+      reason: `Issue: ${this.issueType()}. Needs Temp: ${this.needsTempAsset()}`,
+      quantity: 1,
+      priority: 'Normal',
+      requestType: 'Maintenance',
+      submittedDate: new Date()
     };
-    console.log('Form Submitted:', formData);
-    alert('Request Submitted Successfully!');
-    this.location.back();
+
+    this.assetService.createRequest(requestData).subscribe({
+      next: () => {
+        alert('Maintenance Request Submitted Successfully!');
+        this.location.back();
+      },
+      error: (err) => {
+        console.error('Submission failed', err);
+        alert('Failed to submit request.');
+      }
+    });
   }
 
-  
   // Cancel button logic 
   onCancel() {
     this.location.back();

@@ -1,9 +1,10 @@
-
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import { AssetService } from '../../../../features/inventory/services/asset.service';
+import { AssetDetail } from '../../../../features/inventory/models/asset.model';
 
 interface Asset {
   assetId: string;
@@ -24,8 +25,11 @@ interface Asset {
   templateUrl: './employee-assets.html',
   styleUrls: ['./employee-assets.css']
 })
-export class EmployeeAssetsComponent {
+export class EmployeeAssetsComponent implements OnInit {
+  private assetService = inject(AssetService);
+  
   searchTerm = signal('');
+  loading = signal(true);
 
   onSearchChange(value: string) {
     this.searchTerm.set(value);
@@ -38,77 +42,50 @@ export class EmployeeAssetsComponent {
   pageSize = 6;
   currentPage = signal(1);
 
-  assets = signal<Asset[]>([
+  assets = signal<Asset[]>([]);
 
-    {
-      assetId: 'AST001',
-      assetName: 'Dell Latitude 5520',
-      category: 'Electronics',
-      description: 'Processor: Intel Core i5 11th Gen, RAM: 16GB, Storage: 512GB SSD',
-      assignedEmployee: 'Harry Ekanayeka (EST001)',
-      assignedDate: '2023-10-20',
-      status: 'In Use',
-      conditionStatus: 'Good',
-      image: 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220'
-    },
-    {
-      assetId: 'AST002',
-      assetName: 'Ergonomic Office Chair',
-      category: 'Furniture',
-      description: 'High-back executive chair with lumbar support and adjustable height',
-      assignedEmployee: 'Harry Ekanayeka (EST001)',
-      assignedDate: '2023-10-22',
-      status: 'Transferred',
-      conditionStatus: 'Good',
-      image: 'https://i5.walmartimages.com/seo/Lacoo-Faux-Leather-High-Back-Executive-Office-Chair-with-Lumbar-Support-Black_bf489981-70b3-42c2-972e-93ea9995756c.160b1f502b31db454018d773aed8b003.jpeg'
-    },
-    {
-      assetId: 'AST003',
-      assetName: 'Samsung 24" LED Monitor',
-      category: 'Electronics',
-      description: '24-inch Full HD LED Monitor, HDMI & VGA support, 75Hz refresh rate',
-      assignedEmployee: 'Harry Ekanayeka (EST001)',
-      assignedDate: '2023-10-25',
-      status: 'Maintenance',
-      conditionStatus: 'Good',
-      image: 'https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/e-series/e2425hsm/media-gallery/monitor-dell-pro-e2425hsm-bk-gallery-1.psd?fmt=png-alpha&pscan=auto&scl=1&hei=804&wid=868&qlt=100,1&resMode=sharp2&size=868,804&chrss=full'
-    },
-    {
-      assetId: 'AST004',
-      assetName: 'Apple iPad 9th Gen',
-      category: 'Electronics',
-      description: '10.2-inch Retina Display, A13 Bionic Chip, 64GB Storage',
-      assignedEmployee: 'Harry Ekanayeka (EST001)',
-      assignedDate: '2023-10-28',
-      status: 'In Use',
-      conditionStatus: 'Excellent',
-      image: 'https://m.media-amazon.com/images/I/61NGnpjoRDL._AC_SL1500_.jpg'
-    },
-    {
-      assetId: 'AST005',
-      assetName: 'Canon Scanner X2',
-      category: 'Electronics',
-      description: 'High-speed document scanner, USB connectivity, 40ppm scanning speed',
-      assignedEmployee: 'Harry Ekanayeka (EST001)',
-      assignedDate: '2023-11-01',
-      status: 'Maintenance',
-      conditionStatus: 'Good',
-      image: 'https://mediaserver.goepson.com/ImConvServlet/imconv/e381a1e16d14618eb2c208abe70e26c894553c9a/1200Wx1200H?use=banner&hybrisId=B2C&assetDescr=FY22_SCN_V39II_02Photo'
-    },
-    {
-      assetId: 'AST006',
-      assetName: 'Projector Screen 100"',
-      category: 'Electronics',
-      description: '100-inch wall-mounted projector screen, matte white finish',
-      assignedEmployee: 'Harry Ekanayeka (EST001)',
-      assignedDate: '2023-11-05',
-      status: 'Transferred',
-      conditionStatus: 'Good',
-      image: 'https://tse1.mm.bing.net/th/id/OIP.vTX7YEF-ZTTFkY6_LkYfuwHaHZ?pid=Api&P=0&h=220'
+  ngOnInit() {
+    this.assetService.getAll().subscribe({
+      next: (data: AssetDetail[]) => {
+        const mapped = data.map(a => ({
+          assetId: a.assetCode,
+          assetName: a.productName,
+          category: a.categoryName,
+          description: a.notes,
+          assignedEmployee: a.assignedUserName || 'Me',
+          assignedDate: a.assetDate,
+          status: this.formatStatus(a.status),
+          conditionStatus: 'Good',
+          image: this.getPlaceholderImage(a.categoryName)
+        }));
+        this.assets.set(mapped);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private formatStatus(status: string): string {
+    const map: Record<string, string> = {
+      'InUse': 'In Use',
+      'InStore': 'Stored',
+      'UnderMaintenance': 'Maintenance',
+      'Discarded': 'Discarded'
+    };
+    return map[status] || status;
+  }
+
+  private getPlaceholderImage(category: string): string {
+    if (category.toLowerCase().includes('laptop') || category.toLowerCase().includes('electronic')) {
+      return 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220';
     }
-
-
-  ]);
+    if (category.toLowerCase().includes('chair') || category.toLowerCase().includes('furniture')) {
+      return 'https://i5.walmartimages.com/seo/Lacoo-Faux-Leather-High-Back-Executive-Office-Chair-with-Lumbar-Support-Black_bf489981-70b3-42c2-972e-93ea9995756c.160b1f502b31db454018d773aed8b003.jpeg';
+    }
+    return 'https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/e-series/e2425hsm/media-gallery/monitor-dell-pro-e2425hsm-bk-gallery-1.psd?fmt=png-alpha&pscan=auto&scl=1&hei=804&wid=868&qlt=100,1&resMode=sharp2&size=868,804&chrss=full';
+  }
 
   filteredAssets = computed(() => {
     const term = this.searchTerm().toLowerCase();
@@ -142,4 +119,4 @@ export class EmployeeAssetsComponent {
   backToList() {
     this.selectedAsset.set(null);
   }
-}
+}
