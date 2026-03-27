@@ -1,10 +1,12 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AssetService } from '../../services/asset-request.service';
+import { AssetService as AssetRequestService } from '../../services/asset-request.service';
+import { AssetService } from '../../../inventory/services/asset.service';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { AssetDetail } from '../../../inventory/models/asset.model';
 
 @Component({
   selector: 'app-maintenance-form',
@@ -13,16 +15,25 @@ import { AuthService } from '../../../../core/auth/auth.service';
   templateUrl: './maintenance-form.html',
   styleUrls: ['./maintenance-form.css']
 })
-export class MaintenanceFormComponent {
+export class MaintenanceFormComponent implements OnInit {
   private location = inject(Location);
+  private assetRequestService = inject(AssetRequestService);
   private assetService = inject(AssetService);
   private authService = inject(AuthService);
 
   // Form Signals
+  assignedAssets = signal<AssetDetail[]>([]);
   asset = signal('');
   issueType = signal('Damaged');
   description = signal('');
   needsTempAsset = signal(false);
+
+  ngOnInit(): void {
+    this.assetService.getAll().subscribe({
+      next: (assets) => this.assignedAssets.set(assets),
+      error: (err) => console.error('Failed to load assigned assets', err)
+    });
+  }
 
   // Submit logic
   onSubmit() {
@@ -39,7 +50,7 @@ export class MaintenanceFormComponent {
       submittedDate: new Date()
     };
 
-    this.assetService.createRequest(requestData).subscribe({
+    this.assetRequestService.createRequest(requestData).subscribe({
       next: () => {
         alert('Maintenance Request Submitted Successfully!');
         this.location.back();

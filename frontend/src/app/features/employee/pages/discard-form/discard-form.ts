@@ -1,10 +1,12 @@
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { AssetService } from '../../services/asset-request.service';
+import { AssetService as AssetRequestService } from '../../services/asset-request.service';
+import { AssetService } from '../../../inventory/services/asset.service';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { AssetDetail } from '../../../inventory/models/asset.model';
 
 @Component({
   selector: 'app-discard-form',
@@ -13,14 +15,23 @@ import { AuthService } from '../../../../core/auth/auth.service';
   templateUrl: './discard-form.html',
   styleUrl: './discard-form.css',
 })
-export class DiscardFormComponent {
+export class DiscardFormComponent implements OnInit {
   private location = inject(Location);
+  private assetRequestService = inject(AssetRequestService);
   private assetService = inject(AssetService);
   private authService = inject(AuthService);
 
   // Form Signals
+  assignedAssets = signal<AssetDetail[]>([]);
   asset = signal('');
   reason = signal('');
+
+  ngOnInit(): void {
+    this.assetService.getAll().subscribe({
+      next: (assets) => this.assignedAssets.set(assets),
+      error: (err) => console.error('Failed to load assigned assets', err)
+    });
+  }
 
   // Submit logic
   onSubmit() {
@@ -37,7 +48,7 @@ export class DiscardFormComponent {
       submittedDate: new Date()
     };
 
-    this.assetService.createRequest(requestData).subscribe({
+    this.assetRequestService.createRequest(requestData).subscribe({
       next: () => {
         alert('Discard Request Submitted Successfully!');
         this.location.back();
