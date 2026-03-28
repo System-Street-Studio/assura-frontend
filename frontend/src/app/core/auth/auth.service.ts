@@ -170,7 +170,7 @@ export class AuthService {
     if (roles.includes('HR')) return '/hr/pending';
     if (roles.includes('Accountant')) return '/accountant/discarded';
     if (roles.includes('Superintendent')) return '/superintendent/overview';
-    if (roles.includes('Division Head')) return '/approvals/overview';
+    if (roles.includes('DivisionHead')) return '/approvals/overview';
     if (roles.includes('Employee')) return '/employee/employee-overview';
     return '/overview';
   }

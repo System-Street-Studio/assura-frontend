@@ -63,10 +63,10 @@ export class SidebarComponent {
     { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
 
     // Approvals / Division Head section
-    { label: 'Overview', icon: 'home', link: '/approvals/overview', roles: ['Division Head', 'Admin'], section: 'approvals' },
-    { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['Division Head', 'Admin'], section: 'approvals' },
-    { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['Division Head', 'Admin'], section: 'approvals' },
-    { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['Division Head', 'Admin'], section: 'approvals' },
+    { label: 'Overview', icon: 'home', link: '/approvals/overview', roles: ['DivisionHead', 'Admin'], section: 'approvals' },
+    { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['DivisionHead', 'Admin'], section: 'approvals' },
+    { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['DivisionHead', 'Admin'], section: 'approvals' },
+    { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['DivisionHead', 'Admin'], section: 'approvals' },
 
     // Employee section
     { label: 'Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['ANY'], section: 'employee', isGlobal: true },
