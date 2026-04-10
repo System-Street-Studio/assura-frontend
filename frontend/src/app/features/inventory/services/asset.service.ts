@@ -9,8 +9,9 @@ export class AssetService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/assets`;
 
-  getAll(): Observable<AssetDetail[]> {
-    return this.http.get<AssetDetail[]>(this.apiUrl);
+  getAll(onlyMine: boolean = false): Observable<AssetDetail[]> {
+    const url = onlyMine ? `${this.apiUrl}?onlyMine=true` : this.apiUrl;
+    return this.http.get<AssetDetail[]>(url);
   }
 
   getAssetById(id: number | string): Observable<AssetDetail> {

@@ -27,7 +27,7 @@ interface Asset {
 })
 export class EmployeeAssetsComponent implements OnInit {
   private assetService = inject(AssetService);
-  
+
   searchTerm = signal('');
   loading = signal(true);
 
@@ -45,7 +45,7 @@ export class EmployeeAssetsComponent implements OnInit {
   assets = signal<Asset[]>([]);
 
   ngOnInit() {
-    this.assetService.getAll().subscribe({
+    this.assetService.getAll(true).subscribe({
       next: (data: AssetDetail[]) => {
         const mapped = data.map(a => ({
           assetId: a.assetCode,
@@ -119,4 +119,4 @@ export class EmployeeAssetsComponent implements OnInit {
   backToList() {
     this.selectedAsset.set(null);
   }
-}
+}

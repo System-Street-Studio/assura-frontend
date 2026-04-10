@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
@@ -6,6 +6,8 @@ import { DataTableComponent, ColumnDef } from '../../../../shared/components/dat
 import { ActionButtonComponent } from '../../../../shared/components/action-button/action-button';
 import { FilterDropdownComponent, FilterGroup } from '../../../../shared/components/filter-dropdown/filter-dropdown';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import { AssetService } from '../../../../core/services/asset.service';
+import { Asset } from '../../../../shared/models/asset.model';
 
 @Component({
     selector: 'app-track-assets',
@@ -21,8 +23,9 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
     templateUrl: './track-assets.html',
     styleUrls: ['./track-assets.css']
 })
-export class TrackAssetsComponent {
+export class TrackAssetsComponent implements OnInit {
     private router = inject(Router);
+    private assetService = inject(AssetService);
 
     columns: ColumnDef[] = [
         { key: 'id', label: 'ID', type: 'link' },
@@ -31,23 +34,50 @@ export class TrackAssetsComponent {
         { key: 'status', label: 'Status', type: 'status' }
     ];
 
-    assets = [
-        { id: '123A', name: 'Dell XPS15', category: 'Computer', status: 'In Use' },
-        { id: '234A', name: 'Cisco Switch', category: 'Networking', status: 'Repairing' },
-        { id: '994D', name: 'Wooden Table', category: 'Furniture', status: 'Discarded' },
-        { id: '034S', name: 'Chair', category: 'Furniture', status: 'In Store' },
-        { id: '124B', name: 'MacBook Pro', category: 'Computer', status: 'In Use' },
-        { id: '235C', name: 'HP Monitor', category: 'Computer', status: 'In Use' },
-        { id: '995E', name: 'Office Desk', category: 'Furniture', status: 'In Store' },
-        { id: '035T', name: 'Laser Printer', category: 'Electronics', status: 'Repairing' },
-        { id: '126D', name: 'Lenovo ThinkPad', category: 'Computer', status: 'Discarded' },
-        { id: '236F', name: 'WiFi Router', category: 'Networking', status: 'In Use' }
-    ];
+    assets: any[] = [];
+    filteredAssets: any[] = [];
+    loading = true;
 
-    filteredAssets = [...this.assets];
     currentPage = 1;
     pageSize = 5;
     showFilters = false;
+
+    ngOnInit(): void {
+        this.fetchAssets();
+    }
+
+    private fetchAssets(): void {
+        this.loading = true;
+        this.assetService.getAssets().subscribe({
+            next: (data: Asset[]) => {
+                this.assets = data.map(asset => ({
+                    id: asset.assetCode,
+                    realId: asset.id, // For navigation if needed
+                    name: asset.productName,
+                    category: asset.categoryName,
+                    status: this.formatStatus(asset.status)
+                }));
+                this.filteredAssets = [...this.assets];
+                this.loading = false;
+            },
+            error: (err) => {
+                console.error('Error fetching assets:', err);
+                this.loading = false;
+            }
+        });
+    }
+
+    private formatStatus(status: string): string {
+        // Map backend status strings to display format if necessary
+        // Example: 'InUse' -> 'In Use'
+        switch (status) {
+            case 'InUse': return 'In Use';
+            case 'InStore': return 'In Store';
+            case 'UnderMaintenance': return 'Repairing';
+            case 'Discarded': return 'Discarded';
+            default: return status;
+        }
+    }
 
     get paginatedAssets() {
         const startIndex = (this.currentPage - 1) * this.pageSize;
@@ -66,18 +96,19 @@ export class TrackAssetsComponent {
         {
             title: 'Category',
             options: [
-                { label: 'Computer', value: 'computer', checked: false },
-                { label: 'Networking', value: 'networking', checked: false },
-                { label: 'Furniture', value: 'furniture', checked: false }
+                { label: 'Computer', value: 'Computer', checked: false },
+                { label: 'Networking', value: 'Networking', checked: false },
+                { label: 'Furniture', value: 'Furniture', checked: false },
+                { label: 'Electronics', value: 'Electronics', checked: false }
             ]
         },
         {
             title: 'Status',
             options: [
-                { label: 'In Use', value: 'in use', checked: false },
-                { label: 'Repairing', value: 'repairing', checked: false },
-                { label: 'Discarded', value: 'discarded', checked: false },
-                { label: 'In Store', value: 'in store', checked: false }
+                { label: 'In Use', value: 'In Use', checked: false },
+                { label: 'Repairing', value: 'Repairing', checked: false },
+                { label: 'Discarded', value: 'Discarded', checked: false },
+                { label: 'In Store', value: 'In Store', checked: false }
             ]
         }
     ];
@@ -100,7 +131,7 @@ export class TrackAssetsComponent {
     }
 
     onAssetClick(asset: any): void {
-        this.router.navigate(['/admin/track-assets', asset.id]);
+        this.router.navigate(['/admin/track-assets', asset.realId || asset.id]);
     }
 
     toggleFilters(): void {
