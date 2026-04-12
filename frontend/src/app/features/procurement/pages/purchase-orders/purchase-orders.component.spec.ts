@@ -59,7 +59,7 @@ describe('PurchaseOrdersComponent', () => {
     });
 
     it('should navigate to details page', () => {
-        const testId = 'S-123';
+        const testId = 123;
         component.navigateToDetails(testId);
         expect(routerSpy.navigate).toHaveBeenCalledWith(['procurement', 'purchase-orders', testId]);
     });

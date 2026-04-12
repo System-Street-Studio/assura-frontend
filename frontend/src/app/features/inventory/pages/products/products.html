@@ -1,5 +1,4 @@
 <div class="page">
-
   <!-- Header -->
   <div class="page-header">
     <div class="header-left">
@@ -18,79 +17,19 @@
     </div>
   </div>
 
-  <!-- Summary Stats -->
-  <section class="stats-strip">
-    <div class="stat-card" [class.active]="!filterCategory && !filterManufacturer" (click)="clearFilters()">
-      <div class="stat-icon-wrap all"><mat-icon>inventory_2</mat-icon></div>
-      <div class="stat-info">
-        <div class="stat-value">{{ totalProductCount }}</div>
-        <div class="stat-label">Total Products</div>
-      </div>
-    </div>
-    <div class="stat-card info-only">
-      <div class="stat-icon-wrap units"><mat-icon>widgets</mat-icon></div>
-      <div class="stat-info">
-        <div class="stat-value">{{ totalAssetUnits }}</div>
-        <div class="stat-label">Total Units</div>
-      </div>
-    </div>
-    <div class="stat-card info-only">
-      <div class="stat-icon-wrap available"><mat-icon>shelves</mat-icon></div>
-      <div class="stat-info">
-        <div class="stat-value">{{ totalAvailable }}</div>
-        <div class="stat-label">Available</div>
-      </div>
-    </div>
-    <div class="stat-card info-only">
-      <div class="stat-icon-wrap low"><mat-icon>warning</mat-icon></div>
-      <div class="stat-info">
-        <div class="stat-value">{{ lowStockCount }}</div>
-        <div class="stat-label">Low Stock</div>
-      </div>
-    </div>
-    <div class="stat-card info-only">
-      <div class="stat-icon-wrap out"><mat-icon>remove_shopping_cart</mat-icon></div>
-      <div class="stat-info">
-        <div class="stat-value">{{ outOfStockCount }}</div>
-        <div class="stat-label">Out of Stock</div>
-      </div>
-    </div>
-    <div class="stat-card info-only">
-      <div class="stat-icon-wrap value"><mat-icon>attach_money</mat-icon></div>
-      <div class="stat-info">
-        <div class="stat-value">{{ formatCurrency(totalCatalogValue) }}</div>
-        <div class="stat-label">Catalog Value</div>
-      </div>
-    </div>
-  </section>
-
   <!-- Toolbar -->
   <div class="toolbar">
     <div class="toolbar-left">
       <div class="search-box">
         <mat-icon class="search-icon">search</mat-icon>
-        <input
-          class="search-input"
-          placeholder="Search by name, ID, manufacturer, model..."
-          [(ngModel)]="search"
-          (input)="applyFilters()"
-        />
+        <input class="search-input" placeholder="Search by name, ID, manufacturer, model..." [(ngModel)]="search"
+          (input)="applyFilters()" />
         <button class="search-clear" *ngIf="search" (click)="search = ''; applyFilters()">
           <mat-icon>close</mat-icon>
         </button>
       </div>
 
-      <select class="filter-select" [(ngModel)]="filterCategory" (change)="applyFilters()">
-        <option value="">All Categories</option>
-        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-      </select>
-
-      <select class="filter-select" [(ngModel)]="filterManufacturer" (change)="applyFilters()">
-        <option value="">All Manufacturers</option>
-        <option *ngFor="let mfr of manufacturers" [value]="mfr">{{ mfr }}</option>
-      </select>
-
-      <button class="btn-text" *ngIf="search || filterCategory || filterManufacturer" (click)="clearFilters()">
+      <button class="btn-text" *ngIf="search" (click)="clearFilters()">
         <mat-icon>filter_list_off</mat-icon> Clear
       </button>
     </div>
@@ -103,13 +42,6 @@
     </div>
   </div>
 
-  <!-- Selection banner -->
-  <div class="selection-banner" *ngIf="selectedCount > 0">
-    <mat-icon class="banner-icon">check_circle</mat-icon>
-    {{ selectedCount }} product(s) selected
-    <button class="banner-clear" (click)="clearFilters()">Clear selection</button>
-  </div>
-
   <!-- Table -->
   <div class="table-container">
     <table class="products-table">
@@ -118,86 +50,29 @@
           <th class="col-check">
             <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll($event)" />
           </th>
-          <th class="col-image"></th>
           <th>Product ID</th>
           <th>Name</th>
-          <th>Category</th>
           <th>Manufacturer</th>
           <th>Model</th>
-          <th class="col-num">Total</th>
-          <th class="col-num">Available</th>
-          <th>Stock Status</th>
-          <th>Unit Cost</th>
-          <th>Useful Life</th>
+          <th>Description</th>
         </tr>
       </thead>
       <tbody>
-
-        <!-- Loading Skeleton -->
-        <tr *ngIf="loading" class="skeleton-row">
-          <td colspan="12">
-            <div class="skeleton-table-row" *ngFor="let i of [1,2,3,4,5,6,7,8]">
-              <div class="skel-check"></div>
-              <div class="skel-thumb"></div>
-              <div class="skel-line short"></div>
-              <div class="skel-line medium"></div>
-              <div class="skel-line short"></div>
-              <div class="skel-line medium"></div>
-              <div class="skel-line short"></div>
-              <div class="skel-line short"></div>
-              <div class="skel-line pill"></div>
-              <div class="skel-line short"></div>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Data Rows -->
-        <tr
-          *ngFor="let product of viewProducts"
-          [class.row-selected]="product.selected"
-          class="clickable-row"
-          (click)="onRowClick(product)"
-        >
+        <tr *ngFor="let product of viewProducts" [class.row-selected]="product.selected" class="clickable-row"
+          (click)="onRowClick(product)">
           <td class="col-check" (click)="$event.stopPropagation()">
             <input type="checkbox" [checked]="product.selected" (change)="onRowSelect(product, $event)" />
           </td>
-          <td class="col-image">
-            <div [class]="getThumbClass(product.category)">
-              <mat-icon class="thumb-icon">{{ getCategoryIcon(product.category) }}</mat-icon>
-            </div>
-          </td>
           <td class="cell-id">{{ product.id }}</td>
-          <td>
-            <div class="cell-product">{{ product.name }}</div>
-            <div class="cell-sub" *ngIf="product.notes">{{ product.notes }}</div>
-          </td>
-          <td>
-            <span class="category-tag">{{ product.category }}</span>
-          </td>
-          <td class="cell-manufacturer">{{ product.manufacturer }}</td>
-          <td class="cell-model">{{ product.modelNumber }}</td>
-          <td class="col-num cell-total">{{ product.totalAssets }}</td>
-          <td class="col-num cell-available">{{ product.availableAssets }}</td>
-          <td>
-            <span class="stock-badge" [ngClass]="getStockStatus(product)">
-              <span class="stock-dot"></span>
-              {{ getStockLabel(product) }}
-            </span>
-          </td>
-          <td class="cell-cost">{{ formatCurrency(product.unitCost) }}</td>
-          <td class="cell-eol">{{ formatEol(product.eolMonths) }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.manufacturer || '—' }}</td>
+          <td>{{ product.modelNumber || '—' }}</td>
+          <td>{{ product.description || '—' }}</td>
         </tr>
-
-        <!-- Empty State -->
         <tr *ngIf="viewProducts.length === 0 && !loading">
-          <td colspan="12" class="empty-state">
+          <td colspan="6" class="empty-state">
             <mat-icon class="empty-icon">inventory_2</mat-icon>
-            <div class="empty-text">
-              {{ search || filterCategory || filterManufacturer ? 'No products match your filters' : 'No products found' }}
-            </div>
-            <button class="btn outline" *ngIf="search || filterCategory || filterManufacturer" (click)="clearFilters()">
-              Clear filters
-            </button>
+            <div class="empty-text">No products found</div>
           </td>
         </tr>
       </tbody>
@@ -205,34 +80,7 @@
   </div>
 
   <!-- Pagination -->
-  <div class="pagination" *ngIf="filteredProducts.length > 0">
-    <div class="page-info">
-      Showing {{ showingFrom }}&ndash;{{ showingTo }} of {{ filteredProducts.length }}
-    </div>
-    <div class="page-size-control">
-      <label class="page-size-label">Rows per page:</label>
-      <select class="page-size-select" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-        <option [ngValue]="5">5</option>
-        <option [ngValue]="10">10</option>
-        <option [ngValue]="25">25</option>
-        <option [ngValue]="50">50</option>
-      </select>
-    </div>
-    <div class="page-controls">
-      <button class="page-btn" (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1" title="Previous page">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-      <button
-        class="page-btn"
-        *ngFor="let p of pageNumbers"
-        [class.active]="currentPage === p"
-        (click)="setPage(p)"
-      >
-        {{ p }}
-      </button>
-      <button class="page-btn" (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages" title="Next page">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
-    </div>
-  </div>
+  <app-pagination *ngIf="filteredProducts.length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
+    [pageNumbers]="pageNumbers" (pageChange)="setPage($event)">
+  </app-pagination>
 </div>

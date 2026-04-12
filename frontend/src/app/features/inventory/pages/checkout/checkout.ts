@@ -7,11 +7,12 @@ import { CheckoutService } from '../../services/checkout.service';
 import { CheckoutRecord, CheckoutFormData } from '../../models/checkout.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 @Component({
     selector: 'app-checkout',
     standalone: true,
-    imports: [CommonModule, FormsModule, MatIconModule, ResultOverlayComponent],
+    imports: [CommonModule, FormsModule, MatIconModule, ResultOverlayComponent, PaginationComponent],
     templateUrl: './checkout.html',
     styleUrls: ['./checkout.css'],
 })

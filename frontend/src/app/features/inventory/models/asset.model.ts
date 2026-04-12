@@ -1,52 +1,52 @@
-export type AssetStatus = 'Deployed' | 'In Repair' | 'Available' | 'Retired';
+export type AssetStatus = 'InUse' | 'InStore' | 'UnderMaintenance' | 'Discarded' | 'Transferred' | 'Lost' | 'Deployed'; // Added 'Deployed' for compatibility
 
 export interface Asset {
-  id: string;
-  product: string;
-  image?: string;
+  id: number | string; // Internal frontend ID
+  assetCode: string;
+  assetId?: string; // Alias for assetCode
+  name?: string;     // Alias for productName or custom name
+  assetTag?: string;
+  assetDate: string;
   status: AssetStatus;
-  category?: string;
-  location?: string;
-  purchaseCost?: number;
-  checkedOutTo?: string;
-  checkedOutAgo?: string;
-  album?: string;
-  serial?: string;
+  serialNumber?: string;
+  serial?: string;      // Alias for serialNumber
+  purchaseValue: number;
+  purchaseCost?: number; // Alias for purchaseValue
   warranty?: string;
-  endOfLife?: string;
-  orderNumber?: string;
-  selected?: boolean;
-}
-
-export interface AssetOwner {
-  name: string;
-  department: string;
-  avatar?: string;
-  location?: string;
-}
-
-export interface AssetDetail {
-  id: string;
-  name: string;
-  assetId: string;
-  productName: string;
-  serial: string;
-  warranty: string;
-  endOfLife: string;
-  orderNumber: string;
-  album: string;
-  value?: string;
-  category?: string;
-  department?: string;
-  purchaseDate?: string;
-  supplier?: string;
   notes?: string;
+  categoryId: number;
+  divisionId: number;
+  productId: number;
+  supplierId: number;
+  assignedUserId?: number;
+  qrCode?: string;
+  selected?: boolean;
+
+  // Compatibility fields for old pages if any
+  orderNumber?: string;
+  purchaseDate?: string;
+  endOfLife?: string;
+  album?: string;
+  scheduleAudit?: string;
+  category?: string;
+  supplier?: string;
+  department?: string;
+  location?: string;
+  value?: string;
   checkedOutTo?: string;
   dueBack?: string;
-  status: AssetStatus;
-  owner?: AssetOwner;
-  location?: string;
-  purchaseCost?: number;
-  scheduleAudit?: string;
-  imageBase64?: string | null;
+  owner?: any;
+}
+
+export interface AssetDetail extends Asset {
+  productName: string;
+  categoryName: string;
+  divisionName: string;
+  supplierName: string;
+  assignedUserName?: string;
+  checkedInBy?: string;
+  checkedOutBy?: string;
+  checkoutDate?: string;
+  checkoutNotes?: string;
+  checkinNotes?: string;
 }

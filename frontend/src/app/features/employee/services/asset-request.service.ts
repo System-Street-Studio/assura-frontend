@@ -16,10 +16,11 @@ export interface AssetRequest {
   requestType: string;       
 }
 
+import { environment } from '../../../../environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class AssetService {
-  // Angular Service එකේ
-private apiUrl = 'http://localhost:5000/api/AssetRequests';
+  private apiUrl = `${environment.apiUrl}/AssetRequests`;
 
   constructor(private http: HttpClient) {}
 

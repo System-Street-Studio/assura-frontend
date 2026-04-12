@@ -1,76 +1,32 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { Kpi, ChartDatasets, RecentActivity, WarrantyAlert } from '../models/dashboard.model';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { Kpi, ChartDatasets, RecentActivity, WarrantyAlert, DashboardData } from '../models/dashboard.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
-  private kpis: Kpi = {
-    totalAssets: 4500,
-    checkedOut: 1842,
-    available: 2398,
-    totalAssetValue: '$5.3M',
-    pendingRequests: 23,
-    maintenanceDue: 15,
-  };
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/dashboard`;
 
-  private charts: ChartDatasets = {
-    assetsByCategory: {
-      labels: ['Electronics', 'Furniture', 'Office Supplies', 'Machinery', 'Vehicles'],
-      data: [2600, 400, 200, 300, 100],
-      colors: ['#0b6c78', '#ff8c42', '#3ecf8e', '#6366f1', '#7e7f86'],
-    },
-    assetsByStatus: {
-      labels: ['In Use', 'Available', 'Maintenance', 'Retired'],
-      data: [2600, 1200, 60, 40],
-      colors: ['#0b6c78', '#19a974', '#f39c12', '#d64545'],
-    },
-    assetsByDepartment: {
-      labels: ['R&D', 'HR', 'Marketing', 'Sales', 'IT'],
-      data: [1100, 350, 600, 750, 900],
-      colors: ['#0b6c78', '#ff8c42', '#3ecf8e', '#6366f1', '#7e7f86'],
-    },
-    checkoutTrend: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      data: [120, 145, 162, 138, 175, 190, 210, 198, 225, 240, 215, 248],
-    },
-    anomalies: {
-      ghostAssets: 12,
-      missingAssets: 8,
-      maintenanceDue: 15,
-    },
-  };
+  getDashboardData(): Observable<DashboardData> {
+    return this.http.get<DashboardData>(this.apiUrl);
+  }
 
-  private recentActivity: RecentActivity[] = [
-    { id: '1', action: 'checked_out', assetName: 'MacBook Pro 16"', assetId: 'AST-0045', user: 'Sarah Johnson', timestamp: new Date(Date.now() - 12 * 60000), icon: 'logout', color: '#0b6c78' },
-    { id: '2', action: 'registered', assetName: 'Dell Monitor 27"', assetId: 'AST-0046', user: 'Mike Chen', timestamp: new Date(Date.now() - 45 * 60000), icon: 'add_circle', color: '#19a974' },
-    { id: '3', action: 'maintenance', assetName: 'HP LaserJet Pro', assetId: 'AST-0032', user: 'System', timestamp: new Date(Date.now() - 2 * 3600000), icon: 'build', color: '#f39c12' },
-    { id: '4', action: 'checked_in', assetName: 'iPad Air 5th Gen', assetId: 'AST-0041', user: 'Emily Davis', timestamp: new Date(Date.now() - 4 * 3600000), icon: 'login', color: '#6366f1' },
-    { id: '5', action: 'transferred', assetName: 'Standing Desk', assetId: 'AST-0028', user: 'HR Department', timestamp: new Date(Date.now() - 6 * 3600000), icon: 'swap_horiz', color: '#ff8c42' },
-    { id: '6', action: 'disposed', assetName: 'Old Projector', assetId: 'AST-0015', user: 'Admin', timestamp: new Date(Date.now() - 24 * 3600000), icon: 'delete_forever', color: '#d93025' },
-    { id: '7', action: 'checked_out', assetName: 'Ergonomic Chair', assetId: 'AST-0039', user: 'Tom Wilson', timestamp: new Date(Date.now() - 28 * 3600000), icon: 'logout', color: '#0b6c78' },
-  ];
-
-  private warrantyAlerts: WarrantyAlert[] = [
-    { assetId: 'AST-0012', assetName: 'Server Rack Unit #3', category: 'Machinery', expiryDate: '2025-02-15', daysRemaining: 3, severity: 'critical' },
-    { assetId: 'AST-0018', assetName: 'Cisco Switch 48-Port', category: 'Electronics', expiryDate: '2025-02-28', daysRemaining: 16, severity: 'critical' },
-    { assetId: 'AST-0025', assetName: 'Canon ImageRunner', category: 'Electronics', expiryDate: '2025-03-20', daysRemaining: 36, severity: 'warning' },
-    { assetId: 'AST-0031', assetName: 'UPS Battery Backup', category: 'Electronics', expiryDate: '2025-04-10', daysRemaining: 57, severity: 'warning' },
-    { assetId: 'AST-0044', assetName: 'Air Conditioning Unit', category: 'Machinery', expiryDate: '2025-06-01', daysRemaining: 109, severity: 'info' },
-  ];
-
+  // Maintaining old methods for compatibility if needed, or refactoring component to use getDashboardData()
   getKpis(): Observable<Kpi> {
-    return of(this.kpis);
+    return this.getDashboardData().pipe(map(d => d.kpis));
   }
 
   getCharts(): Observable<ChartDatasets> {
-    return of(this.charts);
+    return this.getDashboardData().pipe(map(d => d.charts));
   }
 
   getRecentActivity(): Observable<RecentActivity[]> {
-    return of(this.recentActivity);
+    return this.getDashboardData().pipe(map(d => d.recentActivity));
   }
 
   getWarrantyAlerts(): Observable<WarrantyAlert[]> {
-    return of(this.warrantyAlerts);
+    return this.getDashboardData().pipe(map(d => d.warrantyAlerts));
   }
 }

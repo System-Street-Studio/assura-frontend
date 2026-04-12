@@ -4,24 +4,25 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetService } from '../../services/asset.service';
-import { Asset } from '../../models/asset.model';
+import { AssetDetail } from '../../models/asset.model';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-assets',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent],
   templateUrl: './assets.html',
   styleUrls: ['./assets.css'],
 })
 export class AssetsComponent implements OnInit {
-private assetService = inject(AssetService);
-private router = inject(Router);
-private toast = inject(ToastService);
+  private assetService = inject(AssetService);
+  private router = inject(Router);
+  private toast = inject(ToastService);
 
-  allAssets: Asset[] = [];
-  filteredAssets: Asset[] = [];
-  viewAssets: Asset[] = [];
+  allAssets: AssetDetail[] = [];
+  filteredAssets: AssetDetail[] = [];
+  viewAssets: AssetDetail[] = [];
   loading = true;
 
   search = '';
@@ -33,22 +34,22 @@ private toast = inject(ToastService);
   allSelected = false;
 
   get statusCounts(): Record<string, number> {
-    const counts: Record<string, number> = { Deployed: 0, Available: 0, 'In Repair': 0, Retired: 0 };
+    const counts: Record<string, number> = { InUse: 0, InStore: 0, UnderMaintenance: 0, Discarded: 0, Transferred: 0, Lost: 0 };
     this.allAssets.forEach(a => counts[a.status] = (counts[a.status] || 0) + 1);
     return counts;
   }
 
   get totalValue(): number {
-    return this.allAssets.reduce((sum, a) => sum + (a.purchaseCost || 0), 0);
+    return this.allAssets.reduce((sum, a) => sum + (a.purchaseValue || 0), 0);
   }
 
   get categories(): string[] {
-    return [...new Set(this.allAssets.map(a => a.category).filter(Boolean) as string[])];
+    return [...new Set(this.allAssets.map(a => a.categoryName).filter(Boolean) as string[])];
   }
 
   ngOnInit(): void {
     this.assetService.getAll().subscribe({
-      next: (data: Asset[]) => {
+      next: (data: AssetDetail[]) => {
         this.allAssets = data;
         this.applyFilters();
         this.loading = false;
@@ -67,12 +68,12 @@ private toast = inject(ToastService);
       const q = this.search.toLowerCase();
       filtered = filtered.filter(
         (a) =>
-          a.product.toLowerCase().includes(q) ||
-          a.id.toLowerCase().includes(q) ||
-          (a.serial || '').toLowerCase().includes(q) ||
-          (a.checkedOutTo || '').toLowerCase().includes(q) ||
-          (a.category || '').toLowerCase().includes(q) ||
-          (a.location || '').toLowerCase().includes(q)
+          a.productName.toLowerCase().includes(q) ||
+          a.assetCode.toLowerCase().includes(q) ||
+          (a.serialNumber || '').toLowerCase().includes(q) ||
+          (a.assignedUserName || '').toLowerCase().includes(q) ||
+          (a.categoryName || '').toLowerCase().includes(q) ||
+          (a.divisionName || '').toLowerCase().includes(q)
       );
     }
 
@@ -81,7 +82,7 @@ private toast = inject(ToastService);
     }
 
     if (this.filterCategory) {
-      filtered = filtered.filter((a) => a.category === this.filterCategory);
+      filtered = filtered.filter((a) => a.categoryName === this.filterCategory);
     }
 
     this.filteredAssets = filtered;
@@ -118,7 +119,7 @@ private toast = inject(ToastService);
     this.viewAssets.forEach((a) => (a.selected = this.allSelected));
   }
 
-  onRowSelect(asset: Asset, ev: Event): void {
+  onRowSelect(asset: AssetDetail, ev: Event): void {
     asset.selected = (ev.target as HTMLInputElement).checked;
     this.allSelected = this.viewAssets.every((a) => a.selected);
   }
@@ -152,15 +153,11 @@ private toast = inject(ToastService);
     return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 0 });
   }
 
-  private selectedIds(): string[] {
-    return this.allAssets.filter((a) => a.selected).map((a) => a.id);
-  }
-
   get selectedCount(): number {
     return this.allAssets.filter((a) => a.selected).length;
   }
 
-  onRowClick(asset: Asset): void {
+  onRowClick(asset: AssetDetail): void {
     this.router.navigate(['/inventory/assets', asset.id]);
   }
 
@@ -172,5 +169,14 @@ private toast = inject(ToastService);
     const start = (this.currentPage - 1) * this.pageSize;
     this.viewAssets = this.filteredAssets.slice(start, start + this.pageSize);
     this.allSelected = this.viewAssets.length > 0 && this.viewAssets.every((a) => a.selected);
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'InUse': return 'In Use';
+      case 'InStore': return 'In Store';
+      case 'UnderMaintenance': return 'Under Maintenance';
+      default: return status;
+    }
   }
 }

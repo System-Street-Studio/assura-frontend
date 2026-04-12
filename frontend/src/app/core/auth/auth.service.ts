@@ -75,9 +75,10 @@ export class AuthService {
         decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
         decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role'] ??
         [];
-      return Array.isArray(raw) ? raw : [raw];
+      const roles = Array.isArray(raw) ? raw : [raw];
+      return roles.length > 0 ? roles : ['Employee'];
     } catch {
-      return [];
+      return ['Employee'];
     }
   }
 
@@ -122,6 +123,41 @@ export class AuthService {
     }
   }
 
+  // Returns the user's ID from the JWT token.
+  getUserId(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const decoded: any = jwtDecode(token);
+      return (
+        decoded.sub ??
+        decoded.nameid ??
+        decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ??
+        decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/nameidentifier'] ??
+        null
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  // Returns the user's name from the JWT token.
+  getUserName(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const decoded: any = jwtDecode(token);
+      return (
+        decoded.unique_name ??
+        decoded.name ??
+        decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ??
+        null
+      );
+    } catch {
+      return null;
+    }
+  }
+
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
   }
@@ -134,7 +170,7 @@ export class AuthService {
     if (roles.includes('HR')) return '/hr/pending';
     if (roles.includes('Accountant')) return '/accountant/discarded';
     if (roles.includes('Superintendent')) return '/superintendent/overview';
-    if (roles.includes('Division Head')) return '/approvals/overview';
+    if (roles.includes('DivisionHead')) return '/approvals/overview';
     if (roles.includes('Employee')) return '/employee/employee-overview';
     return '/overview';
   }

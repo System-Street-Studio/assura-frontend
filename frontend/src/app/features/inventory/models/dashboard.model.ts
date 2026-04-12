@@ -34,3 +34,10 @@ export interface ChartDatasets {
   checkoutTrend: { labels: string[]; data: number[] };
   anomalies: { ghostAssets: number; missingAssets: number; maintenanceDue: number };
 }
+
+export interface DashboardData {
+  kpis: Kpi;
+  charts: ChartDatasets;
+  recentActivity: RecentActivity[];
+  warrantyAlerts: WarrantyAlert[];
+}

@@ -21,5 +21,10 @@ export const routes: Routes = [
         component: AccShellComponent,
         children: accShellRoutes
     },
+    {
+        path: 'profile',
+        loadComponent: () => import('./features/profile/profile').then(m => m.ProfileComponent),
+        canActivate: [authGuard]
+    },
     { path: '**', redirectTo: '' }
 ];

@@ -13,20 +13,15 @@
           <mat-icon class="thumb-icon">devices</mat-icon>
         </div>
         <div class="title">
-          <h2>{{ asset.name }}</h2>
+          <h2>{{ asset.productName }}</h2>
           <div class="meta">
-            Asset ID: {{ asset.assetId }} &bull; Asset Name: {{ asset.productName }}
+            Code: {{ asset.assetCode }} &bull; Tag: {{ asset.assetTag || '—' }}
           </div>
         </div>
       </div>
 
       <div class="action-tabs">
-        <button
-          class="tab"
-          *ngFor="let t of tabs"
-          [class.active]="activeTab === t.id"
-          (click)="setTab(t.id)"
-        >
+        <button class="tab" *ngFor="let t of tabs" [class.active]="activeTab === t.id" (click)="setTab(t.id)">
           {{ t.label }}
         </button>
       </div>
@@ -55,29 +50,23 @@
       <section class="about" *ngIf="activeTab === 'about'">
         <div class="about-grid">
           <div class="qr-block">
-            <img
-              *ngIf="qrDataUrl"
-              [src]="qrDataUrl"
-              alt="QR Code for {{ asset.assetId }}"
-              class="qr-image"
-            />
+            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" class="qr-image" />
             <div class="qr-placeholder" *ngIf="!qrDataUrl">
               <mat-icon class="qr-icon">qr_code_2</mat-icon>
             </div>
-            <div class="serial">{{ asset.serial }}</div>
-            <div class="assetid">{{ asset.assetId }}</div>
-            <div class="property">Property of Demo Company</div>
+            <div class="serial">{{ asset.serialNumber || '—' }}</div>
+            <div class="assetid">{{ asset.assetCode }}</div>
+            <div class="property">Property of Assura Inventory</div>
             <button class="btn light" (click)="onPrint()">
               <mat-icon class="btn-icon">print</mat-icon>
-              Print
+              Print Label
             </button>
           </div>
 
           <div class="about-text">
-            <p class="muted">You can customize the text and size in the Settings.</p>
+            <p class="muted">Asset QR reflects the unique identifier for tracking.</p>
             <p class="tip">
-              Tip: To print labels in bulk, go to the main Assets table, select checkboxes and
-              click Print.
+              Tip: Labels can be printed in bulk from the main Assets table.
             </p>
           </div>
         </div>
@@ -85,100 +74,66 @@
         <hr class="section-divider" />
 
         <!-- Details -->
-        <h3 class="section-title">Details</h3>
+        <h3 class="section-title">Asset Information</h3>
 
         <div class="details-grid">
           <div class="detail-col">
             <div class="field">
+              <div class="label">Asset Code</div>
+              <div class="value">{{ asset.assetCode }}</div>
+            </div>
+            <div class="field">
+              <div class="label">Asset Tag</div>
+              <div class="value">{{ asset.assetTag || '—' }}</div>
+            </div>
+            <div class="field">
               <div class="label">Serial Number</div>
-              <div class="value">
-                {{ asset.serial }}
-                <span class="edit-link" (click)="onEdit()">Edit</span>
-              </div>
-            </div>
-            <div class="field">
-              <div class="label">Warranty</div>
-              <div class="value">{{ asset.warranty }}</div>
-            </div>
-            <div class="field">
-              <div class="label">Category</div>
-              <div class="value">
-                {{ asset.category || '—' }}
-                <span class="edit-link" (click)="onEdit()">Edit</span>
-              </div>
-            </div>
-            <div class="field">
-              <div class="label">Purchase Date</div>
-              <div class="value">
-                {{ asset.purchaseDate || '—' }}
-                <span class="edit-link" (click)="onEdit()">Edit</span>
-              </div>
+              <div class="value">{{ asset.serialNumber || '—' }}</div>
             </div>
           </div>
 
           <div class="detail-col">
             <div class="field">
               <div class="label">Product</div>
-              <div class="value">
-                {{ asset.productName }}
-                <span class="edit-link" (click)="onEdit()">Edit</span>
-              </div>
+              <div class="value">{{ asset.productName }}</div>
             </div>
             <div class="field">
-              <div class="label">End of Life</div>
-              <div class="value">{{ asset.endOfLife }}</div>
+              <div class="label">Category</div>
+              <div class="value">{{ asset.categoryName }}</div>
             </div>
             <div class="field">
-              <div class="label">Department</div>
-              <div class="value">
-                {{ asset.department || '—' }}
-                <span class="edit-link" (click)="onEdit()">Edit</span>
-              </div>
-            </div>
-            <div class="field">
-              <div class="label">Supplier</div>
-              <div class="value">
-                {{ asset.supplier || '—' }}
-                <span class="edit-link" (click)="onEdit()">Edit</span>
-              </div>
+              <div class="label">Division</div>
+              <div class="value">{{ asset.divisionName }}</div>
             </div>
           </div>
 
           <div class="detail-col">
             <div class="field">
-              <div class="label">Asset ID</div>
-              <div class="value">{{ asset.assetId }}</div>
+              <div class="label">Supplier</div>
+              <div class="value">{{ asset.supplierName }}</div>
             </div>
             <div class="field">
-              <div class="label">Order Number</div>
-              <div class="value">
-                {{ asset.orderNumber }}
-                <span class="edit-link" (click)="onEdit()">Edit</span>
-              </div>
+              <div class="label">Purchase Value</div>
+              <div class="value">{{ asset.purchaseValue | currency:'LKR' }}</div>
             </div>
             <div class="field">
-              <div class="label">Value</div>
-              <div class="value">
-                {{ asset.value || '—' }}
-                <span class="edit-link" (click)="onEdit()">Edit</span>
-              </div>
-            </div>
-            <div class="field notes">
-              <div class="label">Notes</div>
-              <div class="value">
-                {{ asset.notes || 'No notes' }}
-                <span class="edit-link" (click)="onEdit()">Edit</span>
-              </div>
+              <div class="label">Asset Date</div>
+              <div class="value">{{ asset.assetDate || '—' }}</div>
             </div>
           </div>
+        </div>
+
+        <div class="notes-section" *ngIf="asset.notes">
+          <div class="label">Notes</div>
+          <div class="value">{{ asset.notes }}</div>
         </div>
       </section>
 
       <!-- Placeholder for other tabs -->
       <section class="tab-placeholder" *ngIf="activeTab !== 'about'">
-        <mat-icon class="placeholder-icon">construction</mat-icon>
+        <mat-icon class="placeholder-icon">history</mat-icon>
         <p class="placeholder-text">
-          {{ activeTab | titlecase }} content coming soon.
+          {{ activeTab === 'checkout-log' ? 'Maintenance and assignment history coming soon.' : 'Additional details.' }}
         </p>
       </section>
     </div>
@@ -189,41 +144,17 @@
         <h4>Current Status</h4>
         <div class="status-row">
           <span class="status-dot" [ngClass]="getStatusClass()"></span>
-          <span class="status-txt">{{ asset.status }}</span>
+          <span class="status-txt">{{ getStatusLabel(asset.status) }}</span>
         </div>
-        <div class="status-row">
+        <div class="status-row" *ngIf="asset.assignedUserName">
           <mat-icon class="status-icon">person</mat-icon>
-          <span class="status-txt">To: {{ asset.checkedOutTo || '—' }}</span>
+          <span class="status-txt">Assigned to: {{ asset.assignedUserName }}</span>
         </div>
-        <div class="status-row">
-          <mat-icon class="status-icon">calendar_today</mat-icon>
-          <span class="status-txt">Due Back: {{ asset.dueBack || '—' }}</span>
-        </div>
-        <button
-          class="btn green"
-          (click)="onCheckin()"
-          [disabled]="asset.status !== 'Deployed'"
-        >
+        <button class="btn green" (click)="onCheckin()"
+          *ngIf="asset.assignedUserName || asset.status === 'Deployed' || asset.status === 'InUse'">
           <mat-icon class="btn-icon">login</mat-icon>
-          Checkin
+          Check-In
         </button>
-      </div>
-
-      <div class="owner-card">
-        <h4>Ownership &amp; Location</h4>
-        <div class="owner" *ngIf="asset.owner">
-          <div class="avatar-circle">
-            <mat-icon>person</mat-icon>
-          </div>
-          <div>
-            <div class="owner-name">{{ asset.owner.name }}</div>
-            <div class="owner-dept">{{ asset.owner.department }}</div>
-          </div>
-        </div>
-        <div class="location" *ngIf="asset.owner?.location">
-          <mat-icon class="location-icon">location_on</mat-icon>
-          {{ asset.owner?.location }}
-        </div>
       </div>
     </aside>
   </div>
@@ -231,99 +162,55 @@
   <!-- ═══ CHECK-IN MODAL ═══ -->
   <div class="overlay" *ngIf="showCheckinModal" (click)="cancelCheckin()">
     <div class="checkin-dialog" (click)="$event.stopPropagation()">
-      <!-- Icon -->
       <div class="checkin-icon-wrap">
         <mat-icon class="checkin-icon">assignment_return</mat-icon>
       </div>
 
-      <h3>Check In Asset</h3>
+      <h3>Quick Check-In</h3>
       <p class="checkin-subtitle">
-        Returning <strong>{{ asset.name }}</strong> ({{ asset.assetId }})
-        <span *ngIf="asset.checkedOutTo"> from <strong>{{ asset.checkedOutTo }}</strong></span>
+        Returning <strong>{{ asset.assetCode }}</strong>
       </p>
 
-      <!-- Condition selector -->
       <div class="checkin-field">
         <label class="checkin-label">Return Condition</label>
         <div class="condition-options">
           <label class="condition-option" [class.selected]="checkinCondition === 'Good'">
             <input type="radio" name="condition" value="Good" [(ngModel)]="checkinCondition" />
-            <mat-icon class="cond-icon good">check_circle</mat-icon>
             <span>Good</span>
           </label>
           <label class="condition-option" [class.selected]="checkinCondition === 'Fair'">
             <input type="radio" name="condition" value="Fair" [(ngModel)]="checkinCondition" />
-            <mat-icon class="cond-icon fair">info</mat-icon>
             <span>Fair</span>
           </label>
           <label class="condition-option" [class.selected]="checkinCondition === 'Damaged'">
             <input type="radio" name="condition" value="Damaged" [(ngModel)]="checkinCondition" />
-            <mat-icon class="cond-icon damaged">warning</mat-icon>
             <span>Damaged</span>
           </label>
         </div>
       </div>
 
-      <!-- Damaged notice -->
-      <div class="damage-notice" *ngIf="checkinCondition === 'Damaged'">
-        <mat-icon class="notice-icon">info</mat-icon>
-        Asset will be moved to <strong>In Repair</strong> status
-      </div>
-
-      <!-- Notes -->
-      <div class="checkin-field">
-        <label class="checkin-label">Notes <span class="optional">(optional)</span></label>
-        <textarea
-          class="checkin-textarea"
-          rows="3"
-          placeholder="Any observations about the asset condition…"
-          [(ngModel)]="checkinNotes"
-        ></textarea>
-      </div>
-
-      <!-- Actions -->
       <div class="checkin-actions">
-        <button class="btn outline" (click)="cancelCheckin()" [disabled]="checkinProcessing">
-          Cancel
-        </button>
+        <button class="btn outline" (click)="cancelCheckin()" [disabled]="checkinProcessing">Cancel</button>
         <button class="btn green" (click)="confirmCheckin()" [disabled]="checkinProcessing">
-          <mat-icon class="btn-icon" *ngIf="!checkinProcessing">login</mat-icon>
-          <mat-icon class="btn-icon spin" *ngIf="checkinProcessing">sync</mat-icon>
-          {{ checkinProcessing ? 'Processing...' : 'Confirm Check-In' }}
+          Confirm Check-In
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Delete confirmation overlay -->
+  <!-- Delete Confirmation -->
   <div class="overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()">
     <div class="confirm-dialog" (click)="$event.stopPropagation()">
-      <div class="confirm-icon-wrap">
-        <mat-icon class="confirm-icon">delete_forever</mat-icon>
-      </div>
-      <h3>Delete this asset?</h3>
-      <p>
-        You're about to permanently delete
-        <strong>{{ asset.name }}</strong> (ID: {{ asset.assetId }}).
-        This action cannot be undone.
-      </p>
+      <h3>Delete Asset?</h3>
+      <p>Are you sure you want to remove <strong>{{ asset.assetCode }}</strong>?</p>
       <div class="confirm-actions">
-        <button class="btn outline" (click)="cancelDelete()" [disabled]="deleting">Cancel</button>
-        <button class="btn red" (click)="confirmDelete()" [disabled]="deleting">
-          <mat-icon class="btn-icon" *ngIf="!deleting">delete</mat-icon>
-          <mat-icon class="btn-icon spin" *ngIf="deleting">sync</mat-icon>
-          {{ deleting ? 'Deleting...' : 'Yes, Delete' }}
-        </button>
+        <button class="btn outline" (click)="cancelDelete()">Cancel</button>
+        <button class="btn red" (click)="confirmDelete()" [disabled]="deleting">Delete</button>
       </div>
     </div>
   </div>
 
-  <!-- Success/Error result overlay -->
-  <app-result-overlay
-    *ngIf="showResult"
-    [type]="resultType"
-    [title]="resultTitle"
-    [message]="resultMessage"
-    (closed)="onResultClosed()"
-  ></app-result-overlay>
+  <!-- Result Overlay -->
+  <app-result-overlay *ngIf="showResult" [type]="resultType" [title]="resultTitle" [message]="resultMessage"
+    (closed)="onResultClosed()"></app-result-overlay>
 </div>

@@ -11,35 +11,31 @@
       </div>
 
       <form (ngSubmit)="onSubmit()" class="asset-form">
-        
-        <div class="form-group">
-          <label>Asset Name</label>
-          <input type="text" [ngModel]="assetName()" (ngModelChange)="assetName.set($event)" 
-                 name="assetName" placeholder="e.g., Dell XPS 15" class="form-control">
-        </div>
 
         <div class="form-group">
-          <label>Asset Category</label>
-          <select [ngModel]="category()" (ngModelChange)="category.set($event)" name="category" class="form-control">
-            <option value="" disabled selected>Select an asset category</option>
-            <option value="electronics">Electronics</option>
-            <option value="furniture">Furniture</option>
-            <option value="vehicles">Vehicles</option>
-            <option value="other">Other</option>
+          <label>Select Asset</label>
+          <select [ngModel]="assetName()" (ngModelChange)="assetName.set($event)" name="assetName" class="form-control"
+            required>
+            <option value="" disabled selected>Select an asset to transfer</option>
+            @for (a of assignedAssets(); track a.id) {
+            <option [value]="a.productName + ' (' + a.assetCode + ')'">
+              {{a.productName}} ({{a.assetCode}})
+            </option>
+            }
           </select>
         </div>
 
         <div class="form-group">
           <label>Description</label>
-          <textarea [ngModel]="description()" (ngModelChange)="description.set($event)" 
-                    name="description" placeholder="Clearly state what the specifications of asset you request." 
-                    class="form-control" rows="3"></textarea>
+          <textarea [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"
+            placeholder="Clearly state what the specifications of asset you request." class="form-control"
+            rows="3"></textarea>
         </div>
 
         <div class="form-group">
           <label>Quantity</label>
-          <input type="number" [ngModel]="quantity()" (ngModelChange)="quantity.set($event)" 
-                 name="quantity" class="form-control">
+          <input type="number" [ngModel]="quantity()" (ngModelChange)="quantity.set($event)" name="quantity"
+            class="form-control">
         </div>
 
         <div class="form-group">
@@ -53,41 +49,40 @@
 
         <div class="form-group">
           <label>Reason for transfer</label>
-          <textarea [ngModel]="reason()" (ngModelChange)="reason.set($event)" name="reason" 
-                    placeholder="Briefly explain why this asset transfer is needed..." 
-                    class="form-control" rows="3"></textarea>
+          <textarea [ngModel]="reason()" (ngModelChange)="reason.set($event)" name="reason"
+            placeholder="Briefly explain why this asset transfer is needed..." class="form-control" rows="3"></textarea>
         </div>
 
         <div class="duration-section">
-            <label class="section-title">Select Duration</label>
-            
-            <div class="date-picker-container">
-                <div class="date-field">
-                <label>From</label>
-                <div class="input-wrapper">
-                    <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
-                    <mat-datepicker #fromPicker></mat-datepicker>
+          <label class="section-title">Select Duration</label>
 
-                    <input matInput [matDatepicker]="fromPicker" placeholder="Pick a date"
-                        [ngModel]="fromDate()" (dateChange)="fromDate.set($event.value)" name="fromDate">
-                   
-                    
-                </div>
-                </div>
+          <div class="date-picker-container">
+            <div class="date-field">
+              <label>From</label>
+              <div class="input-wrapper">
+                <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                <mat-datepicker #fromPicker></mat-datepicker>
 
-                <div class="date-field">
-                <label>To</label>
-                <div class="input-wrapper">
-                    <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
-                    <mat-datepicker #toPicker></mat-datepicker>
-                    
-                    <input matInput [matDatepicker]="toPicker" placeholder="Pick a date"
-                        [ngModel]="toDate()" (dateChange)="toDate.set($event.value)" name="toDate">
-                    
-                </div>
-                </div>
+                <input matInput [matDatepicker]="fromPicker" placeholder="Pick a date" [ngModel]="fromDate()"
+                  (dateChange)="fromDate.set($event.value)" name="fromDate">
+
+
+              </div>
             </div>
+
+            <div class="date-field">
+              <label>To</label>
+              <div class="input-wrapper">
+                <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                <mat-datepicker #toPicker></mat-datepicker>
+
+                <input matInput [matDatepicker]="toPicker" placeholder="Pick a date" [ngModel]="toDate()"
+                  (dateChange)="toDate.set($event.value)" name="toDate">
+
+              </div>
             </div>
+          </div>
+        </div>
 
         <div class="form-actions">
           <button type="submit" class="submit-btn">Submit Request</button>

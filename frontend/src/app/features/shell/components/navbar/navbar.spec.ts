@@ -37,17 +37,17 @@ describe('NavbarComponent', () => {
 
   it('should display "Admin" when on /admin path', async () => {
     await setup(['ADMIN'], '/admin/overview');
-    expect(component.sectionName).toBe('Admin');
+    expect(component.roleName).toBe('Admin');
   });
 
   it('should display "Procurement" when on /procurement path', async () => {
     await setup(['PROCUREMENT'], '/procurement/purchase-orders');
-    expect(component.sectionName).toBe('Procurement');
+    expect(component.roleName).toBe('Procurement');
   });
 
   it('should display "Dashboard" when on root path with no role', async () => {
     await setup([], '/overview');
-    expect(component.sectionName).toBe('Dashboard');
+    expect(component.roleName).toBe('Dashboard');
   });
 
   it('should render section name in the template', async () => {

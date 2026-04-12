@@ -4,7 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetService } from '../../services/asset.service';
+import { ProductService } from '../../services/product.service';
+import { SupplierService } from '../../services/supplier.service';
+import { DivisionService } from '../../services/division.service';
+import { CategoryService } from '../../services/category.service';
 import { AssetDetail, AssetStatus } from '../../models/asset.model';
+import { Product } from '../../models/product.model';
+import { Supplier } from '../../models/supplier.model';
+import { Division } from '../../models/division.model';
+import { Category } from '../../models/category.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 
@@ -17,6 +25,10 @@ import { ResultOverlayComponent } from '../../../../shared/components/result-ove
 })
 export class AssetFormComponent implements OnInit {
   private assetService = inject(AssetService);
+  private productService = inject(ProductService);
+  private supplierService = inject(SupplierService);
+  private divisionService = inject(DivisionService);
+  private categoryService = inject(CategoryService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private location = inject(Location);
@@ -26,7 +38,10 @@ export class AssetFormComponent implements OnInit {
   assetId = '';
   saving = false;
   submitted = false;
+
+  // Compatibility properties
   imagePreview: string | null = null;
+  auditSchedules = ['Monthly', 'Quarterly', 'Semi-Annually', 'Annually'];
 
   showResult = false;
   resultType: 'success' | 'error' = 'success';
@@ -34,57 +49,50 @@ export class AssetFormComponent implements OnInit {
   resultMessage = '';
   private navigateTarget: string[] = [];
 
-  statuses: AssetStatus[] = ['Available', 'Deployed', 'In Repair', 'Retired'];
-  products = ['XPS 13"', 'ThinkPad E15 G4', 'iPhone 15 Pro Max', 'Yoga 7', 'MacBook Pro 14"', 'Surface Pro 9'];
-  suppliers = ['Dell', 'Apple', 'Lenovo', 'HP', 'Microsoft', 'Samsung'];
-  locations = ['Building A - 3rd Floor', 'Building B - 1st Floor', 'Warehouse 1', 'Remote Storage'];
-  departments = ['IT', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations'];
-  categories = ['Laptops', 'Phones', 'Tablets', 'Monitors', 'Accessories', 'Networking'];
-  auditSchedules = ['Monthly', 'Quarterly', 'Semi-Annually', 'Annually'];
+  statuses: AssetStatus[] = ['InUse', 'InStore', 'UnderMaintenance', 'Discarded', 'Transferred', 'Lost'];
+
+  products: Product[] = [];
+  suppliers: Supplier[] = [];
+  divisions: Division[] = [];
+  categories: Category[] = [];
 
   form: AssetDetail = {
     id: '',
-    name: '',
-    assetId: '',
-    productName: '',
-    serial: '',
+    assetCode: '',
+    assetTag: '',
+    assetDate: '',
+    status: 'InStore',
+    serialNumber: '',
+    purchaseValue: 0,
     warranty: '',
-    endOfLife: '',
-    orderNumber: '',
-    album: '',
-    status: 'Available',
-    category: '',
-    department: '',
-    supplier: '',
-    location: '',
-    value: '',
-    purchaseDate: '',
-    purchaseCost: undefined,
-    scheduleAudit: '',
     notes: '',
-    imageBase64: null,
+    categoryId: 0,
+    divisionId: 0,
+    productId: 0,
+    supplierId: 0,
+    productName: '',
+    categoryName: '',
+    divisionName: '',
+    supplierName: ''
   };
 
   ngOnInit(): void {
     this.mode = this.route.snapshot.data['mode'] || 'edit';
     this.assetId = this.route.snapshot.paramMap.get('id') || '';
 
-    if (this.mode === 'create') {
-      this.form.assetId = this.assetService.getNextAssetId();
-    }
+    this.loadDropdownData();
 
     if (this.assetId) {
       this.assetService.getAssetById(this.assetId).subscribe({
         next: (a) => {
           this.form = { ...a };
-          if (a.imageBase64) {
-            this.imagePreview = a.imageBase64;
-          }
+          // Fill aliases for form logic if needed
+          this.form.serial = a.serialNumber;
+          this.form.purchaseCost = a.purchaseValue;
+
           if (this.mode === 'clone') {
             this.form.id = '';
-            this.form.assetId = this.assetService.getNextAssetId();
-            this.form.name = a.name + ' (Copy)';
-            this.form.productName = a.productName + ' (Copy)';
+            this.form.assetCode = a.assetCode + '-COPY';
           }
         },
         error: () => {
@@ -101,87 +109,37 @@ export class AssetFormComponent implements OnInit {
     return 'Edit Asset';
   }
 
-  get breadcrumb(): string {
-    if (this.mode === 'create') return 'Assets / New Asset';
-    if (this.mode === 'clone') return 'Assets / Clone Asset';
-    return 'Assets / Edit Asset';
-  }
-
-  onFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) {
-      return;
-    }
-    const file = input.files[0];
-    if (file.size > 5 * 1024 * 1024) {
-      this.toast.warning('Image must be under 5 MB');
-      input.value = '';
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagePreview = reader.result as string;
-      this.form.imageBase64 = reader.result as string;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  removeImage(): void {
-    this.imagePreview = null;
-    this.form.imageBase64 = null;
-  }
+  onFileChange(event: any): void { }
+  removeImage(): void { }
 
   onSave(): void {
     this.submitted = true;
-    if (!this.form.productName.trim() || !this.form.serial.trim() || !this.form.status) {
+    if (!this.form.assetCode.trim() || !this.form.productId || !this.form.status) {
       this.toast.warning('Please fill in all required fields');
       return;
     }
     this.saving = true;
-    this.form.name = this.form.productName;
 
-    if (this.mode === 'clone') {
+    // Sync values from aliases if template uses them
+    if (this.form.serial) this.form.serialNumber = this.form.serial;
+    if (this.form.purchaseCost) this.form.purchaseValue = this.form.purchaseCost;
+
+    if (this.mode === 'clone' || this.mode === 'create') {
       this.assetService.createAsset(this.form).subscribe({
         next: (created) => {
           this.saving = false;
-          this.showResultOverlay(
-            'success',
-            'Cloned!',
-            `"${created.productName}" has been created successfully.`,
-            ['/inventory/assets', created.id]
-          );
+          this.showResultOverlay('success', 'Success', `Asset saved.`, ['/inventory/assets']);
         },
         error: () => {
           this.saving = false;
-          this.toast.error('Failed to clone asset');
-        },
-      });
-    } else if (this.mode === 'create') {
-      this.assetService.createAsset(this.form).subscribe({
-        next: (created) => {
-          this.saving = false;
-          this.showResultOverlay(
-            'success',
-            'Created!',
-            `"${created.productName}" has been added to inventory.`,
-            ['/inventory/assets', created.id]
-          );
-        },
-        error: () => {
-          this.saving = false;
-          this.toast.error('Failed to create asset');
+          this.toast.error('Failed to save asset');
         },
       });
     } else {
       this.assetService.updateAsset(this.form).subscribe({
         next: () => {
           this.saving = false;
-          this.showResultOverlay(
-            'success',
-            'Updated!',
-            `"${this.form.productName}" has been saved successfully.`,
-            ['/inventory/assets', this.form.id]
-          );
+          this.showResultOverlay('success', 'Updated', `Asset updated.`, ['/inventory/assets']);
         },
         error: () => {
           this.saving = false;
@@ -189,6 +147,25 @@ export class AssetFormComponent implements OnInit {
         },
       });
     }
+  }
+
+  private loadDropdownData(): void {
+    this.productService.getAll().subscribe({
+      next: (data) => this.products = data,
+      error: () => this.toast.error('Failed to load products')
+    });
+    this.supplierService.getAll().subscribe({
+      next: (data) => this.suppliers = data,
+      error: () => this.toast.error('Failed to load suppliers')
+    });
+    this.divisionService.getAll().subscribe({
+      next: (data) => this.divisions = data,
+      error: () => this.toast.error('Failed to load divisions')
+    });
+    this.categoryService.getAll().subscribe({
+      next: (data) => this.categories = data,
+      error: () => this.toast.error('Failed to load categories')
+    });
   }
 
   onCancel(): void {
@@ -202,12 +179,7 @@ export class AssetFormComponent implements OnInit {
     }
   }
 
-  private showResultOverlay(
-    type: 'success' | 'error',
-    title: string,
-    message: string,
-    navigateTo: string[]
-  ): void {
+  private showResultOverlay(type: 'success' | 'error', title: string, message: string, navigateTo: string[]): void {
     this.resultType = type;
     this.resultTitle = title;
     this.resultMessage = message;

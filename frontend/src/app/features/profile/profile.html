@@ -1,0 +1,115 @@
+<div class="profile-container" *ngIf="!loading(); else loadingTemplate">
+  <div class="profile-header">
+    <div class="cover-photo"></div>
+    <div class="header-content">
+      <div class="avatar-container">
+        <div class="profile-avatar">{{ initials }}</div>
+      </div>
+      <div class="user-main-info">
+        <h1 class="user-display-name">{{ profile()?.firstName }} {{ profile()?.lastName }}</h1>
+        <p class="user-role-badge">
+          <mat-icon>verified_user</mat-icon>
+          {{ profile()?.role }}
+        </p>
+      </div>
+      <div class="header-actions">
+        <button mat-stroked-button class="back-btn" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Back
+        </button>
+        <button mat-flat-button color="primary" class="edit-btn" (click)="toggleEdit()" *ngIf="!isEditing">
+          <mat-icon>edit</mat-icon>
+          Edit Profile
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    <div class="profile-card">
+      <div class="card-header">
+        <mat-icon>person</mat-icon>
+        <h2>Account Information</h2>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="card-body">
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" *ngIf="isEditing; else viewTemplate">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" placeholder="First Name">
+              <mat-error *ngIf="profileForm.get('firstName')?.hasError('required')">First Name is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" placeholder="Last Name">
+              <mat-error *ngIf="profileForm.get('lastName')?.hasError('required')">Last Name is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="Email Address">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="profileForm.get('email')?.hasError('required')">Email is required</mat-error>
+            <mat-error *ngIf="profileForm.get('email')?.hasError('email')">Please enter a valid email
+              address</mat-error>
+          </mat-form-field>
+
+          <div class="static-field">
+            <span class="field-label">Username</span>
+            <span class="field-value">{{ profile()?.username }}</span>
+            <span class="field-hint">(Cannot be changed)</span>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="toggleEdit()" [disabled]="saving">Cancel</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="profileForm.invalid || saving">
+              <mat-spinner diameter="20" *ngIf="saving"></mat-spinner>
+              <span *ngIf="!saving">Save Changes</span>
+            </button>
+          </div>
+        </form>
+
+        <ng-template #viewTemplate>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">First Name</span>
+              <span class="value">{{ profile()?.firstName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Last Name</span>
+              <span class="value">{{ profile()?.lastName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Email Address</span>
+              <span class="value">{{ profile()?.email }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Username</span>
+              <span class="value">{{ profile()?.username }}</span>
+            </div>
+            <div class="info-item" *ngIf="profile()?.divisionName">
+              <span class="label">Division</span>
+              <span class="value">{{ profile()?.divisionName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Member Since</span>
+              <span class="value">2024</span> <!-- Placeholder or fetch if available -->
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading your profile...</p>
+  </div>
+</ng-template>
