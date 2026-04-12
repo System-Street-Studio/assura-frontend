@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
@@ -26,6 +26,7 @@ import { Asset } from '../../../../shared/models/asset.model';
 export class TrackAssetsComponent implements OnInit {
     private router = inject(Router);
     private assetService = inject(AssetService);
+    private cdr = inject(ChangeDetectorRef);
 
     columns: ColumnDef[] = [
         { key: 'id', label: 'ID', type: 'link' },
@@ -52,29 +53,31 @@ export class TrackAssetsComponent implements OnInit {
             next: (data: Asset[]) => {
                 this.assets = data.map(asset => ({
                     id: asset.assetCode,
-                    realId: asset.id, // For navigation if needed
+                    realId: asset.id,
                     name: asset.productName,
                     category: asset.categoryName,
                     status: this.formatStatus(asset.status)
                 }));
                 this.filteredAssets = [...this.assets];
                 this.loading = false;
+                this.cdr.detectChanges(); // Fix for NG0100 ExpressionChangedAfterItHasBeenCheckedError
             },
             error: (err) => {
                 console.error('Error fetching assets:', err);
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
     }
 
     private formatStatus(status: string): string {
-        // Map backend status strings to display format if necessary
-        // Example: 'InUse' -> 'In Use'
         switch (status) {
             case 'InUse': return 'In Use';
             case 'InStore': return 'In Store';
             case 'UnderMaintenance': return 'Repairing';
             case 'Discarded': return 'Discarded';
+            case 'Transferred': return 'Transferred';
+            case 'Lost': return 'Lost';
             default: return status;
         }
     }
@@ -115,7 +118,7 @@ export class TrackAssetsComponent implements OnInit {
 
     onSearch(query: string): void {
         const term = query.toLowerCase().trim();
-        this.currentPage = 1; // Reset to first page
+        this.currentPage = 1;
         if (!term) {
             this.filteredAssets = [...this.assets];
             return;
@@ -148,12 +151,17 @@ export class TrackAssetsComponent implements OnInit {
         const activeCategories = this.filterGroups[0].options.filter(o => o.checked).map(o => o.label);
         const activeStatuses = this.filterGroups[1].options.filter(o => o.checked).map(o => o.label);
 
-        this.currentPage = 1; // Reset to first page when filtering
+        console.log('[DEBUG] Applying filters', { activeCategories, activeStatuses });
+
+        this.currentPage = 1;
         this.filteredAssets = this.assets.filter(asset => {
             const matchCat = activeCategories.length === 0 || activeCategories.includes(asset.category);
             const matchStatus = activeStatuses.length === 0 || activeStatuses.includes(asset.status);
             return matchCat && matchStatus;
         });
+
+        console.log('[DEBUG] Filtered items:', this.filteredAssets.length);
+        this.cdr.detectChanges();
     }
 
     onUpdateAsset(): void {

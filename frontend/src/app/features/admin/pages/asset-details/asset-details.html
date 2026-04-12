@@ -69,19 +69,23 @@
                         <label>Update status</label>
                         <div class="status-options">
                             <label class="radio-label">
-                                <input type="radio" name="status" [(ngModel)]="asset.status" value="In Use">
+                                <input type="radio" name="status" [(ngModel)]="asset.status"
+                                    (ngModelChange)="onStatusChange($event)" value="In Use">
                                 <span class="radio-custom"></span> In Use
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="status" [(ngModel)]="asset.status" value="In Store">
+                                <input type="radio" name="status" [(ngModel)]="asset.status"
+                                    (ngModelChange)="onStatusChange($event)" value="In Store">
                                 <span class="radio-custom"></span> In Store
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="status" [(ngModel)]="asset.status" value="Repairing">
+                                <input type="radio" name="status" [(ngModel)]="asset.status"
+                                    (ngModelChange)="onStatusChange($event)" value="Repairing">
                                 <span class="radio-custom"></span> Under Repair
                             </label>
                             <label class="radio-label">
-                                <input type="radio" name="status" [(ngModel)]="asset.status" value="Discarded">
+                                <input type="radio" name="status" [(ngModel)]="asset.status"
+                                    (ngModelChange)="onStatusChange($event)" value="Discarded">
                                 <span class="radio-custom"></span> Discarded
                             </label>
                         </div>

@@ -12,4 +12,12 @@ export class AssetService {
     getAssets(): Observable<Asset[]> {
         return this.api.get<Asset[]>('assets');
     }
+
+    getAsset(id: number): Observable<Asset> {
+        return this.api.get<Asset>(`assets/${id}`);
+    }
+
+    updateAssets(id: number, assetData: any): Observable<Asset> {
+        return this.api.put<Asset>(`assets/${id}`, assetData);
+    }
 }
