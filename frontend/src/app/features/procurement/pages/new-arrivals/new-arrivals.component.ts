@@ -33,6 +33,11 @@ export class NewArrivalsComponent implements OnInit {
     purchasedPrice: [null, [Validators.required, Validators.min(0)]]
   });
 
+  // පාලකයන් (controls) වෙත පහසුවෙන් පිවිසීමට getter එකක්
+  get f() {
+    return this.arrivalForm.controls;
+  }
+
   ngOnInit() {
     this.loadDivisions();
     this.loadHistory();
@@ -57,7 +62,12 @@ export class NewArrivalsComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.arrivalForm.valid && !this.isSubmitting) {
+    if (this.arrivalForm.invalid) {
+      this.arrivalForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.isSubmitting) {
       this.isSubmitting = true;
       const formValue = this.arrivalForm.value;
 

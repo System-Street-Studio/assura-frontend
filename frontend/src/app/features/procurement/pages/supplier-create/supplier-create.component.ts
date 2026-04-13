@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupplierService } from '../../../../core/services/supplier.service';
 import { CreateSupplierRequest } from '../../../../core/models/supplier.model';
@@ -8,7 +8,7 @@ import { CreateSupplierRequest } from '../../../../core/models/supplier.model';
 @Component({
     selector: 'app-supplier-create',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule],
     templateUrl: './supplier-create.component.html',
     styleUrls: ['./supplier-create.component.css']
 })
@@ -16,26 +16,41 @@ export class SupplierCreateComponent {
     private router = inject(Router);
     private supplierService = inject(SupplierService);
 
-    form = {
-        name: '',
-        contactNo: '',
-        url: '',
-        email: '',
-        addressLine1: '',
-        addressLine2: '',
-        city: '',
-        postalCode: ''
-    };
+    private fb = inject(FormBuilder);
+    supplierForm: FormGroup;
+
+    constructor() {
+        this.supplierForm = this.fb.group({
+            name: ['', Validators.required],
+            contactNo: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+            email: ['', [Validators.required, Validators.email]],
+            url: ['', Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?')],
+            addressLine1: ['', Validators.required],
+            addressLine2: [''],
+            city: ['', Validators.required],
+            postalCode: ['', Validators.required]
+        });
+    }
+
+    // දත්ත ලබා ගැනීමට පහසු වීම සඳහා getters
+    get f() {
+        return this.supplierForm.controls;
+    }
 
     saveAndExit() {
-        // Map form fields to the backend command structure
-        // Using PascalCase to ensure absolute compatibility if naming policy is default
+        if (this.supplierForm.invalid) {
+            this.supplierForm.markAllAsTouched();
+            return;
+        }
+
+        const formValue = this.supplierForm.getRawValue();
+
         const supplierData = {
-            Name: this.form.name,
-            Phone: this.form.contactNo,
-            Email: this.form.email,
-            Address: `${this.form.addressLine1} ${this.form.addressLine2}, ${this.form.city}, ${this.form.postalCode}`.trim(),
-            Website: this.form.url
+            Name: formValue.name,
+            Phone: formValue.contactNo,
+            Email: formValue.email,
+            Address: `${formValue.addressLine1} ${formValue.addressLine2}, ${formValue.city}, ${formValue.postalCode}`.trim(),
+            Website: formValue.url
         };
 
         console.log('[DEBUG] Sending supplier data:', supplierData);

@@ -9,6 +9,9 @@
             <div class="form-group full-width">
                 <label for="itemName">Item Name:</label>
                 <input type="text" id="itemName" formControlName="itemName" placeholder="">
+                <div *ngIf="f['itemName'].invalid && f['itemName'].touched" class="error-message">
+                    Item Name is required
+                </div>
             </div>
 
             <!-- Model -->
@@ -41,6 +44,9 @@
             <div class="form-group small-width">
                 <label for="quantity">Quantity:</label>
                 <input type="number" id="quantity" formControlName="quantity">
+                <div *ngIf="f['quantity'].invalid && f['quantity'].touched" class="error-message">
+                    Quantity must be at least 1
+                </div>
             </div>
 
             <!-- Purchased Date & Division -->
@@ -50,6 +56,9 @@
                     <div class="date-input-wrapper">
                         <input type="date" id="purchasedDate" formControlName="purchasedDate">
                     </div>
+                    <div *ngIf="f['purchasedDate'].invalid && f['purchasedDate'].touched" class="error-message">
+                        Purchased Date is required
+                    </div>
                 </div>
                 <div class="form-group half-width">
                     <label for="divisionId">Division</label>
@@ -57,6 +66,9 @@
                         <option [ngValue]="null">Select Division</option>
                         <option *ngFor="let division of divisions" [value]="division.id">{{ division.name }}</option>
                     </select>
+                    <div *ngIf="f['divisionId'].invalid && f['divisionId'].touched" class="error-message">
+                        Please select a division
+                    </div>
                 </div>
             </div>
 
@@ -64,6 +76,9 @@
             <div class="form-group half-width">
                 <label for="purchasedPrice">Purchased Price (LKR)</label>
                 <input type="number" id="purchasedPrice" formControlName="purchasedPrice">
+                <div *ngIf="f['purchasedPrice'].invalid && f['purchasedPrice'].touched" class="error-message">
+                    Valid purchased price is required
+                </div>
             </div>
 
             <!-- Buttons -->
