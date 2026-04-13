@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
 import { ProcurementService } from '../../services/procurement.service';
@@ -15,11 +15,13 @@ import { AssetSummaryDto, RepairingFirmDto, CreateMaintenanceRequest } from '../
 })
 export class MaintenanceNoteCreateComponent implements OnInit {
     private router = inject(Router);
+    private route = inject(ActivatedRoute);
     private procurementService = inject(ProcurementService);
 
     showSuccessPopup = false;
     assets: AssetSummaryDto[] = [];
     repairingFirms: RepairingFirmDto[] = [];
+    selectedAsset: AssetSummaryDto | null = null;
 
     noteData = {
         maintenanceNumber: '',
@@ -38,8 +40,30 @@ export class MaintenanceNoteCreateComponent implements OnInit {
     }
 
     loadInitialData(): void {
-        this.procurementService.getAssets().subscribe(data => this.assets = data);
+        this.procurementService.getAssets().subscribe(data => {
+            this.assets = data;
+            this.checkQueryParams();
+        });
         this.procurementService.getRepairingFirms().subscribe(data => this.repairingFirms = data);
+    }
+
+    private checkQueryParams(): void {
+        this.route.queryParams.subscribe(params => {
+            const assetId = params['assetId'];
+            if (assetId) {
+                this.noteData.assetId = Number(assetId);
+                this.onAssetChange();
+            }
+        });
+    }
+
+    onAssetChange(): void {
+        if (this.noteData.assetId) {
+            this.selectedAsset = this.assets.find(a => a.id === this.noteData.assetId) || null;
+            console.log('Selected asset:', this.selectedAsset);
+        } else {
+            this.selectedAsset = null;
+        }
     }
 
     save(): void {

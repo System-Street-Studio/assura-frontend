@@ -15,11 +15,35 @@
                 </div>
                 <div class="note-item">
                     <label for="asset">Asset:</label>
-                    <select id="asset" name="asset" [(ngModel)]="noteData.assetId" class="custom-select" required>
+                    <select id="asset" name="asset" [(ngModel)]="noteData.assetId" (ngModelChange)="onAssetChange()"
+                        class="custom-select" required>
                         <option [ngValue]="null">Select Asset</option>
                         <option *ngFor="let asset of assets" [ngValue]="asset.id">{{ asset.assetCode }} - {{
                             asset.assetName }}</option>
                     </select>
+                </div>
+
+                <!-- Asset Details section (Auto-fill) -->
+                <div class="asset-details-container full-width" *ngIf="selectedAsset">
+                    <div class="details-header">Asset Details:</div>
+                    <div class="details-grid">
+                        <div class="detail-field">
+                            <span class="detail-label">Product:</span>
+                            <span class="detail-value">{{ selectedAsset.productName }}</span>
+                        </div>
+                        <div class="detail-field">
+                            <span class="detail-label">Category:</span>
+                            <span class="detail-value">{{ selectedAsset.categoryName }}</span>
+                        </div>
+                        <div class="detail-field">
+                            <span class="detail-label">Division:</span>
+                            <span class="detail-value">{{ selectedAsset.divisionName }}</span>
+                        </div>
+                        <div class="detail-field">
+                            <span class="detail-label">Serial Number:</span>
+                            <span class="detail-value">{{ selectedAsset.serialNumber || 'N/A' }}</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="note-item">
                     <label for="date">Date:</label>

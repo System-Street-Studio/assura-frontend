@@ -27,6 +27,10 @@ export interface AssetSummaryDto {
     id: number;
     assetCode: string;
     assetName: string;
+    productName: string;
+    categoryName: string;
+    divisionName: string;
+    serialNumber?: string;
 }
 
 export interface RepairingFirmDto {

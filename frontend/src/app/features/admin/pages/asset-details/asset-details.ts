@@ -101,4 +101,8 @@ export class AssetDetailsComponent implements OnInit {
             }
         });
     }
+
+    onScheduleMaintenance(): void {
+        this.router.navigate(['/procurement/maintenance/create'], { queryParams: { assetId: this.asset.id } });
+    }
 }
