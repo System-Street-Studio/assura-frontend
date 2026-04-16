@@ -124,6 +124,20 @@
         <div class="kpi-value">{{ kpis.maintenanceDue }}</div>
         <div class="kpi-label">Maintenance Due</div>
       </div>
+
+      <div class="kpi-card clickable" routerLink="/approvals/requests" [queryParams]="{ tab: 'new' }">
+        <div class="kpi-accent orange"></div>
+        <div class="kpi-header">
+          <div class="kpi-icon-wrap orange"><mat-icon>assignment_ind</mat-icon></div>
+          <span class="kpi-change neutral"><mat-icon>schedule</mat-icon> staged</span>
+        </div>
+        <div class="kpi-value">{{ kpis.temporaryAssignedAssets }}</div>
+        <div class="kpi-label">Temporary Assigned</div>
+        <div class="kpi-meta-row">
+          <span>Awaiting pickup: {{ kpis.awaitingPickupConfirmations }}</span>
+          <span>Escalated: {{ kpis.procurementEscalations }}</span>
+        </div>
+      </div>
     </section>
 
     <!-- Two-Column: Activity Feed + Warranty Alerts -->

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ export class AssetsComponent implements OnInit {
   private assetService = inject(AssetService);
   private router = inject(Router);
   private toast = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
 
   allAssets: AssetDetail[] = [];
   filteredAssets: AssetDetail[] = [];
@@ -33,30 +34,34 @@ export class AssetsComponent implements OnInit {
   totalPages = 1;
   allSelected = false;
 
-  get statusCounts(): Record<string, number> {
-    const counts: Record<string, number> = { InUse: 0, InStore: 0, UnderMaintenance: 0, Discarded: 0, Transferred: 0, Lost: 0 };
-    this.allAssets.forEach(a => counts[a.status] = (counts[a.status] || 0) + 1);
-    return counts;
-  }
+  statusCounts: Record<string, number> = { InUse: 0, InStore: 0, UnderMaintenance: 0, Discarded: 0, Transferred: 0, Lost: 0 };
+  categories: string[] = [];
+  pageNumbers: number[] = [1];
 
   get totalValue(): number {
     return this.allAssets.reduce((sum, a) => sum + (a.purchaseValue || 0), 0);
   }
 
-  get categories(): string[] {
-    return [...new Set(this.allAssets.map(a => a.categoryName).filter(Boolean) as string[])];
-  }
-
   ngOnInit(): void {
     this.assetService.getAll().subscribe({
       next: (data: AssetDetail[]) => {
-        this.allAssets = data;
+        this.allAssets = data || [];
+        // Precompute counts and categories
+        const counts: Record<string, number> = { InUse: 0, InStore: 0, UnderMaintenance: 0, Discarded: 0, Transferred: 0, Lost: 0 };
+        this.allAssets.forEach(a => {
+            if (a.status) counts[a.status] = (counts[a.status] || 0) + 1;
+        });
+        this.statusCounts = counts;
+        this.categories = [...new Set(this.allAssets.map(a => a.categoryName).filter(Boolean) as string[])];
+        
         this.applyFilters();
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
         this.toast.error('Failed to load assets');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -68,8 +73,8 @@ export class AssetsComponent implements OnInit {
       const q = this.search.toLowerCase();
       filtered = filtered.filter(
         (a) =>
-          a.productName.toLowerCase().includes(q) ||
-          a.assetCode.toLowerCase().includes(q) ||
+          (a.productName || '').toLowerCase().includes(q) ||
+          (a.assetCode || '').toLowerCase().includes(q) ||
           (a.serialNumber || '').toLowerCase().includes(q) ||
           (a.assignedUserName || '').toLowerCase().includes(q) ||
           (a.categoryName || '').toLowerCase().includes(q) ||
@@ -88,6 +93,7 @@ export class AssetsComponent implements OnInit {
     this.filteredAssets = filtered;
     this.totalPages = Math.max(1, Math.ceil(filtered.length / this.pageSize));
     this.currentPage = Math.min(this.currentPage, this.totalPages);
+    this.pageNumbers = Array.from({ length: this.totalPages }, (_, i) => i + 1);
     this.updateView();
   }
 
@@ -100,10 +106,6 @@ export class AssetsComponent implements OnInit {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
     this.updateView();
-  }
-
-  get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
   get showingFrom(): number {

@@ -4,7 +4,8 @@
     <div class="page-header">
         <div class="header-left">
             <h1 class="page-title">Checkout</h1>
-            <span class="item-count">{{ filteredRecords.length }} records</span>
+            <span class="item-count" *ngIf="!loading">{{ filteredRecords.length }} records</span>
+            <span class="item-count" *ngIf="loading">Loading records...</span>
         </div>
         <div class="header-actions">
             <button class="btn outline" title="Export to CSV">
@@ -19,7 +20,7 @@
     </div>
 
     <!-- Stats Strip -->
-    <section class="stats-strip">
+    <section class="stats-strip" *ngIf="!loading">
         <div class="stat-card" [class.active]="!filterStatus" (click)="filterStatus = ''; applyFilters()">
             <div class="stat-icon-wrap all"><mat-icon>assignment</mat-icon></div>
             <div class="stat-info">
@@ -77,12 +78,12 @@
             <div class="search-box">
                 <mat-icon class="search-icon">search</mat-icon>
                 <input class="search-input" type="text" placeholder="Search by name, asset, serial, department…"
-                    [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" />
+                    [(ngModel)]="searchTerm" (keyup)="applyFilters()" />
                 <button class="search-clear" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
                     <mat-icon>close</mat-icon>
                 </button>
             </div>
-            <select class="filter-select" [(ngModel)]="filterDepartment" (ngModelChange)="applyFilters()">
+            <select class="filter-select" [(ngModel)]="filterDepartment" (change)="applyFilters()">
                 <option value="">All Departments</option>
                 <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
             </select>
@@ -101,6 +102,12 @@
 
     <!-- Table -->
     <div class="table-container">
+        <div class="empty-state" *ngIf="!loading && loadError">
+            <mat-icon class="empty-icon">cloud_off</mat-icon>
+            <div class="empty-text">Unable to load checkout records right now.</div>
+            <button class="btn sm" (click)="retryLoad()">Retry</button>
+        </div>
+
         <table class="checkout-table" *ngIf="!loading">
             <thead>
                 <tr>
@@ -251,21 +258,21 @@
                     <select [(ngModel)]="checkoutForm.assetId">
                         <option value="">Select an available asset</option>
                         <option *ngFor="let a of availableAssets" [value]="a.id">
-                            {{ a.name }} ({{ a.serial }})
+                            {{ a.name }} ({{ a.serial }}) - {{ a.category }}
                         </option>
                     </select>
                     <span class="error-text" *ngIf="submitted && !checkoutForm.assetId">Asset is required</span>
                 </div>
 
-                <div class="modal-field" [class.has-error]="submitted && !checkoutForm.checkedOutTo">
+                <div class="modal-field" [class.has-error]="submitted && !checkoutForm.checkedOutToUserId">
                     <label>Employee *</label>
-                    <select [(ngModel)]="checkoutForm.checkedOutTo" (ngModelChange)="onEmployeeChange()">
+                    <select [(ngModel)]="checkoutForm.checkedOutToUserId" (ngModelChange)="onEmployeeChange()">
                         <option value="">Select employee</option>
-                        <option *ngFor="let e of employees" [value]="e.name">
+                        <option *ngFor="let e of employees" [value]="e.id">
                             {{ e.name }} — {{ e.department }}
                         </option>
                     </select>
-                    <span class="error-text" *ngIf="submitted && !checkoutForm.checkedOutTo">Employee is required</span>
+                    <span class="error-text" *ngIf="submitted && !checkoutForm.checkedOutToUserId">Employee is required</span>
                 </div>
 
                 <div class="modal-row">
@@ -408,7 +415,7 @@
 
             <!-- Drawer actions -->
             <div class="drawer-actions" *ngIf="detailRecord.status !== 'Returned'">
-                <button class="btn primary full" (click)="closeDetail(); onCheckin(detailRecord)">
+                    <button class="btn primary full" (click)="onCheckin(detailRecord); closeDetail()">
                     <mat-icon class="btn-icon">login</mat-icon> Check In Asset
                 </button>
             </div>

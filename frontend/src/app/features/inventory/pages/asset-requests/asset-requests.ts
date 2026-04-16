@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { RequestService } from '../../services/request.service';
+import { RequestService, SuggestedAsset } from '../../services/request.service';
 import { AssetRequest, RequestPriority, RequestStatus } from '../../models/request.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
@@ -19,6 +19,7 @@ export class AssetRequestsComponent implements OnInit {
   private requestService = inject(RequestService);
   private toast = inject(ToastService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   allRequests: AssetRequest[] = [];
   filteredRequests: AssetRequest[] = [];
@@ -33,6 +34,19 @@ export class AssetRequestsComponent implements OnInit {
   currentPage = 1;
   pageSize = 10;
   pageSizes = [5, 10, 25, 50];
+  pages: number[] = [1];
+  departments: string[] = [];
+  statuses: RequestStatus[] = [
+    'Pending',
+    'PendingStorekeeperReview',
+    'TemporaryAssigned',
+    'PendingProcurement',
+    'Approved',
+    'Rejected',
+    'Fulfilled',
+    'Cancelled',
+  ];
+  priorities: RequestPriority[] = ['Urgent', 'High', 'Medium', 'Low'];
 
   /* ── Action modal ── */
   showActionModal = false;
@@ -46,6 +60,8 @@ export class AssetRequestsComponent implements OnInit {
   processRequest: AssetRequest | null = null;
   processIsInStock = true;
   processAssetId: number | null = null;
+  suggestedAssets: SuggestedAsset[] = [];
+  selectedSuggestedAssetId: number | null = null;
   processRemarks = '';
   processLoading = false;
 
@@ -78,29 +94,8 @@ export class AssetRequestsComponent implements OnInit {
     return this.allRequests.filter((r) => r.priority === 'Urgent' && r.status === 'Pending').length;
   }
 
-  get departments(): string[] {
-    const depts = new Set(this.allRequests.map((r) => r.department));
-    return Array.from(depts).sort();
-  }
-
-  get isStorekeeper(): boolean {
-    return this.authService.hasRole(['Storekeeper', 'Admin']);
-  }
-
-  get statuses(): RequestStatus[] {
-    return ['Pending', 'Approved', 'Rejected', 'Fulfilled', 'Cancelled'];
-  }
-
-  get priorities(): RequestPriority[] {
-    return ['Urgent', 'High', 'Medium', 'Low'];
-  }
-
   get totalPages(): number {
     return Math.ceil(this.filteredRequests.length / this.pageSize) || 1;
-  }
-
-  get pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
   get showingFrom(): number {
@@ -119,16 +114,24 @@ export class AssetRequestsComponent implements OnInit {
     return this.viewRequests.length > 0 && this.viewRequests.every((r) => r.selected);
   }
 
+  get isStorekeeper(): boolean {
+    return this.authService.hasRole(['Storekeeper', 'Admin']);
+  }
+
   ngOnInit(): void {
     this.requestService.getAll().subscribe({
       next: (data: AssetRequest[]) => {
-        this.allRequests = data;
+        this.allRequests = data || [];
+        const depts = new Set(this.allRequests.map((r) => r.department));
+        this.departments = Array.from(depts).sort();
         this.applyFilters();
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.toast.show('Failed to load requests', 'error');
         this.loading = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -140,12 +143,12 @@ export class AssetRequestsComponent implements OnInit {
     this.filteredRequests = this.allRequests.filter((r) => {
       const matchesSearch =
         !term ||
-        r.requestedBy.toLowerCase().includes(term) ||
-        String(r.id).toLowerCase().includes(term) ||
+        (r.requestedBy || '').toLowerCase().includes(term) ||
+        String(r.id || '').toLowerCase().includes(term) ||
         (r.requestNumber || '').toLowerCase().includes(term) ||
-        r.assetName.toLowerCase().includes(term) ||
-        r.department.toLowerCase().includes(term) ||
-        r.reason.toLowerCase().includes(term);
+        (r.assetName || '').toLowerCase().includes(term) ||
+        (r.department || '').toLowerCase().includes(term) ||
+        (r.reason || '').toLowerCase().includes(term);
 
       const matchesStatus = !this.filterStatus || r.status === this.filterStatus;
       const matchesPriority = !this.filterPriority || r.priority === this.filterPriority;
@@ -155,6 +158,7 @@ export class AssetRequestsComponent implements OnInit {
     });
 
     this.currentPage = 1;
+    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
     this.updateView();
   }
 
@@ -250,14 +254,13 @@ export class AssetRequestsComponent implements OnInit {
 
   /* ── Helpers ── */
   getStatusClass(status: RequestStatus): string {
-    const map: Record<RequestStatus, string> = {
-      Pending: 'pending',
-      Approved: 'approved',
-      Rejected: 'rejected',
-      Fulfilled: 'fulfilled',
-      Cancelled: 'cancelled',
-    };
-    return map[status] || '';
+    if (status === 'Pending' || status === 'PendingStorekeeperReview') return 'pending';
+    if (status === 'TemporaryAssigned') return 'approved';
+    if (status === 'PendingProcurement') return 'rejected';
+    if (status === 'Approved') return 'approved';
+    if (status === 'Rejected') return 'rejected';
+    if (status === 'Fulfilled') return 'fulfilled';
+    return 'cancelled';
   }
 
   getPriorityClass(priority: RequestPriority): string {
@@ -321,13 +324,55 @@ export class AssetRequestsComponent implements OnInit {
     this.processRequest = request;
     this.processIsInStock = true;
     this.processAssetId = null;
+    this.selectedSuggestedAssetId = null;
+    this.suggestedAssets = [];
     this.processRemarks = '';
     this.showProcessModal = true;
+    this.loadSuggestedAssets(request.id);
+  }
+
+  canStorekeeperProcess(request: AssetRequest): boolean {
+    return request.status === 'Pending' || request.status === 'PendingStorekeeperReview';
+  }
+
+  canStorekeeperConfirm(request: AssetRequest): boolean {
+    return request.status === 'TemporaryAssigned';
   }
 
   cancelProcess(): void {
     this.showProcessModal = false;
     this.processRequest = null;
+    this.selectedSuggestedAssetId = null;
+    this.suggestedAssets = [];
+  }
+
+  loadSuggestedAssets(requestId: number | string): void {
+    this.requestService.getSuggestedAssets(requestId).subscribe({
+      next: (assets) => {
+        this.suggestedAssets = assets || [];
+        if (this.suggestedAssets.length > 0) {
+          this.selectedSuggestedAssetId = this.suggestedAssets[0].id;
+          this.processAssetId = this.suggestedAssets[0].id;
+        }
+      },
+      error: () => {
+        this.suggestedAssets = [];
+      }
+    });
+  }
+
+  onSuggestedAssetChanged(): void {
+    this.processAssetId = this.selectedSuggestedAssetId;
+  }
+
+  get selectedSuggestedAsset(): SuggestedAsset | null {
+    if (!this.selectedSuggestedAssetId) return null;
+    return this.suggestedAssets.find(a => a.id === this.selectedSuggestedAssetId) ?? null;
+  }
+
+  get canSubmitProcess(): boolean {
+    if (!this.processIsInStock) return true;
+    return !!this.processAssetId;
   }
 
   confirmProcess(): void {
@@ -336,7 +381,7 @@ export class AssetRequestsComponent implements OnInit {
 
     const command = {
       id: Number(this.processRequest.id),
-      assetId: this.processAssetId,
+      assetId: this.processIsInStock ? this.processAssetId : null,
       isInStock: this.processIsInStock,
       remarks: this.processRemarks
     };
@@ -352,6 +397,18 @@ export class AssetRequestsComponent implements OnInit {
         this.toast.show('Failed to process request', 'error');
         this.processLoading = false;
       }
+    });
+  }
+
+  confirmTemporaryAssignment(request: AssetRequest): void {
+    this.requestService.confirmTemporaryAssignment(request.id).subscribe({
+      next: () => {
+        this.toast.show('Temporary assignment confirmed', 'success');
+        this.ngOnInit();
+      },
+      error: () => {
+        this.toast.show('Failed to confirm assignment', 'error');
+      },
     });
   }
 }

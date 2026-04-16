@@ -53,31 +53,68 @@
 
       <div class="info-group full-width">
         <label>Specifications</label>
-        <p class="specs-text">{{ request().specs  }}</p>
+        <p class="specs-text">{{ request().specs || request().description || 'N/A' }}</p>
       </div>
 
       <div class="info-group full-width">
         <label>Justification</label>
-        <p class="justification-text">{{ request().justification }}</p>
+        <p class="justification-text">{{ request().justification || request().reason || 'N/A' }}</p>
       </div>
 
       
       <div class="info-group">
         <label>Status</label>
-        <span class="status-badge pending">{{ request().status }}</span>
+        <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
       </div>
 
     </div>
 
     <hr />
 
-    <div class="action-buttons">
-      <button class="btn-approve" (click)="approveRequest()">
+    <div class="action-buttons" *ngIf="canDivisionHeadAct()">
+      <button class="btn-approve" (click)="approveRequest()" [disabled]="processing()">
         <mat-icon>check_circle</mat-icon> Approve Request
       </button>
           
-      <button class="btn-reject" (click)="rejectRequest()">
+      <button class="btn-reject" (click)="rejectRequest()" [disabled]="processing()">
         <mat-icon>close</mat-icon> Reject with Reason
+      </button>
+    </div>
+
+    <div class="action-buttons" *ngIf="canStorekeeperProcess()">
+      <div class="suggestion-panel" *ngIf="suggestedAssets().length > 0">
+        <label class="suggestion-title">Suggested In-Store Assets</label>
+        <div class="suggestion-list">
+          <button
+            type="button"
+            class="suggestion-item"
+            *ngFor="let asset of suggestedAssets()"
+            [class.selected]="selectedSuggestedAssetId() === asset.id"
+            (click)="selectSuggestedAsset(asset.id)">
+            <div class="suggestion-main">
+              <strong>{{ asset.productName }}</strong>
+              <span>{{ asset.assetCode }} · {{ asset.categoryName }}</span>
+            </div>
+            <div class="suggestion-side">
+              <span class="score">{{ asset.score }}</span>
+              <small>{{ asset.serialNumber || 'No serial' }}</small>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-approve" (click)="processInStock()" [disabled]="processing()">
+        <mat-icon>inventory_2</mat-icon> In Stock - Reserve Asset
+      </button>
+
+      <button class="btn-reject" (click)="processOutOfStock()" [disabled]="processing()">
+        <mat-icon>local_shipping</mat-icon> Out Of Stock - Send Procurement
+      </button>
+    </div>
+
+    <div class="action-buttons" *ngIf="canStorekeeperConfirm()">
+      <button class="btn-approve" (click)="confirmTemporaryAssignment()" [disabled]="processing()">
+        <mat-icon>verified</mat-icon> Confirm Physical Handover
       </button>
     </div>
    

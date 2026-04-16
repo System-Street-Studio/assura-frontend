@@ -50,3 +50,11 @@ export interface AssetDetail extends Asset {
   checkoutNotes?: string;
   checkinNotes?: string;
 }
+
+export interface AvailableCheckoutAsset {
+  id: number;
+  assetCode: string;
+  productName: string;
+  categoryName: string;
+  serialNumber?: string;
+}

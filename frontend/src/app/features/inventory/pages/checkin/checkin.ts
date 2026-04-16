@@ -1,8 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { catchError, finalize, throwError, timeout } from 'rxjs';
 import { CheckoutService } from '../../services/checkout.service';
 import { CheckoutRecord, CheckinFormData } from '../../models/checkout.model';
 import { ToastService } from '../../../../shared/services/toast.service';
@@ -15,83 +16,243 @@ import { ResultOverlayComponent } from '../../../../shared/components/result-ove
     templateUrl: './checkin.html',
     styleUrls: ['./checkin.css'],
 })
-export class CheckinComponent implements OnInit {
+export class CheckinComponent implements OnInit, OnDestroy {
     private route = inject(ActivatedRoute);
     private router = inject(Router);
     private svc = inject(CheckoutService);
     private toast = inject(ToastService);
+    private cdr = inject(ChangeDetectorRef);
 
     record: CheckoutRecord | null = null;
+    activeCheckouts: CheckoutRecord[] = [];
     loading = true;
     notFound = false;
+    loadError = false;
     processing = false;
     submitted = false;
 
     checkinForm: CheckinFormData = {
         condition: 'Good',
+        damageSeverity: undefined,
+        repairNeeded: false,
+        acknowledged: false,
+        evidenceFileName: '',
         notes: '',
     };
+
+    evidenceFileError = '';
 
     /* Result overlay */
     showResult = false;
     resultType: 'success' | 'error' = 'success';
     resultTitle = '';
     resultMessage = '';
+    private resultAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
 
     ngOnInit(): void {
-        const id = this.route.snapshot.queryParamMap.get('id');
-        if (!id) {
-            this.notFound = true;
-            this.loading = false;
-            return;
-        }
+        this.route.queryParamMap.subscribe((params) => {
+            const id = params.get('id');
+            if (!id) {
+                this.record = null;
+                this.notFound = false;
+                this.loadError = false;
+                this.loadActiveCheckouts();
+                return;
+            }
 
-        this.svc.getById(id).subscribe({
+            this.loadCheckinRecord(id);
+        });
+    }
+
+    loadCheckinRecord(id: string): void {
+        this.loading = true;
+        this.record = null;
+        this.notFound = false;
+        this.loadError = false;
+        this.activeCheckouts = [];
+
+        this.svc.getById(id).pipe(
+            timeout(10000),
+            catchError((err) => {
+                if (err?.name === 'TimeoutError') {
+                    this.toast.error('Loading check-in details timed out. Please try again.');
+                }
+                return throwError(() => err);
+            }),
+            finalize(() => {
+                this.loading = false;
+                setTimeout(() => this.cdr.detectChanges(), 0);
+            })
+        ).subscribe({
             next: (rec) => {
                 if (!rec || rec.status === 'Returned') {
                     this.notFound = true;
-                    this.loading = false;
+                    setTimeout(() => this.cdr.detectChanges(), 0);
                     return;
                 }
                 this.record = rec;
-                this.loading = false;
+                setTimeout(() => this.cdr.detectChanges(), 0);
             },
             error: () => {
-                this.toast.error('Failed to load checkout record');
-                this.loading = false;
-                this.notFound = true;
+                this.toast.error('Failed to load checkout record.');
+                this.loadError = true;
+                setTimeout(() => this.cdr.detectChanges(), 0);
             },
         });
+    }
+
+    loadActiveCheckouts(): void {
+        this.loading = true;
+        this.svc.getActiveCheckouts().pipe(
+            timeout(10000),
+            catchError((err) => {
+                if (err?.name === 'TimeoutError') {
+                    this.toast.error('Loading checkout list timed out. Please try again.');
+                }
+                return throwError(() => err);
+            }),
+            finalize(() => {
+                this.loading = false;
+                setTimeout(() => this.cdr.detectChanges(), 0);
+            })
+        ).subscribe({
+            next: (records) => {
+                this.activeCheckouts = records;
+                setTimeout(() => this.cdr.detectChanges(), 0);
+            },
+            error: () => {
+                this.loadError = true;
+                this.toast.error('Failed to load checkout records.');
+                setTimeout(() => this.cdr.detectChanges(), 0);
+            },
+        });
+    }
+
+    retryLoad(): void {
+        this.loading = true;
+        this.notFound = false;
+        this.loadError = false;
+        this.ngOnInit();
     }
 
     goBack(): void {
         this.router.navigate(['/inventory/check-out']);
     }
 
+    openCheckinRecord(record: CheckoutRecord): void {
+        this.router.navigate(['/inventory/check-in'], { queryParams: { id: record.id } });
+    }
+
     confirmCheckin(): void {
         this.submitted = true;
+        if (this.processing) return;
         if (!this.checkinForm.condition) return;
         if (!this.record) return;
+        if (!this.checkinForm.acknowledged) {
+            this.toast.warning('Please confirm acknowledgement before check-in.');
+            return;
+        }
+
+        if ((this.checkinForm.condition === 'Damaged' || this.checkinForm.repairNeeded) && !this.checkinForm.damageSeverity) {
+            this.toast.warning('Please select damage severity.');
+            return;
+        }
 
         this.processing = true;
-        this.svc.checkin(this.record.id, this.checkinForm).subscribe({
-            next: (updated) => {
+        this.svc.checkin(this.record.assetId, this.checkinForm).pipe(
+            timeout(15000),
+            catchError((err) => {
+                if (err?.name === 'TimeoutError') {
+                    this.toast.error('Check-in request timed out. Please try again.');
+                }
+                return throwError(() => err);
+            }),
+            finalize(() => {
                 this.processing = false;
+                setTimeout(() => this.cdr.detectChanges(), 0);
+            })
+        ).subscribe({
+            next: (updated) => {
                 this.resultType = 'success';
                 this.resultTitle = 'Checked In!';
                 this.resultMessage = `"${updated.assetName}" has been returned by ${updated.checkedOutTo}.`;
                 this.showResult = true;
+                if (this.resultAutoCloseTimer) {
+                    clearTimeout(this.resultAutoCloseTimer);
+                }
+                this.resultAutoCloseTimer = setTimeout(() => {
+                    this.onResultClosed();
+                }, 2000);
+                setTimeout(() => this.cdr.detectChanges(), 0);
             },
             error: () => {
-                this.processing = false;
                 this.toast.error('Check-in failed. Please try again.');
+                setTimeout(() => this.cdr.detectChanges(), 0);
             },
         });
     }
 
+    onConditionChange(condition: 'Good' | 'Fair' | 'Damaged'): void {
+        this.checkinForm.condition = condition;
+        if (condition !== 'Damaged' && !this.checkinForm.repairNeeded) {
+            this.checkinForm.damageSeverity = undefined;
+        }
+    }
+
+    onRepairNeededChange(): void {
+        if (!this.checkinForm.repairNeeded && this.checkinForm.condition !== 'Damaged') {
+            this.checkinForm.damageSeverity = undefined;
+        }
+    }
+
+    onEvidenceSelected(event: Event): void {
+        this.evidenceFileError = '';
+        const input = event.target as HTMLInputElement;
+        const file = input.files && input.files.length > 0 ? input.files[0] : null;
+
+        if (!file) {
+            this.checkinForm.evidenceFileName = '';
+            return;
+        }
+
+        const isImage = file.type.startsWith('image/');
+        const maxSizeBytes = 5 * 1024 * 1024;
+
+        if (!isImage) {
+            this.evidenceFileError = 'Only image files are allowed.';
+            this.checkinForm.evidenceFileName = '';
+            input.value = '';
+            return;
+        }
+
+        if (file.size > maxSizeBytes) {
+            this.evidenceFileError = 'Image must be 5MB or smaller.';
+            this.checkinForm.evidenceFileName = '';
+            input.value = '';
+            return;
+        }
+
+        this.checkinForm.evidenceFileName = file.name;
+    }
+
+    get requiresSeverity(): boolean {
+        return this.checkinForm.condition === 'Damaged' || this.checkinForm.repairNeeded;
+    }
+
     onResultClosed(): void {
+        if (this.resultAutoCloseTimer) {
+            clearTimeout(this.resultAutoCloseTimer);
+            this.resultAutoCloseTimer = null;
+        }
         this.showResult = false;
-        this.router.navigate(['/inventory/check-out']);
+        this.router.navigate(['/inventory/check-in']);
+    }
+
+    ngOnDestroy(): void {
+        if (this.resultAutoCloseTimer) {
+            clearTimeout(this.resultAutoCloseTimer);
+            this.resultAutoCloseTimer = null;
+        }
     }
 
     /* ── Helpers ── */

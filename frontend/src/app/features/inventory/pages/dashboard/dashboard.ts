@@ -1,10 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
-import { forkJoin } from 'rxjs';
 import { DashboardService } from '../../services/dashboard.service';
 import { Kpi, ChartDatasets, RecentActivity, WarrantyAlert, DashboardData } from '../../models/dashboard.model';
 import { ToastService } from '../../../../shared/services/toast.service';
@@ -19,10 +18,27 @@ import { ToastService } from '../../../../shared/services/toast.service';
 export class DashboardComponent implements OnInit {
   private svc = inject(DashboardService);
   private toast = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
 
   loading = true;
-  kpis: Kpi = { totalAssets: 0, checkedOut: 0, available: 0, totalAssetValue: '$0', pendingRequests: 0, maintenanceDue: 0 };
-  charts!: ChartDatasets;
+  kpis: Kpi = {
+    totalAssets: 0,
+    checkedOut: 0,
+    available: 0,
+    totalAssetValue: '$0',
+    pendingRequests: 0,
+    maintenanceDue: 0,
+    temporaryAssignedAssets: 0,
+    awaitingPickupConfirmations: 0,
+    procurementEscalations: 0,
+  };
+  charts: ChartDatasets = {
+    assetsByCategory: { labels: [], data: [], colors: [] },
+    assetsByStatus: { labels: [], data: [], colors: [] },
+    assetsByDepartment: { labels: [], data: [], colors: [] },
+    checkoutTrend: { labels: [], data: [] },
+    anomalies: { ghostAssets: 0, missingAssets: 0, maintenanceDue: 0 },
+  };
   recentActivity: RecentActivity[] = [];
   warrantyAlerts: WarrantyAlert[] = [];
   anomalies = { ghostAssets: 0, missingAssets: 0, maintenanceDue: 0 };
@@ -41,7 +57,7 @@ export class DashboardComponent implements OnInit {
       : 0;
   }
 
-  doughnutData!: ChartConfiguration<'doughnut'>['data'];
+  doughnutData: ChartConfiguration<'doughnut'>['data'] = { labels: [], datasets: [{ data: [] }] };
   doughnutOptions: ChartOptions<'doughnut'> = {
     responsive: true,
     maintainAspectRatio: false,
@@ -61,7 +77,7 @@ export class DashboardComponent implements OnInit {
     plugins: { legend: { display: false } },
   };
 
-  lineData!: ChartConfiguration<'line'>['data'];
+  lineData: ChartConfiguration<'line'>['data'] = { labels: [], datasets: [{ data: [] }] };
   lineOptions: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
@@ -76,22 +92,31 @@ export class DashboardComponent implements OnInit {
     },
   };
 
-  assetsByStatusData!: ChartConfiguration<'bar'>['data'];
-  assetsByDepartmentData!: ChartConfiguration<'bar'>['data'];
+  assetsByStatusData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [{ data: [] }] };
+  assetsByDepartmentData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [{ data: [] }] };
 
   ngOnInit(): void {
     this.svc.getDashboardData().subscribe({
       next: (data: DashboardData) => {
-        this.kpis = data.kpis;
-        this.charts = data.charts;
-        this.recentActivity = data.recentActivity.map(a => ({ ...a, timestamp: new Date(a.timestamp) }));
-        this.warrantyAlerts = data.warrantyAlerts;
-        this.anomalies = data.charts.anomalies;
-        this.prepareCharts();
-        this.loading = false;
+        try {
+          this.kpis = data.kpis || this.kpis;
+          this.charts = data.charts || this.charts;
+          this.recentActivity = (data.recentActivity || []).map(a => ({ ...a, timestamp: new Date(a.timestamp) }));
+          this.warrantyAlerts = data.warrantyAlerts || [];
+          this.anomalies = this.charts.anomalies || this.anomalies;
+          this.prepareCharts();
+        } catch (err) {
+          console.error('Error processing dashboard data:', err);
+          this.toast.error('Error rendering dashboard components');
+        } finally {
+          this.loading = false;
+          this.cdr.detectChanges(); // Force UI update in case we dropped out of zone
+        }
       },
-      error: () => {
+      error: (err) => {
+        console.error('API Error:', err);
         this.loading = false;
+        this.cdr.detectChanges();
         this.toast.error('Failed to load dashboard data');
       },
     });
@@ -127,11 +152,16 @@ export class DashboardComponent implements OnInit {
   }
 
   private prepareCharts(): void {
+    const cat = this.charts?.assetsByCategory;
+    const status = this.charts?.assetsByStatus;
+    const dept = this.charts?.assetsByDepartment;
+    const trend = this.charts?.checkoutTrend;
+
     this.doughnutData = {
-      labels: this.charts.assetsByCategory.labels,
+      labels: cat?.labels || [],
       datasets: [{
-        data: this.charts.assetsByCategory.data,
-        backgroundColor: this.charts.assetsByCategory.colors,
+        data: cat?.data || [],
+        backgroundColor: cat?.colors || [],
         hoverOffset: 8,
         borderWidth: 2,
         borderColor: '#fff',
@@ -139,27 +169,27 @@ export class DashboardComponent implements OnInit {
     };
 
     this.assetsByStatusData = {
-      labels: this.charts.assetsByStatus.labels,
+      labels: status?.labels || [],
       datasets: [{
-        data: this.charts.assetsByStatus.data,
-        backgroundColor: this.charts.assetsByStatus.colors,
+        data: status?.data || [],
+        backgroundColor: status?.colors || [],
         borderRadius: 6,
       }],
     };
 
     this.assetsByDepartmentData = {
-      labels: this.charts.assetsByDepartment.labels,
+      labels: dept?.labels || [],
       datasets: [{
-        data: this.charts.assetsByDepartment.data,
-        backgroundColor: this.charts.assetsByDepartment.colors,
+        data: dept?.data || [],
+        backgroundColor: dept?.colors || [],
         borderRadius: 6,
       }],
     };
 
     this.lineData = {
-      labels: this.charts.checkoutTrend.labels,
+      labels: trend?.labels || [],
       datasets: [{
-        data: this.charts.checkoutTrend.data,
+        data: trend?.data || [],
         borderColor: '#0b6c78',
         backgroundColor: 'rgba(11, 108, 120, 0.08)',
         fill: true,

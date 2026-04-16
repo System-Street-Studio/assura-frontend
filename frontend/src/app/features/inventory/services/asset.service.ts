@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Asset, AssetDetail } from '../models/asset.model';
+import { Asset, AssetDetail, AvailableCheckoutAsset } from '../models/asset.model';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -17,6 +17,10 @@ export class AssetService {
     return this.http.get<AssetDetail>(`${this.apiUrl}/${id}`);
   }
 
+  getAvailableForCheckout(): Observable<AvailableCheckoutAsset[]> {
+    return this.http.get<AvailableCheckoutAsset[]>(`${this.apiUrl}/available-for-checkout`);
+  }
+
   deleteAsset(id: number | string): Observable<boolean> {
     return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
   }
@@ -29,7 +33,22 @@ export class AssetService {
     return this.http.post<AssetDetail>(this.apiUrl, asset);
   }
 
-  checkinAsset(id: number | string, condition: string, notes: string): Observable<AssetDetail> {
-    return this.http.post<AssetDetail>(`${this.apiUrl}/${id}/checkin`, { condition, notes });
+  checkinAsset(
+    id: number | string,
+    condition: string,
+    notes: string,
+    damageSeverity?: string,
+    repairNeeded = false,
+    acknowledged = false,
+    evidenceFileName?: string
+  ): Observable<AssetDetail> {
+    return this.http.post<AssetDetail>(`${this.apiUrl}/${id}/checkin`, {
+      condition,
+      notes,
+      damageSeverity,
+      repairNeeded,
+      acknowledged,
+      evidenceFileName,
+    });
   }
 }

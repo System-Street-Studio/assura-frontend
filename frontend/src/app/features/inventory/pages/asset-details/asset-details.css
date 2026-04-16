@@ -753,3 +753,22 @@
   opacity: 0.55;
   cursor: not-allowed;
 }
+
+/* ── Loading state ── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
+  color: #7d8b8c;
+}
+
+.loading-spinner.rotating {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: #0b6c78;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}

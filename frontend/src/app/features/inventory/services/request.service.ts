@@ -4,6 +4,15 @@ import { Observable, map } from 'rxjs';
 import { AssetRequest } from '../models/request.model';
 import { environment } from '../../../../environments/environment';
 
+export interface SuggestedAsset {
+  id: number;
+  assetCode: string;
+  productName: string;
+  categoryName: string;
+  serialNumber?: string;
+  score: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class RequestService {
   private http = inject(HttpClient);
@@ -33,6 +42,17 @@ export class RequestService {
 
   process(id: number | string, command: any): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${id}/process`, command);
+  }
+
+  confirmTemporaryAssignment(id: number | string, remarks?: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${id}/confirm-temporary-assignment`, {
+      id: Number(id),
+      remarks: remarks || null,
+    });
+  }
+
+  getSuggestedAssets(requestId: number | string): Observable<SuggestedAsset[]> {
+    return this.http.get<SuggestedAsset[]>(`${this.apiUrl}/${requestId}/suggested-assets`);
   }
 
   getById(id: number | string): Observable<AssetRequest> {

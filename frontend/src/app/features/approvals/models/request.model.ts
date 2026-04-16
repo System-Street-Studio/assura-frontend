@@ -1,15 +1,17 @@
 
 export interface RequestItem {
   id: number;
+  requesterId?: number;
+  requestNumber?: string;
   name?: string;
   employee?: string;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'In Progress';
+  status: string;
   assetName: string;
   category?: string;
   date: string;
   reason?: string;
   quantity?: number;
   description?: string;
-  priority: 'High' | 'Normal' | 'Low';
-  type: 'NewAsset' | 'Transfer' | 'Maintenance' | 'Discard'; 
+  priority: string;
+  type: string;
 }

@@ -9,46 +9,46 @@
 
   <div class="form-header">
     <h2>{{ pageTitle }}</h2>
-    <span class="asset-id-badge" *ngIf="form.assetCode">
+    <span class="asset-id-badge" *ngIf="assetCodeValue">
       <mat-icon class="badge-icon">tag</mat-icon>
-      {{ form.assetCode }}
+      {{ assetCodeValue }}
     </span>
   </div>
 
-  <form class="form-card" (ngSubmit)="onSave()">
+  <form class="form-card" [formGroup]="assetForm" (ngSubmit)="onSave()">
     <div class="form-grid">
       <!-- ── Left Column ── -->
       <div class="form-col">
         <div class="section-label">Basic Information</div>
 
-        <div class="form-group" [class.has-error]="submitted && !form.assetCode.trim()">
+        <div class="form-group" [class.has-error]="showError('assetCode')">
           <label for="assetCode">Asset Code *</label>
-          <input id="assetCode" type="text" [(ngModel)]="form.assetCode" name="assetCode" placeholder="e.g. ASSET-001"
+          <input id="assetCode" type="text" formControlName="assetCode" placeholder="e.g. ASSET-001"
             required />
-          <span class="error-text" *ngIf="submitted && !form.assetCode.trim()">Asset Code is required</span>
+          <span class="error-text" *ngIf="showError('assetCode')">Asset Code is required</span>
         </div>
 
         <div class="form-group">
           <label for="assetTag">Asset Tag</label>
-          <input id="assetTag" type="text" [(ngModel)]="form.assetTag" name="assetTag" placeholder="e.g. TAG-123" />
+          <input id="assetTag" type="text" formControlName="assetTag" placeholder="e.g. TAG-123" />
         </div>
 
-        <div class="form-group" [class.has-error]="submitted && !form.productId">
+        <div class="form-group" [class.has-error]="showError('productId')">
           <label for="productId">Product *</label>
-          <select id="productId" [(ngModel)]="form.productId" name="productId" required>
-            <option [value]="0">Select Product</option>
-            <option *ngFor="let p of products" [value]="p.id">{{ p.name }}</option>
+          <select id="productId" formControlName="productId" required>
+            <option [ngValue]="0">Select Product</option>
+            <option *ngFor="let p of products" [ngValue]="p.id">{{ p.name }}</option>
           </select>
-          <span class="error-text" *ngIf="submitted && !form.productId">Product is required</span>
+          <span class="error-text" *ngIf="showError('productId')">Product is required</span>
         </div>
 
-        <div class="form-group" [class.has-error]="submitted && !form.status">
+        <div class="form-group" [class.has-error]="showError('status')">
           <label for="status">Status *</label>
-          <select id="status" [(ngModel)]="form.status" name="status" required>
+          <select id="status" formControlName="status" required>
             <option value="">Select Status</option>
             <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
           </select>
-          <span class="error-text" *ngIf="submitted && !form.status">Status is required</span>
+          <span class="error-text" *ngIf="showError('status')">Status is required</span>
         </div>
       </div>
 
@@ -56,33 +56,36 @@
       <div class="form-col">
         <div class="section-label">Details</div>
 
-        <div class="form-group">
-          <label for="categoryId">Category</label>
-          <select id="categoryId" [(ngModel)]="form.categoryId" name="categoryId">
-            <option [value]="0">Select Category</option>
-            <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+        <div class="form-group" [class.has-error]="showError('categoryId')">
+          <label for="categoryId">Category *</label>
+          <select id="categoryId" formControlName="categoryId" required>
+            <option [ngValue]="0">Select Category</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
           </select>
+          <span class="error-text" *ngIf="showError('categoryId')">Category is required</span>
         </div>
 
-        <div class="form-group">
-          <label for="supplierId">Supplier</label>
-          <select id="supplierId" [(ngModel)]="form.supplierId" name="supplierId">
-            <option [value]="0">Select Supplier</option>
-            <option *ngFor="let s of suppliers" [value]="s.id">{{ s.name }}</option>
+        <div class="form-group" [class.has-error]="showError('supplierId')">
+          <label for="supplierId">Supplier *</label>
+          <select id="supplierId" formControlName="supplierId" required>
+            <option [ngValue]="0">Select Supplier</option>
+            <option *ngFor="let s of suppliers" [ngValue]="s.id">{{ s.name }}</option>
           </select>
+          <span class="error-text" *ngIf="showError('supplierId')">Supplier is required</span>
         </div>
 
-        <div class="form-group">
-          <label for="divisionId">Division</label>
-          <select id="divisionId" [(ngModel)]="form.divisionId" name="divisionId">
-            <option [value]="0">Select Division</option>
-            <option *ngFor="let d of divisions" [value]="d.id">{{ d.name }}</option>
+        <div class="form-group" [class.has-error]="showError('divisionId')">
+          <label for="divisionId">Division *</label>
+          <select id="divisionId" formControlName="divisionId" required>
+            <option [ngValue]="0">Select Division</option>
+            <option *ngFor="let d of divisions" [ngValue]="d.id">{{ d.name }}</option>
           </select>
+          <span class="error-text" *ngIf="showError('divisionId')">Division is required</span>
         </div>
 
         <div class="form-group">
           <label for="serialNumber">Serial Number</label>
-          <input id="serialNumber" type="text" [(ngModel)]="form.serialNumber" name="serialNumber"
+          <input id="serialNumber" type="text" formControlName="serialNumber"
             placeholder="e.g. SN123456" />
         </div>
       </div>
@@ -93,15 +96,16 @@
       <div class="section-label">Additional</div>
 
       <div class="form-row-pair">
-        <div class="form-group">
+        <div class="form-group" [class.has-error]="showError('assetDate')">
           <label for="assetDate">Asset Date</label>
-          <input id="assetDate" type="date" [(ngModel)]="form.assetDate" name="assetDate" />
+          <input id="assetDate" type="date" formControlName="assetDate" />
+          <span class="error-text" *ngIf="showError('assetDate')">Asset date is required</span>
         </div>
         <div class="form-group">
           <label for="purchaseValue">Purchase Value</label>
           <div class="money-row">
             <span class="currency-badge">LKR</span>
-            <input id="purchaseValue" type="number" [(ngModel)]="form.purchaseValue" name="purchaseValue"
+            <input id="purchaseValue" type="number" formControlName="purchaseValue"
               placeholder="0" min="0" step="1" />
           </div>
         </div>
@@ -109,7 +113,7 @@
 
       <div class="form-group">
         <label for="notes">Notes</label>
-        <textarea id="notes" [(ngModel)]="form.notes" name="notes" rows="3"
+        <textarea id="notes" formControlName="notes" rows="3"
           placeholder="Additional notes about this asset..."></textarea>
       </div>
     </div>
@@ -117,7 +121,7 @@
     <!-- ── Actions ── -->
     <div class="form-actions">
       <button type="button" class="btn outline" (click)="onCancel()">Cancel</button>
-      <button type="submit" class="btn primary" [disabled]="saving">
+      <button type="submit" class="btn primary" [disabled]="saving || assetForm.invalid">
         <mat-icon class="btn-icon" *ngIf="!saving">save</mat-icon>
         <mat-icon class="btn-icon spin" *ngIf="saving">sync</mat-icon>
         {{ saving ? 'Saving...' : (mode === 'create' ? 'Create Asset' : mode === 'clone' ? 'Create Clone' : 'Save

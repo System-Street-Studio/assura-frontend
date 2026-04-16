@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 export class MaintenanceComponent implements OnInit {
     private svc = inject(MaintenanceService);
     private toast = inject(ToastService);
+    private cdr = inject(ChangeDetectorRef);
 
     allRequests: MaintenanceRequest[] = [];
     filteredRequests: MaintenanceRequest[] = [];
@@ -32,6 +33,7 @@ export class MaintenanceComponent implements OnInit {
     currentPage = 1;
     pageSize = 10;
     pageSizes = [5, 10, 25, 50];
+    pages: number[] = [1];
 
     /* ── Action modal ── */
     showActionModal = false;
@@ -64,10 +66,6 @@ export class MaintenanceComponent implements OnInit {
         return Math.ceil(this.filteredRequests.length / this.pageSize) || 1;
     }
 
-    get pages(): number[] {
-        return Array.from({ length: this.totalPages }, (_, i) => i + 1);
-    }
-
     get showingFrom(): number {
         return this.filteredRequests.length === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
     }
@@ -87,13 +85,15 @@ export class MaintenanceComponent implements OnInit {
     ngOnInit(): void {
         this.svc.getAll().subscribe({
             next: (data: MaintenanceRequest[]) => {
-                this.allRequests = data;
+                this.allRequests = data || [];
                 this.applyFilters();
                 this.loading = false;
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.toast.error('Failed to load maintenance requests');
                 this.loading = false;
+                this.cdr.detectChanges();
             },
         });
     }
@@ -104,10 +104,10 @@ export class MaintenanceComponent implements OnInit {
         this.filteredRequests = this.allRequests.filter((r) => {
             const matchesSearch =
                 !term ||
-                r.maintenanceNumber.toLowerCase().includes(term) ||
-                r.assetName.toLowerCase().includes(term) ||
-                r.assetId.toLowerCase().includes(term) ||
-                r.description.toLowerCase().includes(term);
+                (r.maintenanceNumber || '').toLowerCase().includes(term) ||
+                (r.assetName || '').toLowerCase().includes(term) ||
+                (r.assetId || '').toLowerCase().includes(term) ||
+                (r.description || '').toLowerCase().includes(term);
 
             const matchesStatus = !this.filterStatus || r.status === this.filterStatus;
 
@@ -115,6 +115,7 @@ export class MaintenanceComponent implements OnInit {
         });
 
         this.currentPage = 1;
+        this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
         this.updateView();
     }
 
