@@ -50,19 +50,37 @@
             </mat-form-field>
           </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email Address</mat-label>
-            <input matInput formControlName="email" type="email" placeholder="Email Address">
-            <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="profileForm.get('email')?.hasError('required')">Email is required</mat-error>
-            <mat-error *ngIf="profileForm.get('email')?.hasError('email')">Please enter a valid email
-              address</mat-error>
-          </mat-form-field>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Email Address</mat-label>
+              <input matInput formControlName="email" type="email" placeholder="Email Address">
+              <mat-icon matSuffix>email</mat-icon>
+              <mat-error *ngIf="profileForm.get('email')?.hasError('required')">Email is required</mat-error>
+              <mat-error *ngIf="profileForm.get('email')?.hasError('email')">Please enter a valid email
+                address</mat-error>
+            </mat-form-field>
 
-          <div class="static-field">
-            <span class="field-label">Username</span>
-            <span class="field-value">{{ profile()?.username }}</span>
-            <span class="field-hint">(Cannot be changed)</span>
+            <mat-form-field appearance="outline">
+              <mat-label>Telephone Number</mat-label>
+              <input matInput formControlName="phoneNumber" placeholder="Telephone Number">
+              <mat-icon matSuffix>phone</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Username</mat-label>
+              <input matInput formControlName="username" placeholder="Username">
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="profileForm.get('username')?.hasError('required')">Username is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>New Password</mat-label>
+              <input matInput formControlName="password" type="password" placeholder="Leave blank to keep current">
+              <mat-icon matSuffix>lock</mat-icon>
+              <mat-hint>Leave blank to keep your current password</mat-hint>
+            </mat-form-field>
           </div>
 
           <div class="form-actions">
@@ -92,13 +110,17 @@
               <span class="label">Username</span>
               <span class="value">{{ profile()?.username }}</span>
             </div>
+            <div class="info-item">
+              <span class="label">Telephone Number</span>
+              <span class="value">{{ profile()?.phoneNumber || 'Not provided' }}</span>
+            </div>
             <div class="info-item" *ngIf="profile()?.divisionName">
               <span class="label">Division</span>
               <span class="value">{{ profile()?.divisionName }}</span>
             </div>
             <div class="info-item">
-              <span class="label">Member Since</span>
-              <span class="value">2024</span> <!-- Placeholder or fetch if available -->
+              <span class="label">Role</span>
+              <span class="value">{{ profile()?.role }}</span>
             </div>
           </div>
         </ng-template>

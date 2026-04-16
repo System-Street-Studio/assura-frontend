@@ -7,11 +7,15 @@ export interface UserProfile {
     role?: string;
     divisionName?: string;
     divisionId?: number;
+    phoneNumber?: string;
 }
 
 export interface UpdateProfileRequest {
     userId: number;
+    username: string;
     firstName: string;
     lastName: string;
     email: string;
+    phoneNumber?: string;
+    password?: string;
 }
