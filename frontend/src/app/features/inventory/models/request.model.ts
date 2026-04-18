@@ -22,4 +22,12 @@ export interface AssetRequest {
 
 export type RequestPriority = 'Urgent' | 'High' | 'Medium' | 'Low';
 
-export type RequestStatus = 'Pending' | 'Approved' | 'Rejected' | 'Fulfilled' | 'Cancelled';
+export type RequestStatus =
+  | 'Pending'
+  | 'PendingStorekeeperReview'
+  | 'TemporaryAssigned'
+  | 'PendingProcurement'
+  | 'Approved'
+  | 'Rejected'
+  | 'Fulfilled'
+  | 'Cancelled';

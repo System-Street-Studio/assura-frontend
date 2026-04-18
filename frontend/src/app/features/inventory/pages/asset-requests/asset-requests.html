@@ -177,14 +177,19 @@
             <div class="cell-sub">{{ formatDate(r.requestDate) }}</div>
           </td>
           <td class="col-actions" (click)="$event.stopPropagation()">
-            <div class="action-btns" *ngIf="r.status === 'Pending'">
+            <div class="action-btns" *ngIf="canStorekeeperProcess(r) || canStorekeeperConfirm(r) || (!isStorekeeper && r.status === 'Pending')">
               <!-- Storekeeper Process Button -->
-              <button *ngIf="isStorekeeper" class="action-btn process" title="Process" (click)="openProcess(r)">
+              <button *ngIf="isStorekeeper && canStorekeeperProcess(r)" class="action-btn process" title="Process" (click)="openProcess(r)">
                 <mat-icon>inventory_2</mat-icon>
               </button>
 
+              <button *ngIf="isStorekeeper && canStorekeeperConfirm(r)" class="action-btn confirm" title="Confirm Handover"
+                (click)="confirmTemporaryAssignment(r)">
+                <mat-icon>task_alt</mat-icon>
+              </button>
+
               <!-- Regular Admin Actions -->
-              <ng-container *ngIf="!isStorekeeper">
+              <ng-container *ngIf="!isStorekeeper && r.status === 'Pending'">
                 <button class="action-btn approve" title="Approve" (click)="openAction('approve', r)">
                   <mat-icon>check</mat-icon>
                 </button>
@@ -414,8 +419,27 @@
 
       <!-- Asset Number if found -->
       <div class="action-field" *ngIf="processIsInStock">
-        <label class="action-label">Enter Asset Number</label>
-        <input type="number" class="action-input" placeholder="e.g. 101" [(ngModel)]="processAssetId">
+        <label class="action-label">Select Suggested Asset</label>
+        <select class="action-input" [(ngModel)]="selectedSuggestedAssetId" (ngModelChange)="onSuggestedAssetChanged()"
+          *ngIf="suggestedAssets.length > 0">
+          <option *ngFor="let asset of suggestedAssets" [ngValue]="asset.id">
+            {{ asset.assetCode }} - {{ asset.productName }} (Score {{ asset.score }})
+          </option>
+        </select>
+
+        <div class="suggested-asset-card" *ngIf="selectedSuggestedAsset as selectedAsset">
+          <div class="asset-line">
+            <strong>{{ selectedAsset.assetCode }}</strong>
+            <span class="asset-score">Match {{ selectedAsset.score }}</span>
+          </div>
+          <div class="asset-meta">{{ selectedAsset.productName }} • {{ selectedAsset.categoryName }}</div>
+          <div class="asset-meta" *ngIf="selectedAsset.serialNumber">Serial: {{ selectedAsset.serialNumber }}</div>
+        </div>
+
+        <div class="manual-entry" *ngIf="suggestedAssets.length === 0">
+          <p class="input-help">No suggested assets found. Enter an asset ID manually.</p>
+          <input type="number" class="action-input" placeholder="e.g. 101" [(ngModel)]="processAssetId">
+        </div>
       </div>
 
       <div class="action-field">
@@ -427,12 +451,12 @@
       <div class="action-buttons">
         <button class="btn outline" (click)="cancelProcess()" [disabled]="processLoading">Cancel</button>
         <button class="btn" [ngClass]="processIsInStock ? 'teal' : 'orange'" (click)="confirmProcess()"
-          [disabled]="processLoading || (processIsInStock && !processAssetId)">
+          [disabled]="processLoading || !canSubmitProcess">
           <mat-icon class="btn-icon" *ngIf="!processLoading">
             {{ processIsInStock ? 'done_all' : 'send' }}
           </mat-icon>
           <mat-icon class="btn-icon spin" *ngIf="processLoading">sync</mat-icon>
-          {{ processLoading ? 'Processing...' : (processIsInStock ? 'Release Asset' : 'Escalate to Procurement') }}
+          {{ processLoading ? 'Processing...' : (processIsInStock ? 'Assign Temporarily' : 'Escalate to Procurement') }}
         </button>
       </div>
     </div>

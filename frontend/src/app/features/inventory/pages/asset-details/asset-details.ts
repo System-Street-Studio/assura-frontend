@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,7 +22,9 @@ export class AssetDetailsComponent implements OnInit {
   private router = inject(Router);
   private location = inject(Location);
   private toast = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
 
+  loading = true;
   asset!: AssetDetail;
   activeTab = 'about';
   showDeleteConfirm = false;
@@ -55,10 +57,19 @@ export class AssetDetailsComponent implements OnInit {
     this.assetService.getAssetById(id).subscribe({
       next: (a: AssetDetail) => {
         this.asset = a;
-        this.generateQr(a.assetCode);
+        // Prefer server-generated QR to ensure consistency with persisted data.
+        if (a.qrCode?.trim()) {
+          this.qrDataUrl = `data:image/png;base64,${a.qrCode}`;
+        } else {
+          void this.generateQr(a.assetCode);
+        }
+        this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
+        this.loading = false;
         this.toast.error('Failed to load asset details');
+        this.cdr.detectChanges();
         this.router.navigate(['/inventory/assets']);
       },
     });
@@ -74,6 +85,11 @@ export class AssetDetailsComponent implements OnInit {
     } catch {
       this.qrDataUrl = '';
     }
+  }
+
+  onQrImageError(): void {
+    if (!this.qrDataUrl || !this.asset?.assetCode) return;
+    void this.generateQr(this.asset.assetCode);
   }
 
   goBack(): void {
@@ -105,8 +121,19 @@ export class AssetDetailsComponent implements OnInit {
 
   confirmCheckin(): void {
     this.checkinProcessing = true;
+    const isDamaged = this.checkinCondition === 'Damaged';
+    const damageSeverity = isDamaged ? 'Medium' : undefined;
+    const repairNeeded = isDamaged;
     this.assetService
-      .checkinAsset(this.asset.id, this.checkinCondition, this.checkinNotes)
+      .checkinAsset(
+        this.asset.id,
+        this.checkinCondition,
+        this.checkinNotes,
+        damageSeverity,
+        repairNeeded,
+        true,
+        undefined
+      )
       .subscribe({
         next: (updated: AssetDetail) => {
           this.showCheckinModal = false;

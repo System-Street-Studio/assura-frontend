@@ -10,7 +10,7 @@
         <mat-icon class="btn-icon">file_download</mat-icon>
         Export
       </button>
-      <button class="btn primary" (click)="onNewProduct()">
+      <button class="btn primary" [routerLink]="['/inventory/products/new']" type="button">
         <mat-icon class="btn-icon">add</mat-icon>
         New Product
       </button>

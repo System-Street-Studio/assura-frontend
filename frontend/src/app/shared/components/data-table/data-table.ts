@@ -18,7 +18,7 @@ export interface ColumnDef {
 export class DataTableComponent {
   @Input() columns: ColumnDef[] = [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  @Input() data: any[] = [];
+  @Input() data: Record<string, any>[] = [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Output() rowClick = new EventEmitter<any>();
 

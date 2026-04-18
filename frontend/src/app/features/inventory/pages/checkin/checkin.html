@@ -22,6 +22,18 @@
     </div>
 
     <!-- Not found -->
+    <div class="not-found-card" *ngIf="!loading && loadError">
+        <div class="not-found-icon-wrap">
+            <mat-icon>cloud_off</mat-icon>
+        </div>
+        <h2>Unable to Load Check-In Record</h2>
+        <p>The server did not return check-in details. Please retry.</p>
+        <button class="btn primary" (click)="retryLoad()">
+            <mat-icon class="btn-icon">refresh</mat-icon>
+            Retry
+        </button>
+    </div>
+
     <div class="not-found-card" *ngIf="!loading && notFound">
         <div class="not-found-icon-wrap">
             <mat-icon>search_off</mat-icon>
@@ -34,8 +46,40 @@
         </button>
     </div>
 
+    <div class="picker-card" *ngIf="!loading && !record && !notFound && !loadError">
+        <div class="picker-header">
+            <div class="picker-icon-wrap">
+                <mat-icon>login</mat-icon>
+            </div>
+            <div>
+                <h2>Start Check-In</h2>
+                <p>Select an active checkout record to open the return form.</p>
+            </div>
+        </div>
+
+        <div class="picker-list" *ngIf="activeCheckouts.length > 0; else noActiveCheckouts">
+            <button class="picker-row" *ngFor="let checkout of activeCheckouts" (click)="openCheckinRecord(checkout)">
+                <div class="picker-main">
+                    <strong>{{ checkout.assetName }}</strong>
+                    <span>{{ checkout.checkedOutTo }} · {{ checkout.department }}</span>
+                </div>
+                <div class="picker-meta">
+                    <span class="picker-id">{{ checkout.id }}</span>
+                    <span class="picker-due">Due {{ formatDate(checkout.dueDate) }}</span>
+                </div>
+            </button>
+        </div>
+
+        <ng-template #noActiveCheckouts>
+            <div class="picker-empty">
+                <mat-icon>assignment_turned_in</mat-icon>
+                <p>No active checkout records are available right now.</p>
+            </div>
+        </ng-template>
+    </div>
+
     <!-- Main content -->
-    <div class="checkin-content" *ngIf="!loading && !notFound && record">
+    <div class="checkin-content" *ngIf="!loading && !notFound && !loadError && record">
 
         <!-- Page Header -->
         <div class="checkin-header">
@@ -132,6 +176,18 @@
                             <span class="detail-label">Checked Out By</span>
                             <span class="detail-value">{{ record.checkedOutBy }}</span>
                         </div>
+                        <div class="detail-item" *ngIf="record.returnDate">
+                            <span class="detail-label">Returned At</span>
+                            <span class="detail-value">{{ formatDate(record.returnDate) }}</span>
+                        </div>
+                        <div class="detail-item" *ngIf="record.checkedInBy">
+                            <span class="detail-label">Checked In By</span>
+                            <span class="detail-value">{{ record.checkedInBy }}</span>
+                        </div>
+                        <div class="detail-item" *ngIf="record.maintenanceNumber">
+                            <span class="detail-label">Maintenance Ticket</span>
+                            <span class="detail-value mono">{{ record.maintenanceNumber }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -155,7 +211,7 @@
                     <label class="field-label">Asset Condition *</label>
                     <div class="condition-options">
                         <div class="condition-option" [class.selected]="checkinForm.condition === 'Good'"
-                            [class.good]="checkinForm.condition === 'Good'" (click)="checkinForm.condition = 'Good'">
+                            [class.good]="checkinForm.condition === 'Good'" (click)="onConditionChange('Good')">
                             <mat-icon class="condition-opt-icon">check_circle</mat-icon>
                             <div>
                                 <span class="condition-title">Good</span>
@@ -163,7 +219,7 @@
                             </div>
                         </div>
                         <div class="condition-option" [class.selected]="checkinForm.condition === 'Fair'"
-                            [class.fair]="checkinForm.condition === 'Fair'" (click)="checkinForm.condition = 'Fair'">
+                            [class.fair]="checkinForm.condition === 'Fair'" (click)="onConditionChange('Fair')">
                             <mat-icon class="condition-opt-icon">info</mat-icon>
                             <div>
                                 <span class="condition-title">Fair</span>
@@ -171,8 +227,7 @@
                             </div>
                         </div>
                         <div class="condition-option" [class.selected]="checkinForm.condition === 'Damaged'"
-                            [class.damaged]="checkinForm.condition === 'Damaged'"
-                            (click)="checkinForm.condition = 'Damaged'">
+                            [class.damaged]="checkinForm.condition === 'Damaged'" (click)="onConditionChange('Damaged')">
                             <mat-icon class="condition-opt-icon">warning</mat-icon>
                             <div>
                                 <span class="condition-title">Damaged</span>
@@ -182,12 +237,46 @@
                     </div>
                 </div>
 
+                <div class="form-field">
+                    <label class="field-label">Maintenance Action</label>
+                    <label class="toggle-row">
+                        <input type="checkbox" [(ngModel)]="checkinForm.repairNeeded" (ngModelChange)="onRepairNeededChange()" />
+                        <span>Create maintenance ticket for this return</span>
+                    </label>
+                </div>
+
+                <div class="form-field" *ngIf="requiresSeverity">
+                    <label class="field-label">Damage Severity *</label>
+                    <select class="severity-select" [(ngModel)]="checkinForm.damageSeverity">
+                        <option [ngValue]="undefined">Select severity</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                        <option value="Critical">Critical</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label class="field-label">Damage Evidence <span class="optional">(optional image, max 5MB)</span></label>
+                    <input class="evidence-input" type="file" accept="image/*" (change)="onEvidenceSelected($event)" />
+                    <div class="evidence-name" *ngIf="checkinForm.evidenceFileName">Selected: {{ checkinForm.evidenceFileName }}</div>
+                    <div class="evidence-error" *ngIf="evidenceFileError">{{ evidenceFileError }}</div>
+                </div>
+
                 <!-- Notes -->
                 <div class="form-field">
                     <label class="field-label">Return Notes <span class="optional">(optional)</span></label>
                     <textarea class="form-textarea" rows="4"
                         placeholder="Describe the condition, any issues found, or actions taken…"
                         [(ngModel)]="checkinForm.notes"></textarea>
+                </div>
+
+                <div class="form-field ack-field" [class.invalid]="submitted && !checkinForm.acknowledged">
+                    <label class="toggle-row">
+                        <input type="checkbox" [(ngModel)]="checkinForm.acknowledged" />
+                        <span>I confirm this inspection is accurate and complete. *</span>
+                    </label>
+                    <div class="evidence-error" *ngIf="submitted && !checkinForm.acknowledged">Acknowledgement is required.</div>
                 </div>
 
                 <!-- Action buttons -->

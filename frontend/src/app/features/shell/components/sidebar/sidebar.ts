@@ -9,7 +9,6 @@ interface MenuItem {
   icon: string;
   link: string;
   roles: string[];
-  section?: string;
   isGlobal?: boolean;
 }
 
@@ -26,75 +25,72 @@ export class SidebarComponent {
 
   menuItems: MenuItem[] = [
     // Admin section
-    { label: 'Dashboard', icon: 'home', link: '/admin/overview', roles: ['Admin'], section: 'admin' },
-    { label: 'Track Assets', icon: 'track_changes', link: '/admin/track-assets', roles: ['Admin'], section: 'admin' },
+    { label: 'Dashboard', icon: 'home', link: '/admin/overview', roles: ['Admin'] },
+    { label: 'Track Assets', icon: 'track_changes', link: '/admin/track-assets', roles: ['Admin'] },
 
     // Procurement section
-    { label: 'Overview', icon: 'home', link: '/procurement/overview', roles: ['Procurement', 'Admin'], section: 'procurement' },
-    { label: 'PO', icon: 'receipt_long', link: '/procurement/purchase-orders', roles: ['Procurement', 'Admin'], section: 'procurement' },
-    { label: 'Suppliers', icon: 'local_shipping', link: '/procurement/suppliers', roles: ['Procurement', 'Admin'], section: 'procurement' },
-    { label: 'Maintenance', icon: 'build', link: '/procurement/maintenance', roles: ['Procurement', 'Admin'], section: 'procurement' },
-    { label: 'New Arrivals', icon: 'fiber_new', link: '/procurement/new-arrivals', roles: ['Procurement', 'Admin'], section: 'procurement' },
+    { label: 'Overview', icon: 'home', link: '/procurement/overview', roles: ['Procurement', 'Admin'] },
+    { label: 'PO', icon: 'receipt_long', link: '/procurement/purchase-orders', roles: ['Procurement', 'Admin'] },
+    { label: 'Suppliers', icon: 'local_shipping', link: '/procurement/suppliers', roles: ['Procurement', 'Admin'] },
+    { label: 'Maintenance', icon: 'build', link: '/procurement/maintenance', roles: ['Procurement', 'Admin'] },
+    { label: 'New Arrivals', icon: 'fiber_new', link: '/procurement/new-arrivals', roles: ['Procurement', 'Admin'] },
 
     // Inventory / Storekeeper section
-    { label: 'Dashboard', icon: 'grid_view', link: '/inventory/dashboard', roles: ['Storekeeper', 'Auditor', 'Admin'], section: 'inventory' },
-    { label: 'Asset', icon: 'precision_manufacturing', link: '/inventory/assets', roles: ['Storekeeper', 'Auditor', 'Admin'], section: 'inventory' },
-    { label: 'Products', icon: 'category', link: '/inventory/products', roles: ['Storekeeper', 'Admin'], section: 'inventory' },
-    { label: 'Request List', icon: 'swap_horiz', link: '/inventory/asset-requests', roles: ['Storekeeper', 'Admin'], section: 'inventory' },
-    { label: 'Check Out', icon: 'exit_to_app', link: '/inventory/check-out', roles: ['Storekeeper', 'Auditor', 'Admin'], section: 'inventory' },
-    { label: 'Check In', icon: 'login', link: '/inventory/check-in', roles: ['Storekeeper', 'Admin'], section: 'inventory' },
-    { label: 'Maintenance', icon: 'build', link: '/inventory/maintenance', roles: ['Procurement', 'Storekeeper', 'Admin'], section: 'inventory' },
+    { label: 'Dashboard', icon: 'grid_view', link: '/inventory/dashboard', roles: ['Storekeeper', 'Auditor', 'Admin'] },
+    { label: 'Asset', icon: 'precision_manufacturing', link: '/inventory/assets', roles: ['Storekeeper', 'Auditor', 'Admin'] },
+    { label: 'Products', icon: 'category', link: '/inventory/products', roles: ['Storekeeper', 'Admin'] },
+    { label: 'Request List', icon: 'swap_horiz', link: '/inventory/asset-requests', roles: ['Storekeeper', 'Admin'] },
+    { label: 'Check Out', icon: 'exit_to_app', link: '/inventory/check-out', roles: ['Storekeeper', 'Auditor', 'Admin'] },
+    { label: 'Check In', icon: 'login', link: '/inventory/check-in', roles: ['Storekeeper', 'Admin'] },
+    { label: 'Maintenance', icon: 'build', link: '/inventory/maintenance', roles: ['Procurement', 'Storekeeper', 'Admin'] },
 
     // HR section
-    { label: 'Pending', icon: 'pending_actions', link: '/hr/pending', roles: ['HR', 'Admin'], section: 'hr' },
-    { label: 'Assigned', icon: 'group', link: '/hr/assigned', roles: ['HR', 'Admin'], section: 'hr' },
+    { label: 'Pending', icon: 'pending_actions', link: '/hr/pending', roles: ['HR', 'Admin'] },
+    { label: 'Assigned', icon: 'group', link: '/hr/assigned', roles: ['HR', 'Admin'] },
 
     // Accountant section
-    { label: 'Discarded', icon: 'cancel', link: '/accountant/discarded', roles: ['Accountant', 'Admin'], section: 'accountant' },
+    { label: 'Discarded', icon: 'cancel', link: '/accountant/discarded', roles: ['Accountant', 'Admin'] },
 
     // Reporting / Auditor section
-    { label: 'Reports', icon: 'assessment', link: '/reporting/reports', roles: ['Auditor', 'Admin'], section: 'reporting' },
-    { label: 'Audit Logs', icon: 'policy', link: '/reporting/audit-logs', roles: ['Auditor', 'Admin'], section: 'reporting' },
-    { label: 'Export', icon: 'file_download', link: '/reporting/export', roles: ['Auditor', 'Admin'], section: 'reporting' },
+    { label: 'Reports', icon: 'assessment', link: '/reporting/reports', roles: ['Auditor', 'Admin'] },
+    { label: 'Audit Logs', icon: 'policy', link: '/reporting/audit-logs', roles: ['Auditor', 'Admin'] },
+    { label: 'Export', icon: 'file_download', link: '/reporting/export', roles: ['Auditor', 'Admin'] },
 
     // Superintendent section
-    { label: 'Overview', icon: 'home', link: '/superintendent/overview', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
-    { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
-    { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'], section: 'superintendent' },
+    { label: 'Overview', icon: 'home', link: '/superintendent/overview', roles: ['Superintendent', 'Admin'] },
+    { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'] },
+    { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'] },
 
     // Approvals / Division Head section
-    { label: 'Overview', icon: 'home', link: '/approvals/overview', roles: ['DivisionHead', 'Admin'], section: 'approvals' },
-    { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['DivisionHead', 'Admin'], section: 'approvals' },
-    { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['DivisionHead', 'Admin'], section: 'approvals' },
-    { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['DivisionHead', 'Admin'], section: 'approvals' },
+    { label: 'Overview', icon: 'home', link: '/approvals/overview', roles: ['DivisionHead', 'Admin'] },
+    { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['DivisionHead', 'Admin'] },
+    { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['DivisionHead', 'Admin'] },
+    { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['DivisionHead', 'Admin'] },
 
     // Employee section
-    { label: 'Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['ANY'], section: 'employee', isGlobal: true },
-    { label: 'My Assets', icon: 'inventory_2', link: '/employee/employee-assets', roles: ['ANY'], section: 'employee', isGlobal: true },
-    { label: 'Asset Request', icon: 'add_circle', link: '/employee/requests-main', roles: ['ANY'], section: 'employee', isGlobal: true },
-    { label: 'Activity', icon: 'history', link: '/employee/all-emp-requests', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['ANY'], isGlobal: false },
+    { label: 'My Assets', icon: 'inventory_2', link: '/employee/employee-assets', roles: ['ANY'], isGlobal: false },
+    { label: 'Asset Request', icon: 'add_circle', link: '/employee/requests-main', roles: ['ANY'], isGlobal: false },
+    { label: 'Activity', icon: 'history', link: '/employee/all-emp-requests', roles: ['ANY'], isGlobal: false },
   ];
 
   get filteredMenuItems(): MenuItem[] {
     const userRoles = this.authService.getRoles();
     const currentUrl = this.router.url;
+    
+    // Determine the current section from the URL (e.g. '/inventory/assets' -> 'inventory')
+    const sectionMatch = currentUrl.match(/^\/([^/]+)/);
+    const currentSection = sectionMatch ? sectionMatch[1] : '';
 
-    // Identify current active section from URL
-    const sections = ['admin', 'procurement', 'inventory', 'hr', 'accountant', 'reporting', 'superintendent', 'approvals', 'employee'];
-    const activeSection = sections.find(s => currentUrl.startsWith(`/${s}`));
+    return this.menuItems.filter(item => {
+      const hasRole = item.roles.includes('ANY') || userRoles.some(role => item.roles.includes(role));
+      if (!hasRole) return false;
 
-    // Filter by role
-    let filtered = this.menuItems.filter(item =>
-      item.roles.includes('ANY') ||
-      userRoles.some(role => item.roles.includes(role))
-    );
+      if (item.isGlobal) return true;
 
-    // Filter by active section if we are in one, but always show global items
-    if (activeSection) {
-      filtered = filtered.filter(item => item.section === activeSection || item.isGlobal === true);
-    }
-
-    return filtered;
+      // Only show items that belong to the current URL section
+      return item.link.startsWith(`/${currentSection}`);
+    });
   }
 
   isCollapsed = false;
@@ -110,6 +106,11 @@ export class SidebarComponent {
 
   toggleMenu(): void {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 
   private updateCollapsedState(): void {

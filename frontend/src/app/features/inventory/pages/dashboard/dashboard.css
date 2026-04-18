@@ -280,6 +280,15 @@
   margin-bottom: 10px;
 }
 
+.kpi-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
+  color: #5f6f71;
+  font-size: 0.73rem;
+}
+
 .kpi-bar {
   height: 4px;
   background: #f0f4f4;

@@ -1,7 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
@@ -11,13 +11,15 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent, RouterLink],
   templateUrl: './products.html',
   styleUrls: ['./products.css'],
 })
 export class ProductsComponent implements OnInit {
   private productService = inject(ProductService);
+  private router = inject(Router);
   private toast = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
 
   allProducts: Product[] = [];
   filteredProducts: Product[] = [];
@@ -29,17 +31,20 @@ export class ProductsComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   allSelected = false;
+  pageNumbers: number[] = [1];
 
   ngOnInit(): void {
     this.productService.getAll().subscribe({
       next: (data: Product[]) => {
-        this.allProducts = data;
+        this.allProducts = data || [];
         this.applyFilters();
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
         this.toast.error('Failed to load products');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -51,8 +56,8 @@ export class ProductsComponent implements OnInit {
       const q = this.search.toLowerCase();
       result = result.filter(
         (p) =>
-          p.name.toLowerCase().includes(q) ||
-          String(p.id).toLowerCase().includes(q) ||
+          (p.name || '').toLowerCase().includes(q) ||
+          String(p.id || '').toLowerCase().includes(q) ||
           (p.manufacturer || '').toLowerCase().includes(q) ||
           (p.modelNumber || '').toLowerCase().includes(q)
       );
@@ -61,6 +66,7 @@ export class ProductsComponent implements OnInit {
     this.filteredProducts = result;
     this.totalPages = Math.max(1, Math.ceil(result.length / this.pageSize));
     this.currentPage = Math.min(this.currentPage, this.totalPages);
+    this.pageNumbers = Array.from({ length: this.totalPages }, (_, i) => i + 1);
     this.updateView();
   }
 
@@ -79,10 +85,6 @@ export class ProductsComponent implements OnInit {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
     this.updateView();
-  }
-
-  get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
   get showingFrom(): number {
@@ -108,11 +110,11 @@ export class ProductsComponent implements OnInit {
   }
 
   onRowClick(product: Product): void {
-    this.toast.info(`Product ${product.name} selected`);
+    this.router.navigate(['/inventory/products', product.id, 'edit']);
   }
 
   onNewProduct(): void {
-    this.toast.info('New product form — coming soon');
+    this.router.navigate(['/inventory/products/new']);
   }
 
   private updateView(): void {

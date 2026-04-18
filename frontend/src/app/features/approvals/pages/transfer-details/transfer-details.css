@@ -104,6 +104,35 @@ label {
   display: block;
 }
 
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.status-badge.pending {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.status-badge.temporary {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.status-badge.approved {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.rejected {
+  background: #ffebee;
+  color: #c62828;
+}
+
 /* Detail Text */
 .bold-text {
   font-weight: 700;
@@ -180,6 +209,87 @@ label {
 .btn-reject:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+.btn-approve:disabled,
+.btn-pool:disabled,
+.btn-reject:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.suggestion-panel {
+  flex: 1 1 100%;
+  margin-bottom: 14px;
+}
+
+.suggestion-title {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #445457;
+}
+
+.suggestion-list {
+  display: grid;
+  gap: 8px;
+}
+
+.suggestion-item {
+  width: 100%;
+  border: 1px solid #dbe6e8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #f9fbfb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.suggestion-item.selected {
+  border-color: #00a9b5;
+  background: #edf9fa;
+}
+
+.suggestion-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.suggestion-main strong {
+  color: #1f2f31;
+  font-size: 13px;
+}
+
+.suggestion-main span {
+  color: #637578;
+  font-size: 12px;
+}
+
+.suggestion-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.suggestion-side .score {
+  background: #e0f2f4;
+  color: #0b6c78;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.suggestion-side small {
+  color: #6f8285;
+  font-size: 11px;
 }
 
 /* Smooth Scrollbar */

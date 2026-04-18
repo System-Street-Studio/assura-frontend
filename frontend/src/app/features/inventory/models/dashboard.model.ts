@@ -5,6 +5,9 @@ export interface Kpi {
   totalAssetValue: string;
   pendingRequests: number;
   maintenanceDue: number;
+  temporaryAssignedAssets: number;
+  awaitingPickupConfirmations: number;
+  procurementEscalations: number;
 }
 
 export interface RecentActivity {

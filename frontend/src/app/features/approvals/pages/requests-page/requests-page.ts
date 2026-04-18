@@ -52,7 +52,18 @@ export class RequestsPageComponent implements OnInit {
   // --- FILTER CONFIG ---
   filterConfig = [
     { label: 'Priority', key: 'priority', options: ['High', 'Normal', 'Low'] },
-    { label: 'Status', key: 'status', options: ['Pending', 'Approved', 'Rejected', 'In Progress'] },
+    {
+      label: 'Status',
+      key: 'status',
+      options: [
+        'PendingDivisionHeadApproval',
+        'PendingStorekeeperReview',
+        'TemporaryAssigned',
+        'PendingProcurement',
+        'Approved',
+        'Rejected'
+      ]
+    },
     { label: 'Asset Category', key: 'category', options: ['Laptop', 'Furniture', 'Electronics', 'Network'] },
   ];
 
@@ -71,29 +82,30 @@ export class RequestsPageComponent implements OnInit {
   // 1. Service Call
   loadData() {
     this.isLoading.set(true);
-   const isDivisionHead = true; 
 
-   this.requestService.getAllRequests(isDivisionHead).subscribe({
+    this.requestService.getAllRequests().subscribe({
       next: (allData: any[]) => {
       console.log("All Data:", allData); 
       
       
       const mappedData: RequestItem[] = allData.map(item => ({
         id: item.id,
+        requesterId: item.requesterId,
+        requestNumber: item.requestNumber,
         name: item.requesterName, 
-        employee: item.requesterId,
-        assetName: item.assetName,
-        category: item.assetCategory,
+        employee: item.requesterName,
+        assetName: item.assetName ?? 'N/A',
+        category: item.department,
         status: item.status,
-        date: item.submittedDate,
+        date: item.createdAt,
         priority: item.priority,
-        type: item.requestType ,
+        type: item.type,
         quantity: item.quantity,
-        specs: item.description,
-        justification: item.reason
+        description: item.description,
+        reason: item.description
       }));
 
-      this.requests.set(mappedData.filter(r => r.type?.toLowerCase().replace(/\s/g, '') === 'newasset'));
+      this.requests.set(mappedData.filter(r => r.type?.toLowerCase().replace(/\s/g, '') === 'asset' || r.type?.toLowerCase().replace(/\s/g, '') === 'newasset'));
       this.transferRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'transfer'));
       this.maintenanceRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'maintenance'));
       this.discardRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'discard'));
