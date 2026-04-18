@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MaintenanceService } from '../../services/maintenance.service';
@@ -90,8 +91,12 @@ export class MaintenanceComponent implements OnInit {
                 this.loading = false;
                 this.cdr.detectChanges();
             },
-            error: () => {
-                this.toast.error('Failed to load maintenance requests');
+            error: (err: HttpErrorResponse) => {
+                if (err.status === 403) {
+                    this.toast.error('You do not have permission to view maintenance records');
+                } else {
+                    this.toast.error('Failed to load maintenance requests');
+                }
                 this.loading = false;
                 this.cdr.detectChanges();
             },

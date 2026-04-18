@@ -57,14 +57,16 @@ export class AssetDetailsComponent implements OnInit {
     this.assetService.getAssetById(id).subscribe({
       next: (a: AssetDetail) => {
         this.asset = a;
-        // Prefer server-generated QR to ensure consistency with persisted data.
-        if (a.qrCode?.trim()) {
-          this.qrDataUrl = `data:image/png;base64,${a.qrCode}`;
-        } else {
-          void this.generateQr(a.assetCode);
-        }
-        this.loading = false;
-        this.cdr.detectChanges();
+        // Move to next macro-task to avoid NG0100
+        setTimeout(() => {
+          if (a.qrCode?.trim()) {
+            this.qrDataUrl = `data:image/png;base64,${a.qrCode}`;
+          } else {
+            void this.generateQr(a.assetCode);
+          }
+          this.loading = false;
+          this.cdr.detectChanges();
+        }, 0);
       },
       error: () => {
         this.loading = false;

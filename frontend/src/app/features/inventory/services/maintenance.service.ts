@@ -10,7 +10,7 @@ import { environment } from '../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class MaintenanceService {
     private http = inject(HttpClient);
-    private apiUrl = `${environment.apiUrl}/maintenances`;
+    private apiUrl = `${environment.apiUrl}/Maintenances`;
 
     getAll(): Observable<MaintenanceRequest[]> {
         return this.http.get<MaintenanceRequest[]>(this.apiUrl);
