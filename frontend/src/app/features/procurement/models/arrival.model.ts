@@ -21,3 +21,9 @@ export interface InformStoresRequest {
     purchasedPrice: number;
     divisionId: number;
 }
+export interface InformStakeholdersRequest {
+    informingId: number;
+    employeeId: number;
+    divisionHeadNotify: boolean;
+    remarks?: string;
+}

@@ -73,4 +73,9 @@ export const inventoryRoutes: Routes = [
     loadComponent: () =>
       import('./pages/checkin/checkin').then((m) => m.CheckinComponent),
   },
+  {
+    path: 'informed-arrivals',
+    loadComponent: () =>
+      import('./pages/informed-arrivals/informed-arrivals').then((m) => m.InformedArrivalsComponent),
+  },
 ];

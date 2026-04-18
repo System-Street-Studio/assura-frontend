@@ -39,6 +39,7 @@ export class SidebarComponent {
     { label: 'Dashboard', icon: 'grid_view', link: '/inventory/dashboard', roles: ['Storekeeper', 'Auditor', 'Admin'] },
     { label: 'Asset', icon: 'precision_manufacturing', link: '/inventory/assets', roles: ['Storekeeper', 'Auditor', 'Admin'] },
     { label: 'Products', icon: 'category', link: '/inventory/products', roles: ['Storekeeper', 'Admin'] },
+    { label: 'New Arrivals', icon: 'fiber_new', link: '/inventory/informed-arrivals', roles: ['Storekeeper', 'Admin'] },
     { label: 'Request List', icon: 'swap_horiz', link: '/inventory/asset-requests', roles: ['Storekeeper', 'Admin'] },
     { label: 'Check Out', icon: 'exit_to_app', link: '/inventory/check-out', roles: ['Storekeeper', 'Auditor', 'Admin'] },
     { label: 'Check In', icon: 'login', link: '/inventory/check-in', roles: ['Storekeeper', 'Admin'] },
@@ -77,7 +78,7 @@ export class SidebarComponent {
   get filteredMenuItems(): MenuItem[] {
     const userRoles = this.authService.getRoles();
     const currentUrl = this.router.url;
-    
+
     // Determine the current section from the URL (e.g. '/inventory/assets' -> 'inventory')
     const sectionMatch = currentUrl.match(/^\/([^/]+)/);
     const currentSection = sectionMatch ? sectionMatch[1] : '';

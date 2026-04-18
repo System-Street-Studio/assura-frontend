@@ -4,7 +4,7 @@ import { Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CreatePurchasingOrderRequest, PurchasingOrderDto, PurchasingOrderSummaryDto, AssetRequestDto } from '../models/purchase-order.model';
 import { MaintenanceDto, CreateMaintenanceRequest, AssetSummaryDto, RepairingFirmDto, CreateRepairingFirmRequest } from '../models/maintenance.model';
-import { AssetInformingDto, InformStoresRequest } from '../models/arrival.model';
+import { AssetInformingDto, InformStoresRequest, InformStakeholdersRequest } from '../models/arrival.model';
 
 @Injectable({
     providedIn: 'root'
@@ -177,5 +177,13 @@ export class ProcurementService {
      */
     getDivisions(): Observable<any[]> {
         return this.http.get<any[]>(this.divisionsUrl);
+    }
+
+    /**
+     * Inform relevant employee and division head about arrivals
+     */
+    informStakeholders(data: InformStakeholdersRequest): Observable<number> {
+        const url = `${this.informingUrl}/inform-stakeholders`;
+        return this.http.post<number>(url, data);
     }
 }
