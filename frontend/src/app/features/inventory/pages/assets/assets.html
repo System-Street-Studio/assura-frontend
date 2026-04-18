@@ -26,22 +26,21 @@
         <div class="stat-label">All Assets</div>
       </div>
     </div>
-    <div class="stat-card" (click)="filterStatus = 'InUse'; applyFilters();" [class.active]="filterStatus === 'InUse'">
+    <div class="stat-card" (click)="onStatusCardClick('InUse')" [class.active]="filterStatus === 'InUse'">
       <div class="stat-icon-wrap deployed"><mat-icon>check_circle</mat-icon></div>
       <div class="stat-info">
         <div class="stat-value">{{ statusCounts['InUse'] }}</div>
         <div class="stat-label">In Use</div>
       </div>
     </div>
-    <div class="stat-card" (click)="filterStatus = 'InStore'; applyFilters();"
-      [class.active]="filterStatus === 'InStore'">
+    <div class="stat-card" (click)="onStatusCardClick('InStore')" [class.active]="filterStatus === 'InStore'">
       <div class="stat-icon-wrap available"><mat-icon>shelves</mat-icon></div>
       <div class="stat-info">
         <div class="stat-value">{{ statusCounts['InStore'] }}</div>
         <div class="stat-label">In Store</div>
       </div>
     </div>
-    <div class="stat-card" (click)="filterStatus = 'UnderMaintenance'; applyFilters();"
+    <div class="stat-card" (click)="onStatusCardClick('UnderMaintenance')"
       [class.active]="filterStatus === 'UnderMaintenance'">
       <div class="stat-icon-wrap repair"><mat-icon>build</mat-icon></div>
       <div class="stat-info">
@@ -49,8 +48,7 @@
         <div class="stat-label">Maintenance</div>
       </div>
     </div>
-    <div class="stat-card" (click)="filterStatus = 'Discarded'; applyFilters();"
-      [class.active]="filterStatus === 'Discarded'">
+    <div class="stat-card" (click)="onStatusCardClick('Discarded')" [class.active]="filterStatus === 'Discarded'">
       <div class="stat-icon-wrap retired"><mat-icon>cancel</mat-icon></div>
       <div class="stat-info">
         <div class="stat-value">{{ statusCounts['Discarded'] }}</div>
