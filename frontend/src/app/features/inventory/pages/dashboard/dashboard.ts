@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
   charts: ChartDatasets = {
     assetsByCategory: { labels: [], data: [], colors: [] },
     assetsByStatus: { labels: [], data: [], colors: [] },
-    assetsByDepartment: { labels: [], data: [], colors: [] },
+    assetsByDivision: { labels: [], data: [], colors: [] },
     checkoutTrend: { labels: [], data: [] },
     anomalies: { ghostAssets: 0, missingAssets: 0, maintenanceDue: 0 },
   };
@@ -93,7 +93,7 @@ export class DashboardComponent implements OnInit {
   };
 
   assetsByStatusData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [{ data: [] }] };
-  assetsByDepartmentData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [{ data: [] }] };
+  assetsByDivisionData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [{ data: [] }] };
 
   ngOnInit(): void {
     this.svc.getDashboardData().subscribe({
@@ -154,7 +154,7 @@ export class DashboardComponent implements OnInit {
   private prepareCharts(): void {
     const cat = this.charts?.assetsByCategory;
     const status = this.charts?.assetsByStatus;
-    const dept = this.charts?.assetsByDepartment;
+    const dept = this.charts?.assetsByDivision;
     const trend = this.charts?.checkoutTrend;
 
     this.doughnutData = {
@@ -177,7 +177,7 @@ export class DashboardComponent implements OnInit {
       }],
     };
 
-    this.assetsByDepartmentData = {
+    this.assetsByDivisionData = {
       labels: dept?.labels || [],
       datasets: [{
         data: dept?.data || [],

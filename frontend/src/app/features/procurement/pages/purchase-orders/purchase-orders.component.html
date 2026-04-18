@@ -32,7 +32,7 @@
                         <tr *ngFor="let order of pagedOrders">
                             <td (click)="navigateToDetails(order.id)"
                                 style="cursor: pointer; color: #000; font-weight: 500;">{{ order.orderNumber }}</td>
-                            <td>{{ order.departmentName }}</td>
+                            <td>{{ order.divisionName }}</td>
                             <td>{{ order.issuedDate | date:'dd MMM yyyy' }}</td>
                         </tr>
                     </tbody>

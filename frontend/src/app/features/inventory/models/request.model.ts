@@ -3,7 +3,7 @@ export interface AssetRequest {
   requestNumber?: string;
   requestedBy: string;
   requesterName?: string;
-  department: string;
+  division: string;
   email: string;
   assetName: string;
   category: string;

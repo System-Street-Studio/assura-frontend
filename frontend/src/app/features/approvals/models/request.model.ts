@@ -8,6 +8,7 @@ export interface RequestItem {
   status: string;
   assetName: string;
   category?: string;
+  division?: string;
   date: string;
   reason?: string;
   quantity?: number;

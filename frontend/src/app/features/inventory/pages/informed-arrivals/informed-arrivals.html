@@ -76,7 +76,7 @@
                     <select class="form-select" [(ngModel)]="selectedEmployeeId">
                         <option value="" disabled>Choose an employee...</option>
                         <option *ngFor="let emp of employees" [value]="emp.id">
-                            {{ emp.name }} ({{ emp.department }})
+                            {{ emp.name }} ({{ emp.division }})
                         </option>
                     </select>
                     <p class="form-hint">The employee will receive a notification.</p>

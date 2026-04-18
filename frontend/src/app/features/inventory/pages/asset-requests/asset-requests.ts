@@ -29,13 +29,13 @@ export class AssetRequestsComponent implements OnInit {
   searchTerm = '';
   filterStatus = '';
   filterPriority = '';
-  filterDepartment = '';
+  filterDivision = '';
 
   currentPage = 1;
   pageSize = 10;
   pageSizes = [5, 10, 25, 50];
   pages: number[] = [1];
-  departments: string[] = [];
+  divisions: string[] = [];
   statuses: RequestStatus[] = [
     'Pending',
     'PendingStorekeeperReview',
@@ -122,8 +122,8 @@ export class AssetRequestsComponent implements OnInit {
     this.requestService.getAll().subscribe({
       next: (data: AssetRequest[]) => {
         this.allRequests = data || [];
-        const depts = new Set(this.allRequests.map((r) => r.department));
-        this.departments = Array.from(depts).sort();
+        const depts = new Set(this.allRequests.map((r) => r.division));
+        this.divisions = Array.from(depts).sort();
         this.applyFilters();
         this.loading = false;
         this.cdr.detectChanges();
@@ -147,12 +147,12 @@ export class AssetRequestsComponent implements OnInit {
         String(r.id || '').toLowerCase().includes(term) ||
         (r.requestNumber || '').toLowerCase().includes(term) ||
         (r.assetName || '').toLowerCase().includes(term) ||
-        (r.department || '').toLowerCase().includes(term) ||
+        (r.division || '').toLowerCase().includes(term) ||
         (r.reason || '').toLowerCase().includes(term);
 
       const matchesStatus = !this.filterStatus || r.status === this.filterStatus;
       const matchesPriority = !this.filterPriority || r.priority === this.filterPriority;
-      const matchesDept = !this.filterDepartment || r.department === this.filterDepartment;
+      const matchesDept = !this.filterDivision || r.division === this.filterDivision;
 
       return matchesSearch && matchesStatus && matchesPriority && matchesDept;
     });
@@ -166,12 +166,12 @@ export class AssetRequestsComponent implements OnInit {
     this.searchTerm = '';
     this.filterStatus = '';
     this.filterPriority = '';
-    this.filterDepartment = '';
+    this.filterDivision = '';
     this.applyFilters();
   }
 
   get hasActiveFilters(): boolean {
-    return !!this.searchTerm || !!this.filterStatus || !!this.filterPriority || !!this.filterDepartment;
+    return !!this.searchTerm || !!this.filterStatus || !!this.filterPriority || !!this.filterDivision;
   }
 
   /* ── Pagination ── */

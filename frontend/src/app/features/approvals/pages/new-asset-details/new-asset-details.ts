@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute,Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { RequestService, SuggestedAsset } from '../../services/requests.service';
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -18,7 +18,7 @@ export class NewAssetDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
 
-  request = signal<any> ({});
+  request = signal<any>({});
   processing = signal(false);
   suggestedAssets = signal<SuggestedAsset[]>([]);
   selectedSuggestedAssetId = signal<number | null>(null);
@@ -45,11 +45,11 @@ export class NewAssetDetailsComponent implements OnInit {
         });
       }
     }
-  
-}
- showPopup = signal(false);
- popupMessage = signal('');
- popupType = signal<'success' | 'reject'>('success');
+
+  }
+  showPopup = signal(false);
+  popupMessage = signal('');
+  popupType = signal<'success' | 'reject'>('success');
 
   get requestStatus(): string {
     return (this.request().status || '').toString();
@@ -274,12 +274,13 @@ export class NewAssetDetailsComponent implements OnInit {
       name: data.requesterName ?? data.name,
       employee: data.requesterId?.toString() ?? data.employee,
       assetName: data.assetName ?? 'N/A',
-      category: data.department ?? data.category ?? 'N/A',
+      division: data.department ?? data.division ?? 'N/A',
       date: data.createdAt ?? data.date,
       specs: data.description ?? data.specs,
       justification: data.description ?? data.justification,
       reason: data.description ?? data.reason,
-      type: data.type ?? 'Asset'
+      type: data.type ?? 'Asset',
+      category: data.type ?? 'Asset'
     };
   }
 }

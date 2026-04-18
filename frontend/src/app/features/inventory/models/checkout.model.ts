@@ -7,7 +7,7 @@ export interface CheckoutRecord {
     category: string;
     serial: string;
     checkedOutTo: string;
-    department: string;
+    division: string;
     email: string;
     checkoutDate: string;
     dueDate: string;
@@ -30,7 +30,7 @@ export interface CheckoutFormData {
     assetId: string;
     checkedOutToUserId: string;
     checkedOutTo: string;
-    department: string;
+    division: string;
     email: string;
     dueDate: string;
     notes: string;
@@ -48,6 +48,6 @@ export interface CheckinFormData {
 export interface CheckoutEmployee {
     id: string;
     name: string;
-    department: string;
+    division: string;
     email: string;
 }

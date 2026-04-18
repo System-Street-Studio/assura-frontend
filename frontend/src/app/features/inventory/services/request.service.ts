@@ -32,7 +32,7 @@ export class RequestService {
         status: r.status,
         requestDate: r.createdAt,
         createdAt: r.createdAt,
-        department: r.department || 'N/A',
+        division: r.department || 'N/A',
         email: 'N/A',
         category: r.type || 'N/A',
         quantity: 1

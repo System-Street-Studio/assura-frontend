@@ -77,15 +77,15 @@
         <div class="toolbar-left">
             <div class="search-box">
                 <mat-icon class="search-icon">search</mat-icon>
-                <input class="search-input" type="text" placeholder="Search by name, asset, serial, department…"
+                <input class="search-input" type="text" placeholder="Search by name, asset, serial, division…"
                     [(ngModel)]="searchTerm" (keyup)="applyFilters()" />
                 <button class="search-clear" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
                     <mat-icon>close</mat-icon>
                 </button>
             </div>
-            <select class="filter-select" [(ngModel)]="filterDepartment" (change)="applyFilters()">
-                <option value="">All Departments</option>
-                <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+            <select class="filter-select" [(ngModel)]="filterDivision" (change)="applyFilters()">
+                <option value="">All Divisions</option>
+                <option *ngFor="let d of divisions" [value]="d">{{ d }}</option>
             </select>
             <button class="btn-text" *ngIf="hasActiveFilters" (click)="clearFilters()">
                 <mat-icon>filter_list_off</mat-icon> Clear
@@ -170,7 +170,7 @@
                             </div>
                             <div>
                                 <div class="person-name">{{ rec.checkedOutTo }}</div>
-                                <div class="person-sub">{{ rec.department }}</div>
+                                <div class="person-sub">{{ rec.division }}</div>
                             </div>
                         </div>
                     </td>
@@ -269,16 +269,17 @@
                     <select [(ngModel)]="checkoutForm.checkedOutToUserId" (ngModelChange)="onEmployeeChange()">
                         <option value="">Select employee</option>
                         <option *ngFor="let e of employees" [value]="e.id">
-                            {{ e.name }} — {{ e.department }}
+                            {{ e.name }} — {{ e.division }}
                         </option>
                     </select>
-                    <span class="error-text" *ngIf="submitted && !checkoutForm.checkedOutToUserId">Employee is required</span>
+                    <span class="error-text" *ngIf="submitted && !checkoutForm.checkedOutToUserId">Employee is
+                        required</span>
                 </div>
 
                 <div class="modal-row">
                     <div class="modal-field">
-                        <label>Department</label>
-                        <input type="text" [value]="checkoutForm.department" disabled placeholder="Auto-filled" />
+                        <label>Division</label>
+                        <input type="text" [value]="checkoutForm.division" disabled placeholder="Auto-filled" />
                     </div>
                     <div class="modal-field">
                         <label>Email</label>
@@ -365,7 +366,7 @@
                     </div>
                     <div>
                         <div class="drawer-name">{{ detailRecord.checkedOutTo }}</div>
-                        <div class="drawer-sub">{{ detailRecord.department }} · {{ detailRecord.email }}</div>
+                        <div class="drawer-sub">{{ detailRecord.division }} · {{ detailRecord.email }}</div>
                     </div>
                 </div>
 
@@ -415,7 +416,7 @@
 
             <!-- Drawer actions -->
             <div class="drawer-actions" *ngIf="detailRecord.status !== 'Returned'">
-                    <button class="btn primary full" (click)="onCheckin(detailRecord); closeDetail()">
+                <button class="btn primary full" (click)="onCheckin(detailRecord); closeDetail()">
                     <mat-icon class="btn-icon">login</mat-icon> Check In Asset
                 </button>
             </div>

@@ -31,7 +31,7 @@ export class CheckoutComponent implements OnInit {
 
     searchTerm = '';
     filterStatus = '';
-    filterDepartment = '';
+    filterDivision = '';
 
     currentPage = 1;
     pageSize = 10;
@@ -50,7 +50,7 @@ export class CheckoutComponent implements OnInit {
         assetId: '',
         checkedOutToUserId: '',
         checkedOutTo: '',
-        department: '',
+        division: '',
         email: '',
         dueDate: '',
         notes: '',
@@ -91,8 +91,8 @@ export class CheckoutComponent implements OnInit {
         ).length;
     }
 
-    get departments(): string[] {
-        const depts = new Set(this.allRecords.map((r) => r.department));
+    get divisions(): string[] {
+        const depts = new Set(this.allRecords.map((r) => r.division));
         return Array.from(depts).sort();
     }
 
@@ -208,10 +208,10 @@ export class CheckoutComponent implements OnInit {
                 r.assetId.toLowerCase().includes(term) ||
                 r.checkedOutTo.toLowerCase().includes(term) ||
                 r.serial.toLowerCase().includes(term) ||
-                r.department.toLowerCase().includes(term);
+                r.division.toLowerCase().includes(term);
 
             const matchesStatus = !this.filterStatus || r.status === this.filterStatus;
-            const matchesDept = !this.filterDepartment || r.department === this.filterDepartment;
+            const matchesDept = !this.filterDivision || r.division === this.filterDivision;
 
             return matchesSearch && matchesStatus && matchesDept;
         });
@@ -223,12 +223,12 @@ export class CheckoutComponent implements OnInit {
     clearFilters(): void {
         this.searchTerm = '';
         this.filterStatus = '';
-        this.filterDepartment = '';
+        this.filterDivision = '';
         this.applyFilters();
     }
 
     get hasActiveFilters(): boolean {
-        return !!this.searchTerm || !!this.filterStatus || !!this.filterDepartment;
+        return !!this.searchTerm || !!this.filterStatus || !!this.filterDivision;
     }
 
     /* ── Pagination ── */
@@ -262,7 +262,7 @@ export class CheckoutComponent implements OnInit {
     openCheckoutModal(): void {
         this.submitted = false;
         this.checkoutProcessing = false;
-        this.checkoutForm = { assetId: '', checkedOutToUserId: '', checkedOutTo: '', department: '', email: '', dueDate: '', notes: '' };
+        this.checkoutForm = { assetId: '', checkedOutToUserId: '', checkedOutTo: '', division: '', email: '', dueDate: '', notes: '' };
         this.showCheckoutModal = true;
     }
 
@@ -277,11 +277,11 @@ export class CheckoutComponent implements OnInit {
         const emp = this.employees.find((e) => e.id === this.checkoutForm.checkedOutToUserId);
         if (emp) {
             this.checkoutForm.checkedOutTo = emp.name;
-            this.checkoutForm.department = emp.department;
+            this.checkoutForm.division = emp.division;
             this.checkoutForm.email = emp.email;
         } else {
             this.checkoutForm.checkedOutTo = '';
-            this.checkoutForm.department = '';
+            this.checkoutForm.division = '';
             this.checkoutForm.email = '';
         }
     }

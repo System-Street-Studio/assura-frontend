@@ -33,7 +33,7 @@ export interface WarrantyAlert {
 export interface ChartDatasets {
   assetsByCategory: { labels: string[]; data: number[]; colors: string[] };
   assetsByStatus: { labels: string[]; data: number[]; colors: string[] };
-  assetsByDepartment: { labels: string[]; data: number[]; colors: string[] };
+  assetsByDivision: { labels: string[]; data: number[]; colors: string[] };
   checkoutTrend: { labels: string[]; data: number[] };
   anomalies: { ghostAssets: number; missingAssets: number; maintenanceDue: number };
 }

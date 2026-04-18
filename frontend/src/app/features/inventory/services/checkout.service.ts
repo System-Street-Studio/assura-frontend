@@ -73,16 +73,16 @@ export class CheckoutService {
                             category: asset.categoryName || '-',
                             serial: asset.serialNumber || '-',
                             checkedOutTo: 'User',
-                            department: asset.divisionName || 'N/A',
+                            division: asset.divisionName || 'N/A',
                             email: '',
                             checkoutDate: new Date().toISOString().split('T')[0],
                             dueDate: new Date().toISOString().split('T')[0],
                             returnDate: new Date().toISOString().split('T')[0],
                             condition: data.condition,
-                                damageSeverity: data.damageSeverity,
-                                repairNeeded: data.repairNeeded,
-                                acknowledged: data.acknowledged,
-                                evidenceFileName: data.evidenceFileName,
+                            damageSeverity: data.damageSeverity,
+                            repairNeeded: data.repairNeeded,
+                            acknowledged: data.acknowledged,
+                            evidenceFileName: data.evidenceFileName,
                             checkinNotes: data.notes,
                             status: 'Returned' as const,
                             checkedOutBy: 'Storekeeper',
@@ -109,12 +109,12 @@ export class CheckoutService {
     }
 
     getEmployees(): Observable<CheckoutEmployee[]> {
-        return this.http.get<{ id: number; fullName: string; department: string; email: string }[]>(`${this.userApiUrl}/assignable-users`).pipe(
+        return this.http.get<{ id: number; fullName: string; division?: string; department?: string; email: string }[]>(`${this.userApiUrl}/assignable-users`).pipe(
             map((users) =>
                 (users || []).map((u) => ({
                     id: String(u.id),
                     name: u.fullName,
-                    department: u.department,
+                    division: u.division || u.department || 'N/A',
                     email: u.email,
                 }))
             ),

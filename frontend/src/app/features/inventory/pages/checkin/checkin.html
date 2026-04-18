@@ -61,7 +61,7 @@
             <button class="picker-row" *ngFor="let checkout of activeCheckouts" (click)="openCheckinRecord(checkout)">
                 <div class="picker-main">
                     <strong>{{ checkout.assetName }}</strong>
-                    <span>{{ checkout.checkedOutTo }} · {{ checkout.department }}</span>
+                    <span>{{ checkout.checkedOutTo }} · {{ checkout.division }}</span>
                 </div>
                 <div class="picker-meta">
                     <span class="picker-id">{{ checkout.id }}</span>
@@ -154,7 +154,7 @@
                         <div class="avatar">{{ getInitials(record.checkedOutTo) }}</div>
                         <div>
                             <div class="person-name">{{ record.checkedOutTo }}</div>
-                            <div class="person-sub">{{ record.department }} · {{ record.email }}</div>
+                            <div class="person-sub">{{ record.division }} · {{ record.email }}</div>
                         </div>
                     </div>
                     <div class="detail-grid">
@@ -227,7 +227,8 @@
                             </div>
                         </div>
                         <div class="condition-option" [class.selected]="checkinForm.condition === 'Damaged'"
-                            [class.damaged]="checkinForm.condition === 'Damaged'" (click)="onConditionChange('Damaged')">
+                            [class.damaged]="checkinForm.condition === 'Damaged'"
+                            (click)="onConditionChange('Damaged')">
                             <mat-icon class="condition-opt-icon">warning</mat-icon>
                             <div>
                                 <span class="condition-title">Damaged</span>
@@ -240,7 +241,8 @@
                 <div class="form-field">
                     <label class="field-label">Maintenance Action</label>
                     <label class="toggle-row">
-                        <input type="checkbox" [(ngModel)]="checkinForm.repairNeeded" (ngModelChange)="onRepairNeededChange()" />
+                        <input type="checkbox" [(ngModel)]="checkinForm.repairNeeded"
+                            (ngModelChange)="onRepairNeededChange()" />
                         <span>Create maintenance ticket for this return</span>
                     </label>
                 </div>
@@ -257,9 +259,11 @@
                 </div>
 
                 <div class="form-field">
-                    <label class="field-label">Damage Evidence <span class="optional">(optional image, max 5MB)</span></label>
+                    <label class="field-label">Damage Evidence <span class="optional">(optional image, max
+                            5MB)</span></label>
                     <input class="evidence-input" type="file" accept="image/*" (change)="onEvidenceSelected($event)" />
-                    <div class="evidence-name" *ngIf="checkinForm.evidenceFileName">Selected: {{ checkinForm.evidenceFileName }}</div>
+                    <div class="evidence-name" *ngIf="checkinForm.evidenceFileName">Selected: {{
+                        checkinForm.evidenceFileName }}</div>
                     <div class="evidence-error" *ngIf="evidenceFileError">{{ evidenceFileError }}</div>
                 </div>
 
@@ -276,7 +280,8 @@
                         <input type="checkbox" [(ngModel)]="checkinForm.acknowledged" />
                         <span>I confirm this inspection is accurate and complete. *</span>
                     </label>
-                    <div class="evidence-error" *ngIf="submitted && !checkinForm.acknowledged">Acknowledgement is required.</div>
+                    <div class="evidence-error" *ngIf="submitted && !checkinForm.acknowledged">Acknowledgement is
+                        required.</div>
                 </div>
 
                 <!-- Action buttons -->

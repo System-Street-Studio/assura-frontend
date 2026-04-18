@@ -1,6 +1,6 @@
-import { Component, inject, signal,OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule,ActivatedRoute } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { Location } from '@angular/common';
 import { RequestService, SuggestedAsset } from '../../services/requests.service';
@@ -20,7 +20,7 @@ export class TransferDetailsComponent implements OnInit {
   private location = inject(Location);
   private requestService = inject(RequestService);
   private authService = inject(AuthService);
-  
+
   // Navigation state එකෙන් එන දත්ත ලබා ගැනීම
   request = signal<any>(history.state.data || {/*
     asset: 'Table',
@@ -123,7 +123,7 @@ export class TransferDetailsComponent implements OnInit {
   }
 
 
-   approveRequest() {
+  approveRequest() {
     const id = this.request().id;
     if (!id || this.processing()) {
       return;
@@ -250,11 +250,11 @@ export class TransferDetailsComponent implements OnInit {
     const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'transfer';
     this.router.navigate(['/approvals/requests'], { queryParams: { tab: returnTab } });
   }
-  
-   closePopup() {
+
+  closePopup() {
     this.showPopup.set(false);
     const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'transfer';
-    this.router.navigate(['approvals/requests'] , { queryParams: { tab: returnTab } });
+    this.router.navigate(['approvals/requests'], { queryParams: { tab: returnTab } });
   }
 
   private mapRequestForView(data: any): any {
@@ -263,12 +263,13 @@ export class TransferDetailsComponent implements OnInit {
       name: data.requesterName ?? data.name,
       employee: data.requesterId?.toString() ?? data.employee,
       assetName: data.assetName ?? 'N/A',
-      category: data.department ?? data.category ?? 'N/A',
+      division: data.department ?? data.division ?? 'N/A',
       date: data.createdAt ?? data.date,
       specs: data.description ?? data.specs,
       justification: data.description ?? data.justification,
       reason: data.description ?? data.reason,
-      type: data.type ?? 'Transfer'
+      type: data.type ?? 'Transfer',
+      category: data.type ?? 'Transfer'
     };
   }
 }

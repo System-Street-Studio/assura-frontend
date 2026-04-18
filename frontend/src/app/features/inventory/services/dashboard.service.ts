@@ -34,7 +34,7 @@ const DEFAULT_DASHBOARD: DashboardData = {
   charts: {
     assetsByCategory: { labels: [], data: [], colors: [] },
     assetsByStatus: { labels: [], data: [], colors: [] },
-    assetsByDepartment: { labels: [], data: [], colors: [] },
+    assetsByDivision: { labels: [], data: [], colors: [] },
     checkoutTrend: { labels: [], data: [] },
     anomalies: { ghostAssets: 0, missingAssets: 0, maintenanceDue: 0 },
   },
@@ -54,7 +54,10 @@ export class DashboardService {
         const data = toCamelCaseKeys(raw);
         return {
           kpis: data.kpis ?? DEFAULT_DASHBOARD.kpis,
-          charts: data.charts ?? DEFAULT_DASHBOARD.charts,
+          charts: data.charts ? {
+            ...data.charts,
+            assetsByDivision: data.charts.assetsByDivision || data.charts.assetsByDepartment
+          } : DEFAULT_DASHBOARD.charts,
           recentActivity: data.recentActivity ?? [],
           warrantyAlerts: data.warrantyAlerts ?? [],
         } as DashboardData;

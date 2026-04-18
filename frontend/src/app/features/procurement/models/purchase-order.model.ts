@@ -59,7 +59,7 @@ export interface PurchasingOrderSummaryDto {
     id: number;
     orderNumber: string;
     issuedDate: Date | string;
-    departmentName: string;
+    divisionName: string;
     totalAmount?: number;
     status?: string;
     supplierName?: string;

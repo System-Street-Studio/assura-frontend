@@ -70,7 +70,7 @@
     <div class="toolbar-left">
       <div class="search-box">
         <mat-icon class="search-icon">search</mat-icon>
-        <input class="search-input" type="text" placeholder="Search by name, ID, asset, department…"
+        <input class="search-input" type="text" placeholder="Search by name, ID, asset, division…"
           [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" />
         <button class="search-clear" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
           <mat-icon>close</mat-icon>
@@ -84,9 +84,9 @@
         <option value="">All Priorities</option>
         <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
       </select>
-      <select class="filter-select" [(ngModel)]="filterDepartment" (ngModelChange)="applyFilters()">
-        <option value="">All Departments</option>
-        <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+      <select class="filter-select" [(ngModel)]="filterDivision" (ngModelChange)="applyFilters()">
+        <option value="">All Divisions</option>
+        <option *ngFor="let d of divisions" [value]="d">{{ d }}</option>
       </select>
       <button class="btn-text" *ngIf="hasActiveFilters" (click)="clearFilters()">
         <mat-icon>filter_list_off</mat-icon> Clear
@@ -149,7 +149,7 @@
               </div>
               <div>
                 <div class="cell-name">{{ r.requestedBy }}</div>
-                <div class="cell-sub">{{ r.department }}</div>
+                <div class="cell-sub">{{ r.division }}</div>
               </div>
             </div>
           </td>
@@ -177,14 +177,16 @@
             <div class="cell-sub">{{ formatDate(r.requestDate) }}</div>
           </td>
           <td class="col-actions" (click)="$event.stopPropagation()">
-            <div class="action-btns" *ngIf="canStorekeeperProcess(r) || canStorekeeperConfirm(r) || (!isStorekeeper && r.status === 'Pending')">
+            <div class="action-btns"
+              *ngIf="canStorekeeperProcess(r) || canStorekeeperConfirm(r) || (!isStorekeeper && r.status === 'Pending')">
               <!-- Storekeeper Process Button -->
-              <button *ngIf="isStorekeeper && canStorekeeperProcess(r)" class="action-btn process" title="Process" (click)="openProcess(r)">
+              <button *ngIf="isStorekeeper && canStorekeeperProcess(r)" class="action-btn process" title="Process"
+                (click)="openProcess(r)">
                 <mat-icon>inventory_2</mat-icon>
               </button>
 
-              <button *ngIf="isStorekeeper && canStorekeeperConfirm(r)" class="action-btn confirm" title="Confirm Handover"
-                (click)="confirmTemporaryAssignment(r)">
+              <button *ngIf="isStorekeeper && canStorekeeperConfirm(r)" class="action-btn confirm"
+                title="Confirm Handover" (click)="confirmTemporaryAssignment(r)">
                 <mat-icon>task_alt</mat-icon>
               </button>
 
@@ -252,8 +254,8 @@
       <!-- Summary card -->
       <div class="action-summary" *ngIf="actionRequest">
         <div class="summary-row">
-          <span class="summary-label">Department</span>
-          <span class="summary-value">{{ actionRequest.department }}</span>
+          <span class="summary-label">Division</span>
+          <span class="summary-value">{{ actionRequest.division }}</span>
         </div>
         <div class="summary-row">
           <span class="summary-label">Priority</span>
@@ -329,7 +331,7 @@
             </div>
             <div>
               <div class="drawer-name">{{ detailRequest.requestedBy }}</div>
-              <div class="drawer-sub">{{ detailRequest.department }} · {{ detailRequest.email }}</div>
+              <div class="drawer-sub">{{ detailRequest.division }} · {{ detailRequest.email }}</div>
             </div>
           </div>
         </div>
