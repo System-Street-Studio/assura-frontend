@@ -30,14 +30,14 @@ export class PoCreate {
   model = '';
   warrantyDuration: number | null = null;
   warrantyUnit: 'Years' | 'Months' = 'Years';
-  quantity: number = 0;
-  unitPrice: number = 0;
-  amount: number = 0;
-  discount: number = 0;
-  discountedPrice: number = 0;
-  vat: number = 0;
-  vatAmount: number = 0;
-  totalPrice: number = 0;
+  quantity = 0;
+  unitPrice = 0;
+  amount = 0;
+  discount = 0;
+  discountedPrice = 0;
+  vat = 0;
+  vatAmount = 0;
+  totalPrice = 0;
   specialNote = '';
 
   // Collection of added items

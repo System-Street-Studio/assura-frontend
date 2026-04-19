@@ -13,7 +13,7 @@ export class RequestService {
   selectedRequest: RequestItem | null = null;
 
   // services/request.service.ts
-  getAllRequests(isHead: boolean = false) {
+  getAllRequests(isHead = false) {
     // Query string parameter
     return this.http.get<RequestItem[]>(`${this.baseUrl}/assetrequests?isDivisionHead=${isHead}`);
   }

@@ -24,7 +24,7 @@ export class MyAssetsComponent implements OnInit {
   ];
 
   filteredAssets: Asset[] = [];
-  searchQuery: string = '';
+  searchQuery = '';
   selectedAsset: Asset | null = null;
 
   ngOnInit() {

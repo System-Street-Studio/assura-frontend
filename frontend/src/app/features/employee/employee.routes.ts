@@ -8,6 +8,7 @@ import { DiscardFormComponent } from './pages/discard-form/discard-form';
 import { TransferFormComponent } from './pages/transfer-form/transfer-form';
 import { AllRequestsComponent } from './pages/all-emp-requests/all-emp-requests';
 import { TransferPageComponent } from './pages/transfer-page/transfer-page';
+import { ReqMoreDetail } from './pages/req-more-detail/req-more-detail';
 
 
 export const employeeRoutes: Routes = [
@@ -58,6 +59,10 @@ export const employeeRoutes: Routes = [
         path: 'transfer-page',
         component:TransferPageComponent 
 
+   },
+    {
+        path: 'request-details/:id',
+        component: ReqMoreDetail
    },
     
    
