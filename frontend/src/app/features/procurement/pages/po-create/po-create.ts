@@ -17,75 +17,85 @@ import { CreatePurchasingOrderItemDto } from '../../models/purchase-order.model'
 export class PoCreate {
   private router = inject(Router);
   private procurementService = inject(ProcurementService);
+  private fb = inject(FormBuilder);
 
   itemCount = 1;
   showSuccessPopup = false;
   isSubmitting = false;
 
-  // Remaining properties for manual binding in the "current item" form section
-  itemName = '';
-  model = '';
-  warrantyDuration: number | null = null;
-  warrantyUnit: 'Years' | 'Months' = 'Years';
-  quantity: number = 0;
-  unitPrice: number = 0;
-  amount: number = 0;
-  discount: number = 0;
-  discountedPrice: number = 0;
-  vat: number = 0;
-  vatAmount: number = 0;
-  totalPrice: number = 0;
-  specialNote = '';
-
-  private fb = inject(FormBuilder);
   poForm: FormGroup;
+  itemForm: FormGroup;
+
+  // Display-only variables for the UI totals
+  amount = 0;
+  discountedPrice = 0;
+  vatAmount = 0;
+  totalPrice = 0;
 
   constructor() {
     this.poForm = this.fb.group({
       supplierName: ['', Validators.required],
-      items: this.fb.array([]) // භාණ්ඩ කිහිපයක් සඳහා
+      items: this.fb.array([])
+    });
+
+    this.itemForm = this.initItemForm();
+    this.setupCalculation();
+  }
+
+  private initItemForm(): FormGroup {
+    return this.fb.group({
+      itemName: ['', Validators.required],
+      model: [''],
+      warrantyDuration: [null],
+      warrantyUnit: ['Years'],
+      quantity: [0, [Validators.required, Validators.min(1)]],
+      unitPrice: [0, [Validators.required, Validators.min(0)]],
+      discount: [0, [Validators.min(0), Validators.max(100)]],
+      vat: [0, [Validators.min(0), Validators.max(100)]],
+      specialNote: ['']
     });
   }
 
-  // getters
+  private setupCalculation() {
+    this.itemForm.valueChanges.subscribe(() => {
+      this.calculateTotals();
+    });
+  }
+
+  // Collection of added items for display
+  addedItems: any[] = [];
+
   get items(): FormArray {
     return this.poForm.get('items') as FormArray;
   }
 
-  // භාණ්ඩයක් ඇතුළත් කිරීමට නව FormGroup එකක් සෑදීම
-  createItem(): FormGroup {
-    return this.fb.group({
-      itemName: [this.itemName, Validators.required],
-      model: [this.model],
-      warranty: [this.warrantyDuration ? `${this.warrantyDuration} ${this.warrantyUnit}` : ''],
-      quantity: [this.quantity, [Validators.required, Validators.min(1)]],
-      unitPrice: [this.unitPrice, [Validators.required, Validators.min(0)]],
-      discount: [this.discount],
-      vatPercentage: [this.vat],
-      specialNote: [this.specialNote]
-    });
-  }
-
-  // Collection of added items (Keeping this for direct access if needed by template)
-  addedItems: any[] = [];
-
   calculateTotals() {
-    this.amount = (this.quantity || 0) * (this.unitPrice || 0);
-    const discountVal = (this.amount * (this.discount || 0)) / 100;
+    const { quantity, unitPrice, discount, vat } = this.itemForm.getRawValue();
+
+    this.amount = (quantity || 0) * (unitPrice || 0);
+    const discountVal = (this.amount * (discount || 0)) / 100;
     this.discountedPrice = this.amount - discountVal;
-    this.vatAmount = (this.discountedPrice * (this.vat || 0)) / 100;
+    this.vatAmount = (this.discountedPrice * (vat || 0)) / 100;
     this.totalPrice = this.discountedPrice + this.vatAmount;
   }
 
   onSaveAndNext() {
-    if (!this.itemName || this.quantity <= 0 || this.unitPrice <= 0) {
-      alert('Please fill in all mandatory item fields.');
+    this.itemForm.markAllAsTouched();
+    if (this.itemForm.invalid) {
+      alert('Please fill in all mandatory item fields with valid values.');
       return;
     }
 
-    const newItemForm = this.createItem();
+    const val = this.itemForm.getRawValue();
+    // Format warranty for the final submission if needed, or keep as discrete fields
+    const itemData = {
+      ...val,
+      warranty: val.warrantyDuration ? `${val.warrantyDuration} ${val.warrantyUnit}` : ''
+    };
+
+    const newItemForm = this.fb.group(itemData);
     this.items.push(newItemForm);
-    this.addedItems.push(newItemForm.value);
+    this.addedItems.push(itemData);
 
     this.showSuccessPopup = true;
 
@@ -97,33 +107,38 @@ export class PoCreate {
   }
 
   resetItemForm() {
-    this.itemName = '';
-    this.model = '';
-    this.warrantyDuration = null;
-    this.quantity = 0;
-    this.unitPrice = 0;
+    this.itemForm.reset({
+      itemName: '',
+      model: '',
+      warrantyDuration: null,
+      warrantyUnit: 'Years',
+      quantity: 0,
+      unitPrice: 0,
+      discount: 0,
+      vat: 0,
+      specialNote: ''
+    });
+    // Resetting totals
     this.amount = 0;
-    this.discount = 0;
     this.discountedPrice = 0;
-    this.vat = 0;
     this.vatAmount = 0;
     this.totalPrice = 0;
-    this.specialNote = '';
   }
 
   onSubmitOrder() {
-    if (this.poForm.get('supplierName')?.invalid) {
-      alert('Please enter a Supplier Name.');
+    if (this.poForm.invalid) {
+      this.poForm.markAllAsTouched();
+      alert('Please ensure the Supplier Name is entered.');
       return;
     }
 
     if (this.items.length === 0) {
-      alert('Please add at least one item.');
+      alert('Please add at least one item to the order.');
       return;
     }
 
     this.isSubmitting = true;
-    const request = this.poForm.value;
+    const request = this.poForm.getRawValue();
 
     this.procurementService.createOrder(request).subscribe({
       next: (id) => {

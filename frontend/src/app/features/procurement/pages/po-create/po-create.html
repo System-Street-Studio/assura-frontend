@@ -25,17 +25,21 @@
 
             <h2 class="item-title">Add Item</h2>
 
-            <div class="form-grid">
+            <div class="form-grid" [formGroup]="itemForm">
                 <!-- Row 1 -->
                 <div class="form-group full-width">
                     <label>Item Name:</label>
-                    <input type="text" class="form-control" [(ngModel)]="itemName">
+                    <input type="text" class="form-control" formControlName="itemName" placeholder="Enter item name">
+                    <div *ngIf="itemForm.get('itemName')?.invalid && itemForm.get('itemName')?.touched"
+                        class="error-message">
+                        Item name is required
+                    </div>
                 </div>
 
                 <!-- Row 2 -->
                 <div class="form-group full-width">
                     <label>Model:</label>
-                    <input type="text" class="form-control" [(ngModel)]="model" [ngModelOptions]="{standalone: true}">
+                    <input type="text" class="form-control" formControlName="model" placeholder="Enter model">
                 </div>
 
                 <!-- Row 3: Warranty -->
@@ -43,9 +47,8 @@
                     <label>Warranty:</label>
                     <div class="warranty-controls">
                         <input type="number" class="form-control short-input warranty-input"
-                            [(ngModel)]="warrantyDuration" [ngModelOptions]="{standalone: true}">
-                        <select class="custom-select short-input" [(ngModel)]="warrantyUnit"
-                            [ngModelOptions]="{standalone: true}">
+                            formControlName="warrantyDuration" placeholder="Duration">
+                        <select class="custom-select short-input" formControlName="warrantyUnit">
                             <option value="Years">Years</option>
                             <option value="Months">Months</option>
                         </select>
@@ -55,8 +58,11 @@
                 <!-- Row 4 -->
                 <div class="form-group">
                     <label>Quantity:</label>
-                    <input type="number" class="form-control short-input" [(ngModel)]="quantity"
-                        [ngModelOptions]="{standalone: true}" (ngModelChange)="calculateTotals()">
+                    <input type="number" class="form-control short-input" formControlName="quantity">
+                    <div *ngIf="itemForm.get('quantity')?.invalid && itemForm.get('quantity')?.touched"
+                        class="error-message">
+                        Min quantity is 1
+                    </div>
                 </div>
                 <div class="form-group">
                     <!-- Spacer -->
@@ -65,8 +71,12 @@
                 <!-- Row 5 -->
                 <div class="form-group">
                     <label>Unit Price (LKR):</label>
-                    <input type="number" class="form-control medium-input" [(ngModel)]="unitPrice"
-                        (ngModelChange)="calculateTotals()">
+                    <input type="number" class="form-control medium-input" formControlName="unitPrice"
+                        placeholder="0.00">
+                    <div *ngIf="itemForm.get('unitPrice')?.invalid && itemForm.get('unitPrice')?.touched"
+                        class="error-message">
+                        Invalid price
+                    </div>
                 </div>
                 <div class="form-group">
                     <!-- Spacer -->
@@ -84,8 +94,7 @@
                 <!-- Row 7 -->
                 <div class="form-group">
                     <label>Discount (%):</label>
-                    <input type="number" class="form-control short-input" [(ngModel)]="discount"
-                        (ngModelChange)="calculateTotals()">
+                    <input type="number" class="form-control short-input" formControlName="discount">
                 </div>
                 <div class="form-group right-align">
                     <label>Discounted Price (LKR):</label>
@@ -96,8 +105,7 @@
                 <!-- Row 8 -->
                 <div class="form-group">
                     <label>VAT (%):</label>
-                    <input type="number" class="form-control short-input" [(ngModel)]="vat"
-                        (ngModelChange)="calculateTotals()">
+                    <input type="number" class="form-control short-input" formControlName="vat">
                 </div>
                 <div class="form-group right-align">
                     <label>VAT Amount (LKR):</label>
@@ -113,9 +121,10 @@
             </div>
 
             <!-- Special Note -->
-            <div class="form-group full-width">
+            <div class="form-group full-width" [formGroup]="itemForm">
                 <label>Special Note:</label>
-                <textarea class="form-control note-area" [(ngModel)]="specialNote"></textarea>
+                <textarea class="form-control note-area" formControlName="specialNote"
+                    placeholder="Additional details..."></textarea>
             </div>
 
             <!-- Buttons -->
