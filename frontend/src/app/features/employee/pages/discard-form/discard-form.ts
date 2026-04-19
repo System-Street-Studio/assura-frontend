@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { AssetService as AssetRequestService } from '../../services/asset-request.service';
 import { AssetService } from '../../../inventory/services/asset.service';
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -20,6 +20,7 @@ export class DiscardFormComponent implements OnInit {
   private assetRequestService = inject(AssetRequestService);
   private assetService = inject(AssetService);
   private authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
 
   // Form Signals
   assignedAssets = signal<AssetDetail[]>([]);
@@ -28,7 +29,19 @@ export class DiscardFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.assetService.getAll().subscribe({
-      next: (assets) => this.assignedAssets.set(assets),
+      next: (assets) => {
+        this.assignedAssets.set(assets);
+        
+        // Auto-select asset from route state
+        const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state.assetName;
+        if (passedAssetName) {
+          // Find the matching asset and set it with full format
+          const matchedAsset = assets.find(a => a.productName === passedAssetName);
+          if (matchedAsset) {
+            this.asset.set(matchedAsset.productName + ' (' + matchedAsset.assetCode + ')');
+          }
+        }
+      },
       error: (err) => console.error('Failed to load assigned assets', err)
     });
   }

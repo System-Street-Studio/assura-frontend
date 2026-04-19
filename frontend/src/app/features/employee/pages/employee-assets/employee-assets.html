@@ -213,7 +213,7 @@
 
           <div class="info-row">
             <span class="label">Status :</span>
-            <span class="status-badge">{{ selectedAsset()?.status }}</span>
+            <span class="status-badge" [ngClass]="getStatusBadgeClass(selectedAsset()?.status)">{{ selectedAsset()?.status }}</span>
           </div>
 
           <div class="info-row">
@@ -224,8 +224,8 @@
         </div>
 
         <div class="info-actions">
-          <button class="btn-maint">Request to Maintenance</button>
-          <button class="btn-discard">Request to Discard</button>
+          <button class="btn-maint" (click)="goToMaintenanceForm()">Request to Maintenance</button>
+          <button class="btn-discard" (click)="goToDiscardForm()">Request to Discard</button>
         </div>
 
       </div>

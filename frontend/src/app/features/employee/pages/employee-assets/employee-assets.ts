@@ -2,6 +2,7 @@ import { Component, computed, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink, Router } from '@angular/router';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { AssetService } from '../../../../features/inventory/services/asset.service';
 import { AssetDetail } from '../../../../features/inventory/models/asset.model';
@@ -21,12 +22,13 @@ interface Asset {
 @Component({
   selector: 'app-employee-assets',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent, RouterLink],
   templateUrl: './employee-assets.html',
   styleUrls: ['./employee-assets.css']
 })
 export class EmployeeAssetsComponent implements OnInit {
   private assetService = inject(AssetService);
+  private router = inject(Router);
   
   searchTerm = signal('');
   loading = signal(true);
@@ -166,5 +168,26 @@ export class EmployeeAssetsComponent implements OnInit {
 
   getCategoryLabel(): string {
     return this.selectedCategory() || 'All Categories';
+  }
+
+  getStatusBadgeClass(status: string | undefined): string {
+    if (!status) return '';
+    return status.replace(' ', '-').toLowerCase();
+  }
+
+  goToMaintenanceForm(): void {
+    if (this.selectedAsset()) {
+      this.router.navigate(['/employee/maintenance-form'], {
+        state: { assetName: this.selectedAsset()?.assetName }
+      });
+    }
+  }
+
+  goToDiscardForm(): void {
+    if (this.selectedAsset()) {
+      this.router.navigate(['/employee/discard-form'], {
+        state: { assetName: this.selectedAsset()?.assetName }
+      });
+    }
   }
 }
