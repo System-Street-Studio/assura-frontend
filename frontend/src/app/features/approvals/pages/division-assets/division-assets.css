@@ -69,7 +69,9 @@
   flex-direction: column;
   gap: 6px;
 }
-
+.search-box :hover{
+  border-color: #16a34a;
+}
 .search-box label {
   font-size: 12px;
   font-weight: 600;
@@ -115,13 +117,13 @@
   flex-wrap: wrap;
 }
 
-/* 1. මේකට අනිවාර්යයෙන්ම position: relative දෙන්න */
+/* position: relative  */
 .styled-select {
   position: relative; 
   min-width: 180px;
 }
 
-/* 2. Button එකේ default styles reset කරලා ලස්සන කරන්න */
+/* 2. Button default styles reset */
 .filter-btn {
   display: flex;
   align-items: center;
@@ -143,7 +145,9 @@
   border-color: #16a34a;
   box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
 }
-
+.filter-btn:hover{
+  border-color: #16a34a;
+}
 .filter-icon {
   display: flex;
   align-items: center;
