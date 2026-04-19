@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -17,7 +17,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
   templateUrl: './all-emp-requests.html',
   styleUrl: './all-emp-requests.css'
 })
-export class AllRequestsComponent {
+export class AllRequestsComponent implements OnInit {
   searchQuery = signal('');
 
   onSearchChange(value: string) {
@@ -55,7 +55,7 @@ export class AllRequestsComponent {
     { id: 'REQ005', type: 'New Asset', date: '2025-08-15', priority: 'High', status: 'Pending' },
   ]);*/
 
-  filterStatus = signal<'All' | 'Pending' | 'Approved' | 'Rejected'>('All');
+  filterStatus = signal<'All Types' | 'Pending' | 'Approved' | 'Rejected'>('All Types');
   isMenuOpen = signal(false); // To toggle the dropdown visibility
 
   /** Priority classes: */
@@ -75,7 +75,7 @@ export class AllRequestsComponent {
 
     return this.requests().filter(r => {
       const matchesSearch = r.id.toString().includes(query) || r.requestType.toLowerCase().includes(query);
-      const matchesStatus = status === 'All' || r.status === status;
+      const matchesStatus = status === 'All Types' || r.status === status;
       return matchesSearch && matchesStatus;
     });
   });
