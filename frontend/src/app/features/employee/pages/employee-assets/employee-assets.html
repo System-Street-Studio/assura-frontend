@@ -73,8 +73,8 @@
       </div>
 
       <!-- Status Filter Dropdown -->
-      <div class="filter-container">
-        <button class="filter-btn" (click)="statusMenuOpen.set(!statusMenuOpen())">
+      <div class="filter-container" data-filter="status-filter" (click)="$event.stopPropagation()">
+        <button class="filter-btn" (click)="$event.stopPropagation(); statusMenuOpen.set(!statusMenuOpen())">
           <div class="filter-icon">
             <mat-icon>tune</mat-icon>
             <span>{{ getStatusLabel() }}</span>
@@ -83,7 +83,7 @@
         </button>
 
         @if (statusMenuOpen()) {
-          <div class="filter-options">
+          <div class="filter-options" (click)="$event.stopPropagation()">
             <div class="option" (click)="setStatus('All')" [class.active]="selectedStatus() === ''">
               All Status
             </div>
@@ -104,8 +104,8 @@
       </div>
 
       <!-- Category Filter Dropdown -->
-      <div class="filter-container">
-        <button class="filter-btn" (click)="categoryMenuOpen.set(!categoryMenuOpen())">
+      <div class="filter-container" data-filter="category-filter" (click)="$event.stopPropagation()">
+        <button class="filter-btn" (click)="$event.stopPropagation(); categoryMenuOpen.set(!categoryMenuOpen())">
           <div class="filter-icon">
             <mat-icon>tune</mat-icon>
             <span>{{ getCategoryLabel() }}</span>
@@ -114,7 +114,7 @@
         </button>
 
         @if (categoryMenuOpen()) {
-          <div class="filter-options">
+          <div class="filter-options" (click)="$event.stopPropagation()">
             <div class="option" (click)="setCategory('All Categories')" [class.active]="selectedCategory() === ''">
               All Categories
             </div>
@@ -173,7 +173,9 @@
 
     <!--asset details section-->
     <div class="details-view">
-      <button (click)="backToList()" class="back-link"> back </button>
+      <button (click)="backToList()" class="back-link">
+        <mat-icon>arrow_back</mat-icon> Back to Assets
+      </button>
 
       <div class="info-card">
         <div class="title">
@@ -208,7 +210,7 @@
 
           <div class="info-row">
             <span class="label">Assigned Date :</span>
-            <span class="val">{{ selectedAsset()?.assignedDate }}</span>
+            <span class="val">{{ selectedAsset()?.assignedDate | date:'yyyy-MM-dd' }}</span>
           </div>
 
           <div class="info-row">

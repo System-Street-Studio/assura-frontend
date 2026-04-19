@@ -1,4 +1,4 @@
-import { Component, computed, signal, OnInit, inject } from '@angular/core';
+import { Component, computed, signal, OnInit, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,6 +29,27 @@ interface Asset {
 export class EmployeeAssetsComponent implements OnInit {
   private assetService = inject(AssetService);
   private router = inject(Router);
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    
+    // Check if click is inside status filter container
+    const inStatusFilter = target.closest('[data-filter="status-filter"]') !== null;
+    
+    // Check if click is inside category filter container
+    const inCategoryFilter = target.closest('[data-filter="category-filter"]') !== null;
+    
+    // Close status menu if clicking outside
+    if (this.statusMenuOpen() && !inStatusFilter) {
+      this.statusMenuOpen.set(false);
+    }
+    
+    // Close category menu if clicking outside
+    if (this.categoryMenuOpen() && !inCategoryFilter) {
+      this.categoryMenuOpen.set(false);
+    }
+  }
   
   searchTerm = signal('');
   loading = signal(true);
