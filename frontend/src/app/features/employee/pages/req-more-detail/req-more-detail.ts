@@ -52,4 +52,21 @@ export class ReqMoreDetail implements OnInit {
     const match = reason.match(/\(Transfer periods:.*\)/);
     return match ? match[0].replace(/[()]/g, '').replace('Transfer periods:', '').trim() : 'Not specified';
   }
+
+  extractIssueType(reason: string): string {
+    // Extract issue type from reason (format: "Issue: <type>")
+    const match = reason.match(/Issue:\s*(.+)$/);
+    return match ? match[1].trim() : reason;
+  }
+
+  extractAssetId(assetName: string): string {
+    // Extract asset ID from format "ProductName (AssetCode)"
+    const match = assetName.match(/\(([^)]+)\)/);
+    return match ? match[1].trim() : '';
+  }
+
+  extractAssetName(assetName: string): string {
+    // Extract asset name without brackets from format "ProductName (AssetCode)"
+    return assetName.replace(/\s*\([^)]*\)$/, '').trim();
+  }
 }

@@ -12,7 +12,7 @@ import { PurchasingOrderSummaryDto, AssetRequestDto } from '../../models/purchas
 @Component({
     selector: 'app-purchase-orders',
     standalone: true,
-    imports: [CommonModule, MatIconModule, FormsModule, FilterDropdownComponent, PaginationComponent],
+    imports: [CommonModule, MatIconModule, FormsModule, PaginationComponent],
     templateUrl: './purchase-orders.component.html',
     styleUrls: ['./purchase-orders.component.css']
 })

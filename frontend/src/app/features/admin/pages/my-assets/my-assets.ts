@@ -2,15 +2,13 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DataTableComponent, ColumnDef } from '../../../../shared/components/data-table/data-table';
-import { ActionButtonComponent } from '../../../../shared/components/action-button/action-button';
 
 @Component({
     selector: 'app-my-assets',
     standalone: true,
     imports: [
         CommonModule,
-        DataTableComponent,
-        ActionButtonComponent
+        DataTableComponent
     ],
     templateUrl: './my-assets.html',
     styleUrls: ['./my-assets.css']

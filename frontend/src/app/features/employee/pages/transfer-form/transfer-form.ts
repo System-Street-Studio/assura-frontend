@@ -44,6 +44,8 @@ export class TransferFormComponent implements OnInit {
   reason = signal('');
   fromDate = signal<Date | null>(null);
   toDate = signal<Date | null>(null);
+  selectedFiles = signal<File[]>([]);
+  isSubmitting = signal(false);
 
   ngOnInit(): void {
     this.categoryService.getAll().subscribe({
@@ -53,6 +55,7 @@ export class TransferFormComponent implements OnInit {
   }
 
   onSubmit() {
+    this.isSubmitting.set(true);
     const requestData = {
       employeeId: this.authService.getUserId() || '',
       submittedBy: this.authService.getUserName() || 'Employee',
@@ -68,17 +71,43 @@ export class TransferFormComponent implements OnInit {
 
     this.assetRequestService.createRequest(requestData).subscribe({
       next: () => {
+        this.isSubmitting.set(false);
         alert('Transfer Request Submitted Successfully!');
         this.location.back();
       },
       error: (err) => {
+        this.isSubmitting.set(false);
         console.error('Submission failed', err);
-        alert('Failed to submit request.');
+        alert('Failed to submit request. Please try again.');
       }
     });
   }
 
   onCancel() {
     this.location.back();
+  }
+
+  onFileSelected(event: any): void {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files) as File[];
+      this.selectedFiles.update(prev => [...prev, ...newFiles]);
+    }
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.update(files => {
+      const updated = [...files];
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
+
+  browseFiles(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.addEventListener('change', (e) => this.onFileSelected(e));
+    input.click();
   }
 }

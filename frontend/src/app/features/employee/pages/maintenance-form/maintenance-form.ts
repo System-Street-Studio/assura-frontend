@@ -11,7 +11,7 @@ import { AssetDetail } from '../../../inventory/models/asset.model';
 @Component({
   selector: 'app-maintenance-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './maintenance-form.html',
   styleUrls: ['./maintenance-form.css']
 })
@@ -27,7 +27,9 @@ export class MaintenanceFormComponent implements OnInit {
   asset = signal('');
   issueType = signal('Damaged');
   description = signal('');
-  needsTempAsset = signal(false);
+  priority = signal('Normal');
+  selectedFiles = signal<File[]>([]);
+  isSubmitting = signal(false);
 
   ngOnInit(): void {
     this.assetService.getAll().subscribe({
@@ -50,27 +52,30 @@ export class MaintenanceFormComponent implements OnInit {
 
   // Submit logic
   onSubmit() {
+    this.isSubmitting.set(true);
     const requestData = {
       employeeId: this.authService.getUserId() || '',
       submittedBy: this.authService.getUserName() || 'Employee',
       assetCategory: 'N/A',
       assetName: this.asset(),
       description: this.description(),
-      reason: `Issue: ${this.issueType()}. Needs Temp: ${this.needsTempAsset()}`,
+      reason: `Issue: ${this.issueType()}`,
       quantity: 1,
-      priority: 'Normal',
+      priority: this.priority(),
       requestType: 'Maintenance',
       submittedDate: new Date()
     };
 
     this.assetRequestService.createRequest(requestData).subscribe({
       next: () => {
+        this.isSubmitting.set(false);
         alert('Maintenance Request Submitted Successfully!');
         this.location.back();
       },
       error: (err) => {
-        console.error('Submission failed', err);
-        alert('Failed to submit request.');
+        this.isSubmitting.set(false);
+        console.error('Save failed', err);
+        alert('Error submitting request. Please try again.');
       }
     });
   }
@@ -78,5 +83,29 @@ export class MaintenanceFormComponent implements OnInit {
   // Cancel button logic 
   onCancel() {
     this.location.back();
+  }
+
+  onFileSelected(event: any): void {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files) as File[];
+      this.selectedFiles.update(prev => [...prev, ...newFiles]);
+    }
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.update(files => {
+      const updated = [...files];
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
+
+  browseFiles(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.addEventListener('change', (e) => this.onFileSelected(e));
+    input.click();
   }
 }

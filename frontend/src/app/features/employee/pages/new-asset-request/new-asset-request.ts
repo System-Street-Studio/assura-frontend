@@ -22,6 +22,9 @@ export class NewAssetRequestComponent implements OnInit {
   private location = inject(Location);
 
   categories = signal<Category[]>([]);
+  selectedFiles = signal<File[]>([]);
+  isSubmitting = signal(false);
+  fileInput: HTMLInputElement | null = null;
 
   requestData = {
     id: 0,
@@ -48,17 +51,48 @@ export class NewAssetRequestComponent implements OnInit {
   }
 
   onSubmit() {
+    this.isSubmitting.set(true);
     this.assetService.createRequest(this.requestData).subscribe({
       next: (res: any) => {
-        console.log('Backend Response:', res);
+        this.isSubmitting.set(false);
         alert(res.message || 'Request submitted successfully!');
         this.location.back();
       },
-      error: (err: any) => console.error('Save failed', err)
+      error: (err: any) => {
+        this.isSubmitting.set(false);
+        console.error('Save failed', err);
+        alert('Error submitting request. Please try again.');
+      }
     });
   }
 
   onCancel() {
     this.location.back();
+  }
+
+  onFileSelected(event: any): void {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files) as File[];
+      this.selectedFiles.update(prev => [...prev, ...newFiles]);
+      // Reset input
+      if (this.fileInput) this.fileInput.value = '';
+    }
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.update(files => {
+      const updated = [...files];
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
+
+  browseFiles(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.addEventListener('change', (e) => this.onFileSelected(e));
+    input.click();
   }
 }

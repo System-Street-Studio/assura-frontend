@@ -36,12 +36,14 @@
               <label>Submitted Date:</label>
               <span>{{ request()!.submittedDate | date:'yyyy-MM-dd HH:mm' }}</span>
             </div>
-            <div class="detail-row">
-              <label>Priority Level:</label>
-              <span [class]="'priority-badge ' + getPriorityClass(request()!.priority)">
-                {{ request()!.priority }}
-              </span>
-            </div>
+            @if (request()!.requestType !== 'Discard') {
+              <div class="detail-row">
+                <label>Priority Level:</label>
+                <span [class]="'priority-badge ' + getPriorityClass(request()!.priority)">
+                  {{ request()!.priority }}
+                </span>
+              </div>
+            }
           </div>
         </div>
 
@@ -50,19 +52,32 @@
           <div class="card">
             <h3 class="section-title">Asset Information</h3>
             <div class="detail-row">
-              <label>Required Asset:</label>
-              <span>{{ request()!.assetName }}</span>
+              @if (request()!.requestType === 'Maintenance' || request()!.requestType === 'Discard') {
+                <label>Asset Name:</label>
+                <span>{{ extractAssetName(request()!.assetName) }}</span>
+              } @else {
+                <label>Required Asset:</label>
+                <span>{{ request()!.assetName }}</span>
+              }
             </div>
+            @if (request()!.requestType === 'Maintenance' || request()!.requestType === 'Discard') {
+              <div class="detail-row">
+                <label>Asset ID:</label>
+                <span>{{ extractAssetId(request()!.assetName) }}</span>
+              </div>
+            }
             @if (request()!.assetCategory && request()!.assetCategory !== 'N/A') {
               <div class="detail-row">
                 <label>Asset Category:</label>
                 <span>{{ request()!.assetCategory }}</span>
               </div>
             }
-            <div class="detail-row">
-              <label>Quantity:</label>
-              <span>{{ request()!.quantity }}</span>
-            </div>
+            @if (request()!.requestType !== 'Maintenance' && request()!.requestType !== 'Discard') {
+              <div class="detail-row">
+                <label>Quantity:</label>
+                <span>{{ request()!.quantity }}</span>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -77,6 +92,12 @@
               <label>Reason for Request:</label>
               <span class="text-block">{{ request()!.reason }}</span>
             </div>
+            @if (request()!.description) {
+              <div class="detail-row">
+                <label>Specifications:</label>
+                <span class="text-block">{{ request()!.description }}</span>
+              </div>
+            }
           </div>
         </ng-container>
 
@@ -85,12 +106,12 @@
           <div class="card full-width">
             <h3 class="section-title">Maintenance Details</h3>
             <div class="detail-row">
-              <label>Issue Description:</label>
-              <span class="text-block">{{ request()!.reason }}</span>
+              <label>Issue Type:</label>
+              <span class="text-block">{{ extractIssueType(request()!.reason) }}</span>
             </div>
             @if (request()!.description) {
               <div class="detail-row">
-                <label>Additional Notes:</label>
+                <label>Details:</label>
                 <span class="text-block">{{ request()!.description }}</span>
               </div>
             }

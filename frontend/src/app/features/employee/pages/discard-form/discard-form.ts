@@ -11,7 +11,7 @@ import { AssetDetail } from '../../../inventory/models/asset.model';
 @Component({
   selector: 'app-discard-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './discard-form.html',
   styleUrl: './discard-form.css',
 })
@@ -26,6 +26,8 @@ export class DiscardFormComponent implements OnInit {
   assignedAssets = signal<AssetDetail[]>([]);
   asset = signal('');
   reason = signal('');
+  selectedFiles = signal<File[]>([]);
+  isSubmitting = signal(false);
 
   ngOnInit(): void {
     this.assetService.getAll().subscribe({
@@ -48,6 +50,7 @@ export class DiscardFormComponent implements OnInit {
 
   // Submit logic
   onSubmit() {
+    this.isSubmitting.set(true);
     const requestData = {
       employeeId: this.authService.getUserId() || '',
       submittedBy: this.authService.getUserName() || 'Employee',
@@ -63,12 +66,14 @@ export class DiscardFormComponent implements OnInit {
 
     this.assetRequestService.createRequest(requestData).subscribe({
       next: () => {
+        this.isSubmitting.set(false);
         alert('Discard Request Submitted Successfully!');
         this.location.back();
       },
       error: (err) => {
-        console.error('Submission failed', err);
-        alert('Failed to submit request.');
+        this.isSubmitting.set(false);
+        console.error('Save failed', err);
+        alert('Error submitting request. Please try again.');
       }
     });
   }
@@ -76,5 +81,29 @@ export class DiscardFormComponent implements OnInit {
   // Cancel button logic 
   onCancel() {
     this.location.back();
+  }
+
+  onFileSelected(event: any): void {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files) as File[];
+      this.selectedFiles.update(prev => [...prev, ...newFiles]);
+    }
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.update(files => {
+      const updated = [...files];
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
+
+  browseFiles(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.addEventListener('change', (e) => this.onFileSelected(e));
+    input.click();
   }
 }

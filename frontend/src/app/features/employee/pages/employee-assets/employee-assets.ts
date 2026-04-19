@@ -22,7 +22,7 @@ interface Asset {
 @Component({
   selector: 'app-employee-assets',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent, RouterLink],
+  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent],
   templateUrl: './employee-assets.html',
   styleUrls: ['./employee-assets.css']
 })
