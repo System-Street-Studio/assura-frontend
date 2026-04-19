@@ -73,6 +73,7 @@ export class SidebarComponent {
     { label: 'My Assets', icon: 'inventory_2', link: '/employee/employee-assets', roles: ['ANY'], section: 'employee', isGlobal: true },
     { label: 'Asset Request', icon: 'add_circle', link: '/employee/requests-main', roles: ['ANY'], section: 'employee', isGlobal: true },
     { label: 'Activity', icon: 'history', link: '/employee/all-emp-requests', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'Transfer', icon: 'swap_horiz', link: '/employee/transfer-page', roles: ['ANY'], section: 'employee', isGlobal: true }  ,
   ];
 
   get filteredMenuItems(): MenuItem[] {

@@ -8,7 +8,7 @@ describe('NavbarComponent', () => {
   let fixture: ComponentFixture<NavbarComponent>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
 
-  async function setup(roles: string[], url: string = '/') {
+  async function setup(roles: string[], url = '/') {
     mockAuthService = jasmine.createSpyObj('AuthService', ['getRole', 'getRoles']);
     mockAuthService.getRoles.and.returnValue(roles);
     mockAuthService.getRole.and.returnValue(roles.length > 0 ? roles[0] : null);

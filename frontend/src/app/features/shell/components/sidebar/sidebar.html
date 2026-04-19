@@ -1,8 +1,10 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-header">
     <div class="brand">
-      <img *ngIf="!isCollapsed" src="assets/images/LOGO2.png" alt="Assura Logo" class="sidebar-logo" />
-      <span *ngIf="!isCollapsed" class="sidebar-title">Assura</span>
+      @if (!isCollapsed) {
+      <img src="assets/images/LOGO2.png" alt="Assura Logo" class="sidebar-logo" />
+      <span class="sidebar-title">Assura</span>
+      }
     </div>
     <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"

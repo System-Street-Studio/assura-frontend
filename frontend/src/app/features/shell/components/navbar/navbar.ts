@@ -34,7 +34,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   get roleName(): string {
     const currentUrl = this.router.url;
-    const sections: { [key: string]: string } = {
+    const sections: Record<string, string> = {
       'admin': 'Admin',
       'procurement': 'Procurement',
       'inventory': 'Inventory',
