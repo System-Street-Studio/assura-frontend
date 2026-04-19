@@ -223,7 +223,7 @@
 
         </div>
 
-        <div class="info-actions">
+        <div class="info-actions" *ngIf="selectedAsset()?.status !== 'Discarded'">
           <button class="btn-maint" (click)="goToMaintenanceForm()">Request to Maintenance</button>
           <button class="btn-discard" (click)="goToDiscardForm()">Request to Discard</button>
         </div>
