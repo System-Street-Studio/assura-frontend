@@ -9,22 +9,22 @@
     
       <div class="hub-card border-blue">
         <p>All Requests<mat-icon class="assignment">assignment</mat-icon> </p>
-        <div class="hub-value">112</div>
+        <div class="hub-value">{{ totalRequests() }}</div>
       </div>
 
       <div class="hub-card border-orange">
         <p>Pending Requests <mat-icon class="schedule">schedule</mat-icon></p>
-        <div class="hub-value">{{ recentRequests().length }}</div>
+        <div class="hub-value">{{ pendingCount() }}</div>
       </div>
 
       <div class="hub-card border-green">
         <p>Approved Requests <mat-icon class="check-circle">check_circle</mat-icon></p>
-        <div class="hub-value">88</div>
+        <div class="hub-value">{{ approvedCount() }}</div>
       </div>
 
       <div class="hub-card border-red">
         <p>Rejected Request <mat-icon class="cancel">cancel</mat-icon></p>
-        <div class="hub-value">11</div>
+        <div class="hub-value">{{ rejectedCount() }}</div>
       </div>
     </div>
 

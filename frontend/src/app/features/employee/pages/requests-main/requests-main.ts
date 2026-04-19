@@ -49,6 +49,21 @@ export class RequestsMainComponent implements OnInit {
     }
     return pages;
   });
+
+  // Computed signals for status counts
+  totalRequests = computed(() => this.recentRequests().length);
+  
+  pendingCount = computed(() => 
+    this.recentRequests().filter(r => r.status === 'Pending').length
+  );
+  
+  approvedCount = computed(() => 
+    this.recentRequests().filter(r => r.status === 'Approved').length
+  );
+  
+  rejectedCount = computed(() => 
+    this.recentRequests().filter(r => r.status === 'Rejected').length
+  );
   
   constructor(private assetService: AssetService, private cdr: ChangeDetectorRef, private router: Router) {}
 
