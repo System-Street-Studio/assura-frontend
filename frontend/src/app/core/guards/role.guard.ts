@@ -1,15 +1,22 @@
-import { CanActivateFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
-// TODO: Implement role-based access control
-// - Check user's role against allowed roles for the route
-// - Redirect to unauthorized page or dashboard if role doesn't match
+export const roleGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-export const roleGuard: CanActivateFn = () => {
-  // const router = inject(Router);
+  const allowedRoles = route.data?.['roles'] as string[];
 
-  // TODO: Get user role from AuthService (decode JWT)
-  // const allowedRoles = route.data?.['roles'] as string[];
+  if (!allowedRoles || allowedRoles.length === 0) {
+    return true;
+  }
 
-  // Placeholder: allow all for now
-  return true;
+  if (authService.hasRole(allowedRoles)) {
+    return true;
+  }
+
+  // If not authorized, redirect to overview or login
+  router.navigate(['/overview']);
+  return false;
 };

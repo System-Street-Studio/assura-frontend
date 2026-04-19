@@ -1,0 +1,21 @@
+.my-assets-container {
+    padding: 32px;
+}
+
+.header-section {
+    margin-bottom: 32px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+    font-family: 'Jost', sans-serif;
+}
+
+.table-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}

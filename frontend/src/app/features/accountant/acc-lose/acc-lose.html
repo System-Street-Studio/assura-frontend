@@ -1,0 +1,83 @@
+<div class="acc-lose-container">
+    <h1 class="page-title">Lose</h1>
+
+    <div class="lose-layout">
+        <div class="table-wrapper">
+            <table class="lose-table">
+                <thead>
+                    <tr>
+                        <th>Asset Name</th>
+                        <th>Division</th>
+                        <th>Date Reported</th>
+                        <th>Reported By</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of loseItems" (click)="selectItem(item)"
+                        [class.active-row]="selectedItem === item">
+                        <td>{{ item.assetName }}</td>
+                        <td>{{ item.division }}</td>
+                        <td>{{ item.date }}</td>
+                        <td>{{ item.reportedBy }}</td>
+                        <td>
+                            <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{ item.status }}</span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="loseItems.length === 0">
+                        <td colspan="5" class="empty-row">No lost items reported.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Detail Panel -->
+        <div class="detail-panel" *ngIf="selectedItem">
+            <div class="detail-panel-card">
+                <div class="detail-panel-header">
+                    <h3 class="detail-panel-name">{{ selectedItem.assetName }}</h3>
+                    <button class="btn-close-detail" (click)="closeDetail()">✕</button>
+                </div>
+                <span class="status-badge detail-badge" [ngClass]="getStatusClass(selectedItem.status)">{{
+                    selectedItem.status }}</span>
+                <hr class="detail-panel-divider" />
+
+                <div class="detail-panel-grid">
+                    <div class="detail-panel-item">
+                        <label>Division</label>
+                        <span>{{ selectedItem.division }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Date Reported</label>
+                        <span>{{ selectedItem.date }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Asset Type</label>
+                        <span>{{ selectedItem.assetType }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Time</label>
+                        <span>{{ selectedItem.time }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Reported By</label>
+                        <span>{{ selectedItem.reportedBy }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Value at Purchasing</label>
+                        <span>{{ selectedItem.valueAtPurchasing }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Current Value</label>
+                        <span>{{ selectedItem.currentValue }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-panel-note">
+                    <label>Description</label>
+                    <div class="detail-panel-note-box">{{ selectedItem.description }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

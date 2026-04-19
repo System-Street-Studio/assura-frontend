@@ -1,0 +1,136 @@
+<div class="page-container" [class.blurred]="showSuccess">
+    <h1 class="page-title">Inform New Arrivals</h1>
+
+    <div class="form-card">
+        <h2 class="form-title">Inform New Assets has arrived</h2>
+
+        <form class="arrival-form" [formGroup]="arrivalForm" (ngSubmit)="onSubmit()">
+            <!-- Item Name -->
+            <div class="form-group full-width">
+                <label for="itemName">Item Name:</label>
+                <input type="text" id="itemName" formControlName="itemName" placeholder="">
+                <div *ngIf="f['itemName'].invalid && f['itemName'].touched" class="error-message">
+                    Item Name is required
+                </div>
+            </div>
+
+            <!-- Model -->
+            <div class="form-group full-width">
+                <label for="model">Model:</label>
+                <input type="text" id="model" formControlName="model">
+            </div>
+
+            <!-- Warranty -->
+            <div class="form-group inline-group">
+                <label for="warranty">Warranty:</label>
+                <div class="warranty-input-group">
+                    <input type="number" id="warranty" formControlName="warranty">
+                    <div class="checkbox-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" formControlName="isYears">
+                            <span class="checkmark"></span>
+                            Years
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" formControlName="isMonths">
+                            <span class="checkmark"></span>
+                            Months
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="form-group small-width">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" formControlName="quantity">
+                <div *ngIf="f['quantity'].invalid && f['quantity'].touched" class="error-message">
+                    Quantity must be at least 1
+                </div>
+            </div>
+
+            <!-- Purchased Date & Division -->
+            <div class="row">
+                <div class="form-group half-width">
+                    <label for="purchasedDate">Purchased Date</label>
+                    <div class="date-input-wrapper">
+                        <input type="date" id="purchasedDate" formControlName="purchasedDate">
+                    </div>
+                    <div *ngIf="f['purchasedDate'].invalid && f['purchasedDate'].touched" class="error-message">
+                        Purchased Date is required
+                    </div>
+                </div>
+                <div class="form-group half-width">
+                    <label for="divisionId">Division</label>
+                    <select id="divisionId" formControlName="divisionId" class="custom-select">
+                        <option [ngValue]="null">Select Division</option>
+                        <option *ngFor="let division of divisions" [value]="division.id">{{ division.name }}</option>
+                    </select>
+                    <div *ngIf="f['divisionId'].invalid && f['divisionId'].touched" class="error-message">
+                        Please select a division
+                    </div>
+                </div>
+            </div>
+
+            <!-- Purchased Price -->
+            <div class="form-group half-width">
+                <label for="purchasedPrice">Purchased Price (LKR)</label>
+                <input type="number" id="purchasedPrice" formControlName="purchasedPrice">
+                <div *ngIf="f['purchasedPrice'].invalid && f['purchasedPrice'].touched" class="error-message">
+                    Valid purchased price is required
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="button" class="btn btn-cancel" (click)="onCancel()"
+                    [disabled]="isSubmitting">Cancel</button>
+                <button type="submit" class="btn btn-inform" [disabled]="!arrivalForm.valid || isSubmitting">{{
+                    isSubmitting ? 'Informing...' : 'Inform' }}</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- History Section -->
+    <section class="history-section">
+        <h2 class="section-title">Recent New Arrivals</h2>
+
+        <div class="table-card">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Item Name</th>
+                        <th>Model</th>
+                        <th>Qty</th>
+                        <th>Division</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of history">
+                        <td class="date-col">{{ item.purchasedDate | date:'mediumDate' }}</td>
+                        <td class="item-name-col">{{ item.itemName }}</td>
+                        <td class="model-col">{{ item.model || '-' }}</td>
+                        <td class="qty-col">{{ item.quantity }}</td>
+                        <td class="division-col">{{ item.divisionName }}</td>
+                        <td class="status-col">
+                            <span class="status-badge" [class.pending]="item.status === 'Pending'">
+                                {{ item.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="history.length === 0">
+                        <td colspan="6" class="empty-state">No data available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" *ngIf="showSuccess">
+        <app-status-card label="Informed Stores Successfully" icon="check_box" color="#00AFB5">
+        </app-status-card>
+    </div>
+</div>

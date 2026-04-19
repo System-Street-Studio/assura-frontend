@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar';
 import { SidebarComponent } from './components/sidebar/sidebar';
+import { ToastComponent } from '../../shared/components/toast/toast';
 
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, SidebarComponent],
+  imports: [RouterOutlet, NavbarComponent, SidebarComponent, ToastComponent],
   template: `
     <div class="shell-layout">
       <app-sidebar></app-sidebar>
@@ -17,6 +18,7 @@ import { SidebarComponent } from './components/sidebar/sidebar';
         </main>
       </div>
     </div>
+    <app-toast></app-toast>
   `,
   styleUrls: ['./shell.css'],
 })

@@ -1,0 +1,46 @@
+<div class="suppliers-container">
+
+    <div class="page-header">
+        <h1 class="page-title">Suppliers</h1>
+        <div class="header-actions">
+            <div class="search-bar">
+                <mat-icon class="search-icon">search</mat-icon>
+                <input type="text" placeholder="Search Assets..." class="search-input" [(ngModel)]="searchQuery"
+                    (ngModelChange)="onSearch()" />
+            </div>
+            <button class="add-new-btn" (click)="onAddNew()">Add New</button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="suppliers-table">
+            <thead>
+                <tr>
+                    <th>Supplier ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Contact No</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let supplier of pagedSuppliers" class="supplier-row">
+                    <td (click)="navigateToDetails(supplier.id)" class="link-id">{{ supplier.id }}</td>
+                    <td>{{ supplier.name }}</td>
+                    <td>{{ supplier.email }}</td>
+                    <td>{{ supplier.phone || supplier.contactNumber }}</td>
+                </tr>
+                <tr *ngIf="!isLoading && pagedSuppliers.length === 0">
+                    <td colspan="4" class="no-results">No suppliers found.</td>
+                </tr>
+                <tr *ngIf="isLoading">
+                    <td colspan="4" class="no-results">Loading suppliers...</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pageNumbers"
+            (pageChange)="goToPage($event)">
+        </app-pagination>
+    </div>
+
+</div>

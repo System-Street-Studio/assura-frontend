@@ -1,0 +1,99 @@
+<div class="maintenance-container">
+    <!-- History of Maintenance Section -->
+    <section class="history-section">
+        <h1 class="section-title">History of Maintenance</h1>
+        <div class="history-controls">
+            <app-search-bar (queryChange)="onSearch($event)" placeholder="Search Assets..."></app-search-bar>
+            <button class="manage-firms-btn" (click)="navigateToFirms()">
+                <span class="material-icons">business</span> Manage Repairing Firms
+            </button>
+        </div>
+
+        <div class="table-card">
+            <table class="maintenance-history-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Asset</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let record of pagedHistory">
+                        <td class="clickable-id" (click)="navigateToNote(record.id)">{{ record.maintenanceNumber }}</td>
+                        <td>{{ record.assetName }}</td>
+                    </tr>
+                    <tr *ngIf="pagedHistory.length === 0">
+                        <td colspan="2" class="empty-state">No data available</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <app-pagination [currentPage]="historyCurrentPage" [totalPages]="historyTotalPages"
+                [pageNumbers]="historyPageNumbers" (pageChange)="goToHistoryPage($event)">
+            </app-pagination>
+        </div>
+    </section>
+
+    <!-- Maintenance Requests Section -->
+    <section class="requests-section">
+        <h1 class="section-title">Maintenance Requests</h1>
+
+        <div class="requests-layout">
+            <!-- Requests List (Left) -->
+            <div class="requests-list">
+                <div *ngFor="let request of pagedRequests" class="request-card"
+                    [class.active]="selectedRequest?.id === request.id" (click)="selectRequest(request)">
+                    <div class="req-name">{{ request.assetName }}</div>
+                    <div class="req-dept">{{ request.division }}</div>
+                    <div class="req-time">{{ request.timestamp }}</div>
+                </div>
+
+                <!-- Pagination Component -->
+                <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
+                    [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
+                </app-pagination>
+            </div>
+
+            <!-- Request Details (Right) -->
+            <div class="request-details-panel">
+                <div class="panel-header">
+                    <h2>Request</h2>
+                </div>
+
+                <div class="panel-content" *ngIf="selectedRequest">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>Asset</label>
+                            <div class="value">{{ selectedRequest.assetName }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Specifications</label>
+                            <div class="spec-box">
+                                <div *ngFor="let spec of selectedRequest.specifications">
+                                    {{ spec }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Division</label>
+                            <div class="value">{{ selectedRequest.division }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Date</label>
+                            <div class="value">{{ selectedRequest.date }}</div>
+                        </div>
+                    </div>
+
+                    <div class="special-note">
+                        <label>Special Note</label>
+                        <textarea readonly>{{ selectedRequest.specialNote }}</textarea>
+                    </div>
+
+                    <div class="action-footer">
+                        <button class="create-note-btn" (click)="navigateToCreate()">Create a Note</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

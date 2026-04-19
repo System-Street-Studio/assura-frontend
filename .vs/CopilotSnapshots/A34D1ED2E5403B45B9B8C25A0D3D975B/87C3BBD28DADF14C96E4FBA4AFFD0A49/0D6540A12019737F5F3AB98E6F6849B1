@@ -1,0 +1,48 @@
+﻿import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { Kpi, ChartDatasets } from '../models/dashboard.model';
+
+@Injectable({ providedIn: 'root' })
+export class DashboardService {
+  private kpis: Kpi = {
+    totalAssets: 4500,
+    ghostAssets: 12,
+    missingAssets: 8,
+    totalAssetValue: '$5.3M',
+  };
+
+  private charts: ChartDatasets = {
+    assetsByCategory: {
+      labels: ['Electronics', 'Furniture', 'Office Supplies', 'Machinery', 'Vehicles'],
+      data: [2600, 400, 200, 300, 100],
+      colors: ['#0b4f6c', '#ff8c42', '#3ecf8e', '#d64545', '#7e7f86'],
+    },
+    assetsByStatus: {
+      labels: ['In Use', 'Available', 'Maintenance', 'Retired'],
+      data: [2600, 1200, 60, 40],
+      colors: ['#0b4f6c', '#19a974', '#f39c12', '#d64545'],
+    },
+    assetsByDepartment: {
+      labels: ['R&D', 'HR', 'Marketing', 'Sales', 'IT'],
+      data: [1100, 350, 600, 750, 900],
+      colors: ['#0b4f6c', '#ff8c42', '#3ecf8e', '#d64545', '#7e7f86'],
+    },
+    assetValueByCategory: {
+      labels: ['Electronics', 'Furniture', 'Office Supplies', 'Machinery', 'Vehicles'],
+      data: [3600000, 250000, 90000, 700000, 180000],
+      colors: ['#0b4f6c', '#ff8c42', '#3ecf8e', '#d64545', '#7e7f86'],
+    },
+    anomalies: {
+      ghostAssets: 12,
+      missingAssets: 8,
+    },
+  };
+
+  getKpis(): Observable<Kpi> {
+    return of(this.kpis);
+  }
+
+  getCharts(): Observable<ChartDatasets> {
+    return of(this.charts);
+  }
+}
