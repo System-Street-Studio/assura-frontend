@@ -186,3 +186,14 @@ mat-icon.cancel { font-size: 20px;color: #ef4444;}
   margin-top: 5px;
   
 }
+
+/* --- Pagination Container --- */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+  padding: 20px 0;
+  background-color: white;
+  border-radius: 12px;
+}
