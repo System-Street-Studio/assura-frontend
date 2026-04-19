@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AssetService } from '../../services/asset-request.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,6 +19,7 @@ import { Category } from '../../../inventory/models/category.model';
 export class NewAssetRequestComponent implements OnInit {
   private authService = inject(AuthService);
   private categoryService = inject(CategoryService);
+  private location = inject(Location);
 
   categories = signal<Category[]>([]);
 
@@ -51,9 +52,13 @@ export class NewAssetRequestComponent implements OnInit {
       next: (res: any) => {
         console.log('Backend Response:', res);
         alert(res.message || 'Request submitted successfully!');
-        this.router.navigate(['/employee/requests-main']);
+        this.location.back();
       },
       error: (err: any) => console.error('Save failed', err)
     });
+  }
+
+  onCancel() {
+    this.location.back();
   }
 }
