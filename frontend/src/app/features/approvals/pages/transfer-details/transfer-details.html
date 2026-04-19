@@ -25,13 +25,15 @@
           <p class="bold-text">{{ request().category }}</p>
         </div>
 
-         <div class="info-group">
-          <label>Time line</label>
-          <div class="bold-text">
-            <span>From :</span> <p class="bold-text">{{ request().timelineFrom }}</p>
+        <div class="info-group">
+          <label>Transfer Period</label>
+          <div class="timeline-row">
+            <span class="timeline-label">From:</span>
+            <p class="bold-text">{{ getTransferDates().from || (request().date | date:'yyyy-MM-dd') }}</p>
           </div>
-          <div class="bold-text">
-            <span>To :</span> <p class="bold-text">{{ request().timelineTo }}</p>
+          <div class="timeline-row">
+            <span class="timeline-label">To:</span>
+            <p class="bold-text">{{ getTransferDates().to }}</p>
           </div>
         </div>
 

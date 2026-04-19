@@ -401,3 +401,25 @@ label {
 }
 
 @keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* Timeline Row Styles */
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.timeline-label {
+  min-width: 45px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-align: right;
+}
+
+.timeline-row .bold-text {
+  margin: 0;
+  display: inline;
+  white-space: nowrap;
+}

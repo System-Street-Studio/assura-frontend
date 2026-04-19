@@ -364,6 +364,9 @@ header h1 {
 
 }
 
+.search-bar:hover{
+  border-color: #16a34a;
+}
 
 
 .search-icon {
@@ -408,6 +411,10 @@ header h1 {
 
   box-shadow: 0 0 0 4px rgba(99, 241, 123, 0.1);
 
+}
+
+.filter-btn:hover{
+  border-color: #16a34a;
 }
 
 .filter-badge {
@@ -568,9 +575,9 @@ header h1 {
 
   background: #eef2ff;
 
-  color: #6366f1;
+  color: #08c74e;
   
-  border-color: #6366f1;
+  border-color: #07d352;
 
   font-weight: 600;
 

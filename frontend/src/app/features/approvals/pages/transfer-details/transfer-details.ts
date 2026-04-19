@@ -79,6 +79,17 @@ export class TransferDetailsComponent implements OnInit {
   }
 
 
+  getTransferDates() {
+    const reason = this.request().justification || this.request().reason || '';
+    const match = reason.match(/\(Transfer periods:([^)]*)\)/);
+    if (match) {
+      const period = match[1].trim();
+      const dateParts = period.split('to').map((d: string) => d.trim());
+      return { from: dateParts[0] || '', to: dateParts[1] || '' };
+    }
+    return { from: '', to: '' };
+  }
+
   viewInPool() { console.log('Viewing in Pool'); }
 
   close() {
