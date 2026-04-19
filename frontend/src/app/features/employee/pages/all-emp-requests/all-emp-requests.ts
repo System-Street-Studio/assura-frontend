@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -31,6 +31,18 @@ export class AllRequestsComponent implements OnInit {
   pageSize = 10;
   currentPage = signal(1);
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    
+    // Check if click is inside status filter container
+    const inStatusFilter = target.closest('[data-filter="status-filter"]') !== null;
+    
+    // Close status menu if clicking outside
+    if (this.isMenuOpen() && !inStatusFilter) {
+      this.isMenuOpen.set(false);
+    }
+  }
 
   private authService = inject(AuthService);
 
