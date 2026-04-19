@@ -1,4 +1,4 @@
-import { Component, signal ,computed} from '@angular/core';
+import { Component, signal ,computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
@@ -135,5 +135,25 @@ filteredAssets = computed(() => {
  showCategoryMenu = signal<boolean>(false);
   showStatusMenu = signal<boolean>(false);
   selectedAsset = signal<Asset | null>(null);
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    
+    // Check if click is inside category filter
+    const inCategoryFilter = target.closest('[data-filter="category"]') !== null;
+    // Check if click is inside status filter
+    const inStatusFilter = target.closest('[data-filter="status"]') !== null;
+    
+    // Close category menu if clicking outside
+    if (this.showCategoryMenu() && !inCategoryFilter) {
+      this.showCategoryMenu.set(false);
+    }
+    
+    // Close status menu if clicking outside
+    if (this.showStatusMenu() && !inStatusFilter) {
+      this.showStatusMenu.set(false);
+    }
+  }
 
 }

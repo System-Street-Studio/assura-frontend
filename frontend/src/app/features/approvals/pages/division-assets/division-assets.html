@@ -139,7 +139,7 @@
         </div>
         
         <div class="selected-filters">
-    <div class="styled-select">
+    <div class="styled-select" data-filter="category">
       <button class="filter-btn" (click)="showCategoryMenu.set(!showCategoryMenu())">
         <div class="filter-icon">
           <mat-icon>tune</mat-icon>
@@ -158,7 +158,7 @@
       }
     </div>
 
-    <div class="styled-select">
+    <div class="styled-select" data-filter="status">
       <button class="filter-btn" (click)="showStatusMenu.set(!showStatusMenu())">
         <div class="filter-icon">
           <mat-icon>filter_list</mat-icon>
