@@ -1,0 +1,158 @@
+<div class="detail-container">
+  <div class="detail-header">
+    <a routerLink="/employee/all-emp-requests" class="back-link">
+      <mat-icon>arrow_back</mat-icon> Back to Requests
+    </a>
+    <h1 class="page-title">Request Details</h1>
+  </div>
+
+  @if (error()) {
+    <div class="error-message">
+      <mat-icon>error</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (request()) {
+    <div class="detail-content">
+      <!-- Request Header Card -->
+      <div class="card header-card">
+        <div class="header-info">
+          <div class="req-id-section">
+            <p class="req-type">{{ request()!.requestType }}</p>
+            <span [class]="'status-badge ' + getStatusClass(request()!.status)">
+              {{ request()!.status }}
+            </span>
+          </div>
+          <p class="req-id">Request #{{ request()!.id }}</p>
+        </div>
+      </div>
+
+      <!-- Request Details Grid -->
+      <div class="detail-grid">
+        <!-- Left Column -->
+        <div class="column">
+          <div class="card">
+            <h3 class="section-title">Request Information</h3>
+            <div class="detail-row">
+              <label>Submitted Date:</label>
+              <span>{{ request()!.submittedDate | date:'yyyy-MM-dd HH:mm' }}</span>
+            </div>
+            <div class="detail-row">
+              <label>Priority Level:</label>
+              <span [class]="'priority-badge ' + getPriorityClass(request()!.priority)">
+                {{ request()!.priority }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Asset Info -->
+        <div class="column">
+          <div class="card">
+            <h3 class="section-title">Asset Information</h3>
+            <div class="detail-row">
+              <label>Required Asset:</label>
+              <span>{{ request()!.assetName }}</span>
+            </div>
+            @if (request()!.assetCategory && request()!.assetCategory !== 'N/A') {
+              <div class="detail-row">
+                <label>Asset Category:</label>
+                <span>{{ request()!.assetCategory }}</span>
+              </div>
+            }
+            <div class="detail-row">
+              <label>Quantity:</label>
+              <span>{{ request()!.quantity }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Type-Specific Details -->
+      <ng-container [ngSwitch]="request()!.requestType">
+        <!-- New Asset Request Details -->
+        <ng-container *ngSwitchCase="'New Asset'">
+          <div class="card full-width">
+            <h3 class="section-title">Justification</h3>
+            <div class="detail-row">
+              <label>Reason for Request:</label>
+              <span class="text-block">{{ request()!.reason }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Maintenance Request Details -->
+        <ng-container *ngSwitchCase="'Maintenance'">
+          <div class="card full-width">
+            <h3 class="section-title">Maintenance Details</h3>
+            <div class="detail-row">
+              <label>Issue Description:</label>
+              <span class="text-block">{{ request()!.reason }}</span>
+            </div>
+            @if (request()!.description) {
+              <div class="detail-row">
+                <label>Additional Notes:</label>
+                <span class="text-block">{{ request()!.description }}</span>
+              </div>
+            }
+          </div>
+        </ng-container>
+
+        <!-- Discard Request Details -->
+        <ng-container *ngSwitchCase="'Discard'">
+          <div class="card full-width">
+            <h3 class="section-title">Discard Details</h3>
+            <div class="detail-row">
+              <label>Reason for Discard:</label>
+              <span class="text-block">{{ request()!.reason }}</span>
+            </div>
+            @if (request()!.description) {
+              <div class="detail-row">
+                <label>Current Condition:</label>
+                <span class="text-block">{{ request()!.description }}</span>
+              </div>
+            }
+          </div>
+        </ng-container>
+
+        <!-- Transfer Request Details -->
+        <ng-container *ngSwitchCase="'Transfer'">
+          <!-- Transfer Details Section -->
+          <div class="card full-width transfer-details">
+            <h3 class="section-title">Transfer Details</h3>
+            <div class="detail-row">
+              <label>Reason for Transfer:</label>
+              <span class="text-block">{{ extractTransferReason(request()!.reason) }}</span>
+            </div>
+            @if (request()!.description) {
+              <div class="detail-row">
+                <label>Required Specifications:</label>
+                <span class="text-block">{{ request()!.description }}</span>
+              </div>
+            }
+            <div class="detail-row">
+              <label>Transfer Period:</label>
+              <span class="text-block">{{ extractTransferPeriod(request()!.reason) }}</span>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-secondary" routerLink="/employee/all-emp-requests">
+          Close
+        </button>
+        @if (request()!.status === 'Pending') {
+          <button class="btn btn-danger">
+            Cancel Request
+          </button>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="no-data">
+      <mat-icon>inbox</mat-icon>
+      <p>No request found</p>
+    </div>
+  }
+</div>
