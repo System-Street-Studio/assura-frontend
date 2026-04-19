@@ -233,7 +233,7 @@
 
 /* Priority & Status Labels */
 .priority-label { font-weight: 500px; }
-.priority-high, .priority-urgent { color: #fa1b0b; }
+.priority-high, .priority-urgent ,.priority-critical{ color: #fa1b0b; }
 .priority-normal { color: #3904c1; }
 
 .status-badge {

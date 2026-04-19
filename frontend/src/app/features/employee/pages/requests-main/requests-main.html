@@ -56,6 +56,7 @@
               <span class="req-date">{{ req.submittedDate | date:'MMM dd, yyyy' }}</span>
             </div>
             <div class="req-status-area">
+              <span [class]="'priority-pill ' + req.priority.toLowerCase()">{{ req.priority }}</span>
               <span [class]="'status-pill ' + req.status.toLowerCase()">{{ req.status }}</span>
               <button class="btn-details" (click)="viewRequestDetails(req)"><mat-icon class="eye">visibility</mat-icon> View Details</button>
             </div>

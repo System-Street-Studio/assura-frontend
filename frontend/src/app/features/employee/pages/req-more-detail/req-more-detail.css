@@ -186,6 +186,7 @@
 .status-in-progress { background: #c4e3fc; color: #0783ff; border-color: #188eef; }
 .status-rejected { background: #fedadf; color: #f60101; border-color: #f95f5f; }
 .status-cancelled { background: #e0e0e0; color: #606060; border-color: #bdbdbd; }
+.status-critical { background: #ffe0e0; color: #d32f2f; border-color: #ff5252; }
 
 /* Priority Badges */
 .priority-badge {
@@ -198,7 +199,8 @@
 }
 
 .priority-high,
-.priority-urgent {
+.priority-urgent,
+.priority-critical {
   background: #fedadf;
   color: #b60e0e !important;
   border-color: #f95f5f;
