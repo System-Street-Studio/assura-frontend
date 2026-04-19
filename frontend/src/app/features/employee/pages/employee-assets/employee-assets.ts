@@ -30,6 +30,8 @@ export class EmployeeAssetsComponent implements OnInit {
   
   searchTerm = signal('');
   loading = signal(true);
+  statusMenuOpen = signal(false);
+  categoryMenuOpen = signal(false);
 
   onSearchChange(value: string) {
     this.searchTerm.set(value);
@@ -37,6 +39,7 @@ export class EmployeeAssetsComponent implements OnInit {
   }
   selectedAsset = signal<Asset | null>(null);
   selectedStatus = signal('');
+  selectedCategory = signal('');
 
   // Pagination
   pageSize = 6;
@@ -87,14 +90,39 @@ export class EmployeeAssetsComponent implements OnInit {
     return 'https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/e-series/e2425hsm/media-gallery/monitor-dell-pro-e2425hsm-bk-gallery-1.psd?fmt=png-alpha&pscan=auto&scl=1&hei=804&wid=868&qlt=100,1&resMode=sharp2&size=868,804&chrss=full';
   }
 
+  categories = computed(() => {
+    const uniqueCategories = [...new Set(this.assets().map(a => a.category))];
+    return uniqueCategories.sort();
+  });
+
+  totalAssets = computed(() => this.assets().length);
+
+  assetsInUse = computed(() => 
+    this.assets().filter(a => a.status === 'In Use').length
+  );
+
+  assetsInMaintenance = computed(() => 
+    this.assets().filter(a => a.status === 'Maintenance').length
+  );
+
+  assetsTransferred = computed(() => 
+    this.assets().filter(a => a.status === 'Transferred').length
+  );
+
+  assetsDiscarded = computed(() => 
+    this.assets().filter(a => a.status === 'Discarded').length
+  );
+
   filteredAssets = computed(() => {
     const term = this.searchTerm().toLowerCase();
     const status = this.selectedStatus();
+    const category = this.selectedCategory();
 
     return this.assets().filter(asset => {
       const matchesTerm = asset.assetName.toLowerCase().includes(term);
       const matchesStatus = status ? asset.status === status : true;
-      return matchesTerm && matchesStatus;
+      const matchesCategory = category ? asset.category === category : true;
+      return matchesTerm && matchesStatus && matchesCategory;
     });
   });
 
@@ -119,4 +147,24 @@ export class EmployeeAssetsComponent implements OnInit {
   backToList() {
     this.selectedAsset.set(null);
   }
-}
+
+  setStatus(status: string) {
+    this.selectedStatus.set(status === 'All' ? '' : status);
+    this.statusMenuOpen.set(false);
+    this.currentPage.set(1);
+  }
+
+  setCategory(category: string) {
+    this.selectedCategory.set(category === 'All Categories' ? '' : category);
+    this.categoryMenuOpen.set(false);
+    this.currentPage.set(1);
+  }
+
+  getStatusLabel(): string {
+    return this.selectedStatus() || 'All Status';
+  }
+
+  getCategoryLabel(): string {
+    return this.selectedCategory() || 'All Categories';
+  }
+}

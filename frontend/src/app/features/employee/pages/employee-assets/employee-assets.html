@@ -11,7 +11,7 @@
           <div class="stat-top1">Total Assets</div>
           <mat-icon class="inventory-icon">inventory</mat-icon>
         </div>
-        <div class="stat-value">12</div>
+        <div class="stat-value">{{ totalAssets() }}</div>
         <p class="stat-desc">All assets assigned to you</p>
       </div>
 
@@ -20,7 +20,7 @@
           <div class="stat-top2">Assets In Use</div>
           <mat-icon class="check_circle">check_circle</mat-icon>
         </div>
-        <div class="stat-value">4</div>
+        <div class="stat-value">{{ assetsInUse() }}</div>
         <p class="stat-desc">Currently utilized assets</p>
       </div>
 
@@ -29,8 +29,26 @@
           <div class="stat-top3">Assets in maintenance</div>
           <mat-icon class="build">build</mat-icon>
         </div>
-        <div class="stat-value">2</div>
+        <div class="stat-value">{{ assetsInMaintenance() }}</div>
         <p class="stat-desc">Awaiting repair or service</p>
+      </div>
+
+      <div class="stat-card border-green">
+        <div class="stat-info">
+          <div class="stat-top4">Assets Transferred</div>
+          <mat-icon class="compare_arrows">compare_arrows</mat-icon>
+        </div>
+        <div class="stat-value">{{ assetsTransferred() }}</div>
+        <p class="stat-desc">Assets in transfer process</p>
+      </div>
+
+      <div class="stat-card border-orange">
+        <div class="stat-info">
+          <div class="stat-top5">Assets Discarded</div>
+          <mat-icon class="delete_outline">delete_outline</mat-icon>
+        </div>
+        <div class="stat-value">{{ assetsDiscarded() }}</div>
+        <p class="stat-desc">Discarded or removed assets</p>
       </div>
 
     </div>
@@ -54,13 +72,60 @@
           (ngModelChange)="onSearchChange($event)" class="search-bar">
       </div>
 
-      <!-- Status Dropdown -->
-      <select class="filter-btn" [(ngModel)]="selectedStatus">
-        <option value="">Filter By Status</option>
-        <option value="In Use">In Use</option>
-        <option value="Transferred">Transferred</option>
-        <option value="Maintenance">Maintenance</option>
-      </select>
+      <!-- Status Filter Dropdown -->
+      <div class="filter-container">
+        <button class="filter-btn" (click)="statusMenuOpen.set(!statusMenuOpen())">
+          <div class="filter-icon">
+            <mat-icon>tune</mat-icon>
+            <span>{{ getStatusLabel() }}</span>
+          </div>
+          <mat-icon class="arrow">expand_more</mat-icon>
+        </button>
+
+        @if (statusMenuOpen()) {
+          <div class="filter-options">
+            <div class="option" (click)="setStatus('All')" [class.active]="selectedStatus() === ''">
+              All Status
+            </div>
+            <div class="option" (click)="setStatus('In Use')" [class.active]="selectedStatus() === 'In Use'">
+              In Use
+            </div>
+            <div class="option" (click)="setStatus('Transferred')" [class.active]="selectedStatus() === 'Transferred'">
+              Transferred
+            </div>
+            <div class="option" (click)="setStatus('Maintenance')" [class.active]="selectedStatus() === 'Maintenance'">
+              Maintenance
+            </div>
+            <div class="option" (click)="setStatus('Discarded')" [class.active]="selectedStatus() === 'Discarded'">
+              Discarded
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Category Filter Dropdown -->
+      <div class="filter-container">
+        <button class="filter-btn" (click)="categoryMenuOpen.set(!categoryMenuOpen())">
+          <div class="filter-icon">
+            <mat-icon>tune</mat-icon>
+            <span>{{ getCategoryLabel() }}</span>
+          </div>
+          <mat-icon class="arrow">expand_more</mat-icon>
+        </button>
+
+        @if (categoryMenuOpen()) {
+          <div class="filter-options">
+            <div class="option" (click)="setCategory('All Categories')" [class.active]="selectedCategory() === ''">
+              All Categories
+            </div>
+            @for (cat of categories(); track cat) {
+              <div class="option" (click)="setCategory(cat)" [class.active]="selectedCategory() === cat">
+                {{ cat }}
+              </div>
+            }
+          </div>
+        }
+      </div>
     </div>
 
     <!--assets cards section-->
