@@ -17,12 +17,12 @@
       <div class="card header-card">
         <div class="header-info">
           <div class="req-id-section">
-            <p class="req-type">{{ request()!.requestType }}</p>
+            <p class="req-type">{{ request()!.requestType }} Request</p>
             <span [class]="'status-badge ' + getStatusClass(request()!.status)">
               {{ request()!.status }}
             </span>
           </div>
-          <p class="req-id">Request #{{ request()!.id }}</p>
+          <p class="req-id">Request ID: #{{ request()!.id }}</p>
         </div>
       </div>
 

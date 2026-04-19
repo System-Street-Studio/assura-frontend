@@ -175,9 +175,9 @@
 .status-badge {
   display: inline-block;
   padding: 2px 10px;
-  border-radius: 20px;
+  border-radius: 12px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   border: 1px solid;
 }
 
@@ -190,7 +190,7 @@
 /* Priority Badges */
 .priority-badge {
   display: inline-block;
-  padding: 1px 8px;
+  padding: 1px 12px;
   border-radius: 20px;
   font-size: 11px;
   font-weight: 500;
@@ -200,20 +200,20 @@
 .priority-high,
 .priority-urgent {
   background: #fedadf;
-  color: #f60101;
+  color: #b60e0e !important;
   border-color: #f95f5f;
 }
 
 .priority-medium {
   background: #fce4f9;
-  color: #da05bd;
+  color: #b71591 !important;
   border-color: #f870d9;
 }
 
 .priority-low,
 .priority-normal {
   background: #dffee1;
-  color: #05a50d;
+  color: #0b7911 !important;
   border-color: #48fb51;
 }
 
