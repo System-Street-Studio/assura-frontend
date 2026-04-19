@@ -8,9 +8,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AssetService as AssetRequestService } from '../../services/asset-request.service';
-import { AssetService } from '../../../inventory/services/asset.service';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { AssetDetail } from '../../../inventory/models/asset.model';
+import { CategoryService } from '../../../inventory/services/category.service';
+import { Category } from '../../../inventory/models/category.model';
 
 @Component({
   selector: 'app-transfer-form',
@@ -31,11 +31,11 @@ import { AssetDetail } from '../../../inventory/models/asset.model';
 export class TransferFormComponent implements OnInit {
   private location = inject(Location);
   private assetRequestService = inject(AssetRequestService);
-  private assetService = inject(AssetService);
+  private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
 
   // Signals
-  assignedAssets = signal<AssetDetail[]>([]);
+  categories = signal<Category[]>([]);
   assetName = signal('');
   category = signal('');
   description = signal('');
@@ -46,9 +46,9 @@ export class TransferFormComponent implements OnInit {
   toDate = signal<Date | null>(null);
 
   ngOnInit(): void {
-    this.assetService.getAll().subscribe({
-      next: (assets) => this.assignedAssets.set(assets),
-      error: (err) => console.error('Failed to load assigned assets', err)
+    this.categoryService.getAll().subscribe({
+      next: (cats) => this.categories.set(cats),
+      error: (err) => console.error('Failed to load categories', err)
     });
   }
 
