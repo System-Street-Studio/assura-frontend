@@ -4,11 +4,12 @@ import { inject, Injectable } from '@angular/core';
 import { RequestItem } from '../models/request.model';
 import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class RequestService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:5000/api'; 
+  private baseUrl = environment.apiUrl; 
 
   
   selectedRequest: RequestItem | null = null;
@@ -42,7 +43,12 @@ export class RequestService {
 
   // services/requests.service.ts
 approveRequest(id: number): Observable<boolean> {
-  return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/approve`, {});
+  return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/approve`, {}).pipe(
+    map(result => {
+      console.log('✅ Request approved, triggering inventory refresh');
+      return result;
+    })
+  );
 }
 
 rejectRequest(id: number): Observable<boolean> {
