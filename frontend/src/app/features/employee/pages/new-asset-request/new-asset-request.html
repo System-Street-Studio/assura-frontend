@@ -27,7 +27,7 @@
         <!--asset name-->
         <div class="form-group">
 
-          <label>Asset Name</label>
+          <label>Required Asset</label>
           <input [(ngModel)]="requestData.assetName" name="assetName" required placeholder="e.g., Dell XPS 15"
             class="form-control">
 
@@ -36,7 +36,7 @@
         <!--description-->
         <div class="form-group">
 
-          <label>Description</label>
+          <label>Specifications</label>
           <textarea [(ngModel)]="requestData.description" name="description"
             placeholder="Clearly state what the specifications of asset you request." class="form-control"
             rows="3"></textarea>
@@ -57,6 +57,7 @@
           <label>Priority</label>
           <select [(ngModel)]="requestData.priority" name="priority" class="form-control">
             <option value="Normal">Normal</option>
+            <option value="Low">Low</option>
             <option value="High">High</option>
             <option value="Critical">Critical</option>
           </select>

@@ -233,8 +233,10 @@
 
 /* Priority & Status Labels */
 .priority-label { font-weight: 500px; }
-.priority-high, .priority-urgent ,.priority-critical{ color: #fa1b0b; }
-.priority-normal { color: #3904c1; }
+.priority-high{color:#be2a2a;}
+.priority-urgent ,.priority-critical{ color: #e50909; }
+.priority-low { color: #ffc107; }
+.priority-normal { color: #04c54b; }
 
 .status-badge {
   padding: 1px 12px;

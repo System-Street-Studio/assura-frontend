@@ -213,6 +213,7 @@ mat-icon.cancel { font-size: 20px;color: #ef4444;}
 }
 
 .priority-pill.normal { color: #07c74d; }
+.priority-pill.low { color: #ffc107; }
 .priority-pill.high { color: #be2a2a; }
 .priority-pill.critical { color: #e50909; }
 
