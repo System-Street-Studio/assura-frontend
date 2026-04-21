@@ -13,11 +13,18 @@
     </div>
 
     <div class="details-grid">
+      <!-- Line 1: Asset Name | Asset Category -->
       <div class="info-group">
         <label>Asset Name</label>
         <p class="bold-text">{{ request().assetName }}</p>
       </div>
 
+      <div class="info-group">
+        <label>Asset Category</label>
+        <p class="bold-text">{{ request().category }}</p>
+      </div>
+
+      <!-- Line 2: Employee Name | Employee ID -->
       <div class="info-group">
         <label>Employee Name</label>
         <p class="bold-text">{{ request().name }}</p>
@@ -28,11 +35,7 @@
         <p class="bold-text">{{ request().employee }}</p>
       </div>
 
-      <div class="info-group">
-        <label>Asset Category</label>
-        <p class="bold-text">{{ request().category }}</p>
-      </div>
-
+      <!-- Line 3: Submitted Date & Time | Priority -->
       <div class="info-group">
         <label>Submitted Date & Time</label>
         <p class="bold-text">{{ request().date | date:'medium' }}</p>
@@ -40,24 +43,29 @@
 
       <div class="info-group">
         <label>Priority</label>
-        <p class="bold-text" [style.color]="request().priority === 'High' ? 'red' : 'inherit'">{{ request().priority }}</p>
+        <p class="bold-text" [ngClass]="'priority-' + request().priority.toLowerCase()">{{ request().priority }}</p>
       </div>
 
-      <div class="info-group full-width">
-        <label>Reason for Discarding</label>
-        <p class="reason-text">{{ request().justification }}</p>
-      </div>
-
+      <!-- Full Width: Additional Details -->
       <div class="info-group full-width">
         <label>Additional Details</label>
-        <p class="description-text">{{ request().specs }}</p>
+        <p class="bold-text">{{ request().specs }}</p>
       </div>
 
-      <div class="info-group">
+      <!-- Full Width: Reason for Discarding -->
+      <div class="info-group full-width">
+        <label>Reason for Discarding</label>
+        <p class="bold-text">{{ request().justification }}</p>
+      </div>
+
+      <!-- Full Width: Status -->
+      <div class="info-group full-width">
         <label>Status</label>
         <span class="status-badge" [ngClass]="request().status.toLowerCase()">{{ request().status }}</span>
       </div>
     </div>
+
+    <hr />
 
     <div class="action-buttons">
       <button class="btn-approve" (click)="approveRequest()">

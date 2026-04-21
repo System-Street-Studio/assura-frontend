@@ -41,9 +41,7 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   border: 1px solid #e5e7eb; /* soft border */
   animation: slideUp 0.35s ease-out;
-   margin-left: 90px;
-  max-height: 85vh;
-  overflow-y: auto;
+  margin-left: 90px;
 }
 
 /* Header */
@@ -88,6 +86,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
+  margin-bottom: 20px;
 }
 
 .full-width { 
@@ -98,28 +97,83 @@
 /* Labels */
 label {
   font-size: 13px;
-  font-weight: 600;
-  color: #6b7280;
-  margin-top: 5px;
+  font-weight: 500;
+  color: #666565;
+  margin-bottom: 5px;
   display: block;
 }
 
 /* Detail Text */
 .bold-text {
   font-weight: 700;
-  font-size: 14px;
-  color: #111827;
-  margin: 0 0 20px 30px;
+  color: #222;
+  margin-left: 50px;
+}
+
+/* Priority Colors */
+.priority-normal {
+  color: #22863a;
+  font-weight: 700;
+}
+
+.priority-high {
+  color: #ff4444;
+  font-weight: 700;
+}
+
+.priority-low {
+  color: #ffa726;
+  font-weight: 700;
+}
+
+.priority-critical {
+  color: #d32f2f;
+  font-weight: 700;
 }
 
 /* Timeline & Specs */
-.flex-row {
+.timeline-row {
   display: flex;
-  gap: 25px;
-  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 5px 0;
 }
- .desc-box .bold-text{
-   background: #f8f9fa;
+
+.timeline-label {
+  font-weight: 600;
+  color: #666565;
+  min-width: 50px;
+}
+
+.status-badge {
+  padding: 4px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.status-badge.approved {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.status-badge.rejected {
+  background: #ffcccc;
+  color: #c62828;
+}
+
+.status-badge.in {
+  background: #ffe0b2;
+  color: #e65100;
+}
+.desc-box .bold-text {
+  background: #f8f9fa;
   padding: 10px;
   border-radius: 6px;
   font-size: 14px;
@@ -127,7 +181,17 @@ label {
   color: #495057;
   margin-left: 10px;
   font-weight: 500;
-  margin-bottom: 0px;
+  border-left: 4px solid #00afb5;
+}
+
+/* Ensure full-width items have proper background */
+.info-group.full-width .bold-text {
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #495057;
   border-left: 4px solid #00afb5;
 }
 
@@ -136,10 +200,9 @@ label {
 /* Buttons Section */
 .action-buttons {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  border-top: 1px solid #dfdddd;
-  padding-top: 20px;
+  gap: 15px;
+  margin-top: 25px;
+  padding-top: 1px;
 }
 
 /* Buttons - Compact Modern */
@@ -147,11 +210,11 @@ label {
 .btn-pool, 
 .btn-reject {
   border: none;
-  padding: 10px 16px;
+  padding: 12px 24px;
   border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
   font-weight: 600;
   font-size: 13px;
@@ -179,18 +242,9 @@ label {
 .btn-pool:hover, 
 .btn-reject:hover {
   opacity: 0.9;
-  transform: translateY(-1px);
 }
 
-/* Smooth Scrollbar */
-.modal-container::-webkit-scrollbar {
-  width: 6px;
-}
 
-.modal-container::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
 
 
 

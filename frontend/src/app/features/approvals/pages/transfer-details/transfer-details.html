@@ -14,81 +14,78 @@
     </div>
 
     <div class="details-grid">
-      <div class="column">
-        <div class="info-group">
-          <label>Asset</label>
-          <p class="bold-text">{{ request().assetName }}</p>
-        </div>
-
-        <div class="info-group">
-          <label>Asset Category</label>
-          <p class="bold-text">{{ request().category }}</p>
-        </div>
-
-        <div class="info-group">
-          <label>Transfer Period</label>
-          <div class="timeline-row">
-            <span class="timeline-label">From:</span>
-            <p class="bold-text">{{ getTransferDates().from || (request().date | date:'yyyy-MM-dd') }}</p>
-          </div>
-          <div class="timeline-row">
-            <span class="timeline-label">To:</span>
-            <p class="bold-text">{{ getTransferDates().to }}</p>
-          </div>
-        </div>
-
+      <!-- Line 1: Asset Name | Asset Category -->
+      <div class="info-group">
+        <label>Asset Name</label>
+        <p class="bold-text">{{ request().assetName }}</p>
       </div>
-
-      <div class="column">
-        <div class="info-group">
-          <label>Employee Name</label>
-          <p class="bold-text">{{ request().name }}</p>
-        </div>
-
-        <div class="info-group">
-          <label>Employee ID</label>
-          <p class="bold-text">{{ request().employee }}</p>
-        </div>
-
-        <div class="info-group">
-          <label>Submitted Date & Time</label>
-          <p class="bold-text">{{ request().date | date:'medium'}}</p>
-        </div>
-      
-        
-        <div class="info-group">
-          <label>Quantity</label>
-          <p class="bold-text">{{ request().quantity }}</p>
-        </div>
-
-        <div class="info-group">
-          <label>Priority</label>
-          <p class="bold-text" [style.color]="request().priority === 'High' ? 'red' : 'inherit'">{{ request().priority }}</p>
-        </div>
-      </div>
-
-        
-      <div class="info-group full-width flex-row">
-        <div class="desc-box">
-          <label>Description</label>
-          <p class="bold-text">{{ request().specs }}</p>
-        </div>
-
-      </div>
-
-      <div class="info-group full-width">
 
       <div class="info-group">
-        <label>Status</label>
-        <span class="status-badge" [ngClass]="request().status.toLowerCase()">{{ request().status }}</span>
+        <label>Asset Category</label>
+        <p class="bold-text">{{ request().category }}</p>
       </div>
-        <div class="desc-box">
+
+      <!-- Line 2: Employee Name | Employee ID -->
+      <div class="info-group">
+        <label>Employee Name</label>
+        <p class="bold-text">{{ request().name }}</p>
+      </div>
+
+      <div class="info-group">
+        <label>Employee ID</label>
+        <p class="bold-text">{{ request().employee }}</p>
+      </div>
+
+      <!-- Line 3: Submitted Date & Time | Transfer Period -->
+      <div class="info-group">
+        <label>Submitted Date & Time</label>
+        <p class="bold-text">{{ request().date | date:'medium'}}</p>
+      </div>
+
+      <div class="info-group">
+        <label>Transfer Period</label>
+        <div class="timeline-row">
+          <span class="timeline-label">From:</span>
+          <p class="bold-text">{{ getTransferDates().from || (request().date | date:'yyyy-MM-dd') }}</p>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-label">To:</span>
+          <p class="bold-text">{{ getTransferDates().to }}</p>
+        </div>
+      </div>
+
+      <!-- Line 4: Quantity | Priority -->
+      <div class="info-group">
+        <label>Quantity</label>
+        <p class="bold-text">{{ request().quantity }}</p>
+      </div>
+
+      <div class="info-group">
+        <label>Priority</label>
+        <p class="bold-text" [ngClass]="'priority-' + request().priority.toLowerCase()">{{ request().priority }}</p>
+      </div>
+
+      <!-- Full Width: Description -->
+      <div class="info-group full-width">
+        <label>Description</label>
+        <p class="bold-text">{{ request().specs }}</p>
+      </div>
+
+      <!-- Full Width: Reason -->
+      <div class="info-group full-width">
         <label>Reason</label>
         <p class="bold-text">{{ getCleanReason() }}</p>
       </div>
-     </div>
+
+      <!-- Full Width: Status -->
+      <div class="info-group full-width">
+        <label>Status</label>
+        <span class="status-badge" [ngClass]="request().status.toLowerCase()">{{ request().status }}</span>
+      </div>
       
     </div>
+
+    <hr />
 
     <div class="action-buttons">
       <button class="btn-approve" (click)="approveRequest()">

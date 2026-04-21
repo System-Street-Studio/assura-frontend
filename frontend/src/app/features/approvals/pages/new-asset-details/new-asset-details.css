@@ -31,123 +31,143 @@
 
 .modal-overlay {
   background-color: #efefef;
+  margin: 30px 50px;
   align-items: flex-start;
   min-height: 100vh;
-  margin:30px 50px;
- 
 }
 
 .modal-container {
-  background: white;
-  border-radius: 8px;
-   margin-left: 90px;
+  background: #ffffff;
+  border-radius: 12px;
   width: 100%;
-  max-width: 700px;
-  font-family: 'jost';
-  padding: 25px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  align-items: baseline;
- /* මුලින් දුන් පින්තූරයේ තිබූ Border එක */
-  
-  /* Slide Up Animation එක මෙතැනට */
-  animation: slideUp 0.4s ease-out;
+  max-width: 750px;
+  padding: 22px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #e5e7eb;
+  animation: slideUp 0.35s ease-out;
+  margin-left: 90px;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
-   border-bottom:1px solid #dcdcdc;
+  margin-bottom: 18px;
   padding-bottom: 20px;
-  }
-
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #333;
-
+  border-bottom: #e0e1e3 solid 1px;
 }
 
-/* Close Button - මෑතකදී දුන් Modern විලාසිතාව */
+.modal-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: #3b3a3a;
+}
+
 .close-btn {
-  background: #f7fafc;
+  background: #f1f5f9;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: #4a5568;
+  transition: 0.2s ease;
 }
 
 .close-btn:hover {
-  background: #edf2f7;
-  color: #e53e3e;
+  background: #e2e8f0;
+  color: #dc2626;
   transform: rotate(90deg);
 }
 
-/* Layout & Grid - මුලින් දුන් විදිහට */
 .details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
 .full-width {
   grid-column: span 2;
+  margin-top: 2px;
 }
 
 label {
-  color: #666565;
   font-size: 13px;
-  display: block;
-  margin-bottom: 5px;
   font-weight: 500;
+  color: #666565;
+  margin-bottom: 5px;
+  display: block;
 }
 
 .bold-text {
   font-weight: 700;
-  margin-left: 50px;
   color: #222;
+  margin-left: 50px;
 }
 
-.specs-text, .justification-text {
+/* Priority Colors */
+.priority-normal {
+  color: #e68c04;
+  font-weight: 700;
+}
+
+.priority-high {
+  color: #ff4444;
+  font-weight: 700;
+}
+
+.priority-low {
+  color: #07f63f;
+  font-weight: 700;
+}
+
+.priority-critical {
+  color: #d32f2f;
+  font-weight: 700;
+}
+
+.status-badge {
+  padding: 4px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.status-badge.approved {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.status-badge.rejected {
+  background: #ffcccc;
+  color: #c62828;
+}
+
+.status-badge.in {
+  background: #ffe0b2;
+  color: #e65100;
+}
+
+.info-group.full-width .bold-text {
   background: #f8f9fa;
   padding: 10px;
   border-radius: 6px;
   font-size: 14px;
   line-height: 1.6;
   color: #495057;
-  margin-left: 10px;
   border-left: 4px solid #00afb5;
-  font-weight: 500;
 }
 
-
-.priority-text {
-  font-weight: 700;
-  margin-left: 50px;
-}
-
-.status-badge.pending {
-  background: #fce4ec; /* පින්තූරයේ තිබූ ලා රෝස/දම් පැහැය */
-  color: #c2185b;
-  padding: 4px 15px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  margin-left: 50px;
-  display: inline-block;
-}
-
-/* Buttons - මුලින් දුන් වර්ණ සහ පෙනුම */
 .action-buttons {
   display: flex;
   gap: 15px;
@@ -155,9 +175,8 @@ label {
   padding-top: 1px;
 }
 
-.btn-approve {
-  background-color: #00bfa5; /* Teal color */
-  color: white;
+.btn-approve,
+.btn-reject {
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -165,29 +184,27 @@ label {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
   flex: 1;
   justify-content: center;
-  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-approve {
+  background-color: #00bfa5;
+  color: white;
 }
 
 .btn-reject {
-  background-color: #b71c1c; /* Deep red */
+  background-color: #b71c1c;
   color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  flex: 1;
-  justify-content: center;
-  font-weight: 600;
 }
 
-/* Hover effects for buttons */
-.btn-approve:hover { opacity: 0.9; }
-.btn-reject:hover { opacity: 0.9; }
+.btn-approve:hover,
+.btn-reject:hover {
+  opacity: 0.9;
+}
 
 
 
@@ -278,7 +295,7 @@ label {
 }
 
 .btn-done {
-  background: #00afb5; /* මුලින් තද කළු පැහැය - Premium look */
+  background: #00afb5;
   color: #ffffff;
   border: none;
   padding: 12px 28px;
@@ -295,8 +312,8 @@ label {
 }
 
 .btn-done:hover {
- background: #0b6c78; /* Hover කළාම ඔයාගේ Teal පාටට මාරු වේ */
-  transform: translateY(-2px) scale(1.02); /* පොඩ්ඩක් ඉහළට එසවෙන effect එක */
+ background: #0b6c78; 
+  transform: translateY(-2px) scale(1.02); 
   box-shadow: 0 10px 20px rgba(0, 169, 181, 0.25);
 }
 
@@ -323,13 +340,12 @@ label {
   transform: scale(0.98);
 }
 
-/* Button එක ඇතුළේ Icon එකක් තියෙනවා නම් ඒක ලස්සන කරන්න */
 .btn-done svg {
   transition: transform 0.3s ease;
 }
 
 .btn-done:hover svg {
-  transform: translateX(4px); /* Hover කළාම arrow එකක් වගේ දෙයක් තිබුණොත් දකුණට චලනය වේ */
+  transform: translateX(4px); 
 }
 
 /* Progress Bar at the bottom */

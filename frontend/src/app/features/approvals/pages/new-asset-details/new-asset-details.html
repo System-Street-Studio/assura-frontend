@@ -13,6 +13,18 @@
     </div>
 
     <div class="details-grid">
+      <!-- Line 1: Asset Name | Asset Category -->
+      <div class="info-group">
+        <label>Requested Asset</label>
+        <p class="bold-text">{{ request().assetName }}</p>
+      </div>
+
+      <div class="info-group">
+        <label>Asset Category</label>
+        <p class="bold-text">{{ request().category }}</p>
+      </div>
+
+      <!-- Line 2: Employee Name | Employee ID -->
       <div class="info-group">
         <label>Employee Name</label>
         <p class="bold-text">{{ request().name }}</p>
@@ -23,50 +35,42 @@
         <p class="bold-text">{{ request().employee }}</p>
       </div>
 
-      <div class="info-group">
-        <label>Quantity</label>
-        <p class="bold-text">{{ request().quantity }}</p>
-      </div>
-
-      <div class="info-group">
-        <label>Requested Asset</label>
-        <p class="bold-text">{{ request().assetName }}</p>
-      </div>
-
+      <!-- Line 3: Requested Date & Time | Quantity -->
       <div class="info-group">
         <label>Requested Date & Time</label>
         <p class="bold-text">{{ request().date | date:'medium' }}</p>
       </div>
 
       <div class="info-group">
-        <label>Asset Category</label>
-        <p class="bold-text">{{ request().category }}</p>
+        <label>Quantity</label>
+        <p class="bold-text">{{ request().quantity }}</p>
       </div>
 
-      
+      <!-- Line 4: Priority -->
       <div class="info-group">
         <label>Priority</label>
-        <p class="priority-text" [style.color]="request().priority === 'High' ? 'red' : 'inherit'">
+        <p class="bold-text" [ngClass]="'priority-' + request().priority.toLowerCase()">
           {{ request().priority }}
         </p>
       </div>
 
+      <!-- Full Width: Specifications -->
       <div class="info-group full-width">
         <label>Specifications</label>
-        <p class="specs-text">{{ request().specs  }}</p>
+        <p class="bold-text">{{ request().specs }}</p>
       </div>
 
+      <!-- Full Width: Justification -->
       <div class="info-group full-width">
         <label>Justification</label>
-        <p class="justification-text">{{ request().justification }}</p>
+        <p class="bold-text">{{ request().justification }}</p>
       </div>
 
-      
-      <div class="info-group">
+      <!-- Full Width: Status -->
+      <div class="info-group full-width">
         <label>Status</label>
-        <span class="status-badge pending">{{ request().status }}</span>
+        <span class="status-badge" [ngClass]="request().status.toLowerCase()">{{ request().status }}</span>
       </div>
-
     </div>
 
     <hr />
