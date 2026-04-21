@@ -34,8 +34,8 @@
       </div>
 
       <div class="info-group">
-        <label>Requested Date</label>
-        <p class="bold-text">{{ request().date }}</p>
+        <label>Requested Date & Time</label>
+        <p class="bold-text">{{ request().date | date:'medium' }}</p>
       </div>
 
       <div class="info-group">
