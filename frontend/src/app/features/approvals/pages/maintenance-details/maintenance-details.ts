@@ -57,6 +57,12 @@ export class MaintenanceDetailsComponent implements OnInit {
     });
   }
 
+  extractIssueType(reason: string): string {
+    // Extract issue type from reason (format: "Issue: <type>")
+    const match = reason.match(/Issue:\s*(.+)$/);
+    return match ? match[1].trim() : reason || 'Not specified';
+  }
+
   close() {
     this.router.navigate(['/approvals/requests']);
     const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'new';

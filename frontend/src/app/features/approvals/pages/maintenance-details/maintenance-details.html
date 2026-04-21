@@ -28,6 +28,11 @@
           <label>Priority</label>
           <p class="bold-text" [style.color]="request().priority === 'High' ? 'red' : 'inherit'">{{ request().priority }}</p>
         </div>
+
+        <div class="info-group">
+          <label>Issue Type</label>
+          <p class="bold-text">{{ extractIssueType(request().justification || request().reason || '') }}</p>
+        </div>
       </div>
 
       <div class="column">
