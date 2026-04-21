@@ -28,9 +28,9 @@ export class MaintenanceDetailsComponent implements OnInit {
       const id = this.route.snapshot.paramMap.get('id');
       if (id) {
         console.log("get request by ID:", id);
-        /* this.requestService.getRequestById(+id).subscribe((data) => {
+        this.requestService.getRequestById(+id).subscribe((data) => {
           this.request.set(data);
-        }); */
+        });
       }
     }
   }

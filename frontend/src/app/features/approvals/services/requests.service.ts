@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { RequestItem } from '../models/request.model';
 import { Observable } from 'rxjs/internal/Observable';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class RequestService {
@@ -16,6 +17,27 @@ export class RequestService {
   getAllRequests(isHead = false) {
     // Query string parameter
     return this.http.get<RequestItem[]>(`${this.baseUrl}/assetrequests?isDivisionHead=${isHead}`);
+  }
+
+  getRequestById(id: number): Observable<RequestItem> {
+    return this.http.get<any>(`${this.baseUrl}/assetrequests/${id}`).pipe(
+      map((apiData: any) => ({
+        id: apiData.id,
+        name: apiData.requesterName,
+        employee: apiData.requesterId,
+        assetName: apiData.assetName,
+        category: apiData.assetCategory,
+        status: apiData.status,
+        date: apiData.submittedDate,
+        priority: apiData.priority,
+        type: apiData.requestType,
+        quantity: apiData.quantity,
+        description: apiData.description,
+        reason: apiData.reason,
+        specs: apiData.description,
+        justification: apiData.reason
+      } as RequestItem))
+    );
   }
 
   // services/requests.service.ts

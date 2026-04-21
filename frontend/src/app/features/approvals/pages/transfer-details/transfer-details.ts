@@ -20,30 +20,34 @@ export class TransferDetailsComponent implements OnInit {
   private requestService = inject(RequestService);
   
   // Navigation state එකෙන් එන දත්ත ලබා ගැනීම
-  request = signal<any>(history.state.data || {/*
-    asset: 'Table',
-    category: 'Furniture',
-    quantity: 1,
-    name: 'Jenny Athapaththu (ID:EST001)',
-    submittedDate: '15-08-2025',
-    timelineFrom: '15-08-2025',
-    timelineTo: '15-09-2025',
-    specs: 'Height: 28-30 inches \n Width: 40-72 inches \n Depth: 24-32 inches',
-    reason: 'my table is discarded and need another for temporary use until new table received.'*/
-  });
+  request = signal<any>({});
+  isLoading = signal<boolean>(true);
 
   ngOnInit() {
     // 1. Service එකේ ඇති දත්ත පරීක්ෂා කිරීම
     if (this.requestService.selectedRequest) {
+      console.log("received data from Service");
       this.request.set(this.requestService.selectedRequest);
+      this.isLoading.set(false);
     } else {
       // 2. Refresh වුවහොත් URL එකෙන් ID එක ගෙන API call එකක් යැවීම
       const id = this.route.snapshot.paramMap.get('id');
+      console.log("Route ID parameter:", id);
       if (id) {
-        // ඔබේ Service එකේ getRequestById(id) එකක් තිබේ නම් එය මෙහි භාවිතා කරන්න
-       /* this.requestService.getRequestById(+id).subscribe((data) => {
-          this.request.set(data);
-        });*/
+        this.requestService.getRequestById(+id).subscribe({
+          next: (data) => {
+            console.log("Data fetched:", data);
+            this.request.set(data);
+            this.isLoading.set(false);
+          },
+          error: (err) => {
+            console.error("API error:", err);
+            this.isLoading.set(false);
+          }
+        });
+      } else {
+        console.warn("No ID found in route");
+        this.isLoading.set(false);
       }
     }
   }
@@ -88,6 +92,28 @@ export class TransferDetailsComponent implements OnInit {
       return { from: dateParts[0] || '', to: dateParts[1] || '' };
     }
     return { from: '', to: '' };
+  }
+
+  getCleanReason() {
+    const reason = this.request().justification || this.request().reason || '';
+    
+    // Remove transfer period information in all possible formats:
+    // (Transfer periods: date to date)
+    // [Transfer periods: date to date]
+    // Transfer periods: date to date
+    // Including multi-line and case-insensitive
+    let cleanedReason = reason
+      .replace(/\s*[\(\[]*Transfer periods?:\s*[^\)]*[\)\]]*\s*/gi, '')
+      .replace(/\s*\(Transfer periods?.*?\)\s*/gi, '')
+      .replace(/\s*\[Transfer periods?.*?\]\s*/gi, '')
+      .trim();
+    
+    // If nothing was removed, just return original trimmed
+    if (cleanedReason === reason.trim()) {
+      return reason.trim();
+    }
+    
+    return cleanedReason || reason.trim();
   }
 
   viewInPool() { console.log('Viewing in Pool'); }

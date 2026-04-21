@@ -46,6 +46,11 @@
         </div>
 
         <div class="info-group">
+          <label>Employee ID</label>
+          <p class="bold-text">{{ request().employee }}</p>
+        </div>
+
+        <div class="info-group">
           <label>Submitted Date & Time</label>
           <p class="bold-text">{{ request().date | date:'medium'}}</p>
         </div>
@@ -72,9 +77,14 @@
       </div>
 
       <div class="info-group full-width">
+
+      <div class="info-group">
+        <label>Status</label>
+        <span class="status-badge" [ngClass]="request().status.toLowerCase()">{{ request().status }}</span>
+      </div>
         <div class="desc-box">
         <label>Reason</label>
-        <p class="bold-text">{{ request().justification }}</p>
+        <p class="bold-text">{{ getCleanReason() }}</p>
       </div>
      </div>
       
