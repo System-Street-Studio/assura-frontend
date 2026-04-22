@@ -24,9 +24,9 @@ export class SharedSidebarComponent {
 
   readonly menuItems: SharedSidebarItem[] = [
     { label: 'Dashboard', icon: 'dashboard', link: '/reporting/dashboard', roles: ['Auditor', 'Admin'] },
-    { label: 'Asset', icon: 'inventory_2', link: '/inventory/assets', roles: ['Storekeeper', 'Auditor', 'Admin'] },
-    { label: 'Report', icon: 'assessment', link: '/reporting/reports', roles: ['Auditor', 'Admin'] },
-    { label: 'Audit log', icon: 'policy', link: '/reporting/audit-logs', roles: ['Auditor', 'Admin'] },
+    { label: 'Asset', icon: 'inventory_2', link: '/reporting/asset', roles: ['Auditor', 'Admin'] },
+    { label: 'Report', icon: 'assessment', link: '/reporting/report', roles: ['Auditor', 'Admin'] },
+    { label: 'Audit log', icon: 'policy', link: '/reporting/auditlog', roles: ['Auditor', 'Admin'] },
     { label: 'Check out', icon: 'logout', link: '/reporting/export', roles: ['Auditor', 'Admin'] },
   ];
 

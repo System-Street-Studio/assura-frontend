@@ -1,0 +1,109 @@
+<section class="report-page">
+  <header class="report-header">
+    <div>
+      <h1>Reports</h1>
+      <p>Generate, review, and export asset audit reports.</p>
+    </div>
+
+    <div class="header-actions">
+      <label class="search-field">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" placeholder="Search reports..." />
+      </label>
+      <button class="secondary-button" type="button">Schedule</button>
+      <button class="primary-button" type="button">
+        <span aria-hidden="true">+</span>
+        New Report
+      </button>
+    </div>
+  </header>
+
+  <div class="summary-grid">
+    @for (summary of summaries; track summary.label) {
+      <article class="summary-card" [class]="summary.tone">
+        <span>{{ summary.label }}</span>
+        <strong>{{ summary.value }}</strong>
+      </article>
+    }
+  </div>
+
+  <div class="report-layout">
+    <section class="report-list">
+      <div class="section-title">
+        <h2>Report Library</h2>
+        <div class="table-actions">
+          <button type="button">Type</button>
+          <button type="button">Date</button>
+          <button type="button">Export</button>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-head">
+          <span>Report ID</span>
+          <span>Title</span>
+          <span>Owner</span>
+          <span>Type</span>
+          <span>Period</span>
+          <span>Generated</span>
+          <span>Status</span>
+          <span>Size</span>
+        </div>
+
+        @for (report of reportItems; track report.id) {
+          <div class="table-row">
+            <strong>{{ report.id }}</strong>
+            <span>{{ report.title }}</span>
+            <span>{{ report.owner }}</span>
+            <span>{{ report.type }}</span>
+            <span>{{ report.period }}</span>
+            <span>{{ report.generated }}</span>
+            <span class="status-pill" [class]="report.status.toLowerCase()">{{ report.status }}</span>
+            <span>{{ report.size }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <aside class="insight-panel">
+      <div class="section-title">
+        <h2>Report Insights</h2>
+      </div>
+
+      @for (insight of insights; track insight.title) {
+        <article class="insight-card" [class]="insight.tone">
+          <span aria-hidden="true"></span>
+          <div>
+            <strong>{{ insight.title }}</strong>
+            <p>{{ insight.detail }}</p>
+          </div>
+        </article>
+      }
+
+      <div class="export-card">
+        <h3>Quick Export</h3>
+        <label>
+          Format
+          <select>
+            <option>PDF</option>
+            <option>Excel</option>
+            <option>CSV</option>
+          </select>
+        </label>
+        <label>
+          Date Range
+          <select>
+            <option>This month</option>
+            <option>Last quarter</option>
+            <option>This year</option>
+          </select>
+        </label>
+        <button type="button">Download</button>
+      </div>
+    </aside>
+  </div>
+
+  <button class="help-button" type="button" aria-label="Open help">
+    <span aria-hidden="true">?</span>
+  </button>
+</section>
