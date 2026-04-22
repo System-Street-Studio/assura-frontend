@@ -1,0 +1,136 @@
+<div class="pool-container">
+  <div class="header">
+    <button class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Centralized Asset Pool</h1>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-section">
+    <div class="search-input">
+      <mat-icon>search</mat-icon>
+      <input type="text" 
+             placeholder="Search Assets, Employee..." 
+             [ngModel]="searchQuery()" 
+             (ngModelChange)="searchQuery.set($event)">
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filter-section">
+    <div class="filter-group">
+      <label for="category">Category</label>
+      <select id="category" 
+              [ngModel]="selectedCategory()" 
+              (ngModelChange)="onCategoryChange($event)">
+        <option value="Electronics">Electronics</option>
+        <option value="Furniture">Furniture</option>
+        <option value="Vehicles">Vehicles</option>
+        <option value="Office Equipment">Office Equipment</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="brand">Brand</label>
+      <select id="brand" 
+              [ngModel]="selectedBrand()" 
+              (ngModelChange)="selectedBrand.set($event)">
+        <option value="">All Brands</option>
+        @for (brand of availableBrands(); track brand) {
+          <option [value]="brand">{{ brand }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="division">Division</label>
+      <select id="division" 
+              [ngModel]="selectedDivision()" 
+              (ngModelChange)="selectedDivision.set($event)">
+        <option value="">All Divisions</option>
+        @for (division of divisions(); track division) {
+          <option [value]="division">{{ division }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="employee">Employee</label>
+      <select id="employee" 
+              [ngModel]="selectedEmployee()" 
+              (ngModelChange)="selectedEmployee.set($event)">
+        <option value="">All Employees</option>
+        @for (emp of uniqueEmployees(); track emp.id) {
+          <option [value]="emp.id">{{ emp.name }} ({{ emp.id }})</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- Specifications Section -->
+  <div class="specs-section">
+    <h3>Specifications</h3>
+    <div class="spec-field">
+      <label for="spec-type">Specification Type:</label>
+      <select id="spec-type" 
+              [ngModel]="selectedSpecification()" 
+              (ngModelChange)="selectedSpecification.set($event)">
+        <option value="">Select Specification</option>
+        @for (spec of availableSpecifications(); track spec) {
+          <option [value]="spec">{{ spec }}</option>
+        }
+      </select>
+      @if (selectedSpecification()) {
+        <input type="text" 
+               [placeholder]="'Enter ' + selectedSpecification()" 
+               [ngModel]="specificationValue()" 
+               (ngModelChange)="specificationValue.set($event)">
+      }
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div class="results-container">
+    <h3>Results</h3>
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Asset Name</th>
+            <th>Brand</th>
+            <th>Assigned To</th>
+            <th>Division</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (asset of filteredAssets(); track asset.id) {
+            <tr>
+              <td>{{ asset.name }}</td>
+              <td>{{ asset.brand }}</td>
+              <td>
+                <div class="assignee-info">
+                  <span class="name">{{ asset.assignedTo }}</span>
+                  <span class="id">(ID:{{ asset.empId }})</span>
+                </div>
+              </td>
+              <td>{{ asset.division }}</td>
+              <td>
+                <button class="btn-transfer" (click)="putTransferRequest(asset)">
+                  Put Transfer Request
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 20px; color: #999;">
+                No assets found matching your criteria.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

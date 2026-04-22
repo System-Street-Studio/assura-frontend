@@ -116,7 +116,14 @@ export class TransferDetailsComponent implements OnInit {
     return cleanedReason || reason.trim();
   }
 
-  viewInPool() { console.log('Viewing in Pool'); }
+ viewInPool() {
+  console.log("Navigating to pool...");
+  this.router.navigate(['/approvals/asset-pool']).then(nav => {
+    console.log('Navigation Status:', nav);
+  }, err => {
+    console.error('Navigation Error:', err); 
+  });
+}
 
   close() {
     const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'transfer';

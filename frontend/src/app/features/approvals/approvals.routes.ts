@@ -7,6 +7,7 @@ import { DiscardDetailsComponent } from './pages/discard-details/discard-details
 import { TransferDetailsComponent } from './pages/transfer-details/transfer-details';
 import { NewAssetDetailsComponent } from './pages/new-asset-details/new-asset-details';
 import { TransferPageComponent } from './pages/transfer-page/transfer-page';
+import { AssetPoolComponent } from './pages/asset-pool/asset-pool';
 
 export const approvalsRoutes: Routes = [
     // { path: 'pending', loadComponent: ... },
@@ -37,11 +38,19 @@ export const approvalsRoutes: Routes = [
         component:  TransferPageComponent
 
    },
+   
+    { 
+        path: 'asset-pool', 
+        component: AssetPoolComponent 
+    },
+
     {
         path: '',
         redirectTo: 'overview',
         pathMatch: 'full'
     }
+
+ 
 
 
 
