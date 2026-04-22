@@ -35,7 +35,10 @@ export class SharedSidebarComponent {
     const section = this.router.url.split('/')[1];
 
     return this.menuItems.filter((item) => {
-      const canView = roles.some((role) => item.roles.includes(role));
+      const canView =
+        section === 'reporting' && roles.length === 0
+          ? item.roles.includes('Auditor')
+          : roles.some((role) => item.roles.includes(role));
       return canView && item.link.startsWith(`/${section}`);
     });
   }

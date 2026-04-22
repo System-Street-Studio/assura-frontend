@@ -11,6 +11,16 @@ export const routes: Routes = [
         loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
     },
     {
+        path: 'reporting',
+        component: ShellComponent,
+        children: [
+            {
+                path: '',
+                loadChildren: () => import('./features/reporting/reporting.routes').then((m) => m.reportingRoutes),
+            },
+        ],
+    },
+    {
         path: '',
         component: ShellComponent,
         canActivate: [authGuard],
