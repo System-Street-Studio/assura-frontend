@@ -39,7 +39,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       'admin': 'Admin',
       'procurement': 'Procurement',
       'inventory': 'Inventory',
-      'hr': 'HR',
+      'hr': 'Human Resource',
       'accountant': 'Accountant',
       'reporting': 'Reporting',
       'superintendent': 'Superintendent',

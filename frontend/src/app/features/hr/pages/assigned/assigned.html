@@ -1,0 +1,39 @@
+<div class="hr-layout">
+  <app-shared-sidebar></app-shared-sidebar>
+
+  <div class="main-area">
+    <app-shared-navbar title="Human Resource"></app-shared-navbar>
+
+    <section class="assigned-page" aria-labelledby="assigned-title">
+      <div class="content-shell">
+        <h1 id="assigned-title" class="page-title">Assigned</h1>
+
+        <div class="table-panel">
+          <table>
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Division</th>
+                <th>Joined Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (user of assignedUsers(); track user.userId) {
+                <tr>
+                  <td>{{ user.userId }}</td>
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.role }}</td>
+                  <td>{{ user.division }}</td>
+                  <td>{{ user.joinedDate }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
