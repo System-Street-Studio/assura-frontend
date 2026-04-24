@@ -26,7 +26,7 @@ export class SharedSidebarComponent {
 
   readonly menuItems: SharedSidebarItem[] = [
     // Admin section
-    { label: 'Dashboard', icon: 'home', link: '/admin/overview', roles: ['Admin'] },
+    { label: 'Admin Dashboard', icon: 'home', link: '/admin/overview', roles: ['Admin'] },
     { label: 'Track Assets', icon: 'track_changes', link: '/admin/track-assets', roles: ['Admin'] },
 
     // Procurement section
@@ -74,7 +74,7 @@ export class SharedSidebarComponent {
     { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['DivisionHead', 'Admin'] },
 
     // Employee section
-    { label: 'Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'My Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['ANY'], section: 'employee', isGlobal: true },
     { label: 'My Assets', icon: 'inventory_2', link: '/employee/employee-assets', roles: ['ANY'], section: 'employee', isGlobal: true },
     { label: 'Asset Request', icon: 'add_circle', link: '/employee/requests-main', roles: ['ANY'], section: 'employee', isGlobal: true },
     { label: 'Activity', icon: 'history', link: '/employee/all-emp-requests', roles: ['ANY'], section: 'employee', isGlobal: true },

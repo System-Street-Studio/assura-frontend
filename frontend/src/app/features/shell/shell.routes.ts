@@ -20,7 +20,19 @@ export const shellRoutes: Routes = [
   {
     path: 'employee',
     canActivate: [roleGuard],
-    data: { roles: [ROLES.EMPLOYEE, ROLES.ADMIN] },
+    data: {
+      roles: [
+        ROLES.EMPLOYEE,
+        ROLES.ADMIN,
+        ROLES.STOREKEEPER,
+        ROLES.HUMAN_RESOURCE,
+        ROLES.AUDITOR,
+        ROLES.PROCUREMENT,
+        ROLES.SUPERINTENDENT,
+        ROLES.ACCOUNTANT,
+        ROLES.DIVISION_HEAD
+      ]
+    },
     loadChildren: () => import('../employee/employee.routes').then(m => m.employeeRoutes)
   },
   {

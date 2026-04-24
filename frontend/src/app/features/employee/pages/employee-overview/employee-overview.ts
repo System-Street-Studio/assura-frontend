@@ -59,7 +59,7 @@ export class EmployeeOverviewComponent implements OnInit {
     this.dashboardService.getDashboardData().subscribe({
       next: (data: DashboardData) => {
         const activities = data.recentActivity.map(a => ({
-          description: `${a.assetName} (${a.assetId}) - ${a.action}`,
+          description: `${a.assetName} (${a.assetCode}) - ${a.action}`,
           timestamp: this.formatTimeAgo(new Date(a.timestamp))
         }));
         this.recentActivities.set(activities);

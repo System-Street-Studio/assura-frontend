@@ -14,7 +14,7 @@ export interface RecentActivity {
   id: string;
   action: 'checked_out' | 'checked_in' | 'registered' | 'maintenance' | 'disposed' | 'transferred';
   assetName: string;
-  assetId: string;
+  assetCode: string;
   user: string;
   timestamp: Date;
   icon: string;
