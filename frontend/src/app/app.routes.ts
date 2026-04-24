@@ -7,6 +7,26 @@ import { accShellRoutes } from './features/accountant/acc-shell/acc-shell.routes
 
 export const routes: Routes = [
     {
+        path: 'hr-overview',
+        loadComponent: () => import('./features/hr/pages/overview/overview').then((m) => m.HrOverviewComponent),
+    },
+    {
+        path: 'hr-my-assets',
+        loadComponent: () => import('./features/hr/pages/myasset/myasset').then((m) => m.HrMyAssetComponent),
+    },
+    {
+        path: 'hr-pending',
+        loadComponent: () => import('./features/hr/pages/pending/pending').then((m) => m.HrPendingComponent),
+    },
+    {
+        path: 'hr-assign-role',
+        loadComponent: () => import('./features/hr/pages/form/form').then((m) => m.HrAssignRoleFormComponent),
+    },
+    {
+        path: 'hr-assigned',
+        loadComponent: () => import('./features/hr/pages/assigned/assigned').then((m) => m.HrAssignedComponent),
+    },
+    {
         path: 'auth',
         loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
     },

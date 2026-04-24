@@ -4,9 +4,9 @@
 }
 
 .sidebar {
-  width: 240px;
+  width: 112px;
   height: 100%;
-  background: linear-gradient(180deg, #d2f1f1 0%, #c1ebeb 100%);
+  background: #c4eef3;
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -15,7 +15,7 @@
 }
 
 .sidebar.collapsed {
-  width: 64px;
+  width: 72px;
 }
 
 /* Header */
@@ -23,26 +23,26 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
-  height: 56px;
+  padding: 5px 8px;
+  height: 34px;
   box-sizing: border-box;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
 }
 
 .sidebar-logo {
-  height: 28px;
-  width: 28px;
+  height: 15px;
+  width: 15px;
   object-fit: contain;
 }
 
 .sidebar-title {
   font-family: 'Jost', sans-serif;
-  font-size: 1.5rem;
+  font-size: 16px;
   font-weight: 700;
   color: #004777;
 }
@@ -51,7 +51,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 2px;
   display: flex;
   align-items: center;
   color: #023435;
@@ -66,10 +66,10 @@
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  padding: 8px 10px;
+  padding: 18px 14px;
   overflow-y: auto;
   flex: 1;
-  gap: 2px;
+  gap: 10px;
 }
 
 .sidebar-section-header {
@@ -92,43 +92,46 @@
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
+  gap: 7px;
+  padding: 0;
   text-decoration: none;
-  color: #044b4b;
-  font-family: 'Jost', sans-serif;
-  font-size: 0.95rem;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 0;
   transition: background 0.2s ease, color 0.15s ease;
   box-sizing: border-box;
 }
 
 .nav-item:hover {
-  background: rgba(11, 108, 120, 0.1);
+  background: transparent;
+  color: #004777;
 }
 
 .nav-item.active {
-  background: linear-gradient(90deg, #0b6c78, #075a5a);
-  color: #ffffff;
-  box-shadow: 0 6px 14px rgba(6, 71, 71, 0.12);
+  background: transparent;
+  color: #000000;
+  box-shadow: none;
 }
 
 .nav-item.active .nav-icon {
-  color: #ffffff;
+  color: #000000;
 }
 
 .nav-icon {
-  font-size: 1.2rem;
-  width: 28px;
+  font-size: 13px;
+  width: 15px;
+  height: 15px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  color: #043838;
+  color: #000000;
 }
 
 .nav-label {
   font-weight: 400;
+  line-height: 1;
 }
 
 /* Bottom section */
@@ -138,6 +141,7 @@
 }
 
 .sidebar-footer {
+  display: none;
   padding: 12px 14px 8px;
   font-family: 'Jost', sans-serif;
   font-size: 12px;

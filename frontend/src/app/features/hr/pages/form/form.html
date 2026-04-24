@@ -1,0 +1,108 @@
+<div class="hr-layout">
+  <app-shared-sidebar></app-shared-sidebar>
+
+  <div class="main-area">
+    <app-shared-navbar title="Human Resource"></app-shared-navbar>
+
+    <section class="form-page" aria-labelledby="assign-title">
+      <div class="form-card">
+        <div class="form-header">
+          <h1 id="assign-title">Assign Role and Department</h1>
+          <p>Select the employee, department, and role to complete role assignment.</p>
+        </div>
+
+        <form class="assign-form" #assignForm="ngForm" (ngSubmit)="assignRole()">
+          <label>
+            <span>Employee ID</span>
+            <input
+              type="text"
+              name="employeeId"
+              placeholder="E1223"
+              required
+              [(ngModel)]="form.employeeId"
+            />
+          </label>
+
+          <label>
+            <span>Employee Name</span>
+            <input
+              type="text"
+              name="employeeName"
+              placeholder="Enter employee name"
+              required
+              [(ngModel)]="form.employeeName"
+            />
+          </label>
+
+          <label>
+            <span>Department</span>
+            <select name="department" required [(ngModel)]="form.department">
+              <option value="" disabled>Select department</option>
+              @for (department of departments; track department) {
+                <option [value]="department">{{ department }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Role</span>
+            <select name="role" required [(ngModel)]="form.role">
+              <option value="" disabled>Select role</option>
+              @for (role of roles; track role) {
+                <option [value]="role">{{ role }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Effective Date</span>
+            <input type="date" name="effectiveDate" required [(ngModel)]="form.effectiveDate" />
+          </label>
+
+          <label class="full-width">
+            <span>Notes</span>
+            <textarea
+              name="note"
+              rows="4"
+              placeholder="Add assignment note"
+              [(ngModel)]="form.note"
+            ></textarea>
+          </label>
+
+          <div class="form-actions">
+            <button class="secondary-button" type="button" (click)="resetForm()">Clear</button>
+            <button class="primary-button" type="submit" [disabled]="assignForm.invalid">
+              Assign Role
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  @if (submitted) {
+    <div class="popup-backdrop" role="presentation" (click)="closePopup()">
+      <section
+        class="success-popup"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="success-title"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="success-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M9.4 16.6 4.9 12.1l1.4-1.4 3.1 3.1 8.3-8.3 1.4 1.4-9.7 9.7Z" />
+          </svg>
+        </div>
+
+        <h2 id="success-title">Assigned Successfully</h2>
+        <p>
+          {{ form.employeeName || 'Selected employee' }} has been assigned to
+          {{ form.department || 'the selected department' }} as {{ form.role || 'the selected role' }}.
+        </p>
+
+        <button class="popup-button" type="button" (click)="closePopup()">OK</button>
+      </section>
+    </div>
+  }
+</div>

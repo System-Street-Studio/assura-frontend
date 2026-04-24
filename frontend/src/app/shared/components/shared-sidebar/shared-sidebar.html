@@ -1,0 +1,20 @@
+<aside class="sidebar" aria-label="Sidebar navigation">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-name">Assura</span>
+    <button class="menu-button" type="button" aria-label="Menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+    </button>
+  </div>
+
+  <nav class="nav-list">
+    @for (item of links; track item.link) {
+      <a class="nav-link" [routerLink]="item.link" routerLinkActive="active">
+        <span class="nav-icon" [class]="item.icon" aria-hidden="true"></span>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+</aside>
