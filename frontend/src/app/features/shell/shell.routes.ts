@@ -19,6 +19,8 @@ export const shellRoutes: Routes = [
   },
   {
     path: 'employee',
+    canActivate: [roleGuard],
+    data: { roles: [ROLES.EMPLOYEE, ROLES.ADMIN] },
     loadChildren: () => import('../employee/employee.routes').then(m => m.employeeRoutes)
   },
   {
