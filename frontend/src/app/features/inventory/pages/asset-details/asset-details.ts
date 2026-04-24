@@ -62,6 +62,7 @@ export class AssetDetailsComponent implements OnInit {
           if (a.qrCode?.trim()) {
             this.qrDataUrl = `data:image/png;base64,${a.qrCode}`;
           } else {
+            // Encode the Asset Code in QR as requested by user for mobile app compatibility
             void this.generateQr(a.assetCode);
           }
           this.loading = false;
