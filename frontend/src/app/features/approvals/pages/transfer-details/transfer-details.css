@@ -452,6 +452,7 @@ label {
 .gradient-text {
   background: linear-gradient(90deg, #004777, #00a9b5);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 26px;
   font-weight: 800;
@@ -552,6 +553,7 @@ label {
 .glass-card.reject .gradient-text {
   background: linear-gradient(90deg, #b71c1c, #e53935);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
