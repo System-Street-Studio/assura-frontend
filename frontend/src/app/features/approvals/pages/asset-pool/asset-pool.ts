@@ -237,19 +237,86 @@ export class AssetPoolComponent implements OnInit {
   });
 
   /**
+   * Handle dropdown selection change
+   */
+  onDropdownChange(event: any) {
+    console.log('🔥 onDropdownChange CALLED! Event:', event);
+    console.log('� Event type:', typeof event);
+    console.log('�📊 Available requests:', this.approvedTransferRequests());
+    console.log('📊 Available requests count:', this.approvedTransferRequests().length);
+    
+    // Convert event to number for proper ID matching
+    const eventId = Number(event);
+    console.log('🔥 Event converted to number:', eventId);
+    
+    const selectedRequest = this.approvedTransferRequests().find(req => req.id === eventId);
+    console.log('🔍 Found selected request:', selectedRequest);
+    
+    this.selectedTransferRequest.set(selectedRequest);
+    console.log('✅ selectedTransferRequest signal set to:', this.selectedTransferRequest());
+    console.log('✅ selectedTransferRequest signal value after setting:', this.selectedTransferRequest());
+  }
+
+  /**
+   * Test method to manually select first request
+   */
+  testSelectFirstRequest() {
+    console.log('🧪 Test: Manually selecting first request...');
+    console.log('📊 Available requests:', this.approvedTransferRequests());
+    
+    if (this.approvedTransferRequests().length > 0) {
+      const firstRequest = this.approvedTransferRequests()[0];
+      console.log('🔍 Selecting first request:', firstRequest);
+      
+      this.selectedTransferRequest.set(firstRequest);
+      console.log('✅ selectedTransferRequest signal set to:', this.selectedTransferRequest());
+      console.log('✅ selectedTransferRequest signal value after setting:', this.selectedTransferRequest());
+    } else {
+      console.log('❌ No requests available to select');
+    }
+  }
+
+  /**
    * Load approved transfer requests for dropdown selection
    */
   loadApprovedTransferRequests() {
-    console.log('� Using same method as requests-page to get approved transfer requests...');
+    console.log('🚀 START: loadApprovedTransferRequests called');
+    console.log('🔄 Using exact same method as requests-page...');
     
-    // Use the same method as requests-page that actually works
-    this.requestService.getApprovedTransferRequestsFromAllData().subscribe({
-      next: (requests) => {
-        console.log('✅ Approved transfer requests loaded using requests-page method:', requests.length);
-        this.approvedTransferRequests.set(requests);
+    // Use the exact same method as requests-page
+    const isDivisionHead = true; // Same as requests-page
+    
+    this.requestService.getAllRequests(isDivisionHead).subscribe({
+      next: (allData: any[]) => {
+        console.log('📡 All data from getAllRequests:', allData);
+        console.log('📊 Total requests received:', allData.length);
+        
+        // Filter for transfer requests (same logic as requests-page)
+        const transferFiltered = allData.filter(r => r.type?.toLowerCase() === 'transfer');
+        console.log('📋 Transfer requests filtered:', transferFiltered.length);
+        
+        // Further filter for approved status only
+        const approvedTransferRequests = transferFiltered.filter(r => r.status === 'Approved');
+        console.log('✅ Approved transfer requests:', approvedTransferRequests.length);
+        
+        // Convert to dropdown format
+        const dropdownData = approvedTransferRequests.map(request => ({
+          id: request.id,
+          requesterName: request.name,
+          requesterId: request.requesterId,
+          assetName: request.assetName,
+          requestType: request.type,
+          status: request.status,
+          reason: request.reason
+        }));
+        
+        console.log('🔍 Dropdown will show these requests:', dropdownData);
+        this.approvedTransferRequests.set(dropdownData);
+        console.log('📊 approvedTransferRequests signal after setting:', this.approvedTransferRequests());
       },
       error: (error: any) => {
-        console.error('❌ Error loading approved transfer requests:', error);
+        console.error('❌ ERROR: Error loading approved transfer requests:', error);
+        console.error('🔍 Error details:', error);
         this.approvedTransferRequests.set([]);
       }
     });
@@ -361,8 +428,29 @@ export class AssetPoolComponent implements OnInit {
    * Load data from API on component init
    */
   ngOnInit() {
+    console.log('🚀 ngOnInit STARTED - AssetPoolComponent initializing...');
+    
     // Load approved transfer requests for dropdown
+    console.log('📞 Calling loadApprovedTransferRequests...');
     this.loadApprovedTransferRequests();
+    
+    // TEMPORARY: Add test data to verify dropdown works
+    console.log('🧪 Adding test data to dropdown for testing...');
+    const testData = [
+      {
+        id: 999,
+        requesterName: 'Test User',
+        requesterId: 123,
+        assetName: 'Test Asset',
+        requestType: 'Transfer',
+        status: 'Approved',
+        reason: 'Test transfer request'
+      }
+    ];
+    console.log('🧪 Test data being set:', testData);
+    this.approvedTransferRequests.set(testData);
+    console.log('🧪 Test data set to dropdown signal:', this.approvedTransferRequests());
+    console.log('🚀 ngOnInit COMPLETED');
 
     this.assetPoolService.getAssetPoolData().subscribe({
       next: (data) => {
@@ -434,12 +522,36 @@ export class AssetPoolComponent implements OnInit {
    * Select asset for transfer - use dropdown selected request + asset data to create transfer record
    */
   putTransferRequest(asset: Asset) {
-    console.log('Select for transfer button clicked for asset:', asset);
+    console.log('🔘 Select for transfer button clicked for asset:', asset);
+    
+    // Debug dropdown state
+    console.log('📊 Dropdown state debugging:');
+    console.log('  approvedTransferRequests():', this.approvedTransferRequests());
+    console.log('  approvedTransferRequests().length:', this.approvedTransferRequests().length);
+    console.log('  selectedTransferRequest():', this.selectedTransferRequest());
+    console.log('  Dropdown options available:', this.approvedTransferRequests().length > 0 ? 'YES' : 'NO');
+    
+    // Check if test data is present
+    if (this.approvedTransferRequests().length > 0) {
+      console.log('🧪 Test data found in dropdown:');
+      this.approvedTransferRequests().forEach(req => {
+        console.log(`  - ID: ${req.id}, Name: ${req.requesterName}`);
+      });
+    }
     
     const selectedRequest = this.selectedTransferRequest();
     if (!selectedRequest) {
       console.error('❌ No transfer request selected from dropdown');
-      alert('Please select a transfer request from the dropdown first.');
+      console.error('🔍 Possible issues:');
+      console.error('  1. Dropdown is empty (no approved transfer requests)');
+      console.error('  2. User has not selected an option from dropdown');
+      console.error('  3. Dropdown signal is not properly set');
+      
+      if (this.approvedTransferRequests().length === 0) {
+        alert('No approved transfer requests available in dropdown. Please check if there are approved transfer requests in the system.');
+      } else {
+        alert('Please select a transfer request from the dropdown first.');
+      }
       return;
     }
     

@@ -37,7 +37,7 @@
         <label for="transferRequest">Select Approved Transfer Request:</label>
         <select id="transferRequest" 
                 [ngModel]="selectedTransferRequest()?.id || ''" 
-                (ngModelChange)="selectedTransferRequest.set(approvedTransferRequests().find(req => req.id === $event))">
+                (ngModelChange)="onDropdownChange($event)">
           <option value="">Select an approved transfer request...</option>
           @for (request of approvedTransferRequests(); track request.id) {
             <option [value]="request.id">
@@ -45,6 +45,16 @@
             </option>
           }
         </select>
+        
+        <!-- DEBUG: Add test button to manually select first request -->
+        <button (click)="testSelectFirstRequest()" style="margin-top: 10px; padding: 5px; background: #007bff; color: white; border: none; border-radius: 3px;">
+          Test: Select First Request
+        </button>
+        
+        <!-- DEBUG: Show current selection -->
+        <div style="margin-top: 10px; font-size: 12px; color: #666;">
+          <small>Current Selection: {{ selectedTransferRequest()?.id || 'None' }}</small>
+        </div>
       </div>
       @if (approvedTransferRequests().length === 0) {
         <div class="no-requests-info">

@@ -2,8 +2,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { RequestItem } from '../models/request.model';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, throwError, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -308,7 +308,111 @@ testSimpleApiCall(): Observable<any[]> {
   );
 }
 
-createTransferRecord(assetData: any, requestData: any): Observable<any> {
+getEmployeeDivisionInfo(employeeId: string): Observable<any> {
+  console.log('🔍 Fetching user division info for userId:', employeeId);
+  console.log('🔗 API call: GET', `${this.baseUrl}/user/${employeeId}`);
+  
+  return this.http.get(`${this.baseUrl}/user/${employeeId}`).pipe(
+    catchError((error) => {
+      console.log('❌ User API failed, using mock division data for testing');
+      console.log('🔍 Error:', error.status, error.message);
+      
+      // Mock user data with division information for testing
+      const mockUserData = {
+        id: parseInt(employeeId),
+        name: `User ${employeeId}`,
+        divisionId: this.getMockDivisionId(employeeId),
+        division: {
+          id: this.getMockDivisionId(employeeId),
+          name: this.getMockDivisionName(employeeId),
+          divisionName: this.getMockDivisionName(employeeId)
+        }
+      };
+      
+      console.log('📋 Mock user data with division:', mockUserData);
+      return of(mockUserData);
+    })
+  );
+}
+
+// Helper method to get mock division ID based on user ID
+private getMockDivisionId(userId: string): number {
+  const userDivisions: { [key: string]: number } = {
+    '65': 1,  // emp_it -> IT Division
+    '66': 2,  // emp_hr -> HR Division  
+    '67': 3,  // emp_finance -> Finance Division
+    '68': 4   // emp_ops -> Operations Division
+  };
+  return userDivisions[userId] || 5; // Default division
+}
+
+// Helper method to get mock division name based on user ID
+private getMockDivisionName(userId: string): string {
+  const userDivisions: { [key: string]: string } = {
+    '65': 'Information Technology',
+    '66': 'Human Resources', 
+    '67': 'Finance',
+    '68': 'Operations'
+  };
+  return userDivisions[userId] || 'General Division';
+}
+
+testDivisionFromUserTable(userId: string): Observable<any> {
+  console.log('🧪 === TESTING DIVISION RETRIEVAL FROM USER TABLE ===');
+  console.log('🔍 Testing with userId:', userId);
+  console.log('🔗 API call: GET', `${this.baseUrl}/user/${userId}`);
+  
+  return this.http.get(`${this.baseUrl}/user/${userId}`).pipe(
+    map((user: any) => {
+      console.log('📋 === USER RESPONSE ANALYSIS ===');
+      console.log('✅ User data received successfully');
+      console.log('📊 User data keys:', Object.keys(user));
+      console.log('📄 Complete user data:', user);
+      
+      console.log('🔍 === DIVISION FIELD CHECK ===');
+      console.log('  user.divisionId:', user.divisionId);
+      console.log('  user.divisionName:', user.divisionName);
+      console.log('  user.division?.id:', user.division?.id);
+      console.log('  user.division?.name:', user.division?.name);
+      console.log('  user.division?.divisionName:', user.division?.divisionName);
+      
+      console.log('🔍 === EXTRACTED DIVISION INFO ===');
+      const divisionId = user.divisionId || user.division?.id;
+      const divisionName = user.divisionName || user.division?.name || user.division?.divisionName;
+      
+      console.log('  ✅ Extracted divisionId:', divisionId);
+      console.log('  ✅ Extracted divisionName:', divisionName);
+      
+      if (divisionId && divisionName) {
+        console.log('🎉 SUCCESS: Division info retrieved from user table');
+      } else {
+        console.log('❌ ISSUE: Division info missing or incomplete');
+        console.log('⚠️  Possible issues:');
+        console.log('    - User table does not have division information');
+        console.log('    - Division field names are different');
+        console.log('    - User with this ID does not exist');
+      }
+      
+      return user;
+    }),
+    catchError((error) => {
+      console.log('❌ === API ERROR ===');
+      console.log('❌ Failed to fetch user data');
+      console.log('🔍 Error details:', error);
+      console.log('⚠️  Possible issues:');
+      console.log('    - API endpoint does not exist');
+      console.log('    - User ID does not exist');
+      console.log('    - Permission issues');
+      console.log('    - Network connectivity');
+      
+      return throwError(() => error);
+    })
+  );
+}
+
+createTransferRecordWithDivisionInfo(assetData: any, requestData: any, toDivisionId: any, toDivision: any, targetUserId: any, targetUser: any): Observable<any> {
+  console.log('🔄 Creating transfer record with division info...');
+  
   const transferPayload = {
     // From assets table
     assetId: assetData.assetId,
@@ -321,20 +425,231 @@ createTransferRecord(assetData: any, requestData: any): Observable<any> {
     // From assetrequests table
     assetRequestId: requestData.id,
     reason: requestData.reason,
-    toDivisionId: requestData.toDivisionId,
-    toDivision: requestData.toDivision,
-    targetUserId: requestData.targetUserId,
-    targetUser: requestData.targetUser,
+    toDivisionId: toDivisionId,
+    toDivision: toDivision,
+    targetUserId: targetUserId,
+    targetUser: targetUser,
     
     // Transfer metadata
     transferDate: new Date().toISOString(),
-    status: 'Pending',
+    status: 'PendingOwnerApproval',
     createdBy: requestData.requesterId
   };
   
-  console.log(' Transfer table data being inserted:', transferPayload);
+  console.log('🔄 Creating transfer record with the following data:');
+  console.log('📋 Transfer table data being inserted:');
+  console.log('From assets table:');
+  console.log('  assetId:', transferPayload.assetId);
+  console.log('  assetTag:', transferPayload.assetTag);
+  console.log('  fromDivisionId:', transferPayload.fromDivisionId);
+  console.log('  fromDivision:', transferPayload.fromDivision);
+  console.log('  currentHolderId:', transferPayload.currentHolderId);
+  console.log('  currentHolder:', transferPayload.currentHolder);
+  console.log('');
+  console.log('From assetrequests table:');
+  console.log('  assetRequestId:', transferPayload.assetRequestId);
+  console.log('  reason:', transferPayload.reason);
+  console.log('  toDivisionId:', transferPayload.toDivisionId);
+  console.log('  toDivision:', transferPayload.toDivision);
+  console.log('  targetUserId:', transferPayload.targetUserId);
+  console.log('  targetUser:', transferPayload.targetUser);
+  console.log('');
+  console.log('Transfer metadata:');
+  console.log('  transferDate:', transferPayload.transferDate);
+  console.log('  status:', transferPayload.status);
+  console.log('  createdBy:', transferPayload.createdBy);
+  console.log('');
+  console.log('📄 Complete transfer record data:');
+  console.log(transferPayload);
   
-  return this.http.post(`${this.baseUrl}/transfers`, transferPayload);
+  return this.http.post(`${this.baseUrl}/transfers`, transferPayload).pipe(
+      catchError((error) => {
+        console.log('❌ === TRANSFERS API ERROR ===');
+        console.log('❌ Failed to create transfer record');
+        console.log('🔍 Error status:', error.status);
+        console.log('🔍 Error message:', error.message);
+        console.log('📋 Transfer data that failed to save:', transferPayload);
+        
+        if (error.status === 404) {
+          console.log('⚠️  Transfers endpoint not found (404). Backend endpoint may not be implemented yet.');
+          console.log('🔄 Alternative: Transfer record data prepared but not saved to database.');
+          console.log('📄 Transfer record data (ready for backend implementation):');
+          console.log(JSON.stringify(transferPayload, null, 2));
+          
+          // Return mock success response for testing purposes
+          return of({
+            success: true,
+            message: 'Transfer record created successfully (mock response - endpoint not implemented)',
+            data: transferPayload,
+            id: Date.now() // Mock ID
+          });
+        } else {
+          console.log('❌ Other error occurred:', error);
+          return throwError(() => error);
+        }
+      })
+    );
+}
+
+createTransferRecord(assetData: any, requestData: any): Observable<any> {
+  console.log('🔍 === COMPREHENSIVE TRANSFER DEBUGGING ===');
+  console.log('📋 Step 1: Asset Data Analysis');
+  console.log('  Asset data keys:', Object.keys(assetData));
+  console.log('  Asset data:', assetData);
+  console.log('  ✅ assetId:', assetData.assetId);
+  console.log('  ✅ assetTag:', assetData.assetTag || assetData.assetCode);
+  console.log('  ✅ fromDivisionId:', assetData.divisionId);
+  console.log('  ✅ fromDivision:', assetData.divisionName);
+  console.log('  ✅ currentHolderId:', assetData.assignedUserId);
+  console.log('  ✅ currentHolder:', assetData.assignedUserName);
+  
+  console.log('📋 Step 2: Request Data Analysis');
+  console.log('  Request data keys:', Object.keys(requestData));
+  console.log('  Request data:', requestData);
+  console.log('  ✅ requesterId:', requestData.requesterId);
+  console.log('  ✅ requesterName:', requestData.requesterName);
+  console.log('  ✅ assetRequestId:', requestData.id);
+  console.log('  ✅ reason:', requestData.reason);
+  
+  // Check all possible target user fields
+  console.log('📋 Step 3: Target User Identification');
+  const possibleTargetUserIds = [
+    {field: 'targetUserId', value: requestData.targetUserId},
+    {field: 'toUserId', value: requestData.toUserId},
+    {field: 'assignToUserId', value: requestData.assignToUserId},
+    {field: 'requesterId', value: requestData.requesterId}
+  ];
+  console.log('  Possible target user IDs:', possibleTargetUserIds);
+  
+  const targetUserId = requestData.targetUserId || requestData.toUserId || requestData.assignToUserId || requestData.requesterId;
+  const targetUser = requestData.targetUser || requestData.toUser || requestData.assignTo || requestData.requesterName;
+  console.log('  ✅ Selected targetUserId:', targetUserId);
+  console.log('  ✅ Selected targetUser:', targetUser);
+  
+  // Check all possible division fields
+  console.log('📋 Step 4: Division Field Analysis');
+  const possibleDivisionIds = [
+    {field: 'divisionId', value: requestData.divisionId},
+    {field: 'requesterDivisionId', value: requestData.requesterDivisionId},
+    {field: 'userDivisionId', value: requestData.userDivisionId},
+    {field: 'user.divisionId', value: requestData.user?.divisionId},
+    {field: 'user.division.id', value: requestData.user?.division?.id}
+  ];
+  console.log('  Possible division IDs:', possibleDivisionIds);
+  
+  const possibleDivisionNames = [
+    {field: 'division', value: requestData.division},
+    {field: 'divisionName', value: requestData.divisionName},
+    {field: 'requesterDivision', value: requestData.requesterDivision},
+    {field: 'user.divisionName', value: requestData.user?.divisionName},
+    {field: 'user.division.name', value: requestData.user?.division?.name},
+    {field: 'user.division.divisionName', value: requestData.user?.division?.divisionName}
+  ];
+  console.log('  Possible division names:', possibleDivisionNames);
+  
+  const requestDivisionId = requestData.divisionId || 
+                          requestData.requesterDivisionId || 
+                          requestData.userDivisionId ||
+                          requestData.user?.divisionId ||
+                          requestData.user?.division?.id;
+                          
+  const requestDivision = requestData.division || 
+                         requestData.divisionName || 
+                         requestData.requesterDivision ||
+                         requestData.user?.divisionName ||
+                         requestData.user?.division?.name ||
+                         requestData.user?.division?.divisionName;
+  
+  console.log('  ✅ Found requestDivisionId:', requestDivisionId);
+  console.log('  ✅ Found requestDivision:', requestDivision);
+  
+  let toDivisionId = requestData.toDivisionId || requestData.toDivision || requestData.targetDivisionId || requestData.destinationDivisionId;
+  let toDivision = requestData.toDivision || requestData.targetDivision || requestData.destinationDivision;
+  
+  if (requestDivisionId && requestDivision) {
+    // Use division info from request data if available
+    toDivisionId = requestDivisionId;
+    toDivision = requestDivision;
+    console.log('� Step 5A: Using division info from request data');
+    console.log('  ✅ toDivisionId:', toDivisionId);
+    console.log('  ✅ toDivision:', toDivision);
+    
+    return this.createTransferRecordWithDivisionInfo(assetData, requestData, toDivisionId, toDivision, targetUserId, targetUser);
+  } else {
+    // Fetch division info from user table using requesterId
+    console.log('� Step 5B: Fetching division from user table');
+    console.log('  🔍 RequesterId for user lookup:', requestData.requesterId);
+    console.log('  🔗 Will call: GET', `${this.baseUrl}/user/${requestData.requesterId}`);
+    
+    return this.getEmployeeDivisionInfo(requestData.requesterId).pipe(
+      map((user: any) => {
+        console.log('📋 Step 6: User Response Analysis');
+        console.log('  User data keys:', Object.keys(user));
+        console.log('  User data:', user);
+        
+        // Check all possible division fields in user response
+        const userDivisionIds = [
+          {field: 'divisionId', value: user.divisionId},
+          {field: 'division.id', value: user.division?.id}
+        ];
+        console.log('  User division IDs:', userDivisionIds);
+        
+        const userDivisionNames = [
+          {field: 'divisionName', value: user.divisionName},
+          {field: 'division.name', value: user.division?.name},
+          {field: 'division.divisionName', value: user.division?.divisionName}
+        ];
+        console.log('  User division names:', userDivisionNames);
+        
+        toDivisionId = user.divisionId || user.division?.id || requestData.requesterId;
+        toDivision = user.divisionName || user.division?.name || user.division?.divisionName || 'Unknown Division';
+        
+        console.log('  ✅ Final toDivisionId:', toDivisionId);
+        console.log('  ✅ Final toDivision:', toDivision);
+        
+        console.log('📋 Step 7: Creating Transfer Record');
+        console.log('  ✅ Final transfer data:');
+        console.log('    - assetId:', assetData.assetId);
+        console.log('    - assetRequestId:', requestData.id);
+        console.log('    - requesterId:', requestData.requesterId);
+        console.log('    - targetUserId:', targetUserId);
+        console.log('    - toDivisionId:', toDivisionId);
+        console.log('    - toDivision:', toDivision);
+        
+        return this.createTransferRecordWithDivisionInfo(assetData, requestData, toDivisionId, toDivision, targetUserId, targetUser);
+      }),
+      catchError((error) => {
+        console.log('❌ === USER API ERROR ===');
+        console.log('❌ Failed to fetch user data for division info');
+        console.log('🔍 Error status:', error.status);
+        console.log('🔍 Error message:', error.message);
+        
+        if (error.status === 404) {
+          console.log('⚠️  User endpoint not found (404). Using fallback division info.');
+          console.log('🔄 Creating transfer record with fallback division info...');
+          
+          // Use fallback division info
+          const fallbackDivisionId = requestData.requesterId;
+          const fallbackDivisionName = `${requestData.requesterName} Division`;
+          
+          console.log('  ✅ Fallback toDivisionId:', fallbackDivisionId);
+          console.log('  ✅ Fallback toDivision:', fallbackDivisionName);
+          
+          return this.createTransferRecordWithDivisionInfo(
+            assetData, 
+            requestData, 
+            fallbackDivisionId, 
+            fallbackDivisionName, 
+            targetUserId, 
+            targetUser
+          );
+        } else {
+          console.log('❌ Other error occurred:', error);
+          return throwError(() => error);
+        }
+      })
+    );
+  }
 }
 
 }

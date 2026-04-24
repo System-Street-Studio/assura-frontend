@@ -64,6 +64,107 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Transfer Request Section */
+.transfer-request-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border: 1px solid #e8e8e8;
+}
+
+.transfer-request-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.transfer-request-dropdown label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.transfer-request-dropdown label::before {
+  content: '📋';
+  font-size: 18px;
+  margin-right: 5px;
+}
+
+.transfer-request-dropdown select {
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  min-height: 52px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.transfer-request-dropdown select:hover {
+  border-color: #0066cc;
+  box-shadow: 0 4px 16px rgba(0,102,204,0.15);
+  transform: translateY(-1px);
+}
+
+.transfer-request-dropdown select:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+}
+
+.transfer-request-dropdown option {
+  padding: 12px;
+  font-size: 14px;
+  color: #333;
+}
+
+.transfer-request-dropdown option:hover {
+  background: #f0f8ff;
+}
+
+.no-requests-info {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 15px;
+}
+
+.no-requests-info small {
+  color: #856404;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.selected-request-info {
+  background: #e8f5e9;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 15px;
+}
+
+.selected-request-info small {
+  color: #2e7d32;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.selected-request-info small strong {
+  color: #1b5e20;
+  font-weight: 600;
+}
+
 /* Search Section */
 .search-section {
   margin-bottom: 25px;
