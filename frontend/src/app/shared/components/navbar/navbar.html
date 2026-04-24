@@ -1,0 +1,25 @@
+<nav class="shared-navbar">
+  <div class="navbar-title">
+    <mat-icon aria-hidden="true">dashboard</mat-icon>
+    <span>{{ pageTitle }}</span>
+  </div>
+
+  <div class="navbar-actions">
+    <button class="profile-button" type="button" aria-label="Open profile menu" (click)="toggleProfileMenu($event)">
+      <span class="profile-avatar">A</span>
+    </button>
+
+    @if (showProfileMenu) {
+      <div class="profile-menu" (click)="$event.stopPropagation()">
+        <button type="button" (click)="openProfile()">
+          <mat-icon aria-hidden="true">person</mat-icon>
+          Profile
+        </button>
+        <button type="button" (click)="logout()">
+          <mat-icon aria-hidden="true">logout</mat-icon>
+          Sign Out
+        </button>
+      </div>
+    }
+  </div>
+</nav>

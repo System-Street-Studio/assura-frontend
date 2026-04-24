@@ -1,0 +1,298 @@
+:host {
+  display: block;
+  min-height: 100%;
+  background: #f5f7f8;
+  color: #17232b;
+  font-family: 'Jost', Arial, sans-serif;
+}
+
+.asset-page {
+  min-height: 100%;
+  padding: 14px 18px 40px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.asset-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.asset-toolbar h1 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.search-box {
+  width: 130px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 8px;
+  border: 1px solid #e1e8ec;
+  border-radius: 4px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.search-box span {
+  color: #7a878e;
+  font-size: 11px;
+}
+
+.search-box input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 9px;
+}
+
+.filter-button,
+.new-button,
+.delete-button {
+  height: 24px;
+  border: 0;
+  border-radius: 4px;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.filter-button {
+  background: #ffffff;
+  border: 1px solid #e1e8ec;
+  color: #33424a;
+}
+
+.new-button {
+  background: #16a676;
+  color: #ffffff;
+}
+
+.delete-button {
+  background: #e21c2b;
+  color: #ffffff;
+}
+
+.new-button span,
+.delete-button span {
+  margin-right: 4px;
+}
+
+.list-card {
+  width: 100%;
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e1e8ec;
+  border-radius: 5px;
+}
+
+.list-header,
+.asset-row {
+  min-width: 1080px;
+  display: grid;
+  grid-template-columns: 72px 70px 130px 88px 130px 122px 108px 130px 132px 120px;
+  align-items: center;
+  column-gap: 10px;
+  box-sizing: border-box;
+}
+
+.list-header {
+  height: 34px;
+  padding: 0 12px;
+  color: #50616a;
+  border-bottom: 1px solid #e7edf1;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.asset-row {
+  min-height: 60px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e7edf1;
+  color: #1f2b33;
+  font-size: 9px;
+}
+
+.asset-row:last-child {
+  border-bottom: 0;
+}
+
+.select-label,
+.asset-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input[type='checkbox'] {
+  width: 11px;
+  height: 11px;
+  margin: 0;
+  accent-color: #0f8c9a;
+}
+
+.color-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.asset-id {
+  font-size: 9px;
+}
+
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+}
+
+.product-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  display: inline-block;
+  border: 1px solid #cdd7dd;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.12)),
+    #dce3e7;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.08);
+}
+
+.product-thumb.laptop {
+  background:
+    linear-gradient(#27343b 0 55%, #b8c1c8 55% 68%, transparent 68%),
+    #e8eef1;
+}
+
+.product-thumb.phone {
+  background:
+    linear-gradient(90deg, transparent 28%, #26343d 28% 72%, transparent 72%),
+    #e8eef1;
+}
+
+.product-thumb.printer {
+  background:
+    linear-gradient(#34434b 0 42%, #e4eaee 42% 72%, #65747c 72%),
+    #f2f5f7;
+}
+
+.product-thumb.server {
+  background:
+    repeating-linear-gradient(45deg, #202a30 0 3px, #eef2f4 3px 6px),
+    #d8e0e4;
+}
+
+.product-thumb.desktop {
+  background:
+    linear-gradient(#c9d2d7 0 58%, #26343b 58% 70%, transparent 70%),
+    #eef2f4;
+}
+
+.product-thumb.tablet {
+  background:
+    linear-gradient(90deg, transparent 18%, #26343b 18% 82%, transparent 82%),
+    #eceff2;
+}
+
+.status-pill {
+  width: max-content;
+  min-width: 54px;
+  padding: 4px 7px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.status-pill.assigned {
+  background: #eef3f5;
+  color: #1f2b33;
+}
+
+.status-pill.in-repair {
+  background: #f3f5f6;
+  color: #1f2b33;
+}
+
+.status-pill.available {
+  background: #eef7f1;
+  color: #19764a;
+}
+
+.status-pill.retired {
+  background: #ef3348;
+  color: #ffffff;
+}
+
+.person-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.person-cell span {
+  font-weight: 800;
+}
+
+.person-cell small {
+  color: #66767f;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.muted {
+  color: #7c8c94;
+}
+
+.help-button {
+  position: fixed;
+  right: 22px;
+  bottom: 20px;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: #08aeb0;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba(8, 174, 176, 0.25);
+  cursor: pointer;
+}
+
+@media (max-width: 860px) {
+  .asset-toolbar {
+    flex-direction: column;
+  }
+
+  .toolbar-actions {
+    justify-content: flex-start;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+}
