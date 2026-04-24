@@ -33,7 +33,7 @@
 
       <div class="info-group">
         <label>Employee ID</label>
-        <p class="bold-text">{{ request().employee }}</p>
+        <p class="bold-text">{{ request().requesterId || request().employeeId || request().employee || 'N/A' }}</p>
       </div>
 
       <!-- Line 3: Submitted Date & Time | Transfer Period -->
@@ -87,21 +87,24 @@
 
     <hr />
 
-    <div class="action-buttons">
+    <div class="action-buttons" *ngIf="!isReadOnly()">
       <button class="btn-approve" (click)="approveRequest()">
         <mat-icon>check_circle</mat-icon> Approve Request
       </button>
       
-      <button class="btn-pool" (click)="viewInPool()">
-        <mat-icon>search</mat-icon> View in Pool
-      </button>
-
       <button class="btn-reject" (click)="rejectRequest()">
         <mat-icon>close</mat-icon> Reject with Reason
       </button>
     </div>
+
+    <div class="action-buttons" *ngIf="isReadOnly()">
+      <button class="btn-pool" (click)="viewInPool()">
+        <mat-icon>search</mat-icon> View in Pool
+      </button>
+    </div>
   </div>
 </div>
+
 
   <div class="overlay" *ngIf="showPopup()">
     <div class="glass-card" [class.reject]="popupType() === 'reject'">

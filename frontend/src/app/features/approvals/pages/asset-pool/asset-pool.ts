@@ -2,8 +2,8 @@ import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
 import { AssetPoolService, PoolAsset } from '../../services/asset-pool.service';
+import { RequestService } from '../../services/requests.service';
 import { Division } from '../../../inventory/models/division.model';
 
 interface Asset extends PoolAsset {
@@ -26,12 +26,30 @@ interface CategoryConfig {
   styleUrl: './asset-pool.css'
 })
 export class AssetPoolComponent implements OnInit {
-  private router = inject(Router);
   private assetPoolService = inject(AssetPoolService);
+  private requestService = inject(RequestService);
+
+  // Transfer request selection
+  approvedTransferRequests = signal<any[]>([]);
+  selectedTransferRequest = signal<any>(null);
 
   // Loading state
   isLoading = signal(true);
   errorMessage = signal('');
+  
+
+  // Search and filter signals
+  searchQuery = signal<string>('');
+  selectedCategory = signal<string>('');
+  selectedBrand = signal<string>('');
+  selectedSpecification = signal<string>('');
+  specificationValue = signal<string>('');
+  selectedDivision = signal<string>('');
+  selectedEmployee = signal<string>('');
+
+  // Pagination signals
+  currentPage = signal(1);
+  itemsPerPage = signal(10);
 
   // Category to Brand mapping - Enhanced for all asset types
   categoryBrandMap: Record<string, CategoryConfig> = {
@@ -49,46 +67,31 @@ export class AssetPoolComponent implements OnInit {
     },
     'Printers': {
       brands: ['HP', 'Canon', 'Epson', 'Brother', 'Xerox', 'Samsung'],
-      specifications: ['type', 'speed', 'resolution', 'connectivity', 'duplex']
+      specifications: ['print_speed', 'resolution', 'connectivity', 'paper_size', 'duplex']
     },
     'Servers': {
       brands: ['Dell', 'HP', 'IBM', 'Lenovo', 'Supermicro', 'Cisco'],
-      specifications: ['processor', 'ram', 'storage', 'rack_size', 'power_supply']
+      specifications: ['processor', 'ram', 'storage', 'raid', 'power_supply']
     },
     'Mobile Devices': {
       brands: ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Huawei'],
-      specifications: ['screen_size', 'storage', 'camera', 'battery', 'processor']
+      specifications: ['screen_size', 'storage', 'ram', 'camera', 'battery']
     },
     'Audio/Video': {
-      brands: ['Sony', 'Bose', 'JBL', 'Logitech', 'Sennheiser', 'Shure'],
-      specifications: ['type', 'power', 'connectivity', 'frequency_range', 'channels']
+      brands: ['Sony', 'Bose', 'JBL', 'LG', 'Samsung', 'Panasonic'],
+      specifications: ['power', 'connectivity', 'frequency_response', 'channels', 'format']
     },
     'Office Equipment': {
-      brands: ['Xerox', 'Canon', 'Brother', 'HP', 'Ricoh', 'Konica Minolta'],
-      specifications: ['type', 'speed', 'capacity', 'function', 'paper_size']
+      brands: ['Canon', 'Brother', 'Xerox', 'HP', 'Epson', 'Ricoh'],
+      specifications: ['speed', 'resolution', 'paper_capacity', 'connectivity', 'functions']
     }
   };
 
-  // Divisions list - will be fetched from API
+  // Data signals
+  private allAssets = signal<Asset[]>([]);
   divisions = signal<Division[]>([]);
 
-  // Filters signals
-  searchQuery = signal('');
-  selectedCategory = signal(''); // Default to empty to not show results initially
-  selectedBrand = signal('');
-  selectedDivision = signal('');
-  selectedEmployee = signal('');
-  selectedSpecification = signal('');
-  specificationValue = signal('');
-
-  // Pagination signals
-  currentPage = signal(1);
-  itemsPerPage = signal(10);
-
-  // Master Data List - will be fetched from API
-  allAssets = signal<Asset[]>([]);
-
-  // Computed signals
+  // Computed properties for filter options
   availableBrands = computed(() => {
     const config = this.categoryBrandMap[this.selectedCategory()];
     return config ? config.brands : [];
@@ -101,7 +104,7 @@ export class AssetPoolComponent implements OnInit {
 
   // Computed property for filtered results (before pagination)
   filteredResults = computed(() => {
-    // Only show assets if there's a search query or active filters
+    // Check if there are active filters
     const hasSearch = this.searchQuery().trim() !== '';
     const hasCategory = this.selectedCategory() !== '';
     const hasDivision = this.selectedDivision() !== '';
@@ -116,11 +119,14 @@ export class AssetPoolComponent implements OnInit {
       allAssetsCount: this.allAssets().length 
     });
     
-    if (!hasSearch && !hasCategory && !hasDivision && !hasEmployee) {
-      return []; // Don't show any assets unless searching or filtering
-    }
-
+    // Start with all assets - show them by default
     let filtered = this.allAssets();
+    
+    // Only apply filters if they are active
+    if (!hasSearch && !hasCategory && !hasDivision && !hasEmployee) {
+      console.log('No active filters - showing all assets:', filtered.length);
+      return filtered; // Show all assets when no filters are active
+    }
 
     // Enhanced search query filtering
     const q = this.searchQuery().toLowerCase();
@@ -149,7 +155,6 @@ export class AssetPoolComponent implements OnInit {
                assetCategory.includes(selectedCat) ||
                selectedCat.includes(assetCategory) ||
                (asset.productName && asset.productName.toLowerCase().includes(selectedCat));
-        console.log(`Asset "${asset.productName}" category "${assetCategory}" matches "${selectedCat}": ${matches}`);
         return matches;
       });
       console.log(`Category filter: ${beforeCount} -> ${filtered.length} assets`);
@@ -208,174 +213,157 @@ export class AssetPoolComponent implements OnInit {
     return limitedResults.slice(startIndex, endIndex);
   });
 
-  // Computed signal for display - only show results when there's a search query or filters
+  // Computed signal for display - show assets by default or when filtered
   displayAssets = computed(() => {
-    // Only show assets if there's a search query or active filters
-    const hasSearch = this.searchQuery().trim() !== '';
-    const hasCategory = this.selectedCategory() !== '';
-    const hasDivision = this.selectedDivision() !== '';
-    const hasEmployee = this.selectedEmployee() !== '';
-    
-    console.log('Filter conditions:', { 
-      hasSearch, 
-      hasCategory, 
-      hasDivision, 
-      hasEmployee, 
-      searchQuery: this.searchQuery(),
-      allAssetsCount: this.allAssets().length 
-    });
-    
-    if (!hasSearch && !hasCategory && !hasDivision && !hasEmployee) {
-      return []; // Don't show any assets unless searching or filtering
-    }
-
-    let filtered = this.allAssets();
-
-    // Enhanced search query filtering (name, empId, assignedTo, asset tag, division, etc.)
-    const q = this.searchQuery().toLowerCase();
-    if (q) {
-      console.log('Searching for:', q);
-      filtered = filtered.filter(asset =>
-        (asset.productName?.toLowerCase().includes(q) || false) ||
-        (asset.assetTag?.toLowerCase().includes(q) || false) ||
-        (asset.assetCode?.toLowerCase().includes(q) || false) ||
-        (asset.serialNumber?.toLowerCase().includes(q) || false) ||
-        (asset.divisionName?.toLowerCase().includes(q) || false) ||
-        (asset.assignedUserId?.toString().includes(q) || false) ||
-        (asset.assignedUserName?.toLowerCase().includes(q) || false) ||
-        (asset.specifications?.toLowerCase().includes(q) || false)
-      );
-    }
-
-    // Filter by category
-    if (this.selectedCategory()) {
-      const selectedCat = this.selectedCategory().toLowerCase();
-      console.log('Filtering by category:', selectedCat);
-      const beforeCount = filtered.length;
-      filtered = filtered.filter(asset => {
-        const assetCategory = (asset.categoryName || 'Unknown').toLowerCase();
-        const matches = assetCategory === selectedCat || 
-               assetCategory.includes(selectedCat) ||
-               selectedCat.includes(assetCategory) ||
-               (asset.productName && asset.productName.toLowerCase().includes(selectedCat));
-        console.log(`Asset "${asset.productName}" category "${assetCategory}" matches "${selectedCat}": ${matches}`);
-        return matches;
-      });
-      console.log(`Category filter: ${beforeCount} -> ${filtered.length} assets`);
-    }
-
-    // Filter by brand
-    if (this.selectedBrand()) {
-      filtered = filtered.filter(asset => 
-        asset.productName && asset.productName.toLowerCase().includes(this.selectedBrand().toLowerCase())
-      );
-    }
-
-    // Filter by division
-    if (this.selectedDivision()) {
-      filtered = filtered.filter(asset => asset.divisionName === this.selectedDivision());
-    }
-
-    // Filter by employee
-    if (this.selectedEmployee()) {
-      filtered = filtered.filter(asset =>
-        asset.assignedUserId?.toString().includes(this.selectedEmployee()) ||
-        (asset.assignedUserName?.toLowerCase().includes(this.selectedEmployee().toLowerCase()) || false)
-      );
-    }
-
-    // Filter by specification
-    if (this.selectedSpecification() && this.specificationValue()) {
-      const spec = this.selectedSpecification().toLowerCase();
-      const value = this.specificationValue().toLowerCase();
-      filtered = filtered.filter(asset => {
-        return (asset.specifications && 
-                asset.specifications.toLowerCase().includes(spec) && 
-                asset.specifications.toLowerCase().includes(value));
-      });
-    }
-
-    console.log('Final filtered assets:', filtered.length);
-    
-    // Apply pagination - limit to maximum 50 results
-    const maxResults = Math.min(filtered.length, 50);
-    const limitedResults = filtered.slice(0, maxResults);
-    
-    // Calculate pagination
-    const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
-    const endIndex = Math.min(startIndex + this.itemsPerPage(), maxResults);
-    
-    const finalResults = limitedResults.slice(startIndex, endIndex);
-    console.log('Final paginated results:', finalResults.length, 'items:', finalResults.map(a => ({name: a.productName, category: a.categoryName})));
-    
-    return finalResults;
+    // Show all assets by default, or filtered results when filters are active
+    return this.filteredResults();
   });
 
-  // Keep filteredAssets for compatibility but make it use paginated results
-  filteredAssets = this.paginatedAssets;
-
+  // Computed properties for filter options
   uniqueEmployees = computed(() => {
-    const employees = this.allAssets()
-      .filter(a => a.assignedUserId && a.assignedUserName)
-      .map(a => ({ name: a.assignedUserName || '', id: a.assignedUserId?.toString() || '' }));
+    const assets = this.allAssets();
+    const employees = new Map<string, { id: string; name: string }>();
     
-    const unique = Array.from(
-      new Map(employees.map(e => [e.id, e])).values()
-    );
-    return unique;
+    assets.forEach(asset => {
+      if (asset.assignedUserId && asset.assignedUserName) {
+        employees.set(asset.assignedUserId.toString(), {
+          id: asset.assignedUserId.toString(),
+          name: asset.assignedUserName
+        });
+      }
+    });
+    
+    return Array.from(employees.values());
   });
 
   /**
-   * Extract category from product name using predefined category mappings
+   * Load approved transfer requests for dropdown selection
    */
-  extractCategoryFromProductName(productName: string): string {
-    if (!productName) return 'Unknown';
+  loadApprovedTransferRequests() {
+    console.log('� Using same method as requests-page to get approved transfer requests...');
     
-    const name = productName.toLowerCase();
+    // Use the same method as requests-page that actually works
+    this.requestService.getApprovedTransferRequestsFromAllData().subscribe({
+      next: (requests) => {
+        console.log('✅ Approved transfer requests loaded using requests-page method:', requests.length);
+        this.approvedTransferRequests.set(requests);
+      },
+      error: (error: any) => {
+        console.error('❌ Error loading approved transfer requests:', error);
+        this.approvedTransferRequests.set([]);
+      }
+    });
+  }
+
+  /**
+   * Fallback method: Get all transfer requests and filter client-side
+   */
+  tryFallbackMethod() {
+    console.log('🔄 Trying fallback method - get all transfer requests...');
     
-    // Check for category keywords in product name
-    for (const [category, config] of Object.entries(this.categoryBrandMap)) {
-      for (const brand of config.brands) {
-        if (name.includes(brand.toLowerCase())) {
-          return category;
+    this.requestService.getAllTransferRequests().subscribe({
+      next: (requests) => {
+        console.log('📋 Method 2 - All transfer requests:', requests);
+        
+        if (requests && requests.length > 0) {
+          this.processTransferRequests(requests, 'Method 2');
+        } else {
+          console.log('⚠️ Method 2 returned no results, trying debug method...');
+          this.tryDebugMethod();
         }
+      },
+      error: (error) => {
+        console.error('❌ Method 2 failed, trying debug method:', error);
+        this.tryDebugMethod();
       }
-      // Also check for category keywords
-      if (name.includes(category.toLowerCase())) {
-        return category;
+    });
+  }
+
+  /**
+   * Debug method: Get all asset requests to see what exists in database
+   */
+  tryDebugMethod() {
+    console.log('🔍 Trying debug method - get all asset requests...');
+    
+    this.requestService.getAllAssetRequests().subscribe({
+      next: (requests) => {
+        console.log('📋 Method 3 - All asset requests:', requests);
+        console.log('📊 Total asset requests in database:', requests?.length || 0);
+        
+        if (requests && requests.length > 0) {
+          // Log a few sample requests to understand structure
+          console.log('🔍 Sample requests:');
+          requests.slice(0, 3).forEach((req, index) => {
+            console.log(`  Request ${index + 1}:`, {
+              id: req.id,
+              assetName: req.assetName,
+              requestType: req.requestType || req.type,
+              status: req.status,
+              requesterName: req.requesterName
+            });
+          });
+          
+          // Filter for transfer requests from all requests
+          const transferRequests = requests.filter(req => 
+            (req.requestType === 'Transfer' || req.type === 'Transfer') && 
+            req.status === 'Approved'
+          );
+          
+          console.log('✅ Found transfer requests from all data:', transferRequests);
+          this.processTransferRequests(transferRequests, 'Method 3');
+        } else {
+          console.log('⚠️ No asset requests found in database at all');
+          this.approvedTransferRequests.set([]);
+        }
+      },
+      error: (error) => {
+        console.error('❌ All methods failed:', error);
+        this.approvedTransferRequests.set([]);
       }
+    });
+  }
+
+  /**
+   * Process transfer requests and filter for approved ones
+   */
+  processTransferRequests(requests: any[], method: string) {
+    console.log(`📊 ${method} - Processing ${requests.length} assetrequests records`);
+    
+    if (!requests || requests.length === 0) {
+      console.log('⚠️ No assetrequests records to process');
+      this.approvedTransferRequests.set([]);
+      return;
     }
     
-    // Default categorization based on common keywords
-    if (name.includes('laptop') || name.includes('dell') || name.includes('hp') || name.includes('lenovo')) {
-      return 'Computers';
-    }
-    if (name.includes('printer') || name.includes('xerox') || name.includes('canon')) {
-      return 'Printers';
-    }
-    if (name.includes('server') || name.includes('rack')) {
-      return 'Servers';
-    }
-    if (name.includes('router') || name.includes('switch') || name.includes('cisco')) {
-      return 'Network Equipment';
-    }
-    if (name.includes('phone') || name.includes('tablet')) {
-      return 'Mobile Devices';
-    }
-    if (name.includes('desk') || name.includes('chair') || name.includes('table')) {
-      return 'Furniture';
-    }
-    if (name.includes('camera') || name.includes('projector') || name.includes('tv')) {
-      return 'Audio/Video';
+    // Log first request structure to understand field names
+    if (requests.length > 0) {
+      console.log(`🔍 ${method} - First assetrequest record structure:`, requests[0]);
+      console.log(`🔍 ${method} - Available fields:`, Object.keys(requests[0]));
     }
     
-    return 'Office Equipment';
+    // Filter for approved status and Transfer requestType
+    const approvedRequests = requests.filter(request => {
+      const status = request.status || request.Status || request.requestStatus || request.assetStatus;
+      const type = request.requestType || request.type || request.Type || request.assetType;
+      
+      console.log(`🔍 ${method} - Request ID ${request.id}: status="${status}", type="${type}"`);
+      
+      return status === 'Approved' && (type === 'Transfer' || type === 'transfer');
+    });
+    
+    console.log(`✅ ${method} - Filtered approved assetrequest records:`, approvedRequests);
+    console.log(`📊 ${method} - Final count:`, approvedRequests.length, 'approved transfer requests found');
+    
+    this.approvedTransferRequests.set(approvedRequests);
   }
 
   /**
    * Load data from API on component init
    */
   ngOnInit() {
+    // Load approved transfer requests for dropdown
+    this.loadApprovedTransferRequests();
+
     this.assetPoolService.getAssetPoolData().subscribe({
       next: (data) => {
         console.log('Raw API data:', data);
@@ -400,44 +388,101 @@ export class AssetPoolComponent implements OnInit {
 
         console.log('Transformed assets:', transformedAssets);
         this.allAssets.set(transformedAssets);
-        
-        // Set divisions - extract unique division names
-        const divisionNames = Array.from(
-          new Set(transformedAssets.map(a => a.divisionName).filter(d => d))
-        ) as string[];
-        
-        const divisionObjects: Division[] = divisionNames.map((name, index) => ({
-          id: index,
-          name: name
-        }));
-
-        this.divisions.set(divisionObjects);
+        this.divisions.set(data.divisions || []);
         this.isLoading.set(false);
       },
-      error: (error) => {
-        console.error('Error loading asset pool data:', error);
-        this.errorMessage.set('Failed to load assets. Please try again later.');
+      error: (err) => {
+        console.error('Error loading asset pool data:', err);
+        this.errorMessage.set('Failed to load asset data. Please try again.');
         this.isLoading.set(false);
       }
     });
   }
 
+  /**
+   * Extract category from product name
+   */
+  extractCategoryFromProductName(productName: string): string {
+    const name = productName.toLowerCase();
+    
+    if (name.includes('laptop') || name.includes('desktop') || name.includes('computer') || name.includes('pc')) {
+      return 'Computers';
+    }
+    if (name.includes('chair') || name.includes('desk') || name.includes('table') || name.includes('cabinet')) {
+      return 'Furniture';
+    }
+    if (name.includes('router') || name.includes('switch') || name.includes('modem') || name.includes('access point')) {
+      return 'Network Equipment';
+    }
+    if (name.includes('printer') || name.includes('scanner') || name.includes('copier')) {
+      return 'Printers';
+    }
+    if (name.includes('server') || name.includes('rack') || name.includes('nas')) {
+      return 'Servers';
+    }
+    if (name.includes('phone') || name.includes('tablet') || name.includes('mobile')) {
+      return 'Mobile Devices';
+    }
+    if (name.includes('camera') || name.includes('projector') || name.includes('tv')) {
+      return 'Audio/Video';
+    }
+    
+    return 'Office Equipment';
+  }
+
+  /**
+   * Select asset for transfer - use dropdown selected request + asset data to create transfer record
+   */
+  putTransferRequest(asset: Asset) {
+    console.log('Select for transfer button clicked for asset:', asset);
+    
+    const selectedRequest = this.selectedTransferRequest();
+    if (!selectedRequest) {
+      console.error('❌ No transfer request selected from dropdown');
+      alert('Please select a transfer request from the dropdown first.');
+      return;
+    }
+    
+    const assetName = asset.productName || asset.assetCode || 'Unknown Asset';
+    const assignedTo = asset.assignedUserName || 'Unknown Employee';
+    
+    if (confirm(`Select "${assetName}" for transfer from ${assignedTo}?`)) {
+      console.log('📋 Using selected transfer request from dropdown:', selectedRequest);
+      
+      // Prepare asset data from the asset pool
+      const assetData = {
+        assetId: asset.id,
+        assetTag: asset.assetTag || asset.assetCode,
+        divisionId: asset.divisionId,
+        divisionName: asset.divisionName,
+        assignedUserId: asset.assignedUserId,
+        assignedUserName: asset.assignedUserName
+      };
+      
+      console.log('📋 Asset data from assets table:', assetData);
+      console.log('📄 Selected transfer request data from dropdown:', selectedRequest);
+      
+      // Create transfer record combining both data sources
+      this.requestService.createTransferRecord(assetData, selectedRequest).subscribe({
+        next: (response) => {
+          console.log('✅ Transfer record created successfully:', response);
+          alert('Transfer record created successfully!');
+        },
+        error: (error) => {
+          console.error('❌ Error creating transfer record:', error);
+          alert('Failed to create transfer record. Please try again.');
+        }
+      });
+    }
+  }
+
+  // Event handlers
   onCategoryChange(category: string) {
     this.selectedCategory.set(category);
     this.selectedBrand.set('');
     this.selectedSpecification.set('');
     this.specificationValue.set('');
     this.currentPage.set(1); // Reset to first page when category changes
-  }
-
-  /**
-   * Create a transfer request for the selected asset
-   * This will send the asset to the employee's incoming requests
-   */
-  putTransferRequest(asset: Asset) {
-    console.log('Transfer request for asset:', asset);
-    // TODO: Implement transfer request dialog
-    alert('Transfer request functionality will be implemented');
   }
 
   onPageChange(page: number) {
@@ -459,18 +504,12 @@ export class AssetPoolComponent implements OnInit {
   }
 
   getPageNumbers(): number[] {
-    // Note: totalPages and paginatedAssets are updated by computed property
-    // No need to set signals here to avoid NG0600 error
-    const total = this.totalPages();
-    const current = this.currentPage();
-    const start = Math.max(1, current - 2);
-    const end = Math.min(total, current + 2);
-    
-    const pages = [];
-    for (let i = start; i <= end; i++) {
+    const pages: number[] = [];
+    const totalPages = this.totalPages();
+    for (let i = 1; i <= totalPages; i++) {
       pages.push(i);
     }
-    
     return pages;
   }
 }
+

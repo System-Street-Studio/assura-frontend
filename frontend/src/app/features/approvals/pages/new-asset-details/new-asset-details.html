@@ -32,7 +32,7 @@
 
       <div class="info-group">
         <label>Employee ID</label>
-        <p class="bold-text">{{ request().employee }}</p>
+        <p class="bold-text">{{ request().requesterId || request().employeeId || request().employee || 'N/A' }}</p>
       </div>
 
       <!-- Line 3: Requested Date & Time | Quantity -->
@@ -75,7 +75,7 @@
 
     <hr />
 
-    <div class="action-buttons">
+    <div class="action-buttons" *ngIf="!isReadOnly()">
       <button class="btn-approve" (click)="approveRequest()">
         <mat-icon>check_circle</mat-icon> Approve Request
       </button>

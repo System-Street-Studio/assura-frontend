@@ -10,14 +10,27 @@
 
   <!-- Tabs -->
   <div class="transfer-tabs">
+    <button class="tab-btn" [class.active]="activeTab() === 'outgoing'" (click)="setTab('outgoing')">Outgoing Requests</button>
     <button class="tab-btn" [class.active]="activeTab() === 'incoming'" (click)="setTab('incoming')">Incoming Approvals</button>
     <button class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">Transfer Confirmations</button>
     <button class="tab-btn" [class.active]="activeTab() === 'active'" (click)="setTab('active')">Active Transfers</button>
     <button class="tab-btn" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">Completed Transfers</button>
+    
   </div>
 
   <!-- Stats Grid -->
   <div class="stats-grid">
+
+     <div class="card purple-border" [class.highlight]="activeTab() === 'outgoing'">
+      <div class="card-content">
+        <div>
+          <p class="card-title">Outgoing Requests</p>
+          <span class="badge blue-bg">{{ outgoingCount() }}</span>
+          <h2 class="card-number">{{ outgoingCount() }}</h2>
+        </div>
+      </div>
+    </div>
+
     <div class="card blue-border" [class.highlight]="activeTab() === 'incoming'">
       <div class="card-content">
         <div>
@@ -55,6 +68,8 @@
         </div>
       </div>
     </div>
+
+   
   </div>
 
 
@@ -82,7 +97,9 @@
     <h2 class="section-main-title">{{ 
         activeTab() === 'incoming' ? 'Incoming Approvals' : 
          activeTab() === 'pending' ? 'Pending Confirmations' : 
-         activeTab() === 'active' ? 'Active Transfers' : 'Completed Transfers' }}
+         activeTab() === 'active' ? 'Active Transfers' : 
+         activeTab() === 'completed' ? 'Completed Transfers' : 
+         activeTab() === 'outgoing' ? 'Outgoing Requests' : 'Unknown' }}
     </h2>
 
     <!--Search and Filter -->
@@ -223,6 +240,42 @@
                
                  <button class="btn-view-outline">View</button>
                
+            </div>
+          </div>
+        }
+
+        <!-- Outgoing Requests -->
+        @if (activeTab() === 'outgoing') {
+          <div class="asset-item-card">
+            <div class="asset-img-container">
+              @if (item.image) {
+                <img [src]="item.image" [alt]="item.assetName" class="asset-image">
+              } @else {
+                <div class="asset-img-placeholder"></div>
+              }
+            </div>
+
+            <div class="asset-info-box">
+              <span class="time-stamp">{{ item.timeAgo || 'Just now' }}</span>
+              <div class="info-header">
+                <span class="asset-name-id">{{ item.assetName }} ({{ item.id }})</span>
+              </div>
+              <div class="info-grid-details">
+                <p><span>Division:</span> {{ item.division }}</p>
+                <div class="Duration"><p><span>Duration:</span> {{ item.duration || 'Temporary' }}</p></div>
+                <p><span>Requested by:</span> {{ item.requestedBy || 'Division Head' }}</p>
+                <p><span>Asset need to:</span> {{ item.assetNeedTo }} (ID: {{ item.assetNeedToId }})</p>
+                <p><span>Reason:</span> {{ item.reason }}</p>
+                <div class="status-info">
+                  <p><span>Status:</span> 
+                    <span class="status-badge-outline pending">{{ item.status }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="action-buttons-cell">
+              <span class="status-badge-outline pending">Sent to Employee</span>
             </div>
           </div>
         }

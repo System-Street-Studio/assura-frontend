@@ -49,11 +49,17 @@ export class DiscardDetailsComponent implements OnInit {
     }
   }
 
+  showPopup = signal(false);
+  popupMessage = signal('');
+  popupType = signal<'success' | 'reject'>('success');
+
   approveRequest() {
     const id = this.request().id;
     this.requestService.approveRequest(id).subscribe({
       next: () => {
-        console.log('Discard request approved');
+        this.popupMessage.set('Request Approved Successfully');
+        this.popupType.set('success');
+        this.showPopup.set(true);
         this.router.navigate(['/approvals/requests']);
       },
       error: (err) => console.error("Approve error:", err)
@@ -64,7 +70,9 @@ export class DiscardDetailsComponent implements OnInit {
     const id = this.request().id;
     this.requestService.rejectRequest(id).subscribe({
       next: () => {
-        console.log('Discard request rejected');
+        this.popupMessage.set('Request Rejected Successfully!');
+        this.popupType.set('reject');
+        this.showPopup.set(true);
         this.router.navigate(['/approvals/requests']);
       },
       error: (err) => console.error("Reject error:", err)
@@ -72,9 +80,10 @@ export class DiscardDetailsComponent implements OnInit {
   }
 
   close() {
-    const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'new';
-    this.router.navigate(['/approvals/requests'], { 
-      queryParams: { tab: returnTab } 
-    });
+    this.router.navigate(['approvals/requests']); // navigate to the requests page
+  }
+
+  closePopup() {
+    this.showPopup.set(false);
   }
 }

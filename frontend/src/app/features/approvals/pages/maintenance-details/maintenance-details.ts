@@ -35,11 +35,17 @@ export class MaintenanceDetailsComponent implements OnInit {
     }
   }
 
+  showPopup = signal(false);
+  popupMessage = signal('');
+  popupType = signal<'success' | 'reject'>('success');
+
   approveRequest() {
     const id = this.request().id;
     this.requestService.approveRequest(id).subscribe({
       next: () => {
-        console.log('Maintenance request approved');
+        this.popupMessage.set('Request Approved Successfully');
+        this.popupType.set('success');
+        this.showPopup.set(true);
         this.router.navigate(['/approvals/requests']);
       },
       error: (err) => console.error("Approve error:", err)
@@ -50,7 +56,9 @@ export class MaintenanceDetailsComponent implements OnInit {
     const id = this.request().id;
     this.requestService.rejectRequest(id).subscribe({
       next: () => {
-        console.log('Maintenance request rejected');
+        this.popupMessage.set('Request Rejected Successfully!');
+        this.popupType.set('reject');
+        this.showPopup.set(true);
         this.router.navigate(['/approvals/requests']);
       },
       error: (err) => console.error("Reject error:", err)
@@ -61,6 +69,10 @@ export class MaintenanceDetailsComponent implements OnInit {
     // Extract issue type from reason (format: "Issue: <type>")
     const match = reason.match(/Issue:\s*(.+)$/);
     return match ? match[1].trim() : reason || 'Not specified';
+  }
+
+  closePopup() {
+    this.showPopup.set(false);
   }
 
   close() {

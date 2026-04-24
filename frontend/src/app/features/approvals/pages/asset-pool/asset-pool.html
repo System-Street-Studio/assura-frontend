@@ -32,6 +32,42 @@
       </div>
     </div>
 
+    <div class="transfer-request-section">
+      <div class="transfer-request-dropdown">
+        <label for="transferRequest">Select Approved Transfer Request:</label>
+        <select id="transferRequest" 
+                [ngModel]="selectedTransferRequest()?.id || ''" 
+                (ngModelChange)="selectedTransferRequest.set(approvedTransferRequests().find(req => req.id === $event))">
+          <option value="">Select an approved transfer request...</option>
+          @for (request of approvedTransferRequests(); track request.id) {
+            <option [value]="request.id">
+              Request ID: {{ request.id }} - {{ request.requesterName || 'Unknown' }} (Requester ID: {{ request.requesterId || 'Unknown' }})
+            </option>
+          }
+        </select>
+      </div>
+      @if (approvedTransferRequests().length === 0) {
+        <div class="no-requests-info">
+          <small style="color: #666;">No approved transfer requests found in assetrequests table.</small>
+        </div>
+      }
+      @if (selectedTransferRequest()) {
+        <div class="selected-request-info">
+          <small>
+            <strong>Request ID:</strong> {{ selectedTransferRequest().id }}
+            <br>
+            <strong>Requester Name:</strong> {{ selectedTransferRequest().requesterName || 'Unknown' }}
+            <br>
+            <strong>Requester ID:</strong> {{ selectedTransferRequest().requesterId || 'Unknown' }}
+            <br>
+            <strong>Asset Name:</strong> {{ selectedTransferRequest().assetName || 'Not specified' }}
+            <br>
+            <strong>Status:</strong> {{ selectedTransferRequest().status }}
+          </small>
+        </div>
+      }
+    </div>
+
     <div class="filter-section">
       <div class="filter-group">
         <label for="category">Category</label>
@@ -114,7 +150,6 @@
       </div>
     </div>
 
-    <!-- Results Section - Only show when searching or filtering -->
     @if (searchQuery().trim() || selectedCategory() || selectedDivision() || selectedEmployee()) {
       <div class="results-container">
         <div class="results-header">
@@ -171,7 +206,7 @@
                     <td>
                       @if (asset.assignedUserId) {
                         <button class="btn-transfer" (click)="putTransferRequest(asset)">
-                          Put Transfer Request
+                          Select for transfer
                         </button>
                       } @else {
                         <span class="text-muted">Not assigned</span>
@@ -182,7 +217,6 @@
               </tbody>
             </table>
             
-            <!-- Pagination Controls -->
             @if (totalPages() > 1) {
               <div class="pagination-controls">
                 <button class="btn-pagination" 

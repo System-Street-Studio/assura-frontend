@@ -1,8 +1,9 @@
-
 export interface RequestItem {
   id: number;
   name?: string;
   employee?: string;
+  requesterId?: string;
+  employeeId?: string;
   status: 'Pending' | 'Approved' | 'Rejected' | 'In Progress';
   assetName: string;
   category?: string;

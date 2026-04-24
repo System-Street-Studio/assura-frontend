@@ -19,8 +19,14 @@ export class NewAssetDetailsComponent implements OnInit {
   request = signal<any> ({});
   isLoading = signal<boolean>(true);
   error = signal<string>('');
+  isReadOnly = signal<boolean>(false);
 
   ngOnInit() {
+    // Check for readOnly query parameter
+    const readOnly = this.route.snapshot.queryParamMap.get('readOnly');
+    this.isReadOnly.set(readOnly === 'true');
+    console.log('Is read-only mode:', this.isReadOnly());
+
     //  Service handling
     if (this.requestService.selectedRequest) {
       console.log("received data from Service ");
@@ -63,6 +69,7 @@ export class NewAssetDetailsComponent implements OnInit {
         this.popupMessage.set('Request Approved Successfully');
         this.popupType.set('success');
         this.showPopup.set(true);
+        this.router.navigate(['/approvals/requests']);
       },
       error: (err) => console.error("Approve error:", err)
     });
@@ -75,30 +82,12 @@ export class NewAssetDetailsComponent implements OnInit {
         this.popupMessage.set('Request Rejected Successfully!');
         this.popupType.set('reject');
         this.showPopup.set(true);
+        this.router.navigate(['/approvals/requests']);
       },
       error: (err) => console.error("Reject error:", err)
     });
   }
 
-
-  /*rejectRequest() {
-     
-    const reason = prompt("Please provide a reason for rejecting this request:");
-    
-    if (reason === null || reason.trim() === "") {
-    alert("Rejection reason is required to proceed.");
-    return;
-  }
-    const id = this.request().id;
-    this.requestService.rejectRequest(id, reason).subscribe({
-      next: () => {
-        this.popupMessage.set('Request Rejected Successfully!');
-        this.popupType.set('reject');
-        this.showPopup.set(true);
-      },
-      error: (err) => console.error("Reject error:", err)
-    });
-  }*/
 
   close() {
     this.router.navigate(['approvals/requests']); // navigate to the requests page
