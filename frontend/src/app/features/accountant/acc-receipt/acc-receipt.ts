@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -18,7 +18,7 @@ interface ReceiptItem {
     templateUrl: './acc-receipt.html',
     styleUrls: ['./acc-receipt.css']
 })
-export class AccReceiptComponent {
+export class AccReceiptComponent implements OnInit {
     receipts: ReceiptItem[] = [
         { id: '1', assetName: 'Dell XPS 15 Laptop', division: 'Information Technology', date: '20 Feb 2026', amount: 'Rs. 45,000', status: 'Uploaded' },
         { id: '2', assetName: 'HP LaserJet Printer', division: 'Admin', date: '18 Feb 2026', amount: 'Rs. 12,500', status: 'Pending' },

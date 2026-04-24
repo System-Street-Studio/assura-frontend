@@ -22,7 +22,7 @@ export interface QueueItem {
   styleUrls: ['./overview.css']
 })
 export class OverviewComponent implements OnInit {
-  activeFilter: string = '';
+  activeFilter = '';
 
   queue: QueueItem[] = [
     // Pending
@@ -58,7 +58,7 @@ export class OverviewComponent implements OnInit {
   // Review flow state
   reviewStep: 'idle' | 'choose' | 'notes' = 'idle';
   reviewAction: 'done' | 'reject' | '' = '';
-  reviewNote: string = '';
+  reviewNote = '';
 
   // Feedback cards
   showSuccessCard = false;

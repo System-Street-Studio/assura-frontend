@@ -26,11 +26,20 @@ export class PoCreate {
   poForm: FormGroup;
   itemForm: FormGroup;
 
-  // Display-only variables for the UI totals
+  // Current Item Form Fields
+  itemName = '';
+  model = '';
+  warrantyDuration: number | null = null;
+  warrantyUnit: 'Years' | 'Months' = 'Years';
+  quantity = 0;
+  unitPrice = 0;
   amount = 0;
+  discount = 0;
   discountedPrice = 0;
+  vat = 0;
   vatAmount = 0;
   totalPrice = 0;
+  specialNote = '';
 
   constructor() {
     this.poForm = this.fb.group({

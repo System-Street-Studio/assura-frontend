@@ -9,7 +9,7 @@ describe('SidebarComponent', () => {
   let mockAuthService: jasmine.SpyObj<AuthService>;
 
   // setup now takes a string[] and a url string
-  function setup(roles: string[], url: string = '/') {
+  function setup(roles: string[], url = '/') {
     mockAuthService = jasmine.createSpyObj('AuthService', ['getRole', 'getRoles', 'hasRole']);
     mockAuthService.getRoles.and.returnValue(roles);
     mockAuthService.getRole.and.returnValue(roles.length > 0 ? roles[0] : null);

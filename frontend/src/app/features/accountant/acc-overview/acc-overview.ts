@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface PendingItem {
@@ -24,13 +24,13 @@ interface PendingItem {
     templateUrl: './acc-overview.html',
     styleUrls: ['./acc-overview.css']
 })
-export class AccOverviewComponent {
+export class AccOverviewComponent implements OnInit {
     approvedCount = 4;
     toBeApprovedCount = 5;
     pendingCount = 7;
     rejectCount = 2;
 
-    activeFilter: string = 'all';
+    activeFilter = 'all';
 
     allItems: PendingItem[] = [
         {

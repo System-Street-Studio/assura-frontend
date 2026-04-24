@@ -10,27 +10,29 @@
 
       <div class="search-container">
         <mat-icon class="search-icon">search</mat-icon>
-
         <input type="text" placeholder="Search requests..." [ngModel]="searchQuery()"
-          (ngModelChange)="searchQuery.set($event)" />
+          (ngModelChange)="searchQuery.set($event)" class="search-bar" />
       </div>
 
 
 
       <!-- Filter -->
-      <div class="filter-container">
-
-        <button class="filter-btn" (click)="toggleMenu()">
-          Filter ({{ filterStatus() }}) <span class="arrow">▼</span>
+      <div class="filter-container" data-filter="status-filter" (click)="$event.stopPropagation()">
+        <button class="filter-btn" (click)="$event.stopPropagation(); toggleMenu()">
+          <div class="filter-icon">
+            <mat-icon>tune</mat-icon>
+            <span>{{ filterStatus() }}</span>
+          </div>
+          <mat-icon class="arrow">expand_more</mat-icon>
         </button>
 
         @if (isMenuOpen()) {
-        <div class="filter-options">
-          <div class="option" (click)="setStatus('All')">All</div>
-          <div class="option" (click)="setStatus('Pending')">Pending</div>
-          <div class="option" (click)="setStatus('Approved')">Approved</div>
-          <div class="option" (click)="setStatus('Rejected')">Rejected</div>
-        </div>
+          <div class="filter-options" (click)="$event.stopPropagation()">
+            <div class="option" (click)="setStatus('All Types')" [class.active]="filterStatus() === 'All Types'">All Types</div>
+            <div class="option" (click)="setStatus('Pending')" [class.active]="filterStatus() === 'Pending'">Pending</div>
+            <div class="option" (click)="setStatus('Approved')" [class.active]="filterStatus() === 'Approved'">Approved</div>
+            <div class="option" (click)="setStatus('Rejected')" [class.active]="filterStatus() === 'Rejected'">Rejected</div>
+          </div>
         }
       </div>
 
@@ -44,7 +46,6 @@
         <th>Request ID</th>
         <th>Type</th>
         <th>Submitted Date</th>
-        <th>Submitted By</th>
         <th>Priority</th>
         <th>Status</th>
         <th>Actions</th>
@@ -58,7 +59,6 @@
         <td>{{ req.id }}</td>
         <td>{{ req.requestType }}</td>
         <td>{{ req.submittedDate | date:'yyyy-MM-dd' }}</td>
-        <td>{{ req.submittedBy }}</td>
         <td>
           <span [class]="'priority-label ' + getPriorityClass(req.priority)">
             {{ req.priority }}
@@ -73,7 +73,7 @@
 
         <!-- Actions -->
         <td class="actions">
-          <button class="btn-view">
+          <button class="btn-view" [routerLink]="['/employee/request-details', req.id]" [state]="{ request: req }">
             <mat-icon class="eye">visibility</mat-icon> View Details
           </button>
 

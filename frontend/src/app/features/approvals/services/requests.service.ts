@@ -19,11 +19,13 @@ export class RequestService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
 
-  
+
   selectedRequest: RequestItem | null = null;
 
-  getAllRequests() {
-    return this.http.get<RequestItem[]>(`${this.baseUrl}/requests`);
+  // services/request.service.ts
+  getAllRequests(isHead = false) {
+    // Query string parameter
+    return this.http.get<RequestItem[]>(`${this.baseUrl}/assetrequests?isDivisionHead=${isHead}`);
   }
 
   getRequestById(id: number): Observable<RequestItem> {

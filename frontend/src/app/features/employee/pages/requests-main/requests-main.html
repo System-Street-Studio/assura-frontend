@@ -9,22 +9,22 @@
     
       <div class="hub-card border-blue">
         <p>All Requests<mat-icon class="assignment">assignment</mat-icon> </p>
-        <div class="hub-value">112</div>
+        <div class="hub-value">{{ totalRequests() }}</div>
       </div>
 
       <div class="hub-card border-orange">
         <p>Pending Requests <mat-icon class="schedule">schedule</mat-icon></p>
-        <div class="hub-value">{{ recentRequests.length }}</div>
+        <div class="hub-value">{{ pendingCount() }}</div>
       </div>
 
       <div class="hub-card border-green">
         <p>Approved Requests <mat-icon class="check-circle">check_circle</mat-icon></p>
-        <div class="hub-value">88</div>
+        <div class="hub-value">{{ approvedCount() }}</div>
       </div>
 
       <div class="hub-card border-red">
         <p>Rejected Request <mat-icon class="cancel">cancel</mat-icon></p>
-        <div class="hub-value">11</div>
+        <div class="hub-value">{{ rejectedCount() }}</div>
       </div>
     </div>
 
@@ -41,39 +41,46 @@
     <div class="list-section mt-30">
       <div class="list-header">
         <h3 class="section-label">My Recent Requests</h3>
-        <a href="#" class="view-all"  routerLink="/employee/all-emp-requests">View All Requests ></a>
+        <a class="view-all" routerLink="/employee/all-emp-requests">View All Requests <mat-icon class="arrow-icon">arrow_forward</mat-icon></a>
       </div>
 
       <div class="request-list">
-
-                <!-- Show list if recentRequests has items -->
-          <div *ngIf="recentRequests && recentRequests.length > 0; else emptyBlock">
-            <div *ngFor="let req of recentRequests" class="request-item">
-              <div class="req-info">
-                <span class="req-id">Request ID: <b>#{{ req.id }}</b></span>
-                <p class="req-name">{{ req.assetName }}</p>
-                <span class="req-date">Submitted: {{ req.submittedDate | date:'yyyy-MM-dd' }}</span>
+        <div *ngIf="paginatedRequests().length > 0; else emptyBlock">
+          <div *ngFor="let req of paginatedRequests(); trackBy: trackByReqId" class="request-item">
+            <div class="req-info">
+              <div class="req-header">
+                <span class="req-id">#{{ req.id }}</span>
+                <span class="req-type-badge">{{ req.requestType }}</span>
               </div>
-              <div class="req-status-area">
-                <span><small>{{ req.requestType }}</small></span>
-                <span [class]="'status-pill ' + req.status.toLowerCase()">{{ req.status }}</span>
-                <button class="btn-details">View Details</button>
-              </div>
+              <p class="req-name">{{ req.assetName }}</p>
+              <span class="req-date">{{ req.submittedDate | date:'MMM dd, yyyy' }}</span>
+            </div>
+            <div class="req-status-area">
+              <span [class]="'priority-pill ' + req.priority.toLowerCase()">{{ req.priority }}</span>
+              <span [class]="'status-pill ' + req.status.toLowerCase()">{{ req.status }}</span>
+              <button class="btn-details" (click)="viewRequestDetails(req)"><mat-icon class="eye">visibility</mat-icon> View Details</button>
             </div>
           </div>
+        </div>
 
-          <!-- Empty message if no requests -->
-          <ng-template #emptyBlock>
-            <div class="request-item">
-             <!-- <p>No recent requests found.</p>-->
-            </div>
-          </ng-template>
-
-            
-          
-                  
-         
+        <ng-template #emptyBlock>
+          <div class="request-item">
+            <p>No recent requests found.</p>
+          </div>
+        </ng-template>
       </div>
+
+      <!-- Pagination Controls -->
+      @if (totalPages() > 1) {
+        <div class="pagination-container">
+          <app-pagination
+            [currentPage]="currentPage()"
+            [totalPages]="totalPages()"
+            [pageNumbers]="pageNumbers()"
+            (pageChange)="onPageChange($event)">
+          </app-pagination>
+        </div>
+      }
     </div>
 
 

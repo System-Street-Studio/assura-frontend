@@ -95,9 +95,9 @@ export class DiscardedNotesComponent implements OnInit {
     ];
 
     filteredNotes: DiscardedNote[] = [];
-    searchQuery: string = '';
+    searchQuery = '';
     selectedNote: DiscardedNote | null = null;
-    showFilter: boolean = false;
+    showFilter = false;
 
     ngOnInit() {
         this.filteredNotes = [...this.notes];

@@ -8,9 +8,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AssetService as AssetRequestService } from '../../services/asset-request.service';
-import { AssetService } from '../../../inventory/services/asset.service';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { AssetDetail } from '../../../inventory/models/asset.model';
+import { CategoryService } from '../../../inventory/services/category.service';
+import { Category } from '../../../inventory/models/category.model';
 
 @Component({
   selector: 'app-transfer-form',
@@ -31,11 +31,11 @@ import { AssetDetail } from '../../../inventory/models/asset.model';
 export class TransferFormComponent implements OnInit {
   private location = inject(Location);
   private assetRequestService = inject(AssetRequestService);
-  private assetService = inject(AssetService);
+  private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
 
   // Signals
-  assignedAssets = signal<AssetDetail[]>([]);
+  categories = signal<Category[]>([]);
   assetName = signal('');
   category = signal('');
   description = signal('');
@@ -44,15 +44,18 @@ export class TransferFormComponent implements OnInit {
   reason = signal('');
   fromDate = signal<Date | null>(null);
   toDate = signal<Date | null>(null);
+  selectedFiles = signal<File[]>([]);
+  isSubmitting = signal(false);
 
   ngOnInit(): void {
-    this.assetService.getAll().subscribe({
-      next: (assets) => this.assignedAssets.set(assets),
-      error: (err) => console.error('Failed to load assigned assets', err)
+    this.categoryService.getAll().subscribe({
+      next: (cats) => this.categories.set(cats),
+      error: (err) => console.error('Failed to load categories', err)
     });
   }
 
   onSubmit() {
+    this.isSubmitting.set(true);
     const requestData = {
       employeeId: this.authService.getUserId() || '',
       submittedBy: this.authService.getUserName() || 'Employee',
@@ -68,17 +71,43 @@ export class TransferFormComponent implements OnInit {
 
     this.assetRequestService.createRequest(requestData).subscribe({
       next: () => {
+        this.isSubmitting.set(false);
         alert('Transfer Request Submitted Successfully!');
         this.location.back();
       },
       error: (err) => {
+        this.isSubmitting.set(false);
         console.error('Submission failed', err);
-        alert('Failed to submit request.');
+        alert('Failed to submit request. Please try again.');
       }
     });
   }
 
   onCancel() {
     this.location.back();
+  }
+
+  onFileSelected(event: any): void {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files) as File[];
+      this.selectedFiles.update(prev => [...prev, ...newFiles]);
+    }
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.update(files => {
+      const updated = [...files];
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
+
+  browseFiles(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.addEventListener('change', (e) => this.onFileSelected(e));
+    input.click();
   }
 }

@@ -10,6 +10,7 @@ interface MenuItem {
   link: string;
   roles: string[];
   isGlobal?: boolean;
+  section?: string;
 }
 
 @Component({
@@ -69,10 +70,11 @@ export class SidebarComponent {
     { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['DivisionHead', 'Admin'] },
 
     // Employee section
-    { label: 'Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['ANY'], isGlobal: false },
-    { label: 'My Assets', icon: 'inventory_2', link: '/employee/employee-assets', roles: ['ANY'], isGlobal: false },
-    { label: 'Asset Request', icon: 'add_circle', link: '/employee/requests-main', roles: ['ANY'], isGlobal: false },
-    { label: 'Activity', icon: 'history', link: '/employee/all-emp-requests', roles: ['ANY'], isGlobal: false },
+    { label: 'Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'My Assets', icon: 'inventory_2', link: '/employee/employee-assets', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'Asset Request', icon: 'add_circle', link: '/employee/requests-main', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'Activity', icon: 'history', link: '/employee/all-emp-requests', roles: ['ANY'], section: 'employee', isGlobal: true },
+    { label: 'Transfer', icon: 'swap_horiz', link: '/employee/transfer-page', roles: ['ANY'], section: 'employee', isGlobal: true },
   ];
 
   get filteredMenuItems(): MenuItem[] {

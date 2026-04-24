@@ -16,6 +16,7 @@
   display: block;
   margin-bottom: 20px;
   margin-top: 20px;
+  cursor: pointer;
 }
 
 .page-title {
@@ -59,11 +60,180 @@ select, textarea {
 textarea{
     height: auto;
 }
+
+.upload-box {
+  border: 2px dashed #d0d8e0;
+  border-radius: 8px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background-color: #fafbfc;
+}
+
+.upload-box:hover {
+  border-color: #12b2e8;
+  background-color: #f0f8fc;
+}
+
+.upload-icon {
+  font-size: 32px;     
+  height: 48px;       
+  width: 48px;
+  color: #12b2e8;
+  margin-bottom: 8px;
+}
+
+.upload-box p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.browse { 
+  color: #12b2e8; 
+  cursor: pointer; 
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* Selected Files Styling */
+.selected-files {
+  margin-top: 0;
+  padding: 16px 12px;
+  background-color: #f8fafc;
+  border: 2px solid #d0d8e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.selected-files:hover {
+  border-color: #12b2e8;
+  background-color: #f0f8fc;
+}
+
+.files-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #666;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background-color: white;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 1px solid #e0e5ec;
+  transition: all 0.2s ease;
+}
+
+.file-item:hover {
+  border-color: #12b2e8;
+  background-color: #f9fcff;
+  box-shadow: 0 1px 3px rgba(18, 178, 232, 0.1);
+}
+
+.file-item:last-child {
+  margin-bottom: 0;
+}
+
+.file-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #12b2e8;
+  flex-shrink: 0;
+}
+
+.file-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a1a;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  font-size: 12px;
+  color: #999;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #999;
+  flex-shrink: 0;
+}
+
+.remove-btn:hover {
+  color: #ef4444;
+  background-color: #fee2e2;
+  border-radius: 4px;
+}
+
+.remove-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Add Files Button */
+.add-files-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  background-color: transparent;
+  color: #12b2e8;
+  border: 1px solid #12b2e8;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Jost', sans-serif;
+}
+
+.add-files-btn:hover {
+  background-color: #f0f8fc;
+  border-color: #0896c9;
+  color: #0896c9;
+}
+
+.add-files-btn:active {
+  opacity: 0.9;
+}
+
+.add-files-btn mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
 .actions { 
     display: flex; 
     justify-content: flex-end; 
     gap: 1rem;
-    margin-top: 100px;
 }
 
 .btn-primary {
@@ -72,10 +242,25 @@ textarea{
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
-  font-weight:650px;
+  font-weight: 650;
   cursor: pointer;
-  font-family: 'jost'; 
+  font-family: 'jost';
   font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #008a91;
+}
+
+.btn-primary:disabled {
+  background: #c0d8d9;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .btn-secondary {
@@ -84,5 +269,29 @@ textarea{
   padding: 12px 30px;
   border-radius: 8px;
   cursor: pointer;
-  font-family: 'jost'; 
+  font-family: 'jost';
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.btn-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

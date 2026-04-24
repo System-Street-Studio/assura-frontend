@@ -11,6 +11,7 @@ export interface AssetRequest {
   quantity: number;
   priority: string;
   reason: string;
+  description?: string;
   status: string;
   submittedDate: string;
   requestType: string;       
@@ -34,5 +35,9 @@ export class AssetService {
 
   getPendingRequests(): Observable<AssetRequest[]> {
     return this.http.get<AssetRequest[]>(`${this.apiUrl}/pending`);
+  }
+
+  getRequestById(requestId: number): Observable<AssetRequest> {
+    return this.http.get<AssetRequest>(`${this.apiUrl}/${requestId}`);
   }
 }
