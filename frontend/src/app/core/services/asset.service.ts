@@ -20,4 +20,8 @@ export class AssetService {
     updateAssets(id: number, assetData: any): Observable<Asset> {
         return this.api.put<Asset>(`assets/${id}`, assetData);
     }
+
+    updateAssetStatus(id: number, status: number): Observable<any> {
+        return this.api.patch(`assets/${id}/status`, { status });
+    }
 }

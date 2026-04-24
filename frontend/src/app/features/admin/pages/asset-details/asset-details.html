@@ -56,7 +56,8 @@
                     <div class="qr-section">
                         <label>QR Code</label>
                         <div class="qr-placeholder">
-                            <mat-icon class="qr-icon">qr_code_2</mat-icon>
+                            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" class="qr-image" />
+                            <mat-icon *ngIf="!qrDataUrl" class="qr-icon">qr_code_2</mat-icon>
                         </div>
                     </div>
 

@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge';
 import { AssetService } from '../../../../core/services/asset.service';
+import QRCode from 'qrcode';
 
 @Component({
     selector: 'app-asset-details',
@@ -25,6 +26,7 @@ export class AssetDetailsComponent implements OnInit {
         status: '',
         specifications: []
     };
+    qrDataUrl = '';
 
     ngOnInit(): void {
         const id = this.route.snapshot.paramMap.get('id');
@@ -62,6 +64,12 @@ export class AssetDetailsComponent implements OnInit {
                         { label: 'Color', value: 'Silver' }
                     ]
                 };
+
+                // Generate QR code using AssetCode for mobile scanner compatibility
+                if (data.assetCode) {
+                    this.generateQr(data.assetCode);
+                }
+
                 this.cdr.detectChanges();
             },
             error: (err) => console.error('Error fetching asset details:', err)
@@ -76,20 +84,16 @@ export class AssetDetailsComponent implements OnInit {
         console.log('[DEBUG] changing status to:', newStatus);
 
         // Map the UI string status back to the exact Enum names expected by the backend
-        const statusMap: Record<string, string> = {
-            'In Use': 'InUse',
-            'In Store': 'InStore',
-            'Repairing': 'UnderMaintenance',
-            'Discarded': 'Discarded'
+        const statusMap: Record<string, number> = {
+            'In Use': 1, // InUse
+            'In Store': 2, // InStore
+            'Repairing': 3, // UnderMaintenance
+            'Discarded': 4 // Discarded
         };
 
-        const updateRequest = {
-            ...this.asset,
-            id: this.asset.id,
-            status: statusMap[newStatus]
-        };
+        const statusEnumVal = statusMap[newStatus];
 
-        this.assetService.updateAssets(this.asset.id, updateRequest).subscribe({
+        this.assetService.updateAssetStatus(this.asset.id, statusEnumVal).subscribe({
             next: (response) => {
                 console.log('Status updated successfully');
                 this.asset.status = newStatus;
@@ -97,12 +101,25 @@ export class AssetDetailsComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Failed to update status:', err);
-                // Optionally revert the UI state if the backend request fails
             }
         });
     }
 
     onScheduleMaintenance(): void {
         this.router.navigate(['/procurement/maintenance/create'], { queryParams: { assetId: this.asset.id } });
+    }
+
+    private async generateQr(value: string): Promise<void> {
+        try {
+            this.qrDataUrl = await QRCode.toDataURL(value, {
+                width: 120,
+                margin: 1,
+                color: { dark: '#0b6c78', light: '#ffffff' },
+            });
+            this.cdr.detectChanges();
+        } catch (err) {
+            console.error('Failed to generate QR code:', err);
+            this.qrDataUrl = '';
+        }
     }
 }
