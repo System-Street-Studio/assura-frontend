@@ -1,9 +1,16 @@
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.container{
+.container {
   margin: 0px;
   padding: 10px;
   font-family: 'jost';
@@ -13,12 +20,12 @@
 .page-title {
   font-size: 30px;
   font-weight: 700;
-  margin:5px 35px 40px 5px ;
+  margin: 5px 35px 40px 5px;
   color: #333;
 }
 
-.header-section p{
-  margin:10px 100px 0px 120px;
+.header-section p {
+  margin: 10px 100px 0px 120px;
   font-size: 20px;
   font-weight: 700;
 }
@@ -36,14 +43,14 @@
   background: #ffffff;
   border-radius: 12px;
   width: 100%;
-  max-width: 750px; /* reduced */
+  max-width: 750px;
+  /* reduced */
   padding: 22px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  border: 1px solid #e5e7eb; /* soft border */
+  border: 1px solid #e5e7eb;
+  /* soft border */
   animation: slideUp 0.35s ease-out;
-   margin-left: 90px;
-  max-height: 85vh;
-  overflow-y: auto;
+  margin-left: 90px;
 }
 
 /* Header */
@@ -88,19 +95,20 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
+  margin-bottom: 20px;
 }
 
-.full-width { 
-  grid-column: span 2; 
+.full-width {
+  grid-column: span 2;
   margin-top: 2px;
 }
 
 /* Labels */
 label {
   font-size: 13px;
-  font-weight: 600;
-  color: #6b7280;
-  margin-top: 5px;
+  font-weight: 500;
+  color: #666565;
+  margin-bottom: 5px;
   display: block;
 }
 
@@ -136,19 +144,75 @@ label {
 /* Detail Text */
 .bold-text {
   font-weight: 700;
-  font-size: 14px;
-  color: #111827;
-  margin: 0 0 20px 30px;
+  color: #222;
+  margin-left: 50px;
+}
+
+/* Priority Colors */
+.priority-normal {
+  color: #22863a;
+  font-weight: 700;
+}
+
+.priority-high {
+  color: #ff4444;
+  font-weight: 700;
+}
+
+.priority-low {
+  color: #ffa726;
+  font-weight: 700;
+}
+
+.priority-critical {
+  color: #d32f2f;
+  font-weight: 700;
 }
 
 /* Timeline & Specs */
-.flex-row {
+.timeline-row {
   display: flex;
-  gap: 25px;
-  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 5px 0;
 }
- .desc-box .bold-text{
-   background: #f8f9fa;
+
+.timeline-label {
+  font-weight: 600;
+  color: #666565;
+  min-width: 50px;
+}
+
+.status-badge {
+  padding: 4px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.status-badge.approved {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.status-badge.rejected {
+  background: #ffcccc;
+  color: #c62828;
+}
+
+.status-badge.in {
+  background: #ffe0b2;
+  color: #e65100;
+}
+
+.desc-box .bold-text {
+  background: #f8f9fa;
   padding: 10px;
   border-radius: 6px;
   font-size: 14px;
@@ -156,7 +220,17 @@ label {
   color: #495057;
   margin-left: 10px;
   font-weight: 500;
-  margin-bottom: 0px;
+  border-left: 4px solid #00afb5;
+}
+
+/* Ensure full-width items have proper background */
+.info-group.full-width .bold-text {
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #495057;
   border-left: 4px solid #00afb5;
 }
 
@@ -165,22 +239,21 @@ label {
 /* Buttons Section */
 .action-buttons {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  border-top: 1px solid #dfdddd;
-  padding-top: 20px;
+  gap: 15px;
+  margin-top: 25px;
+  padding-top: 1px;
 }
 
 /* Buttons - Compact Modern */
-.btn-approve, 
-.btn-pool, 
+.btn-approve,
+.btn-pool,
 .btn-reject {
   border: none;
-  padding: 10px 16px;
+  padding: 12px 24px;
   border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
   font-weight: 600;
   font-size: 13px;
@@ -189,26 +262,25 @@ label {
   transition: all 0.2s ease;
 }
 
-.btn-approve { 
-  background-color: #00bfa5; 
-  color: white; 
+.btn-approve {
+  background-color: #00bfa5;
+  color: white;
 }
 
-.btn-pool { 
-  background-color: #ff8f00; 
-  color: white; 
+.btn-pool {
+  background-color: #ff8f00;
+  color: white;
 }
 
-.btn-reject { 
-  background-color: #b71c1c; 
-  color: white; 
+.btn-reject {
+  background-color: #b71c1c;
+  color: white;
 }
 
-.btn-approve:hover, 
-.btn-pool:hover, 
+.btn-approve:hover,
+.btn-pool:hover,
 .btn-reject:hover {
   opacity: 0.9;
-  transform: translateY(-1px);
 }
 
 .btn-approve:disabled,
@@ -297,10 +369,6 @@ label {
   width: 6px;
 }
 
-.modal-container::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
 
 
 
@@ -360,8 +428,17 @@ label {
   opacity: 0;
 }
 
-.r1 { width: 80px; height: 80px; animation: ripple 2s infinite; }
-.r2 { width: 110px; height: 110px; animation: ripple 2s infinite 0.6s; }
+.r1 {
+  width: 80px;
+  height: 80px;
+  animation: ripple 2s infinite;
+}
+
+.r2 {
+  width: 110px;
+  height: 110px;
+  animation: ripple 2s infinite 0.6s;
+}
 
 /* --- Right Content Section --- */
 .content-container {
@@ -389,7 +466,8 @@ label {
 }
 
 .btn-done {
-  background: #00afb5; /* මුලින් තද කළු පැහැය - Premium look */
+  background: #00afb5;
+  /* මුලින් තද කළු පැහැය - Premium look */
   color: #ffffff;
   border: none;
   padding: 12px 28px;
@@ -406,8 +484,10 @@ label {
 }
 
 .btn-done:hover {
- background: #0b6c78; /* Hover කළාම ඔයාගේ Teal පාටට මාරු වේ */
-  transform: translateY(-2px) scale(1.02); /* පොඩ්ඩක් ඉහළට එසවෙන effect එක */
+  background: #0b6c78;
+  /* Hover කළාම ඔයාගේ Teal පාටට මාරු වේ */
+  transform: translateY(-2px) scale(1.02);
+  /* පොඩ්ඩක් ඉහළට එසවෙන effect එක */
   box-shadow: 0 10px 20px rgba(0, 169, 181, 0.25);
 }
 
@@ -428,7 +508,10 @@ label {
   transition: 0.2s;
 }
 
-.btn-close:hover { background: #eee; color: #333; }
+.btn-close:hover {
+  background: #eee;
+  color: #333;
+}
 
 .btn-done:active {
   transform: scale(0.98);
@@ -440,7 +523,8 @@ label {
 }
 
 .btn-done:hover svg {
-  transform: translateX(4px); /* Hover කළාම arrow එකක් වගේ දෙයක් තිබුණොත් දකුණට චලනය වේ */
+  transform: translateX(4px);
+  /* Hover කළාම arrow එකක් වගේ දෙයක් තිබුණොත් දකුණට චලනය වේ */
 }
 
 /* Progress Bar at the bottom */
@@ -486,19 +570,41 @@ label {
 
 /* --- Animations --- */
 @keyframes ripple {
-  0% { transform: scale(0.8); opacity: 0; }
-  50% { opacity: 0.3; }
-  100% { transform: scale(1.3); opacity: 0; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
 }
 
 @keyframes entry {
-  from { opacity: 0; transform: scale(0.9) translateY(30px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes progress {
-  from { transform: scaleX(1); }
-  to { transform: scaleX(0); }
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
 }
 
 .checkmark-path {
@@ -510,4 +616,30 @@ label {
   animation: draw 0.6s ease-out 0.4s forwards;
 }
 
-@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Timeline Row Styles */
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.timeline-label {
+  min-width: 45px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-align: right;
+}
+
+.timeline-row .bold-text {
+  margin: 0;
+  display: inline;
+  white-space: nowrap;
+}

@@ -481,7 +481,11 @@
   color: #2563eb;
   border: 1px solid rgba(37, 99, 235, 0.1);
 }
-
+.priority-badge.normal {
+  background: #f7efff;
+  color: #c008d1;
+  border: 1px solid rgba(145, 26, 236, 0.1);
+}
 .priority-badge.low {
   background: #f3f4f6;
   color: #6b7280;

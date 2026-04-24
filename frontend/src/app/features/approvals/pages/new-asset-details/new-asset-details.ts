@@ -20,6 +20,8 @@ export class NewAssetDetailsComponent implements OnInit {
 
   request = signal<any>({});
   processing = signal(false);
+  isLoading = signal<boolean>(true);
+  error = signal<string>('');
   suggestedAssets = signal<SuggestedAsset[]>([]);
   selectedSuggestedAssetId = signal<number | null>(null);
 
@@ -29,24 +31,34 @@ export class NewAssetDetailsComponent implements OnInit {
       console.log("received data from Service ");
       this.request.set(this.requestService.selectedRequest);
       this.loadSuggestedAssets();
+      this.isLoading.set(false);
     } else {
       // Refresh 
       const id = this.route.snapshot.paramMap.get('id');
+      console.log("Route ID parameter:", id);
       if (id) {
         console.log("get request by ID:", id);
         this.loadSuggestedAssets(Number(id));
         this.requestService.getRequestById(+id).subscribe({
           next: (data) => {
+            console.log("Data fetched:", data);
             this.request.set(this.mapRequestForView(data));
+            this.isLoading.set(false);
           },
           error: (err) => {
             console.error('Load request by id error:', err);
+            this.error.set('Failed to load request details');
+            this.isLoading.set(false);
           }
         });
+      } else {
+        console.warn("No ID found in route");
+        this.error.set('No request ID provided');
+        this.isLoading.set(false);
       }
     }
-
   }
+
   showPopup = signal(false);
   popupMessage = signal('');
   popupType = signal<'success' | 'reject'>('success');

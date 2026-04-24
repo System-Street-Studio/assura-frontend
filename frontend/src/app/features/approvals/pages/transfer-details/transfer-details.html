@@ -1,7 +1,6 @@
 <div class="container">
   <div class="header-section">
     <div class="page-title">Requests</div>
-
   </div>
 
   <div class="modal-overlay">
@@ -14,74 +13,80 @@
       </div>
 
       <div class="details-grid">
-        <div class="column">
-          <div class="info-group">
-            <label>Asset</label>
-            <p class="bold-text">{{ request().assetName }}</p>
-          </div>
-
-          <div class="info-group">
-            <label>Division</label>
-            <p class="bold-text">{{ request().division }}</p>
-          </div>
-
-          <div class="info-group">
-            <label>Time line</label>
-            <div class="bold-text">
-              <span>From :</span>
-              <p class="bold-text">{{ request().timelineFrom }}</p>
-            </div>
-            <div class="bold-text">
-              <span>To :</span>
-              <p class="bold-text">{{ request().timelineTo }}</p>
-            </div>
-          </div>
-
+        <!-- Line 1: Asset Name | Asset Category -->
+        <div class="info-group">
+          <label>Asset Name</label>
+          <p class="bold-text">{{ request().assetName }}</p>
         </div>
 
-        <div class="column">
-          <div class="info-group">
-            <label>Employee Name</label>
-            <p class="bold-text">{{ request().name }}</p>
-          </div>
-
-          <div class="info-group">
-            <label>Submitted Date</label>
-            <p class="bold-text">{{ request().date |date}}</p>
-          </div>
-
-          <div class="info-group">
-            <label>Status</label>
-            <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
-          </div>
-
-
-          <div class="info-group">
-            <label>Quantity</label>
-            <p class="bold-text">{{ request().quantity }}</p>
-          </div>
-
-
+        <div class="info-group">
+          <label>Asset Category</label>
+          <p class="bold-text">{{ request().category }}</p>
         </div>
 
-
-        <div class="info-group full-width flex-row">
-          <div class="desc-box">
-            <label>Description</label>
-            <p class="bold-text">{{ request().specs }}</p>
-          </div>
-
+        <!-- Line 2: Employee Name | Employee ID -->
+        <div class="info-group">
+          <label>Employee Name</label>
+          <p class="bold-text">{{ request().name }}</p>
         </div>
 
+        <div class="info-group">
+          <label>Employee ID</label>
+          <p class="bold-text">{{ request().employee }}</p>
+        </div>
+
+        <!-- Line 3: Submitted Date & Time | Transfer Period -->
+        <div class="info-group">
+          <label>Submitted Date & Time</label>
+          <p class="bold-text">{{ request().date | date:'medium' }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Transfer Period</label>
+          <div class="timeline-row">
+            <span class="timeline-label">From:</span>
+            <p class="bold-text">{{ getTransferDates().from || (request().date | date:'yyyy-MM-dd') }}</p>
+          </div>
+          <div class="timeline-row">
+            <span class="timeline-label">To:</span>
+            <p class="bold-text">{{ getTransferDates().to }}</p>
+          </div>
+        </div>
+
+        <!-- Line 4: Quantity | Priority -->
+        <div class="info-group">
+          <label>Quantity</label>
+          <p class="bold-text">{{ request().quantity }}</p>
+        </div>
+
+        <div class="info-group">
+          <label>Priority</label>
+          <p class="bold-text" [ngClass]="'priority-' + (request().priority || '').toLowerCase()">{{ request().priority
+            }}</p>
+        </div>
+
+        <!-- Full Width: Description -->
         <div class="info-group full-width">
-          <div class="desc-box">
-            <label>Reason</label>
-            <p class="bold-text">{{ request().justification }}</p>
-          </div>
+          <label>Description</label>
+          <p class="bold-text">{{ request().specs }}</p>
         </div>
 
+        <!-- Full Width: Reason -->
+        <div class="info-group full-width">
+          <label>Reason</label>
+          <p class="bold-text">{{ getCleanReason() }}</p>
+        </div>
+
+        <!-- Full Width: Status -->
+        <div class="info-group full-width">
+          <label>Status</label>
+          <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
+        </div>
       </div>
 
+      <hr />
+
+      <!-- Action buttons for Division Head -->
       <div class="action-buttons" *ngIf="canDivisionHeadAct()">
         <button class="btn-approve" (click)="approveRequest()" [disabled]="processing()">
           <mat-icon>check_circle</mat-icon> Approve Request
@@ -92,6 +97,7 @@
         </button>
       </div>
 
+      <!-- Action buttons for Storekeeper -->
       <div class="action-buttons" *ngIf="canStorekeeperProcess()">
         <div class="suggestion-panel" *ngIf="suggestedAssets().length > 0">
           <label class="suggestion-title">Suggested In-Store Assets</label>
@@ -119,6 +125,7 @@
         </button>
       </div>
 
+      <!-- Confirmation for Storekeeper -->
       <div class="action-buttons" *ngIf="canStorekeeperConfirm()">
         <button class="btn-approve" (click)="confirmTemporaryAssignment()" [disabled]="processing()">
           <mat-icon>verified</mat-icon> Confirm Physical Handover
@@ -127,9 +134,9 @@
     </div>
   </div>
 
+  <!-- Success/Error Popup -->
   <div class="overlay" *ngIf="showPopup()">
     <div class="glass-card" [class.reject]="popupType() === 'reject'">
-
       <div class="icon-container">
         <div class="ripple-ring r1"></div>
         <div class="ripple-ring r2"></div>
@@ -149,7 +156,7 @@
         </button>
 
         <div class="text-block">
-          <h2 class="gradient-text">Success!</h2>
+          <h2 class="gradient-text">{{ popupType() === 'success' ? 'Success!' : 'Request Rejected' }}</h2>
           <p>{{ popupMessage() }}</p>
         </div>
 
@@ -162,7 +169,6 @@
           </button>
         </div>
       </div>
-
       <div class="progress-bar"></div>
     </div>
   </div>
