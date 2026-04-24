@@ -169,8 +169,9 @@ export class AuthService {
     const roles = this.getRoles();
     if (roles.includes('Admin')) return '/admin/overview';
     if (roles.includes('Procurement')) return '/procurement/overview';
-    if (roles.includes('Storekeeper') || roles.includes('Auditor')) return '/inventory/dashboard';
-    if (roles.includes('HR')) return '/hr/pending';
+    if (roles.includes('Storekeeper')) return '/inventory/dashboard';
+    if (roles.includes('Auditor')) return '/reporting/dashboard';
+    if (roles.includes('HR')) return '/hr/overview';
     if (roles.includes('Accountant')) return '/accountant/discarded';
     if (roles.includes('Superintendent')) return '/superintendent/overview';
     if (roles.includes('DivisionHead')) return '/approvals/overview';
