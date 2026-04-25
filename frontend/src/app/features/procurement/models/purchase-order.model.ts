@@ -75,4 +75,7 @@ export interface AssetRequestDto {
     date: Date | string;
     specifications?: string;
     specialNote?: string;
+    type?: string;
+    description?: string;
+    assetId?: number;
 }

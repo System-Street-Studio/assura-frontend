@@ -98,25 +98,28 @@
                         <div class="value">{{ selectedRequest.employeeName }}</div>
                     </div>
                     <div class="detail-field">
-                        <label>Specifications</label>
-                        <div class="specs-box">
-                            <div class="pre-wrap">{{ selectedRequest.specifications || 'N/A' }}</div>
-                        </div>
+                        <label>Request Type</label>
+                        <div class="value">{{ selectedRequest.type || 'N/A' }}</div>
                     </div>
                     <div class="detail-field">
                         <label>Division</label>
                         <div class="value">{{ selectedRequest.divisionName }}</div>
                     </div>
-                    <!-- Spacer for grid alignment if needed -->
-                    <div></div>
-
                     <div class="detail-field">
                         <label>Date</label>
-                        <div class="value">{{ selectedRequest.date | date:'dd MMM yyyy' }}</div>
+                        <div class="value">{{ selectedRequest.date | date:'dd MMM yyyy, HH:mm' }}</div>
                     </div>
                 </div>
 
-                <div class="detail-field full-width">
+                <div class="detail-field full-width" style="margin-top: 12px;">
+                    <label>Description</label>
+                    <div class="specs-box">
+                        <div class="pre-wrap">{{ selectedRequest.description || selectedRequest.specifications || 'N/A'
+                            }}</div>
+                    </div>
+                </div>
+
+                <div class="detail-field full-width" style="margin-top: 12px;">
                     <label>Special Note</label>
                     <div class="note-box">
                         {{ selectedRequest.specialNote || 'No special note.' }}

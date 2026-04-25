@@ -25,6 +25,7 @@ export class MaintenanceFormComponent implements OnInit {
   // Form Signals
   assignedAssets = signal<AssetDetail[]>([]);
   asset = signal('');
+  selectedAssetId = signal<number | null>(null);
   issueType = signal('Damaged');
   description = signal('');
   priority = signal('Normal');
@@ -39,10 +40,10 @@ export class MaintenanceFormComponent implements OnInit {
         // Auto-select asset from route state
         const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state.assetName;
         if (passedAssetName) {
-          // Find the matching asset and set it with full format
           const matchedAsset = assets.find(a => a.productName === passedAssetName);
           if (matchedAsset) {
             this.asset.set(matchedAsset.productName + ' (' + matchedAsset.assetCode + ')');
+            this.selectedAssetId.set(Number(matchedAsset.id));
           }
         }
       },
@@ -61,6 +62,7 @@ export class MaintenanceFormComponent implements OnInit {
       type: 4,   // RequestType.Maintenance
       priority: priorityMap[this.priority()] ?? 2,
       description: `Maintenance Request - Issue: ${this.issueType()}. ${this.description()}`.trim(),
+      assetId: this.selectedAssetId() ?? undefined
     };
 
     this.assetRequestService.createUnifiedRequest(payload).subscribe({

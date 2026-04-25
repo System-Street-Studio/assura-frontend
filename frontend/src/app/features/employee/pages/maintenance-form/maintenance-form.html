@@ -14,10 +14,12 @@
       <form (ngSubmit)="onSubmit()">
         <div class="field">
           <label>Asset</label>
-          <select [ngModel]="asset()" (ngModelChange)="asset.set($event)" name="asset" required>
+          <select [ngModel]="selectedAssetId()"
+            (ngModelChange)="selectedAssetId.set($event ? +$event : null); asset.set(assignedAssets().find(a => a.id == $event)?.productName + ' (' + assignedAssets().find(a => a.id == $event)?.assetCode + ')')"
+            name="asset" required>
             <option value="" disabled selected>Select an asset</option>
             @for (a of assignedAssets(); track a.id) {
-            <option [value]="a.productName + ' (' + a.assetCode + ')'">
+            <option [value]="a.id">
               {{a.productName}} ({{a.assetCode}})
             </option>
             }
@@ -55,31 +57,31 @@
         <div class="field">
           <label>Attachment (Optional)</label>
           @if (selectedFiles().length === 0) {
-            <div class="upload-box" (click)="browseFiles()">
-              <mat-icon class="upload-icon">cloud_upload</mat-icon>
-              <p>Drag files here or <span class="browse">click to browse</span></p>
-            </div>
+          <div class="upload-box" (click)="browseFiles()">
+            <mat-icon class="upload-icon">cloud_upload</mat-icon>
+            <p>Drag files here or <span class="browse">click to browse</span></p>
+          </div>
           }
 
           <!-- Display selected files -->
           @if (selectedFiles().length > 0) {
-            <div class="selected-files" (click)="browseFiles()">
-              <p class="files-label">Selected Files: {{ selectedFiles().length }}</p>
-              @for (file of selectedFiles(); track file.name; let i = $index) {
-                <div class="file-item">
-                  <mat-icon class="file-icon">attach_file</mat-icon>
-                  <span class="file-name">{{ file.name }}</span>
-                  <span class="file-size">({{ (file.size / 1024).toFixed(2) }} KB)</span>
-                  <button type="button" class="remove-btn" (click)="removeFile(i); $event.stopPropagation()">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </div>
-              }
-              <button type="button" class="add-files-btn" (click)="browseFiles(); $event.stopPropagation()">
-                <mat-icon>add_circle_outline</mat-icon>
-                Add More Files
+          <div class="selected-files" (click)="browseFiles()">
+            <p class="files-label">Selected Files: {{ selectedFiles().length }}</p>
+            @for (file of selectedFiles(); track file.name; let i = $index) {
+            <div class="file-item">
+              <mat-icon class="file-icon">attach_file</mat-icon>
+              <span class="file-name">{{ file.name }}</span>
+              <span class="file-size">({{ (file.size / 1024).toFixed(2) }} KB)</span>
+              <button type="button" class="remove-btn" (click)="removeFile(i); $event.stopPropagation()">
+                <mat-icon>close</mat-icon>
               </button>
             </div>
+            }
+            <button type="button" class="add-files-btn" (click)="browseFiles(); $event.stopPropagation()">
+              <mat-icon>add_circle_outline</mat-icon>
+              Add More Files
+            </button>
+          </div>
           }
         </div>
 
@@ -87,10 +89,10 @@
           <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">Cancel</button>
           <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
             @if (isSubmitting()) {
-              <mat-icon class="spinner">schedule</mat-icon>
-              Submitting...
+            <mat-icon class="spinner">schedule</mat-icon>
+            Submitting...
             } @else {
-              Submit Request
+            Submit Request
             }
           </button>
         </div>
