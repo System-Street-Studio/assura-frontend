@@ -2,7 +2,7 @@
   <div class="content-padding">
     
     <div class="header-section">
-      <h1 class="page-title">Assets</h1>
+      <h1 class="page-title">Division Assets</h1>
       @if (selectedAsset()) {
         <div class="back-btn" (click)="goBack()">
           <mat-icon>arrow_back</mat-icon> 
@@ -34,8 +34,15 @@
 
             <div class="detail-row">
               <span class="label">Assigned Employee :</span>
-              <span class="value">{{ asset.assignedTo }} (EST001)</span>
+              <span class="value">{{ asset.assignedUserName || asset.assignedTo }}</span>
             </div>
+
+            @if (asset.assignedUserId) {
+              <div class="detail-row">
+                <span class="label">Assigned User ID :</span>
+                <span class="value">{{ asset.assignedUserId }}</span>
+              </div>
+            }
 
             <div class="detail-row">
               <span class="label">Asset Category :</span>
@@ -107,21 +114,28 @@
             <span class="stat-title color-blue">Total Assets</span>
             <mat-icon>content_copy</mat-icon>
           </div>
-          <div class="stat-value">124</div>
+          <div class="stat-value">{{ totalAssets() }}</div>
         </div>
         <div class="stat-card border-yellow">
           <div class="stat-header">
             <span class="stat-title color-yellow">In Use</span>
             <mat-icon>check_circle_outline</mat-icon>
           </div>
-          <div class="stat-value">114</div>
+          <div class="stat-value">{{ inUseAssets() }}</div>
         </div>
         <div class="stat-card border-red">
           <div class="stat-header">
             <span class="stat-title color-red">Under maintenance</span>
             <mat-icon>build</mat-icon>
           </div>
-          <div class="stat-value">12</div>
+          <div class="stat-value">{{ maintenanceAssets() }}</div>
+        </div>
+        <div class="stat-card border-green">
+          <div class="stat-header">
+            <span class="stat-title color-green">Transferred</span>
+            <mat-icon>swap_horiz</mat-icon>
+          </div>
+          <div class="stat-value">{{ transferredAssets().length }}</div>
         </div>
       </div>
     </section>
@@ -140,7 +154,7 @@
         
         <div class="selected-filters">
     <div class="styled-select" data-filter="category">
-      <button class="filter-btn" (click)="showCategoryMenu.set(!showCategoryMenu())">
+      <button class="filter-btn" (click)="toggleCategoryMenu($event)">
         <div class="filter-icon">
           <mat-icon>tune</mat-icon>
           <span>{{ selectedCategory() === 'all' ? 'All Categories' : selectedCategory() }}</span>
@@ -151,15 +165,15 @@
       @if (showCategoryMenu()) {
         <div class="filter-menu-card">
           <div class="filter-option" (click)="setFilterCategory('all')" [class.active]="selectedCategory() === 'all'">All Categories</div>
-          <div class="filter-option" (click)="setFilterCategory('Electronics')" [class.active]="selectedCategory() === 'Electronics'">Electronics</div>
-          <div class="filter-option" (click)="setFilterCategory('IT Equipment')" [class.active]="selectedCategory() === 'IT Equipment'">IT Equipment</div>
-          <div class="filter-option" (click)="setFilterCategory('Vehicles')" [class.active]="selectedCategory() === 'Vehicles'">Vehicles</div>
+          @for (category of availableCategories(); track category) {
+            <div class="filter-option" (click)="setFilterCategory(category)" [class.active]="selectedCategory() === category">{{ category }}</div>
+          }
         </div>
       }
     </div>
 
     <div class="styled-select" data-filter="status">
-      <button class="filter-btn" (click)="showStatusMenu.set(!showStatusMenu())">
+      <button class="filter-btn" (click)="toggleStatusMenu($event)">
         <div class="filter-icon">
           <mat-icon>filter_list</mat-icon>
           <span>{{ selectedStatus() === 'all' ? 'All Status' : selectedStatus() }}</span>
@@ -202,13 +216,13 @@
                 {{ asset.status }}
               </div>
               
-              <p class="assigned-text">Assigned to {{ asset.assignedTo }}</p>
+              <p class="assigned-text">Assigned to {{ asset.assignedUserName || asset.assignedTo }}</p>
             </div>
             
             <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
           </div>
-        
-          </div>
+        </div>
+
       </section>
     }
 
