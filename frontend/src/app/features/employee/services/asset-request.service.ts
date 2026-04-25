@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface AssetRequest {
-  id: number;         
+  id: number;
   employeeId: string;
   submittedBy: string;
   assetName: string;
@@ -14,7 +14,7 @@ export interface AssetRequest {
   description?: string;
   status: string;
   submittedDate: string;
-  requestType: string;       
+  requestType: string;
 }
 
 import { environment } from '../../../../environments/environment';
@@ -22,11 +22,17 @@ import { environment } from '../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class AssetService {
   private apiUrl = `${environment.apiUrl}/AssetRequests`;
+  private unifiedApiUrl = `${environment.apiUrl}/requests`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   createRequest(data: any): Observable<AssetRequest> {
     return this.http.post<AssetRequest>(this.apiUrl, data);
+  }
+
+  /** Posts to the unified /api/requests endpoint which Division Heads can see and approve */
+  createUnifiedRequest(payload: { type: number; priority: number; description?: string; assetId?: number }): Observable<number> {
+    return this.http.post<number>(this.unifiedApiUrl, payload);
   }
 
   getEmployeeRequests(empId: string): Observable<AssetRequest[]> {

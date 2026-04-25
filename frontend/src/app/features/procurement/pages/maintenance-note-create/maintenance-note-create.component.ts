@@ -73,10 +73,19 @@ export class MaintenanceNoteCreateComponent implements OnInit {
     private checkQueryParams(): void {
         this.route.queryParams.subscribe(params => {
             const assetId = params['assetId'];
+            const description = params['description'];
+            const date = params['date'];
+
             if (assetId) {
                 const id = Number(assetId);
                 this.noteForm.patchValue({ assetId: id });
                 this.onAssetChange();
+            }
+            if (description) {
+                this.noteForm.patchValue({ description });
+            }
+            if (date) {
+                this.noteForm.patchValue({ date });
             }
         });
     }

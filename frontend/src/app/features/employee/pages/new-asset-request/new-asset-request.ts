@@ -52,10 +52,20 @@ export class NewAssetRequestComponent implements OnInit {
 
   onSubmit() {
     this.isSubmitting.set(true);
-    this.assetService.createRequest(this.requestData).subscribe({
+
+    // Map priority string to PriorityType enum value
+    const priorityMap: Record<string, number> = { Low: 1, Normal: 2, Medium: 3, High: 4, Urgent: 5 };
+
+    const payload = {
+      type: 1,  // RequestType.Asset
+      priority: priorityMap[this.requestData.priority] ?? 2,
+      description: `New Asset Request - ${this.requestData.assetName} (${this.requestData.assetCategory}). ${this.requestData.description}`.trim(),
+    };
+
+    this.assetService.createUnifiedRequest(payload).subscribe({
       next: (res: any) => {
         this.isSubmitting.set(false);
-        alert(res.message || 'Request submitted successfully!');
+        alert('Request submitted successfully!');
         this.location.back();
       },
       error: (err: any) => {

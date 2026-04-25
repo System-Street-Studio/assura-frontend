@@ -2,19 +2,25 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
-import { DataTableComponent, ColumnDef } from '../../../../shared/components/data-table/data-table';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { ProcurementService } from '../../services/procurement.service';
 import { MaintenanceDto } from '../../models/maintenance.model';
 
-interface MaintenanceRequest {
-  id: string;
+export interface LiveMaintenanceRequest {
+  id: number;
+  employeeName: string;
+  divisionName: string;
+  date: string;
+  specifications?: string;
+  specialNote?: string;
+  type?: string;
+  description?: string;
+  assetId?: number;
+  // Template-compatible aliases
   assetName: string;
   division: string;
   timestamp: string;
-  date: string;
-  specifications: string[];
-  specialNote: string;
+  specificationsArray: string[];
 }
 
 @Component({
@@ -28,16 +34,57 @@ export class ProcurementMaintenanceComponent implements OnInit {
   private router = inject(Router);
   private procurementService = inject(ProcurementService);
 
+  // Maintenance history (from /Maintenances)
   maintenanceHistory: MaintenanceDto[] = [];
   filteredHistory: MaintenanceDto[] = [];
   isLoading = false;
-
-  // History Table pagination
   historyPageSize = 5;
   historyCurrentPage = 1;
 
+  // Live pending requests from backend (PendingProcurement status)
+  pendingRequests: LiveMaintenanceRequest[] = [];
+  filteredRequests: LiveMaintenanceRequest[] = [];
+  selectedRequest: LiveMaintenanceRequest | null = null;
+  isLoadingRequests = false;
+  requestsPageSize = 5;
+  requestsCurrentPage = 1;
+
   ngOnInit(): void {
     this.loadMaintenanceHistory();
+    this.loadPendingRequests();
+  }
+
+  loadPendingRequests(): void {
+    this.isLoadingRequests = true;
+    this.procurementService.getPendingRequests().subscribe({
+      next: (data: any[]) => {
+        this.pendingRequests = data.map((r: any) => ({
+          id: r.id,
+          employeeName: r.employeeName,
+          divisionName: r.divisionName,
+          date: r.date,
+          specifications: r.specifications,
+          specialNote: r.specialNote,
+          type: r.type,
+          description: r.description,
+          assetId: r.assetId,
+          // Template-compatible aliases
+          assetName: r.description || r.specialNote || `Request #${r.id}`,
+          division: r.divisionName,
+          timestamp: r.date ? new Date(r.date).toLocaleDateString() : 'N/A',
+          specificationsArray: r.specifications ? [r.specifications] : []
+        }));
+        this.filteredRequests = [...this.pendingRequests];
+        if (this.filteredRequests.length > 0) {
+          this.selectedRequest = this.filteredRequests[0];
+        }
+        this.isLoadingRequests = false;
+      },
+      error: (err) => {
+        console.error('Error loading pending requests', err);
+        this.isLoadingRequests = false;
+      }
+    });
   }
 
   loadMaintenanceHistory(): void {
@@ -55,6 +102,11 @@ export class ProcurementMaintenanceComponent implements OnInit {
     });
   }
 
+  selectRequest(request: LiveMaintenanceRequest): void {
+    this.selectedRequest = request;
+  }
+
+  // History pagination
   get historyTotalPages(): number {
     return Math.max(1, Math.ceil(this.filteredHistory.length / this.historyPageSize));
   }
@@ -74,50 +126,25 @@ export class ProcurementMaintenanceComponent implements OnInit {
     }
   }
 
-  // Maintenance Requests Data (Still mock for now as backend for this is unclear)
-  maintenanceRequests: MaintenanceRequest[] = [
-    {
-      id: '1',
-      assetName: 'Dell XPS 15',
-      division: 'Information Technology',
-      timestamp: '1 day ago',
-      date: '12 Jan 2026',
-      specifications: [
-        'RAM: 32GB',
-        'Storage: 1TB',
-        'Processor: Intel 14th gen i7'
-      ],
-      specialNote: 'Display is Broken'
-    }
-  ];
-
-  // Requests list pagination
-  requestsPageSize = 3;
-  requestsCurrentPage = 1;
-
+  // Requests pagination
   get requestsTotalPages(): number {
-    return Math.max(1, Math.ceil(this.maintenanceRequests.length / this.requestsPageSize));
+    return Math.max(1, Math.ceil(this.filteredRequests.length / this.requestsPageSize));
   }
 
   get requestsPageNumbers(): number[] {
     return Array.from({ length: this.requestsTotalPages }, (_, i) => i + 1);
   }
 
-  get pagedRequests(): MaintenanceRequest[] {
+  get pagedRequests(): LiveMaintenanceRequest[] {
     const startIndex = (this.requestsCurrentPage - 1) * this.requestsPageSize;
-    return this.maintenanceRequests.slice(startIndex, startIndex + this.requestsPageSize);
+    return this.filteredRequests.slice(startIndex, startIndex + this.requestsPageSize);
   }
 
   goToRequestsPage(page: number): void {
     if (page >= 1 && page <= this.requestsTotalPages) {
       this.requestsCurrentPage = page;
-      if (this.pagedRequests.length > 0) {
-        this.selectedRequest = this.pagedRequests[0];
-      }
     }
   }
-
-  selectedRequest: MaintenanceRequest | null = this.maintenanceRequests[0];
 
   onSearch(query: string): void {
     this.historyCurrentPage = 1;
@@ -137,14 +164,22 @@ export class ProcurementMaintenanceComponent implements OnInit {
   }
 
   navigateToCreate(): void {
-    this.router.navigate(['/procurement/maintenance/create']);
+    if (this.selectedRequest) {
+      this.router.navigate(['/procurement/maintenance/create'], {
+        queryParams: {
+          requestId: this.selectedRequest.id,
+          description: this.selectedRequest.description || this.selectedRequest.assetName,
+          division: this.selectedRequest.divisionName,
+          date: new Date().toISOString().split('T')[0],
+          assetId: this.selectedRequest.assetId || ''
+        }
+      });
+    } else {
+      this.router.navigate(['/procurement/maintenance/create']);
+    }
   }
 
   navigateToFirms(): void {
     this.router.navigate(['/procurement/maintenance/repairing-firms']);
-  }
-
-  selectRequest(request: MaintenanceRequest): void {
-    this.selectedRequest = request;
   }
 }

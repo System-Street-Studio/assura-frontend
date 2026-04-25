@@ -35,7 +35,7 @@ export class MaintenanceFormComponent implements OnInit {
     this.assetService.getAll().subscribe({
       next: (assets) => {
         this.assignedAssets.set(assets);
-        
+
         // Auto-select asset from route state
         const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state.assetName;
         if (passedAssetName) {
@@ -53,20 +53,17 @@ export class MaintenanceFormComponent implements OnInit {
   // Submit logic
   onSubmit() {
     this.isSubmitting.set(true);
-    const requestData = {
-      employeeId: this.authService.getUserId() || '',
-      submittedBy: this.authService.getUserName() || 'Employee',
-      assetCategory: 'N/A',
-      assetName: this.asset(),
-      description: this.description(),
-      reason: `Issue: ${this.issueType()}`,
-      quantity: 1,
-      priority: this.priority(),
-      requestType: 'Maintenance',
-      submittedDate: new Date()
+
+    // Map priority string to PriorityType enum value
+    const priorityMap: Record<string, number> = { Low: 1, Normal: 2, Medium: 3, High: 4, Urgent: 5 };
+
+    const payload = {
+      type: 4,   // RequestType.Maintenance
+      priority: priorityMap[this.priority()] ?? 2,
+      description: `Maintenance Request - Issue: ${this.issueType()}. ${this.description()}`.trim(),
     };
 
-    this.assetRequestService.createRequest(requestData).subscribe({
+    this.assetRequestService.createUnifiedRequest(payload).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         alert('Maintenance Request Submitted Successfully!');

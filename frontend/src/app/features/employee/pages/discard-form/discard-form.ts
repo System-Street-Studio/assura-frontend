@@ -33,7 +33,7 @@ export class DiscardFormComponent implements OnInit {
     this.assetService.getAll().subscribe({
       next: (assets) => {
         this.assignedAssets.set(assets);
-        
+
         // Auto-select asset from route state
         const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state.assetName;
         if (passedAssetName) {
@@ -51,20 +51,14 @@ export class DiscardFormComponent implements OnInit {
   // Submit logic
   onSubmit() {
     this.isSubmitting.set(true);
-    const requestData = {
-      employeeId: this.authService.getUserId() || '',
-      submittedBy: this.authService.getUserName() || 'Employee',
-      assetCategory: 'N/A',
-      assetName: this.asset(),
-      description: 'Discard Request',
-      reason: this.reason(),
-      quantity: 1,
-      priority: 'Normal',
-      requestType: 'Discard',
-      submittedDate: new Date()
+
+    const payload = {
+      type: 5,   // RequestType.Disposal
+      priority: 2, // PriorityType.Normal
+      description: `Discard Request - Asset: ${this.asset()}. Reason: ${this.reason()}`.trim(),
     };
 
-    this.assetRequestService.createRequest(requestData).subscribe({
+    this.assetRequestService.createUnifiedRequest(payload).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         alert('Discard Request Submitted Successfully!');

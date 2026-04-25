@@ -63,15 +63,16 @@
                 <div class="panel-content" *ngIf="selectedRequest">
                     <div class="detail-grid">
                         <div class="detail-item">
-                            <label>Asset</label>
+                            <label>Description</label>
                             <div class="value">{{ selectedRequest.assetName }}</div>
                         </div>
                         <div class="detail-item">
                             <label>Specifications</label>
                             <div class="spec-box">
-                                <div *ngFor="let spec of selectedRequest.specifications">
+                                <div *ngFor="let spec of selectedRequest.specificationsArray">
                                     {{ spec }}
                                 </div>
+                                <div *ngIf="!selectedRequest.specificationsArray?.length">N/A</div>
                             </div>
                         </div>
                         <div class="detail-item">
