@@ -1,8 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SharedNavbarComponent } from '../../../../shared/components/shared-navbar/shared-navbar';
-import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
 import { HrAssignmentService } from '../../services/hr-assignment.service';
 
 export interface AssignRoleForm {
@@ -17,7 +15,7 @@ export interface AssignRoleForm {
 @Component({
   selector: 'app-hr-assign-role-form',
   standalone: true,
-  imports: [FormsModule, SharedNavbarComponent, SharedSidebarComponent],
+  imports: [FormsModule],
   templateUrl: './form.html',
   styleUrls: ['./form.css'],
 })

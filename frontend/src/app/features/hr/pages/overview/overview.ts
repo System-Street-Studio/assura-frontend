@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { SharedNavbarComponent } from '../../../../shared/components/shared-navbar/shared-navbar';
-import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
 
 export interface OverviewStat {
   label: string;
@@ -15,7 +13,7 @@ export interface DivisionUserCount {
 @Component({
   selector: 'app-hr-overview',
   standalone: true,
-  imports: [SharedNavbarComponent, SharedSidebarComponent],
+  imports: [],
   templateUrl: './overview.html',
   styleUrls: ['./overview.css'],
 })

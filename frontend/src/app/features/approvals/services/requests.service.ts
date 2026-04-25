@@ -24,46 +24,41 @@ export class RequestService {
 
   // services/request.service.ts
   getAllRequests(isHead = false) {
-    // Query string parameter
-    return this.http.get<RequestItem[]>(`${this.baseUrl}/assetrequests?isDivisionHead=${isHead}`);
+    // Modern system handles isHead check via Role in token automatically
+    return this.http.get<RequestItem[]>(`${this.baseUrl}/requests`);
   }
 
   getRequestById(id: number): Observable<RequestItem> {
-    return this.http.get<any>(`${this.baseUrl}/assetrequests/${id}`).pipe(
+    return this.http.get<any>(`${this.baseUrl}/requests/${id}`).pipe(
       map((apiData: any) => ({
         id: apiData.id,
         name: apiData.requesterName,
         employee: apiData.requesterId,
         assetName: apiData.assetName,
-        category: apiData.assetCategory,
+        category: apiData.type || 'Asset',
         status: apiData.status,
-        date: apiData.submittedDate,
+        date: apiData.createdAt,
         priority: apiData.priority,
-        type: apiData.requestType,
+        type: apiData.type,
         quantity: apiData.quantity,
         description: apiData.description,
-        reason: apiData.reason,
+        reason: apiData.description,
         specs: apiData.description,
-        justification: apiData.reason
+        justification: apiData.description
       } as RequestItem))
     );
   }
 
   // services/requests.service.ts
-  approveRequest(id: number): Observable<boolean> {
-    return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/approve`, {}).pipe(
-      map(result => {
-        console.log('✅ Request approved, triggering inventory refresh');
-        return result;
-      })
-    );
+  approveRequest(id: number): Observable<void> {
+    return this.divisionHeadReview(id, true);
   }
 
   getSuggestedAssetsForRequest(id: number): Observable<SuggestedAsset[]> {
     return this.http.get<SuggestedAsset[]>(`${this.baseUrl}/requests/${id}/suggested-assets`);
   }
 
-  divisionHeadReview(id: number, approve: boolean, remarks?: string): Observable<void> {
+  divisionHeadReview(id: number, approve: boolean, remarks: string = ''): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/requests/${id}/division-head-review`, {
       id,
       approve,
@@ -71,12 +66,8 @@ export class RequestService {
     });
   }
 
-  rejectRequest(id: number, remarks?: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/requests/${id}/division-head-review`, {
-      id,
-      approve: false,
-      remarks,
-    });
+  rejectRequest(id: number, remarks: string = ''): Observable<void> {
+    return this.divisionHeadReview(id, false, remarks);
   }
 
   processByStorekeeper(id: number, isInStock: boolean, assetId?: number, remarks?: string): Observable<void> {

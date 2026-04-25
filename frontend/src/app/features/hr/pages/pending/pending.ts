@@ -1,13 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { SharedNavbarComponent } from '../../../../shared/components/shared-navbar/shared-navbar';
-import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
 import { HrAssignmentService } from '../../services/hr-assignment.service';
 
 @Component({
   selector: 'app-hr-pending',
   standalone: true,
-  imports: [SharedNavbarComponent, SharedSidebarComponent],
+  imports: [],
   templateUrl: './pending.html',
   styleUrls: ['./pending.css'],
 })

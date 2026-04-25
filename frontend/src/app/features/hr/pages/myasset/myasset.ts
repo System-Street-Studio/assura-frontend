@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { SharedNavbarComponent } from '../../../../shared/components/shared-navbar/shared-navbar';
-import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
 
 export type AuditResult = 'Success' | 'Rejected' | 'Pending';
 
@@ -20,7 +18,7 @@ export interface AuditLogEntry {
 @Component({
   selector: 'app-hr-myasset',
   standalone: true,
-  imports: [SharedNavbarComponent, SharedSidebarComponent],
+  imports: [],
   templateUrl: './myasset.html',
   styleUrls: ['./myasset.css'],
 })

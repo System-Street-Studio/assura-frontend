@@ -157,10 +157,8 @@
           <td class="priority-cell" [attr.data-priority]="item.priority">{{ item.priority || 'Normal' }}</td>
           }
           <td>
-            @if (item.status === 'Pending') {
-
+            @if (item.status === 'Pending' || item.status === 'PendingDivisionHeadApproval') {
             <button class="btn-view" (click)="viewDetails(item)"> <mat-icon>visibility</mat-icon> View Details</button>
-
             } @else {
             <button class="btn-check">Check</button>
             }
