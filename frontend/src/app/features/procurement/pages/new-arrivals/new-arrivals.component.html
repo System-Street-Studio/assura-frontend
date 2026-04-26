@@ -7,10 +7,13 @@
         <form class="arrival-form" [formGroup]="arrivalForm" (ngSubmit)="onSubmit()">
             <!-- Item Name -->
             <div class="form-group full-width">
-                <label for="itemName">Item Name:</label>
-                <input type="text" id="itemName" formControlName="itemName" placeholder="">
-                <div *ngIf="f['itemName'].invalid && f['itemName'].touched" class="error-message">
-                    Item Name is required
+                <label for="purchasingOrderId">Purchasing Order (Item Name):</label>
+                <select id="purchasingOrderId" formControlName="purchasingOrderId" class="custom-select">
+                    <option [ngValue]="null">Select Purchasing Order</option>
+                    <option *ngFor="let po of purchasingOrders" [value]="po.id">{{ po.orderNumber }} - {{ po.supplierName }}</option>
+                </select>
+                <div *ngIf="f['purchasingOrderId'].invalid && f['purchasingOrderId'].touched" class="error-message">
+                    Purchasing Order is required
                 </div>
             </div>
 

@@ -20,6 +20,7 @@ export interface InformStoresRequest {
     purchasedDate: string;
     purchasedPrice: number;
     divisionId: number;
+    purchasingOrderId?: number;
 }
 export interface InformStakeholdersRequest {
     informingId: number;
