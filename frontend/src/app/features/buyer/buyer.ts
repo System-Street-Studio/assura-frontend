@@ -1,30 +1,73 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ApiService } from '../../core/services/api.service';
+
+interface Buyer {
+    id: string;
+    name: string;
+    contact: string;
+    email: string;
+    phone: string;
+    category: string;
+    status: string;
+}
 
 @Component({
     selector: 'app-buyer',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, FormsModule],
     templateUrl: './buyer.html',
     styleUrls: ['./buyer.css']
 })
-export class BuyerComponent {
-    buyers = [
-        { id: '1', name: 'TechWorld Distributors', contact: 'John Smith', email: 'john@techworld.com', phone: '+1 555-0101', category: 'Electronics', status: 'Active' },
-        { id: '2', name: 'Office Solutions Inc.', contact: 'Sarah Davis', email: 'sarah@officesolutions.com', phone: '+1 555-0202', category: 'Office Supplies', status: 'Active' },
-        { id: '3', name: 'NetGear Partners', contact: 'Mike Johnson', email: 'mike@netgear.com', phone: '+1 555-0303', category: 'Networking', status: 'Inactive' },
-        { id: '4', name: 'ProDisplay Corp', contact: 'Emily Chen', email: 'emily@prodisplay.com', phone: '+1 555-0404', category: 'Monitors', status: 'Active' },
-        { id: '5', name: 'CloudBase Systems', contact: 'David Wilson', email: 'david@cloudbase.com', phone: '+1 555-0505', category: 'Cloud Infrastructure', status: 'Active' },
-        { id: '6', name: 'SecureIT Ltd.', contact: 'Anna Martinez', email: 'anna@secureit.com', phone: '+1 555-0606', category: 'Security', status: 'Pending' }
-    ];
+export class BuyerComponent implements OnInit {
+    api = inject(ApiService);
+    buyers: Buyer[] = [];
 
-    selectedBuyer: any = null;
+    selectedBuyer: Buyer | null = null;
 
-    selectBuyer(buyer: any) {
+    showAddModal = false;
+    newBuyer = {
+        name: '',
+        contact: '',
+        email: '',
+        phone: '',
+        category: ''
+    };
+
+    ngOnInit() {
+        this.api.get<Buyer[]>('Buyers').subscribe({
+            next: (data) => this.buyers = data,
+            error: (err) => console.error(err)
+        });
+    }
+
+    selectBuyer(buyer: Buyer) {
         this.selectedBuyer = buyer;
     }
 
     closeDetail() {
         this.selectedBuyer = null;
+    }
+
+    openAddModal() {
+        this.showAddModal = true;
+    }
+
+    closeAddModal() {
+        this.showAddModal = false;
+        this.newBuyer = { name: '', contact: '', email: '', phone: '', category: '' };
+    }
+
+    submitBuyer() {
+        if (!this.newBuyer.name || !this.newBuyer.contact) return;
+
+        this.api.post('Buyers', this.newBuyer).subscribe({
+            next: () => {
+                this.ngOnInit(); // Refresh list
+                this.closeAddModal();
+            },
+            error: (err) => console.error(err)
+        });
     }
 }
