@@ -1,34 +1,55 @@
 <div class="note-page-container">
+    <div class="popup-overlay" *ngIf="showSuccessPopup">
+        <app-status-card label="Status Updated Successfully" icon="check_box" color="#00AFB5"></app-status-card>
+    </div>
+
     <h1 class="page-title">Maintenance Note</h1>
 
-    <div class="note-card">
+    <div class="note-card" *ngIf="noteData; else loading">
         <div class="note-grid">
             <div class="note-item">
                 <label>Asset:</label>
-                <div class="value">{{ noteData.asset }}</div>
+                <div class="value">{{ noteData.assetName }}</div>
             </div>
             <div class="note-item">
                 <label>Date:</label>
-                <div class="value">{{ noteData.date }}</div>
+                <div class="value">{{ noteData.maintenanceDate | date:'mediumDate' }}</div>
             </div>
             <div class="note-item">
                 <label>Repair Firm:</label>
-                <div class="value">{{ noteData.repairFirm }}</div>
+                <div class="value">{{ noteData.repairingFirmName || 'N/A' }}</div>
             </div>
             <div class="note-item">
                 <label>Cost (LKR):</label>
                 <div class="value">{{ noteData.cost }}</div>
             </div>
+            <div class="note-item">
+                <label>Status:</label>
+                <select [(ngModel)]="editStatus" class="custom-select status-select">
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
             <div class="note-item full-width">
                 <label>Description:</label>
                 <div class="description-box">
-                    {{ noteData.description }}
+                    {{ noteData.description || 'No description provided.' }}
                 </div>
             </div>
         </div>
 
-        <div class="action-row">
-            <button class="close-btn" (click)="close()">Close</button>
+        <div class="action-row" style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <button class="close-btn" (click)="close()"
+                style="padding: 10px 20px; border-radius: 8px; border: 1px solid #ccc; background-color: #f7f7f7; cursor: pointer;">Close</button>
+            <button class="save-btn" (click)="updateStatus()" [disabled]="isUpdating || noteData.status === editStatus"
+                style="padding: 10px 20px; border-radius: 8px; background-color: #00AFB5; color: white; border: none; cursor: pointer;"
+                [style.opacity]="(isUpdating || noteData.status === editStatus) ? '0.6' : '1'">
+                {{ isUpdating ? 'Saving...' : 'Save' }}
+            </button>
         </div>
     </div>
+    <ng-template #loading>
+        <p>Loading maintenance note details...</p>
+    </ng-template>
 </div>
