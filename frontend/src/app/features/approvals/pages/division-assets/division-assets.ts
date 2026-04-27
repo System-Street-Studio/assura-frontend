@@ -133,7 +133,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
           type: asset.category || asset.assetType || '',
           status: this.mapAssetStatus(asset.status),
           assignedTo: asset.assignedUserName || asset.assignedTo || 'Unassigned',
-          image: asset.image || asset.assetImage || asset.imageUrl || asset.photo || this.getDefaultAssetImage(asset.type, asset.category),
+          image: asset.image || asset.assetImage || asset.imageUrl || asset.photo || '',
           specs: asset.specs || asset.description || '',
           category: asset.categoryName || asset.category || '',
           division: asset.divisionName || asset.division || '',
@@ -179,36 +179,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     return statusMap[status] || 'In Use';
   }
 
-  private getDefaultAssetImage(type: string, category: string): string {
-    const typeLower = (type || '').toLowerCase();
-    const categoryLower = (category || '').toLowerCase();
-    
-    // Default images based on asset type or category
-    if (typeLower.includes('laptop') || categoryLower.includes('laptop')) {
-      return 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220';
-    } else if (typeLower.includes('desktop') || categoryLower.includes('desktop')) {
-      return 'https://tse4.mm.bing.net/th/id/OIP.sJPzc8VZD1qRzKUvudISdwHaFj?pid=Api&P=0&h=220';
-    } else if (typeLower.includes('tablet') || categoryLower.includes('tablet')) {
-      return 'https://tse3.mm.bing.net/th/id/OIP.dIez9xu3P243rJXi3FXoUgHaFj?pid=Api&P=0&h=220';
-    } else if (typeLower.includes('projector') || categoryLower.includes('projector')) {
-      return 'https://tse1.mm.bing.net/th/id/OIP.aW37fldWqaew_S4k9yOVzAHaE8?pid=Api&P=0&h=220';
-    } else if (typeLower.includes('phone') || categoryLower.includes('phone') || categoryLower.includes('mobile')) {
-      return 'https://tse3.mm.bing.net/th/id/OIP.gmlrBa13ph_b_WslIOzMkAHaEK?pid=Api&P=0&h=220';
-    } else if (typeLower.includes('vehicle') || categoryLower.includes('vehicle')) {
-      return 'https://www.carscoops.com/wp-content/uploads/2023/12/Toyota-Hilux-BEV-2048x1152.jpg';
-    } else if (typeLower.includes('printer') || categoryLower.includes('printer')) {
-      return 'https://tse2.mm.bing.net/th/id/OIP.4lP9X2Y3W5s7T6J8K9L0QHaHa?pid=Api&P=0&h=220';
-    } else if (typeLower.includes('monitor') || categoryLower.includes('monitor')) {
-      return 'https://tse1.mm.bing.net/th/id/OIP.9V8L7X6W5s4T3J2K1M0NQHaHa?pid=Api&P=0&h=220';
-    } else if (typeLower.includes('keyboard') || categoryLower.includes('keyboard')) {
-      return 'https://tse4.mm.bing.net/th/id/OIP.8K7J6X5W4s3T2J1K0M9NQHaHa?pid=Api&P=0&h=220';
-    } else if (typeLower.includes('mouse') || categoryLower.includes('mouse')) {
-      return 'https://tse3.mm.bing.net/th/id/OIP.7K6J5X4W3s2T1J0K9M8NQHaHa?pid=Api&P=0&h=220';
-    } else {
-      // Default generic asset image
-      return 'https://tse1.mm.bing.net/th/id/OIP.6K5J4X3W2s1T0J9K7M6NQHaHa?pid=Api&P=0&h=220';
-    }
-  }
+  
 
   selectAsset(asset: Asset): void {
     console.log('Selected asset:', asset);
