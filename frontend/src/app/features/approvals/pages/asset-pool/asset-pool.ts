@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetPoolService, PoolAsset } from '../../services/asset-pool.service';
 import { RequestService } from '../../services/requests.service';
+import { TransferService } from '../../services/transfer.service';
 import { Division } from '../../../inventory/models/division.model';
 
 interface Asset extends PoolAsset {
@@ -28,6 +29,7 @@ interface CategoryConfig {
 export class AssetPoolComponent implements OnInit {
   private assetPoolService = inject(AssetPoolService);
   private requestService = inject(RequestService);
+  private transferService = inject(TransferService);
 
   // Transfer request selection
   approvedTransferRequests = signal<any[]>([]);
@@ -240,64 +242,54 @@ export class AssetPoolComponent implements OnInit {
    * Handle dropdown selection change
    */
   onDropdownChange(event: any) {
-    console.log('🔥 onDropdownChange CALLED! Event:', event);
-    console.log('� Event type:', typeof event);
-    console.log('�📊 Available requests:', this.approvedTransferRequests());
-    console.log('📊 Available requests count:', this.approvedTransferRequests().length);
     
     // Convert event to number for proper ID matching
     const eventId = Number(event);
-    console.log('🔥 Event converted to number:', eventId);
+    console.log(' Event converted to number:', eventId);
     
     const selectedRequest = this.approvedTransferRequests().find(req => req.id === eventId);
-    console.log('🔍 Found selected request:', selectedRequest);
+    console.log(' Found selected request:', selectedRequest);
     
     this.selectedTransferRequest.set(selectedRequest);
-    console.log('✅ selectedTransferRequest signal set to:', this.selectedTransferRequest());
-    console.log('✅ selectedTransferRequest signal value after setting:', this.selectedTransferRequest());
+    console.log('selectedTransferRequest signal set to:', this.selectedTransferRequest());
+   
   }
 
   /**
    * Test method to manually select first request
    */
   testSelectFirstRequest() {
-    console.log('🧪 Test: Manually selecting first request...');
-    console.log('📊 Available requests:', this.approvedTransferRequests());
+    console.log(' Test: Manually selecting first request...');
+    
     
     if (this.approvedTransferRequests().length > 0) {
       const firstRequest = this.approvedTransferRequests()[0];
-      console.log('🔍 Selecting first request:', firstRequest);
+      console.log(' Selecting first request:', firstRequest);
       
       this.selectedTransferRequest.set(firstRequest);
-      console.log('✅ selectedTransferRequest signal set to:', this.selectedTransferRequest());
-      console.log('✅ selectedTransferRequest signal value after setting:', this.selectedTransferRequest());
+      console.log('selectedTransferRequest signal value after setting:', this.selectedTransferRequest());
     } else {
-      console.log('❌ No requests available to select');
+      console.log(' No requests available to select');
     }
   }
 
-  /**
-   * Load approved transfer requests for dropdown selection
-   */
+  
+
   loadApprovedTransferRequests() {
-    console.log('🚀 START: loadApprovedTransferRequests called');
-    console.log('🔄 Using exact same method as requests-page...');
     
     // Use the exact same method as requests-page
     const isDivisionHead = true; // Same as requests-page
     
     this.requestService.getAllRequests(isDivisionHead).subscribe({
       next: (allData: any[]) => {
-        console.log('📡 All data from getAllRequests:', allData);
-        console.log('📊 Total requests received:', allData.length);
+      
         
         // Filter for transfer requests (same logic as requests-page)
         const transferFiltered = allData.filter(r => r.type?.toLowerCase() === 'transfer');
-        console.log('📋 Transfer requests filtered:', transferFiltered.length);
         
         // Further filter for approved status only
         const approvedTransferRequests = transferFiltered.filter(r => r.status === 'Approved');
-        console.log('✅ Approved transfer requests:', approvedTransferRequests.length);
+
         
         // Convert to dropdown format
         const dropdownData = approvedTransferRequests.map(request => ({
@@ -310,147 +302,65 @@ export class AssetPoolComponent implements OnInit {
           reason: request.reason
         }));
         
-        console.log('🔍 Dropdown will show these requests:', dropdownData);
         this.approvedTransferRequests.set(dropdownData);
-        console.log('📊 approvedTransferRequests signal after setting:', this.approvedTransferRequests());
+        console.log(' approvedTransferRequests signal after setting:', this.approvedTransferRequests());
       },
       error: (error: any) => {
-        console.error('❌ ERROR: Error loading approved transfer requests:', error);
-        console.error('🔍 Error details:', error);
+        console.error(' ERROR: Error loading approved transfer requests:', error);
         this.approvedTransferRequests.set([]);
       }
     });
   }
 
-  /**
-   * Fallback method: Get all transfer requests and filter client-side
-   */
-  tryFallbackMethod() {
-    console.log('🔄 Trying fallback method - get all transfer requests...');
-    
-    this.requestService.getAllTransferRequests().subscribe({
-      next: (requests) => {
-        console.log('📋 Method 2 - All transfer requests:', requests);
-        
-        if (requests && requests.length > 0) {
-          this.processTransferRequests(requests, 'Method 2');
-        } else {
-          console.log('⚠️ Method 2 returned no results, trying debug method...');
-          this.tryDebugMethod();
-        }
-      },
-      error: (error) => {
-        console.error('❌ Method 2 failed, trying debug method:', error);
-        this.tryDebugMethod();
-      }
-    });
-  }
+  
+  
 
   /**
-   * Debug method: Get all asset requests to see what exists in database
+   * Select asset for transfer - pass asset ID and selected request ID to backend
    */
-  tryDebugMethod() {
-    console.log('🔍 Trying debug method - get all asset requests...');
-    
-    this.requestService.getAllAssetRequests().subscribe({
-      next: (requests) => {
-        console.log('📋 Method 3 - All asset requests:', requests);
-        console.log('📊 Total asset requests in database:', requests?.length || 0);
-        
-        if (requests && requests.length > 0) {
-          // Log a few sample requests to understand structure
-          console.log('🔍 Sample requests:');
-          requests.slice(0, 3).forEach((req, index) => {
-            console.log(`  Request ${index + 1}:`, {
-              id: req.id,
-              assetName: req.assetName,
-              requestType: req.requestType || req.type,
-              status: req.status,
-              requesterName: req.requesterName
-            });
-          });
-          
-          // Filter for transfer requests from all requests
-          const transferRequests = requests.filter(req => 
-            (req.requestType === 'Transfer' || req.type === 'Transfer') && 
-            req.status === 'Approved'
-          );
-          
-          console.log('✅ Found transfer requests from all data:', transferRequests);
-          this.processTransferRequests(transferRequests, 'Method 3');
-        } else {
-          console.log('⚠️ No asset requests found in database at all');
-          this.approvedTransferRequests.set([]);
-        }
-      },
-      error: (error) => {
-        console.error('❌ All methods failed:', error);
-        this.approvedTransferRequests.set([]);
-      }
-    });
-  }
-
-  /**
-   * Process transfer requests and filter for approved ones
-   */
-  processTransferRequests(requests: any[], method: string) {
-    console.log(`📊 ${method} - Processing ${requests.length} assetrequests records`);
-    
-    if (!requests || requests.length === 0) {
-      console.log('⚠️ No assetrequests records to process');
-      this.approvedTransferRequests.set([]);
+  selectForTransfer(asset: Asset) {
+    const selectedRequest = this.selectedTransferRequest();
+    if (!selectedRequest) {
+      alert('Please select a transfer request from dropdown first.');
       return;
     }
     
-    // Log first request structure to understand field names
-    if (requests.length > 0) {
-      console.log(`🔍 ${method} - First assetrequest record structure:`, requests[0]);
-      console.log(`🔍 ${method} - Available fields:`, Object.keys(requests[0]));
+    if (confirm(`Select "${asset.productName || asset.assetCode}" for transfer?`)) {
+      // Only pass asset ID and request ID to backend
+      const transferRequest = {
+        assetId: Number(asset.id),
+        assetRequestId: selectedRequest.id
+      };
+      
+      console.log('📋 === PASSING IDS TO BACKEND ===');
+      console.log('🆔 Asset ID:', Number(asset.id));
+      console.log('🆔 Request ID:', selectedRequest.id);
+      console.log('📤 Transfer Request Object:', transferRequest);
+      console.log('🌐 Sending to backend URL: http://localhost:5000/api/transfers');
+      
+      // Call backend to create transfer record with just the IDs
+      this.transferService.createTransferRecord(transferRequest).subscribe({
+        next: (response: any) => {
+          console.log('✅ Transfer record created successfully:', response);
+          alert('Transfer record created successfully');
+        },
+        error: (error: any) => {
+          console.error('❌ Error creating transfer record:', error);
+          alert('Failed to create transfer record. Please try again.');
+        }
+      });
     }
-    
-    // Filter for approved status and Transfer requestType
-    const approvedRequests = requests.filter(request => {
-      const status = request.status || request.Status || request.requestStatus || request.assetStatus;
-      const type = request.requestType || request.type || request.Type || request.assetType;
-      
-      console.log(`🔍 ${method} - Request ID ${request.id}: status="${status}", type="${type}"`);
-      
-      return status === 'Approved' && (type === 'Transfer' || type === 'transfer');
-    });
-    
-    console.log(`✅ ${method} - Filtered approved assetrequest records:`, approvedRequests);
-    console.log(`📊 ${method} - Final count:`, approvedRequests.length, 'approved transfer requests found');
-    
-    this.approvedTransferRequests.set(approvedRequests);
   }
 
   /**
    * Load data from API on component init
    */
   ngOnInit() {
-    console.log('🚀 ngOnInit STARTED - AssetPoolComponent initializing...');
+    
     
     // Load approved transfer requests for dropdown
-    console.log('📞 Calling loadApprovedTransferRequests...');
     this.loadApprovedTransferRequests();
-    
-    // TEMPORARY: Add test data to verify dropdown works
-    console.log('🧪 Adding test data to dropdown for testing...');
-    const testData = [
-      {
-        id: 999,
-        requesterName: 'Test User',
-        requesterId: 123,
-        assetName: 'Test Asset',
-        requestType: 'Transfer',
-        status: 'Approved',
-        reason: 'Test transfer request'
-      }
-    ];
-    console.log('🧪 Test data being set:', testData);
-    this.approvedTransferRequests.set(testData);
-    console.log('🧪 Test data set to dropdown signal:', this.approvedTransferRequests());
-    console.log('🚀 ngOnInit COMPLETED');
+   
 
     this.assetPoolService.getAssetPoolData().subscribe({
       next: (data) => {
@@ -519,88 +429,12 @@ export class AssetPoolComponent implements OnInit {
   }
 
   /**
-   * Select asset for transfer - use dropdown selected request + asset data to create transfer record
+   * Reset specification filters
    */
-  putTransferRequest(asset: Asset) {
-    console.log('🔘 Select for transfer button clicked for asset:', asset);
-    
-    // Debug dropdown state
-    console.log('📊 Dropdown state debugging:');
-    console.log('  approvedTransferRequests():', this.approvedTransferRequests());
-    console.log('  approvedTransferRequests().length:', this.approvedTransferRequests().length);
-    console.log('  selectedTransferRequest():', this.selectedTransferRequest());
-    console.log('  Dropdown options available:', this.approvedTransferRequests().length > 0 ? 'YES' : 'NO');
-    
-    // Check if test data is present
-    if (this.approvedTransferRequests().length > 0) {
-      console.log('🧪 Test data found in dropdown:');
-      this.approvedTransferRequests().forEach(req => {
-        console.log(`  - ID: ${req.id}, Name: ${req.requesterName}`);
-      });
-    }
-    
-    const selectedRequest = this.selectedTransferRequest();
-    if (!selectedRequest) {
-      console.error('❌ No transfer request selected from dropdown');
-      console.error('🔍 Possible issues:');
-      console.error('  1. Dropdown is empty (no approved transfer requests)');
-      console.error('  2. User has not selected an option from dropdown');
-      console.error('  3. Dropdown signal is not properly set');
-      
-      if (this.approvedTransferRequests().length === 0) {
-        alert('No approved transfer requests available in dropdown. Please check if there are approved transfer requests in the system.');
-      } else {
-        alert('Please select a transfer request from the dropdown first.');
-      }
-      return;
-    }
-    
-    const assetName = asset.productName || asset.assetCode || 'Unknown Asset';
-    const assignedTo = asset.assignedUserName || 'Unknown Employee';
-    
-    if (confirm(`Select "${assetName}" for transfer from ${assignedTo}?`)) {
-      console.log('📋 Using selected transfer request from dropdown:', selectedRequest);
-      
-      // Prepare asset data from the asset pool
-      const assetData = {
-        assetId: asset.id,
-        assetTag: asset.assetTag || asset.assetCode,
-        divisionId: asset.divisionId,
-        divisionName: asset.divisionName,
-        assignedUserId: asset.assignedUserId,
-        assignedUserName: asset.assignedUserName
-      };
-      
-      console.log('📋 Asset data from assets table:', assetData);
-      console.log('📄 Selected transfer request data from dropdown:', selectedRequest);
-      
-      // Create transfer record combining both data sources
-      this.requestService.createTransferRecord(assetData, selectedRequest).subscribe({
-        next: (response) => {
-          console.log('✅ Transfer record created successfully:', response);
-          alert('Transfer record created successfully!');
-        },
-        error: (error) => {
-          console.error('❌ Error creating transfer record:', error);
-          alert('Failed to create transfer record. Please try again.');
-        }
-      });
-    }
-  }
-
-  // Event handlers
-  onCategoryChange(category: string) {
-    this.selectedCategory.set(category);
-    this.selectedBrand.set('');
+  resetSpecificationFilters() {
     this.selectedSpecification.set('');
     this.specificationValue.set('');
-    this.currentPage.set(1); // Reset to first page when category changes
-  }
-
-  onPageChange(page: number) {
-    if (page >= 1 && page <= this.totalPages()) {
-      this.currentPage.set(page);
-    }
+    this.currentPage.set(1);
   }
 
   onPreviousPage() {
@@ -622,6 +456,17 @@ export class AssetPoolComponent implements OnInit {
       pages.push(i);
     }
     return pages;
+  }
+
+  onPageChange(page: number) {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  onCategoryChange(category: string) {
+    this.selectedCategory.set(category);
+    this.currentPage.set(1); // Reset to first page when category changes
   }
 }
 
