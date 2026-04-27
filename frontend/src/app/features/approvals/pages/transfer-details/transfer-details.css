@@ -258,7 +258,7 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9000;
 }
 
 /* Modern Rectangular Card */
@@ -318,6 +318,7 @@ label {
 
 .gradient-text {
   background: linear-gradient(90deg, #004777, #00a9b5);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 26px;
@@ -411,6 +412,7 @@ label {
 
 .glass-card.reject .gradient-text {
   background: linear-gradient(90deg, #b71c1c, #e53935);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
