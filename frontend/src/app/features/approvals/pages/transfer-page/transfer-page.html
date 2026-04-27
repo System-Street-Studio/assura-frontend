@@ -1,7 +1,9 @@
 
 <div class="container">
   <header>
-    <h1>Transfers</h1>
+    <div class="header-content">
+      <h1>Transfers</h1>
+    </div>
     <div class="overview-section">
       <h3>Overview</h3>
      
@@ -168,10 +170,10 @@
               </div>
               <div class="info-grid-details">
                 <p><span>Division:</span> {{ item.division }}</p>
-                <div class="Duration"><p><span>Duration:</span> {{ item.duration }}</p></div>
-                <p><span>Requested by:</span> {{ item.requestedBy }}</p>
+                                <p><span>Requested by:</span> {{ item.requestedBy }}</p>
                 <p><span>Asset need to:</span> {{ item.assetNeedTo }}</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
+                <p><span>Transfer period:</span> {{ item.transferPeriod }}</p>
                 <div class ="AcceptedBy"><p><span >Accepted By:</span> {{ item.acceptedBy }}</p> </div>
               </div>
             </div>
@@ -225,8 +227,7 @@
 
               <div class="info-grid-minimal">
                 <p><span>ID:</span> {{ item.id }}</p>
-                <p><span>Duration:</span> {{ item.duration }}</p>
-                <p><span>Asset transfer to:</span> {{ item.assetNeedTo }}</p>
+                                <p><span>Asset transfer to:</span> {{ item.assetNeedTo }}</p>
                 <p><span>Division:</span> {{ item.division }}</p>
                 <p><span>Asset Owner:</span> {{ item.assetOwner }}</p>
               </div>
@@ -262,8 +263,7 @@
               </div>
               <div class="info-grid-details">
                 <p><span>Division:</span> {{ item.division }}</p>
-                <div class="Duration"><p><span>Duration:</span> {{ item.duration || 'Temporary' }}</p></div>
-                <p><span>Requested by:</span> {{ item.requestedBy || 'Division Head' }}</p>
+                                <p><span>Requested by:</span> {{ item.requestedBy || 'Division Head' }}</p>
                 <p><span>Asset need to:</span> {{ item.assetNeedTo }} (ID: {{ item.assetNeedToId }})</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
                 <div class="status-info">
