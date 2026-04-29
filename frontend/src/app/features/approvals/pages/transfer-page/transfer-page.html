@@ -130,10 +130,10 @@
                     <div class="filter-option" (click)="setFilterType('all'); showMenu = false" [class.active]="filterType() === 'all'">
                       All Transfers
                     </div>
-                    <div class="filter-option" (click)="setFilterType('Incoming'); showMenu = false" [class.active]="filterType() === 'Incoming'">
+                    <div class="filter-option" (click)="setFilterType('IncomingActive'); showMenu = false" [class.active]="filterType() === 'IncomingActive'">
                       Incoming
                     </div>
-                    <div class="filter-option" (click)="setFilterType('Outgoing'); showMenu = false" [class.active]="filterType() === 'Outgoing'">
+                    <div class="filter-option" (click)="setFilterType('OutgoingActive'); showMenu = false" [class.active]="filterType() === 'OutgoingActive'">
                       Outgoing
                     </div>
                   </div>
@@ -150,11 +150,11 @@
       @for (item of filteredResults(); track item.id) {
         
         <!-- Incoming Requests, Pending Approval -->
-        @if (activeTab() === 'incoming' || activeTab() === 'pending') {
+        @if (activeTab() === 'incoming' || activeTab() === 'pending' ) {
           <div class="asset-item-card">
                 <div class="asset-img-container">
                   @if (item.image) {
-                    <img [src]="item.image" [alt]="item.assetName" class="asset-image">
+                    <img [src]="item.image" [alt]="item.assetTag" class="asset-image">
                   } @else {
                     <div class="asset-img-placeholder"></div>
                   }
@@ -163,18 +163,18 @@
             <div class="asset-info-box">
               <span class="time-stamp">{{ item.timeAgo }}</span>
               <div class="info-header">
-                <span class="asset-name-id">{{ item.assetName }} ({{ item.id }})</span>
+                <span class="asset-name-id">{{ item.assetTag }} ({{ item.id }})</span>
 
               
 
               </div>
               <div class="info-grid-details">
-                <p><span>Division:</span> {{ item.division }}</p>
-                                <p><span>Requested by:</span> {{ item.requestedBy }}</p>
+                <p><span>Division:</span> {{ item.toDivisionName }}</p>
+                <p><span>Requested by:</span> {{ item.requestedByName }}</p>
                 <p><span>Asset need to:</span> {{ item.assetNeedTo }}</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
                 <p><span>Transfer period:</span> {{ item.transferPeriod }}</p>
-                <div class ="AcceptedBy"><p><span >Accepted By:</span> {{ item.acceptedBy }}</p> </div>
+                <div class ="AcceptedBy"><p><span >Accepted By:</span> {{ item.currentHolderName }}</p> </div>
               </div>
             </div>
             
@@ -189,7 +189,7 @@
                 @if (item.status === 'Confirmed') {
                     <span class="status-badge-outline confirmed">Confirmed</span>
                 }
-                 @if (item.status === 'Incomming Confirmation') {
+                 @if (item.status === 'Approved') {
                     <span class="status-badge-outline confirm">Confirm</span>
                     <span class="status-badge-outline rejected">Reject</span>
                 }
@@ -210,25 +210,25 @@
           <div class="asset-item-card horizontal">
             <div class="asset-img-container">
                   @if (item.image) {
-                    <img [src]="item.image" [alt]="item.assetName" class="asset-image">
+                    <img [src]="item.image" [alt]="item.assetTag" class="asset-image">
                   } @else {
                     <div class="asset-img-placeholder"></div>
                   }
                 </div>
             <div class="asset-info-box">
               <div class="info-header">
-                <span class="asset-name-id">{{ item.assetName }}</span>   
+                <span class="asset-name-id">{{ item.assetTag }}</span>   
               </div>
 
-              <span class="badge-type" [ngClass]="item.type === 'Incoming' ? 'inc' : 'out'">{{ item.type }}</span>
+              <span class="badge-type" [ngClass]="item.type === 'IncomingActive' ? 'inc' : 'out'">{{ item.type }}</span>
                 @if (activeTab() === 'completed') {
                     <div class="status-pill completed">Completed</div>
              }
 
               <div class="info-grid-minimal">
-                <p><span>ID:</span> {{ item.id }}</p>
-                                <p><span>Asset transfer to:</span> {{ item.assetNeedTo }}</p>
-                <p><span>Division:</span> {{ item.division }}</p>
+                <p><span>ID:</span> {{ item.assetCode }}</p>
+                <p><span>Asset transfer to:</span> {{ item.assetNeedTo }}</p>
+                <p><span>Division:</span> {{ item.toDivisionName }}</p>
                 <p><span>Asset Owner:</span> {{ item.assetOwner }}</p>
               </div>
 
@@ -250,7 +250,7 @@
           <div class="asset-item-card">
             <div class="asset-img-container">
               @if (item.image) {
-                <img [src]="item.image" [alt]="item.assetName" class="asset-image">
+                <img [src]="item.image" [alt]="item.assetTag" class="asset-image">
               } @else {
                 <div class="asset-img-placeholder"></div>
               }
@@ -259,11 +259,11 @@
             <div class="asset-info-box">
               <span class="time-stamp">{{ item.timeAgo || 'Just now' }}</span>
               <div class="info-header">
-                <span class="asset-name-id">{{ item.assetName }} ({{ item.id }})</span>
+                <span class="asset-name-id">{{ item.assetTag }} ({{ item.assetCode}})</span>
               </div>
               <div class="info-grid-details">
-                <p><span>Division:</span> {{ item.division }}</p>
-                                <p><span>Requested by:</span> {{ item.requestedBy || 'Division Head' }}</p>
+                <p><span>Division:</span> {{ item.toDivisionName }}</p>
+                <p><span>Requested by:</span> {{ item.requestedByName}}</p>
                 <p><span>Asset need to:</span> {{ item.assetNeedTo }} (ID: {{ item.assetNeedToId }})</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
                 <div class="status-info">

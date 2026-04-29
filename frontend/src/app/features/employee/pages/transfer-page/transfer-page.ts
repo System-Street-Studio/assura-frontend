@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { AssetRequest } from '../../services/asset-request.service';
 import { TransferService } from '../../../../features/approvals/services/transfer.service';
 
-// දත්ත වල ව්‍යුහය (Interface)
+// (Interface)
 interface TransferData {
   id: number;
   transferNumber: string;
@@ -16,6 +16,7 @@ interface TransferData {
   assetRequestId: number;
   assetId: number;
   assetTag?: string;
+  assetName?: string;
   fromDivisionId: number;
   fromDivisionName: string;
   toDivisionId: number;
@@ -30,7 +31,7 @@ interface TransferData {
   updatedAt: string;
 }
 
-// දත්ත වල ව්‍යුහය (Interface)
+// (Interface)
 interface TransferDataLocal {
   id: string;
   assetName: string;
@@ -68,7 +69,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
 
   showMenu = false;
   // Filter state එක සඳහා signal එකක් (Default එක 'all')
-  filterType = signal<'all' | 'Incoming' | 'Outgoing'>('all');
+  filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
   searchQuery = signal<string>('');
 
   // filteredResults computed logic 
@@ -78,13 +79,13 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     const query = this.searchQuery().toLowerCase().trim();
     let data = this.allData();
 
-    // මුලින්ම Tab එක අනුව filter කරන්න
+    //  Tab  filter 
     if (tab === 'incoming') data = data.filter(i => i.status === 'Incoming');
     else if (tab === 'pending') data = data.filter(i => i.status === 'Pending' || i.status === 'Approved');
     else if (tab === 'active') data = data.filter(i => i.status === 'Active');
     else if (tab === 'completed') data = data.filter(i => i.status === 'Completed');
 
-    // දැන් Incoming/Outgoing filter එක apply කරන්න (Active/Completed tabs වලදී පමණක්)
+    //  Incoming/Outgoing filter  apply  (only Active/Completed tabs )
     if ((tab === 'active' || tab === 'completed') && typeFilter !== 'all') {
       data = data.filter(item => item.type === typeFilter);
     }
@@ -104,12 +105,12 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     this.searchQuery.set(value);
   }
 
-  // Filter එක change කරන function එක
-  setFilterType(type: 'all' | 'Incoming' | 'Outgoing') {
+  // Filter change  function 
+  setFilterType(type: 'all' | 'IncomingActive' | 'OutgoingActive') {
     this.filterType.set(type);
   }
 
-  // Summary Counts (Card වල පෙන්වීමට)
+  // Summary Counts (Card )
   incomingCount = computed(() => this.allData().filter(i => i.status === 'Incoming').length);
   pendingCount = computed(() => this.allData().filter(i => i.status === 'Pending' || i.status === 'Approved').length);
   activeCount = computed(() => this.allData().filter(i => i.status === 'Active').length);
@@ -147,17 +148,18 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    console.log('📋 Fetching all transfers from transfer table');
+    // Load incoming transfers (where current user is current holder and status = PendingOwnerApproval)
+    console.log('📋 Fetching incoming transfers where current user = current holder and status = PendingOwnerApproval');
     
-    this.transferService.getUserTransfers().subscribe({
-      next: (transfers: TransferData[]) => {
-        console.log('✅ === ALL TRANSFERS LOADED ===');
-        console.log(`📊 Found ${transfers.length} total transfers in database`);
+    this.transferService.getIncomingTransfers().subscribe({
+      next: (incomingTransfers: TransferData[]) => {
+        console.log('✅ === INCOMING TRANSFERS LOADED ===');
+        console.log(`📊 Found ${incomingTransfers.length} incoming transfers for current user`);
         
-        // Convert backend data to local format
-        const localData: TransferDataLocal[] = transfers.map(transfer => ({
+        // Convert incoming transfers data to local format
+        const incomingLocalData: TransferDataLocal[] = incomingTransfers.map(transfer => ({
           id: transfer.id.toString(),
-          assetName: `Asset ID: ${transfer.assetId}`,
+          assetName: transfer.assetName || `Asset ID: ${transfer.assetId}`,
           division: transfer.fromDivisionName,
           duration: this.calculateDuration(transfer.transferDate),
           requestedBy: transfer.transferByName,
@@ -165,35 +167,79 @@ export class TransferPageComponent implements OnInit, OnDestroy {
           reason: transfer.reason || 'No reason provided',
           status: this.mapBackendStatus(transfer.status),
           timeAgo: this.getTimeAgo(transfer.createdAt),
-          type: this.getUserTransferType(transfer.status, transfer.currentHolderId ?? null, 1),
+          type: 'Incoming' as const, // All these are incoming transfers
           daysLeft: this.calculateDaysLeft(transfer.transferDate),
           currentHolderId: transfer.currentHolderId,
           targetUserId: transfer.targetUserId
         }));
 
-        this.allData.set(localData);
-        this.isLoading.set(false);
-        
-        console.log('📋 Transferred data to local format:', localData);
-        console.log('📊 Transfer status distribution:');
-        console.log('  Incoming (PendingOwnerApproval):', localData.filter(t => t.status === 'Incoming').length);
-        console.log('  Pending (Approved):', localData.filter(t => t.status === 'Pending').length);
-        console.log('  Active:', localData.filter(t => t.status === 'Active').length);
-        console.log('  Completed:', localData.filter(t => t.status === 'Completed').length);
-        
-        // Display user information for each transfer
-        console.log('👤 User Information Display:');
-        localData.forEach((transfer, index) => {
-          console.log(`  ${index + 1}. Transfer ID: ${transfer.id}`);
-          console.log(`     Current Holder ID: ${transfer.currentHolderId}`);
-          console.log(`     Target User ID: ${transfer.targetUserId}`);
-          console.log(`     Status: ${transfer.status}`);
+        // Load other transfers (pending, active, completed) for other tabs
+        console.log('📋 Fetching all other transfers for other tabs');
+        this.transferService.getUserTransfers().subscribe({
+          next: (allTransfers: TransferData[]) => {
+            console.log('✅ === ALL OTHER TRANSFERS LOADED ===');
+            console.log(`📊 Found ${allTransfers.length} total transfers`);
+            
+            // Convert all transfers data to local format
+            const allLocalData: TransferDataLocal[] = allTransfers.map(transfer => ({
+              id: transfer.id.toString(),
+              assetName: transfer.assetName || `Asset ID: ${transfer.assetId}`,
+              division: transfer.fromDivisionName,
+              duration: this.calculateDuration(transfer.transferDate),
+              requestedBy: transfer.transferByName,
+              assetNeedTo: transfer.targetUserName,
+              reason: transfer.reason || 'No reason provided',
+              status: this.mapBackendStatus(transfer.status),
+              timeAgo: this.getTimeAgo(transfer.createdAt),
+              type: this.getUserTransferType(transfer.status, transfer.currentHolderId ?? null, this.getCurrentUserId()),
+              daysLeft: this.calculateDaysLeft(transfer.transferDate),
+              currentHolderId: transfer.currentHolderId,
+              targetUserId: transfer.targetUserId
+            }));
+
+            // Combine incoming transfers with other transfers (avoid duplicates)
+            const combinedData = [...incomingLocalData];
+            
+            // Add transfers that are not already in incoming data
+            allLocalData.forEach(transfer => {
+              if (!combinedData.find(t => t.id === transfer.id)) {
+                combinedData.push(transfer);
+              }
+            });
+
+            this.allData.set(combinedData);
+            this.isLoading.set(false);
+            
+            console.log('📋 Combined transfer data loaded:', combinedData);
+            console.log('📊 Transfer status distribution:');
+            console.log('  Incoming (PendingOwnerApproval):', combinedData.filter(t => t.status === 'Incoming').length);
+            console.log('  Pending (Approved):', combinedData.filter(t => t.status === 'Pending').length);
+            console.log('  Active:', combinedData.filter(t => t.status === 'Active').length);
+            console.log('  Completed:', combinedData.filter(t => t.status === 'Completed').length);
+            
+            // Display user information for each transfer
+            console.log('👤 User Information Display:');
+            combinedData.forEach((transfer, index) => {
+              console.log(`  ${index + 1}. Transfer ID: ${transfer.id}`);
+              console.log(`     Current Holder ID: ${transfer.currentHolderId}`);
+              console.log(`     Target User ID: ${transfer.targetUserId}`);
+              console.log(`     Status: ${transfer.status}`);
+              console.log(`     Asset Name: ${transfer.assetName}`);
+            });
+          },
+          error: (error) => {
+            console.log('❌ === ERROR LOADING ALL TRANSFERS ===');
+            console.log('❌ Failed to load all transfers:', error);
+            // Still set incoming data if available
+            this.allData.set(incomingLocalData);
+            this.isLoading.set(false);
+          }
         });
       },
       error: (error) => {
-        console.log('❌ === ERROR LOADING USER TRANSFERS ===');
-        console.log('❌ Failed to load transfers:', error);
-        this.errorMessage.set('Failed to load user transfers');
+        console.log('❌ === ERROR LOADING INCOMING TRANSFERS ===');
+        console.log('❌ Failed to load incoming transfers:', error);
+        this.errorMessage.set('Failed to load incoming transfers');
         this.isLoading.set(false);
       }
     });
@@ -259,17 +305,17 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     return `${Math.floor(diffDays / 30)} months ago`;
   }
 
-  // Tab එක මාරු කරන Function එක
+  // Tab එchange Function 
   setTab(tab: 'incoming' | 'pending' | 'active' | 'completed') {
     this.activeTab.set(tab);
   }
 
   // Actions - Backend functionality removed
   onAccept(id: string) {
-    console.log('Accept functionality removed - will be rebuilt later');
+   
   }
 
   onReject(id: string) {
-    console.log('Reject functionality removed - will be rebuilt later');
+    
   }
 }

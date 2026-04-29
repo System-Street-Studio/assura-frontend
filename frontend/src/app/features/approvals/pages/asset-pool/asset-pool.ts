@@ -332,11 +332,11 @@ export class AssetPoolComponent implements OnInit {
         assetRequestId: selectedRequest.id
       };
       
-      console.log('📋 === PASSING IDS TO BACKEND ===');
-      console.log('🆔 Asset ID:', Number(asset.id));
-      console.log('🆔 Request ID:', selectedRequest.id);
-      console.log('📤 Transfer Request Object:', transferRequest);
-      console.log('🌐 Sending to backend URL: http://localhost:5000/api/transfers');
+      console.log(' === PASSING IDS TO BACKEND ===');
+      console.log(' Asset ID:', Number(asset.id));
+      console.log(' Request ID:', selectedRequest.id);
+      console.log(' Transfer Request Object:', transferRequest);
+      console.log(' Sending to backend URL: http://localhost:5000/api/transfers');
       
       // Call backend to create transfer record with just the IDs
       this.transferService.createTransferRecord(transferRequest).subscribe({

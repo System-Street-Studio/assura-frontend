@@ -68,38 +68,16 @@ export class TransferDetailsComponent implements OnInit {
   popupType = signal<'success' | 'reject'>('success');
 
   
-  approveRequest() {
-    const id = this.request().id;
-    console.log("Approving Request ID:", id);
-
-    if (!id) {
-      console.error("Error: Request ID is missing!");
-      return;
-    }
-
-    // Update request status to approved using RequestService
+   approveRequest() {
+      const id = this.request().id;
     this.requestService.approveRequest(id).subscribe({
       next: () => {
-        console.log("Transfer request approved successfully");
-        
-        // Update local request object to show approved status
-        const updatedRequest = { ...this.request(), status: 'approved' };
-        this.request.set(updatedRequest);
-        
-        // Show success popup immediately
-        this.popupMessage.set('Transfer Request Approved Successfully');
+        this.popupMessage.set('Request Approved Successfully');
         this.popupType.set('success');
         this.showPopup.set(true);
-        
-        console.log('Request status updated to approved');
-        console.log('Popup should be visible now');
+       
       },
-      error: (err) => {
-        console.error("Approve error details:", err);
-        this.popupMessage.set('Failed to approve request. Please try again.');
-        this.popupType.set('reject');
-        this.showPopup.set(true);
-      }
+      error: (err) => console.error("Approve error:", err)
     });
   }
 
@@ -110,7 +88,7 @@ export class TransferDetailsComponent implements OnInit {
         this.popupMessage.set('Request Rejected Successfully!');
         this.popupType.set('reject');
         this.showPopup.set(true);
-        this.router.navigate(['/approvals/requests']);
+        
       },
       error: (err) => console.error("Reject error:", err)
     });
@@ -175,7 +153,7 @@ viewInPool() {
 
   closePopup() {
     this.showPopup.set(false);
-   
+   this.router.navigate(['approvals/requests']);
   }
 }
 

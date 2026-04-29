@@ -60,7 +60,7 @@ export class DiscardDetailsComponent implements OnInit {
         this.popupMessage.set('Request Approved Successfully');
         this.popupType.set('success');
         this.showPopup.set(true);
-        this.router.navigate(['/approvals/requests']);
+        
       },
       error: (err) => console.error("Approve error:", err)
     });
@@ -73,7 +73,7 @@ export class DiscardDetailsComponent implements OnInit {
         this.popupMessage.set('Request Rejected Successfully!');
         this.popupType.set('reject');
         this.showPopup.set(true);
-        this.router.navigate(['/approvals/requests']);
+        
       },
       error: (err) => console.error("Reject error:", err)
     });
@@ -85,5 +85,6 @@ export class DiscardDetailsComponent implements OnInit {
 
   closePopup() {
     this.showPopup.set(false);
+    this.router.navigate(['approvals/requests']);
   }
 }

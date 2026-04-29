@@ -56,7 +56,7 @@
         @for (req of pendingRequests(); track $index) {
           <tr>
             <td>{{ req.item }}</td>
-            <td>{{ req.date }}</td>
+            <td>{{ req.date |  date:'medium'  }}</td>
             <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
             <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
           </tr>

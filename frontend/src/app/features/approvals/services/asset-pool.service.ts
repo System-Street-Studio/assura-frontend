@@ -64,13 +64,8 @@ export class AssetPoolService {
     return this.http.get<Division[]>(`${this.apiUrl}/divisions`);
   }
 
-  /**
-   * Create a transfer request for an asset
-   */
-  
-
-  /**
-   * Get all data needed for the asset pool page at once
+ 
+   /* Get all data needed for the asset pool page at once
    */
   getAssetPoolData(): Observable<{ assets: PoolAsset[]; divisions: Division[] }> {
     return forkJoin({

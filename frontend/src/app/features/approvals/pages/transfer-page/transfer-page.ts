@@ -2,26 +2,35 @@ import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { RequestService } from '../../services/requests.service';
 import { TransferService } from '../../services/transfer.service';
 
 // Data structure interface
 interface TransferData {
   id: string;
-  assetName: string;
-  division: string;
-  requestedBy: string;
+  transferNumber:string;
+  assetId:string;
+  assetTag:string;
+  assetCode:string;
+  productName: string;
   assetNeedTo: string;
   assetNeedToId?: string;
+  assetOwner?: string;
+  assetOwnerId?: string;
+  fromDivisionId: string;
+  fromDivisionName:string;
+  toDivisionId: string;
+  toDivisionName:string;
+  requestedByName: string;
+  requestedById: string;
   reason: string;
   transferPeriod?: string;
-  status: 'Incoming' | 'Active' | 'Pending' | 'Approved' | 'Completed' | 'Transfered' | 'Transfer' | 'Confirmed' | 'Incomming Confirmation';
+  status: 'Outgoing' | 'Incoming' | 'Active' | 'Pending' | 'Approved' | 'Completed' | 'Confirmed' | 'Transfer' | 'Transfered';
   timeAgo: string;
   image?: string;
-  type?: 'Incoming' | 'Outgoing';
+  type?: 'IncomingActive' | 'OutgoingActive';
   daysLeft?: string;
   acceptedBy?: string;
-  assetOwner?: string;
+  
 }
 
 @Component({
@@ -35,8 +44,8 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   // Component signals
   isLoading = signal(false);
   errorMessage = signal('');
-  activeTab = signal<'incoming' | 'pending' | 'active' | 'completed' | 'outgoing'>('incoming');
-  filterType = signal<'all' | 'Incoming' | 'Outgoing'>('all');
+  activeTab = signal<'outgoing'|'incoming' | 'pending' | 'active' | 'completed'>('outgoing');
+  filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
   searchQuery = signal<string>('');
   showMenu = false;
 
@@ -46,18 +55,17 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   // Real data store signal
   private allData = signal<TransferData[]>([]);
 
-  constructor(private requestService: RequestService, private transferService: TransferService) {
+  constructor( private transferService: TransferService) {
     // Initialize with backend service
   }
 
   ngOnInit(): void {
-  
-    console.log(' Loading all transfers from backend...');
-    this.loadUserTransfers();
+    console.log('=== APPROVALS TRANSFER PAGE INITIALIZED ===');
+    console.log('Loading transfers with specific filtering criteria...');
+    this.loadApprovalTransfers();
 
     // Start auto-refresh every 30 seconds
     this.startAutoRefresh();
-
   }
 
   // Auto-refresh functionality
@@ -72,7 +80,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     // Set up new interval to refresh every 30 seconds
     this.refreshInterval = setInterval(() => {
       console.log(' Auto-refreshing transfer data...');
-      this.loadUserTransfers();
+      //this.loadUserTransfers();
     }, 30000); // 30 seconds
   }
 
@@ -95,89 +103,208 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   refreshTransfers(): void {
    
     console.log(' Force reloading all transfers from backend...');
-    this.loadUserTransfers();
+    //this.loadUserTransfers();
   }
 
-  loadUserTransfers() {
-    
+  // Load transfers with specific filtering for approvals
+  loadApprovalTransfers() {
+    console.log('=== LOADING APPROVAL TRANSFERS ===');
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    this.transferService.getUserTransfers().subscribe({
-      next: (transfers: any[]) => {
-        console.log(' === ALL TRANSFERS LOADED (APPROVALS) ===');
-        console.log(` Found ${transfers.length} total transfers in database`);
-        console.log(' Raw transfers data:', transfers);
+    // Load outgoing transfers (status=PendingOwnerApproval & current user=transferredBy)
+    console.log('Loading outgoing transfers for approval...');
+    this.transferService.getOutgoingTransfersForApproval().subscribe({
+      next: (outgoingTransfers: any[]) => {
+        console.log('=== OUTGOING TRANSFERS LOADED ===');
+        console.log(`Found ${outgoingTransfers.length} outgoing transfers for approval`);
 
-        if (transfers.length === 0) {
-          console.log(' No transfers found in database');
-          this.allData.set([]);
-          this.isLoading.set(false);
-          return;
-        }
+        // Load incoming transfers (status=PendingOwnerDivisionHeadApproval & current user=currentHolder division head)
+        console.log('Loading incoming transfers for division head approval...');
+        this.transferService.getIncomingTransfersForDivisionHeadApproval().subscribe({
+          next: (incomingTransfers: any[]) => {
+            console.log('=== INCOMING DIVISION HEAD TRANSFERS LOADED ===');
+            console.log(`Found ${incomingTransfers.length} incoming transfers for division head approval`);
 
-        // Convert backend data to local format
-        const localData: TransferData[] = transfers.map(transfer => {
-          console.log(' === DEBUG TRANSFER DATA ===');
-          console.log(' Transfer ID:', transfer.id);
-          console.log(' Reason field:', transfer.reason);
-          console.log(' Extracted transfer period:', this.extractTransferPeriod(transfer.reason));
-          console.log(' Transfer by name:', transfer.transferByName || transfer.targetUserName);
-          console.log(' From division head:', transfer.fromDivisionHeadName);
-          console.log(' Created at:', transfer.createdAt);
-          console.log(' Transfer date:', transfer.transferDate);
-          console.log(' Full transfer object:', transfer);
-
-          return {
-            id: transfer.id.toString(),
-            assetName: `Asset ID: ${transfer.assetId}`,
-            division: transfer.fromDivisionName || transfer.fromDivision,
-            requestedBy: transfer.fromDivisionHeadName || 'Division Head',
-            assetNeedTo: transfer.targetUserName || transfer.targetUser,
-            reason: transfer.reason || 'No reason provided',
-            transferPeriod: this.extractTransferPeriod(transfer.reason),
-            status: this.mapBackendStatus(transfer.status),
-            timeAgo: this.getTimeAgo(transfer.createdAt),
-            type: this.getUserTransferType(transfer.status, transfer.currentHolderId ?? null, 1),
-            daysLeft: this.calculateDaysLeft(transfer.transferDate)
-          };
+            // Load active transfers for division heads
+            console.log('Loading active transfers for division heads...');
+            this.loadActiveTransfers(outgoingTransfers, incomingTransfers);
+          },
+          error: (error) => {
+            console.log('=== ERROR LOADING INCOMING TRANSFERS ===');
+            console.log('Error details:', error);
+            this.errorMessage.set('Failed to load incoming transfers');
+            this.isLoading.set(false);
+          }
         });
-
-        this.allData.set(localData);
-        this.isLoading.set(false);
-
-        console.log(' === TRANSFER DATA CONVERSION COMPLETE ===');
-        console.log(` Converted ${localData.length} transfers to local format`);
-        console.log(' Sample converted data:', localData.slice(0, 2));
       },
       error: (error) => {
-        console.log(' === ERROR LOADING USER TRANSFERS (APPROVALS) ===');
-        console.log(' Error details:', error);
-        this.errorMessage.set('Failed to load user transfers');
+        console.log('=== ERROR LOADING OUTGOING TRANSFERS ===');
+        console.log('Error details:', error);
+        this.errorMessage.set('Failed to load outgoing transfers');
         this.isLoading.set(false);
       }
     });
   }
 
-  // Helper methods
-  private mapBackendStatus(backendStatus: string): TransferData['status'] {
-    const statusMap: { [key: string]: TransferData['status'] } = {
-      'PendingOwnerApproval': 'Incoming',
-      'Pending': 'Pending',
-      'Active': 'Active',
-      'Completed': 'Completed',
-      'Transfer': 'Transfer',
-      'Transfered': 'Transfered',
-      'Confirmed': 'Confirmed',
-      'Incomming Confirmation': 'Incomming Confirmation'
-    };
-    return statusMap[backendStatus] || 'Pending';
+  // Load active transfers for division heads
+  private loadActiveTransfers(outgoingTransfers: any[], incomingTransfers: any[]) {
+    // Load active incoming transfers (status=Active & current user=toDivision division head)
+    this.transferService.getActiveIncomingTransfersForDivisionHead().subscribe({
+      next: (activeIncomingTransfers: any[]) => {
+        console.log('=== ACTIVE INCOMING TRANSFERS LOADED ===');
+        console.log(`Found ${activeIncomingTransfers.length} active incoming transfers`);
+
+        // Load active outgoing transfers (status=Active & current user=fromDivision division head)
+        this.transferService.getActiveOutgoingTransfersForDivisionHead().subscribe({
+          next: (activeOutgoingTransfers: any[]) => {
+            console.log('=== ACTIVE OUTGOING TRANSFERS LOADED ===');
+            console.log(`Found ${activeOutgoingTransfers.length} active outgoing transfers`);
+
+            // Combine all transfer types
+            const allTransfers = [
+              ...outgoingTransfers, 
+              ...incomingTransfers, 
+              ...activeIncomingTransfers, 
+              ...activeOutgoingTransfers
+            ];
+            console.log(`Combined total: ${allTransfers.length} transfers`);
+
+            // Convert backend data to local format
+            const transferData: TransferData[] = allTransfers.map(transfer => {
+              console.log('=== DEBUG TRANSFER DATA ===');
+              console.log('Transfer ID:', transfer.id);
+              console.log('Status:', transfer.status);
+              console.log('TransferredBy:', transfer.transferredByName);
+              console.log('CurrentHolder:', transfer.currentHolderName);
+
+              return {
+                id: transfer.id.toString(),
+                transferNumber: `TRF-${transfer.id}`,
+                assetId: transfer.assetId?.toString() || 'Unknown',
+                assetTag: transfer.assetTag || 'Unknown',
+                assetCode: transfer.assetCode || `AST-${transfer.assetId}`,
+                productName: transfer.productName || transfer.assetName || `Asset ID: ${transfer.assetId}`,
+                assetNeedTo: transfer.targetUserName || 'Unknown',
+                assetNeedToId: transfer.targetUserId?.toString(),
+                assetOwner: transfer.currentHolderName || 'Unknown',
+                assetOwnerId: transfer.currentHolderId?.toString(),
+                fromDivisionId: transfer.fromDivisionId?.toString() || 'Unknown',
+                fromDivisionName: transfer.fromDivisionName || 'Unknown',
+                toDivisionId: transfer.toDivisionId?.toString() || 'Unknown',
+                toDivisionName: transfer.toDivisionName || 'Unknown',
+                requestedByName: transfer.transferredByName || 'Unknown',
+                requestedById: transfer.transferredById?.toString() || 'Unknown',
+                reason: transfer.reason || 'No reason provided',
+                transferPeriod: this.extractTransferPeriod(transfer.reason),
+                status: this.mapBackendStatus(transfer.status),
+                timeAgo: this.getTimeAgo(transfer.createdAt),
+                daysLeft: this.calculateDaysLeft(transfer.transferDate),
+                acceptedBy: transfer.acceptedBy,
+                type: this.getTransferType(transfer.status, transfer.fromDivisionId, transfer.toDivisionId)
+              };
+            });
+
+            this.allData.set(transferData);
+            this.isLoading.set(false);
+
+            console.log('=== TRANSFER DATA CONVERSION COMPLETE ===');
+            console.log(`Converted ${transferData.length} transfers to local format`);
+            console.log('Transfer status distribution:');
+            console.log('  Outgoing (PendingOwnerApproval):', transferData.filter(t => t.status === 'Outgoing').length);
+            console.log('  Incoming (PendingOwnerDivisionHeadApproval):', transferData.filter(t => t.status === 'Incoming').length);
+            console.log('  Active:', transferData.filter(t => t.status === 'Active').length);
+            console.log('Sample converted data:', transferData.slice(0, 2));
+          },
+          error: (error) => {
+            console.log('=== ERROR LOADING ACTIVE OUTGOING TRANSFERS ===');
+            console.log('Error details:', error);
+            // Still load what we have without active outgoing transfers
+            this.finalizeTransferData(outgoingTransfers, incomingTransfers, activeIncomingTransfers, []);
+          }
+        });
+      },
+      error: (error) => {
+        console.log('=== ERROR LOADING ACTIVE INCOMING TRANSFERS ===');
+        console.log('Error details:', error);
+        // Still load what we have without active transfers
+        this.finalizeTransferData(outgoingTransfers, incomingTransfers, [], []);
+      }
+    });
   }
 
-  private getUserTransferType(status: string, currentHolderId: number | null, currentUserId: number): 'Incoming' | 'Outgoing' {
-    // Simple logic: if current holder is current user, it's outgoing; otherwise incoming
-    return currentHolderId === currentUserId ? 'Outgoing' : 'Incoming';
+  // Finalize transfer data processing
+  private finalizeTransferData(outgoingTransfers: any[], incomingTransfers: any[], activeIncomingTransfers: any[], activeOutgoingTransfers: any[]) {
+    const allTransfers = [
+      ...outgoingTransfers, 
+      ...incomingTransfers, 
+      ...activeIncomingTransfers, 
+      ...activeOutgoingTransfers
+    ];
+    console.log(`Combined total: ${allTransfers.length} transfers`);
+
+    // Convert backend data to local format
+    const transferData: TransferData[] = allTransfers.map(transfer => {
+      return {
+        id: transfer.id.toString(),
+        transferNumber: `TRF-${transfer.id}`,
+        assetId: transfer.assetId?.toString() || 'Unknown',
+        assetTag: transfer.assetTag || 'Unknown',
+        assetCode: transfer.assetCode || `AST-${transfer.assetId}`,
+        productName: transfer.productName || transfer.assetName || `Asset ID: ${transfer.assetId}`,
+        assetNeedTo: transfer.targetUserName || 'Unknown',
+        assetNeedToId: transfer.targetUserId?.toString(),
+        assetOwner: transfer.currentHolderName || 'Unknown',
+        assetOwnerId: transfer.currentHolderId?.toString(),
+        fromDivisionId: transfer.fromDivisionId?.toString() || 'Unknown',
+        fromDivisionName: transfer.fromDivisionName || 'Unknown',
+        toDivisionId: transfer.toDivisionId?.toString() || 'Unknown',
+        toDivisionName: transfer.toDivisionName || 'Unknown',
+        requestedByName: transfer.transferredByName || 'Unknown',
+        requestedById: transfer.transferredById?.toString() || 'Unknown',
+        reason: transfer.reason || 'No reason provided',
+        transferPeriod: this.extractTransferPeriod(transfer.reason),
+        status: this.mapBackendStatus(transfer.status),
+        timeAgo: this.getTimeAgo(transfer.createdAt),
+        daysLeft: this.calculateDaysLeft(transfer.transferDate),
+        acceptedBy: transfer.acceptedBy,
+        type: this.getTransferType(transfer.status, transfer.fromDivisionId, transfer.toDivisionId)
+      };
+    });
+
+    this.allData.set(transferData);
+    this.isLoading.set(false);
+
+    console.log('=== TRANSFER DATA CONVERSION COMPLETE ===');
+    console.log(`Converted ${transferData.length} transfers to local format`);
   }
+
+  // Determine transfer type for active transfers
+  private getTransferType(status: string, fromDivisionId: number, toDivisionId: number): 'IncomingActive' | 'OutgoingActive' | undefined {
+    if (status !== 'Active') return undefined;
+    
+    // This would need to be based on current user's division head role
+    // For now, we'll use a simple logic based on division IDs
+    // In a real implementation, this would check if current user is division head of from/to division
+    return fromDivisionId < toDivisionId ? 'OutgoingActive' : 'IncomingActive';
+  }
+
+  // Helper methods
+  private mapBackendStatus(backendStatus: string): TransferData['status'] {
+    const statusMap: { [key: string]: TransferData['status'] } = { 
+    'PendingOwnerApproval':'Outgoing', 
+    'PendingOwnerDivisionHeadApproval': 'Incoming',
+    'WaitingForFinalConfirmation': 'Approved',
+    'ReadyForHandover': 'Confirmed',
+    'Active': 'Active',
+    'Completed': 'Completed',
+    'Transfer': 'Active',
+    'Transfered': 'Completed'
+    };
+    return statusMap[backendStatus] || 'Outgoing';
+  }
+
+ 
 
   private getTimeAgo(dateString: string): string {
     const date = new Date(dateString);
@@ -207,10 +334,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   private extractTransferPeriod(reason: string): string {
     if (!reason) return '';
 
-    console.log(' === EXTRACTING TRANSFER PERIOD ===');
-    console.log(' Original reason:', reason);
-
-    // Try multiple patterns to extract transfer period - prioritize the specific format we see
+    // Try multiple patterns to extract transfer period
     const patterns = [
       /\(Transfer periods?:\s*([^)]+)\)/i,  // "(Transfer periods: 4/25/2026 to 4/28/2026)"
       /Transfer periods?:\s*(.+?)(?:\n|$)/i,
@@ -224,15 +348,14 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     for (const pattern of patterns) {
       const match = reason.match(pattern);
       if (match) {
-        const extracted = match[1].trim();
-        console.log(' Extracted period:', extracted);
-        return extracted;
+        return match[1].trim();
       }
     }
 
-    console.log(' No transfer period found');
     return '';
   }
+
+  
 
   // Filtered logic (Computed signal for better performance)
   filteredResults = computed(() => {
@@ -253,7 +376,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     } else if (tab === 'completed') {
       filtered = filtered.filter(i => i.status === 'Completed');
     } else if (tab === 'outgoing') {
-      filtered = filtered.filter(i => i.type === 'Outgoing');
+      filtered = filtered.filter(i => i.status === 'Outgoing');
     }
 
     // 2. Incoming/Outgoing filter (for Active/Completed tabs)
@@ -264,7 +387,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     // 3. Search query filter
     if (query) {
       filtered = filtered.filter(item => 
-        item.assetName.toLowerCase().includes(query) || 
+        item.assetCode.toLowerCase().includes(query) || 
         item.id.toLowerCase().includes(query)
       );
     }
@@ -277,7 +400,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   pendingCount = computed(() => this.allData().filter(i => ['Pending', 'Transfer', 'Transfered', 'Confirmed', 'Incomming Confirmation'].includes(i.status)).length);
   activeCount = computed(() => this.allData().filter(i => i.status === 'Active').length);
   completedCount = computed(() => this.allData().filter(i => i.status === 'Completed').length);
-  outgoingCount = computed(() => this.allData().filter(i => i.type === 'Outgoing').length);
+  outgoingCount = computed(() => this.allData().filter(i => i.status === 'Outgoing').length);
 
   // Event handlers
   onSearchChange(event: Event) {
@@ -285,8 +408,8 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     this.searchQuery.set(value);
   }
 
-  setFilterType(type: 'all' | 'Incoming' | 'Outgoing') {
-    this.filterType.set(type);
+  setFilterType(type: 'all' | 'IncomingActive' | 'OutgoingActive') {
+   this.filterType.set(type);
   }
 
   setTab(tab: 'incoming' | 'pending' | 'active' | 'completed' | 'outgoing') {
@@ -295,7 +418,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
 
   onAccept(id: string) {
     console.log('Accepted:', id);
-    // TODO: implement API call
+  
     // this.apiService.acceptTransfer(id).then(() => {
     //   console.log('Transfer accepted successfully');
     // }).catch((error) => {
@@ -305,7 +428,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
 
   onReject(id: string) {
     console.log('Rejected:', id);
-    // TODO: implement API call
+   
     // this.apiService.rejectTransfer(id).then(() => {
     //   console.log('Transfer rejected successfully');
     // }).catch((error) => {
