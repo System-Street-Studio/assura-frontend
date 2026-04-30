@@ -13,8 +13,8 @@ export class RequestService {
   
   selectedRequest: RequestItem | null = null;
 
+  //map API data to RequestItem model
   getAllRequests(isHead = false): Observable<RequestItem[]> {
-    // Query string parameter
     return this.http.get<any[]>(`${this.baseUrl}/assetrequests?isDivisionHead=${isHead}`).pipe(
       map((apiData: any[]) => apiData.map(item => ({
         id: item.id,
@@ -37,6 +37,7 @@ export class RequestService {
     );
   }
 
+  //map API data to RequestItem model(for single request)
   getRequestById(id: number): Observable<RequestItem> {
     return this.http.get<any>(`${this.baseUrl}/assetrequests/${id}`).pipe(
       map((apiData: any) => ({
@@ -60,6 +61,7 @@ export class RequestService {
     );
   }
 
+  //approve request
   approveRequest(id: number): Observable<boolean> {
     return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/approve`, {}).pipe(
       map(result => {
@@ -69,46 +71,29 @@ export class RequestService {
     );
   }
 
+  //reject request
   rejectRequest(id: number): Observable<boolean> {
     return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, {});
   }
 
-  getApprovedTransferRequests(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/assetrequests?requestType=Transfer&status=Approved`);
-  }
-
-  getApprovedTransferRequestsForDropdown(): Observable<any[]> {
-    console.log(' Loading approved transfer requests from assetrequests table...');
-    
+  getAllAssetRequests(): Observable<any[]> {
+    console.log('Fetching all asset requests...');
     return this.http.get<any[]>(`${this.baseUrl}/assetrequests`).pipe(
-      map((requests: any[]) => {
-        
-        
-        if (!requests || requests.length === 0) {
-          console.log('No data received from assetrequests table');
-          return [];
-        }
-        
-        console.log('Total requests in table:', requests.length);
-        
-        // Simple filter for approved transfer requests
-        const approvedTransfers = requests.filter(request => {
-          const type = request.requestType;
-          const status = request.status;
-          console.log(` Filtering request ${request.id}: type="${type}", status="${status}"`);
-          return type === 'Transfer' && status === 'Approved';
-        });
-        
-        console.log('Found approved transfer requests:', approvedTransfers.length);
-       
-        
-        return approvedTransfers;
+      map((apiData: any[]) => {
+        console.log('Received asset requests:', apiData);
+        return apiData;
       })
     );
   }
 
+  //get approved transfer requests
+  getApprovedTransferRequests(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/assetrequests?requestType=Transfer&status=Approved`);
+  }
+
   
 
+/*
   getApprovedTransferRequestsFromAllData(): Observable<any[]> {
     console.log(' Getting approved transfer requests using same method as requests-page...');
     
@@ -144,23 +129,14 @@ export class RequestService {
       })
     );
   }
+*/
 
 
-
-  getAllTransferRequests(): Observable<any[]> {
+ /* getAllTransferRequests(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/assetrequests?requestType=Transfer`);
-  }
+  }*/
 
-  getAllAssetRequests(): Observable<any[]> {
-    console.log('Fetching all asset requests...');
-    return this.http.get<any[]>(`${this.baseUrl}/assetrequests`).pipe(
-      map((apiData: any[]) => {
-        console.log('Received asset requests:', apiData);
-        return apiData;
-      })
-    );
-  }
-
+  
   
   
   

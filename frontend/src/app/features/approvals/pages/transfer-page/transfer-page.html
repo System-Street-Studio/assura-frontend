@@ -97,12 +97,12 @@
   <section class="content-container">
     
     <h2 class="section-main-title">{{ 
+          activeTab() === 'outgoing' ? 'Outgoing Requests' :
         activeTab() === 'incoming' ? 'Incoming Approvals' : 
          activeTab() === 'pending' ? 'Pending Confirmations' : 
          activeTab() === 'active' ? 'Active Transfers' : 
-         activeTab() === 'completed' ? 'Completed Transfers' : 
-         activeTab() === 'outgoing' ? 'Outgoing Requests' : 'Unknown' }}
-    </h2>
+         'Completed Transfers' 
+    }}</h2>
 
     <!--Search and Filter -->
     @if (activeTab() === 'active' || activeTab() === 'completed') {
@@ -116,7 +116,7 @@
         <div class="action-group">
             
               <div class="filter-dropdown">
-                <button class="filter-btn" (click)="showMenu = !showMenu">
+                <button class="filter-btn" (click)="showMenu.set(!showMenu())">
                   <div class="filter-icon">
                   <mat-icon>tune</mat-icon>
                   <span>{{ filterType() === 'all' ? 'All Types' : filterType() }}</span>
@@ -125,15 +125,15 @@
 
                 </button>
 
-                @if (showMenu) {
+                @if (showMenu()) {
                   <div class="filter-menu-card">
-                    <div class="filter-option" (click)="setFilterType('all'); showMenu = false" [class.active]="filterType() === 'all'">
+                    <div class="filter-option" (click)="setFilterType('all')" [class.active]="filterType() === 'all'">
                       All Transfers
                     </div>
-                    <div class="filter-option" (click)="setFilterType('IncomingActive'); showMenu = false" [class.active]="filterType() === 'IncomingActive'">
+                    <div class="filter-option" (click)="setFilterType('IncomingActive')" [class.active]="filterType() === 'IncomingActive'">
                       Incoming
                     </div>
-                    <div class="filter-option" (click)="setFilterType('OutgoingActive'); showMenu = false" [class.active]="filterType() === 'OutgoingActive'">
+                    <div class="filter-option" (click)="setFilterType('OutgoingActive')" [class.active]="filterType() === 'OutgoingActive'">
                       Outgoing
                     </div>
                   </div>
@@ -174,17 +174,17 @@
                 <p><span>Asset need to:</span> {{ item.assetNeedTo }}</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
                 <p><span>Transfer period:</span> {{ item.transferPeriod }}</p>
-                <div class ="AcceptedBy"><p><span >Accepted By:</span> {{ item.currentHolderName }}</p> </div>
+                <div class ="AcceptedBy"><p><span >Accepted By:</span> {{ item.assetOwner}}</p> </div>
               </div>
             </div>
             
             <div class="action-buttons-cell">
               @if (activeTab() === 'incoming') {
-                <button class="btn-accept">Approve</button>
-                <button class="btn-reject">Reject</button>
+                <button class="btn-accept" (click)="approveTransfer(item.id)">Approve</button>
+                <button class="btn-reject" (click)="rejectTransfer(item.id)">Reject</button>
               } @else {
-                @if (item.status === 'Pending') {
-                <span class="status-badge-outline pending">Pending Confirmation</span>
+                @if (activeTab() === 'pending') {
+                <span class="status-badge-outline pending" (click)="confirmTransfer(item.id) ">Pending Confirmation</span>
                 }
                 @if (item.status === 'Confirmed') {
                     <span class="status-badge-outline confirmed">Confirmed</span>
@@ -264,7 +264,7 @@
               <div class="info-grid-details">
                 <p><span>Division:</span> {{ item.toDivisionName }}</p>
                 <p><span>Requested by:</span> {{ item.requestedByName}}</p>
-                <p><span>Asset need to:</span> {{ item.assetNeedTo }} (ID: {{ item.assetNeedToId }})</p>
+                <p><span>Asset need to:</span> {{ item.assetNeedTo }}{{ item.assetNeedToId ? ' (ID: ' + item.assetNeedToId + ')' : '' }}</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
                 <div class="status-info">
                   <p><span>Status:</span> 

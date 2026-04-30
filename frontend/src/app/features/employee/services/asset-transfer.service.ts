@@ -9,12 +9,35 @@ import { AuthService } from '../../../core/auth/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class TransferService {
-     private http = inject(HttpClient);
-     private authService = inject(AuthService);
+    private http = inject(HttpClient);
      private baseUrl = environment.apiUrl;
+    //private apiUrl = `${environment.apiUrl}/transfers`;
+    // constructor(private http: HttpClient) { }
   
+getTransfers(tab: string, filterType: string | null = null): Observable<any[]> {
+    let params = new HttpParams().set('tab', tab);
+
+    
+    if (filterType && filterType !== 'all') {
+      params = params.set('filterType', filterType);
+    }
+
+    return this.http.get<any[]>(`${this.baseUrl}/transfers`, { params });
+  }
+  acceptTransfer(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${id}/accept`, {});
+  }
+
+  rejectTransfer(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${id}/reject`, {});
+  }
+
+  getTransferById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/transfers/${id}`);
+  }
+
  // Get incoming transfers for the current user
-  getIncomingTransfers( userId: number | null = null): Observable<any> {
+  /*getIncomingTransfers( userId: number | null = null): Observable<any> {
     console.log('  GETTING INCOMING TRANSFERS ');
     console.log(' Fetching incoming transfers with status = 1');
     console.log(' API call: GET', `${this.baseUrl}/transfers/incoming`);
@@ -53,7 +76,7 @@ export class TransferService {
         return of([]);
       })
     );
-  }
+  }*/
  
 
  

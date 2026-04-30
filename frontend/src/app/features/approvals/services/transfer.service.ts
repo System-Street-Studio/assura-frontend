@@ -20,18 +20,13 @@ createTransferRecord(transferRequest: { assetId: number, assetRequestId: number 
     
     // Get current user ID from AuthService
     const currentUserId = this.authService.getUserId();
-    console.log(' Current user ID from AuthService:', currentUserId);
     
-    if (!currentUserId) {
-      console.error(' No user ID found - user may not be authenticated');
-      return throwError(() => new Error('User not authenticated - no user ID available'));
-    }
     
     // Create payload with user ID included
     const payload = {
       assetId: transferRequest.assetId,
       assetRequestId: transferRequest.assetRequestId,
-      userId: parseInt(currentUserId, 10) // Convert string ID to number
+      
     };
     
     console.log(' Final payload to backend:', JSON.stringify(payload, null, 2));
@@ -50,6 +45,23 @@ createTransferRecord(transferRequest: { assetId: number, assetRequestId: number 
         return throwError(() => error);
       })
     );
+  }
+
+  getDivisionHeadTransfers(tab: string): Observable<any[]> {
+    const params = new HttpParams().set('tab', tab);
+    return this.http.get<any[]>(`${this.baseUrl}/transfers/division-head`, { params });
+  }
+
+ approveByHead(transferId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/approve-head`, {});
+  }
+
+
+  confirmByHead(transferId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/confirm-head`, {});
+  }
+  rejectByHead(transferId: number, reason: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject-head`, { reason });
   }
 
  // Get incomingApprovals transfers for the current user
@@ -145,7 +157,7 @@ createTransferRecord(transferRequest: { assetId: number, assetRequestId: number 
   } */
 
   // Get outgoing transfers where status=PendingOwnerApproval & current user=transferredBy
-  getOutgoingTransfersForApproval(): Observable<any> {
+ /* getOutgoingTransfersForApproval(): Observable<any> {
     console.log('=== GETTING OUTGOING TRANSFERS FOR APPROVAL ===');
     console.log('Fetching transfers where status=PendingOwnerApproval AND current user=transferredBy');
     
@@ -318,6 +330,6 @@ createTransferRecord(transferRequest: { assetId: number, assetRequestId: number 
         return of([]);
       })
     );
-  }
+  }*/
 
 }
