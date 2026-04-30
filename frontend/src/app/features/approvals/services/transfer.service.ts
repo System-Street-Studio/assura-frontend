@@ -52,97 +52,44 @@ createTransferRecord(transferRequest: { assetId: number, assetRequestId: number 
     );
   }
 
- // Get incomingApprovals transfers for the current user
- /* getIncomingApprovals( userId: number | null = null): Observable<any> {
-    console.log('  GETTING INCOMING APPROVALS ');
-    console.log(' Fetching incoming transfers with status = 1');
-    console.log(' API call: GET', `${this.baseUrl}/transfers/incomingApprovals`);
-    console.log(' Query parameters:');
-    console.log('  userId:', userId);
-    
+  // Get incoming transfers for the current user
+  getIncomingTransfers(userId: number | null = null): Observable<any> {
+    console.log('--- GETTING INCOMING TRANSFERS ---');
     let params = new HttpParams();
-   
     if (userId) {
       params = params.set('userId', userId.toString());
     }
     
     return this.http.get(`${this.baseUrl}/transfers/incomingApprovals`, { params }).pipe(
       map((response: any) => {
-       
-        console.log(' API response received successfully');
-      
-        
         if (response.success && response.data) {
-          
-          console.log('📋 Incoming transfers:');
-          response.data.forEach((transfer: any, index: number) => {
-            console.log(`  ${index + 1}. ID:${transfer.id} | ${transfer.transferNumber} | Asset:${transfer.assetId} | From:${transfer.fromDivisionName} | To:${transfer.toDivisionName} | Target:${transfer.targetUserName} | Status:${transfer.status}`);
-          });
-          
           return response.data;
-        } else {
-          console.log(' No incoming transfers found or API error');
-          return [];
         }
+        return [];
       }),
       catchError((error: any) => {
-        console.log(' INCOMING APPROVALS API ERROR ');
-        
-        
+        console.error('Error fetching incoming transfers:', error);
         return of([]);
       })
     );
   }
-  */
- 
-/*
-  getUserTransfers(): Observable<any> {
-    console.log(' GETTING ALL TRANSFERS ');
-    console.log(' Fetching all transfers from transfer table');
-    console.log(' API call: GET', `${this.baseUrl}/transfers`);
-    
-    
-    return this.http.get(`${this.baseUrl}/transfers`).pipe(
-      timeout(3000), // Reduced timeout for faster feedback
-      map((response: any) => {
-        console.log('  USER TRANSFERS RESPONSE ');
-        console.log(' API response received successfully');
-        
-        
-        if (response.success && response.data) {
-          console.log(` SUCCESS: Found ${response.data.length} transfers for user`);
-          console.log(' User transfers:');
-          response.data.forEach((transfer: any, index: number) => {
-            console.log(`  ${index + 1}. ID:${transfer.id} | ${transfer.transferNumber} | Asset:${transfer.assetId} | From:${transfer.fromDivisionName} | To:${transfer.toDivisionName} | Status:${transfer.status} | CurrentHolder:${transfer.currentHolderName}`);
-          });
 
+  getUserTransfers(): Observable<any> {
+    console.log('--- GETTING ALL USER TRANSFERS ---');
+    return this.http.get(`${this.baseUrl}/transfers`).pipe(
+      map((response: any) => {
+        if (response.success && response.data) {
           return response.data;
-        } else {
-          console.log(' No transfers found for this user or API error');
-          return [];
         }
+        return [];
       }),
       catchError((error: any) => {
-        console.log(' USER TRANSFERS API ERROR ');
-       
-        
-        // Get mock transfers from localStorage for testing
-        const mockTransfers = JSON.parse(localStorage.getItem('mockTransfers') || '[]');
-        console.log(' Found mock transfers in localStorage:', mockTransfers.length);
-        
-        if (mockTransfers.length > 0) {
-          console.log(' Returning mock transfers for testing:');
-          mockTransfers.forEach((transfer: any, index: number) => {
-            console.log(`  ${index + 1}. ID:${transfer.id} | Asset:${transfer.assetId} | From:${transfer.fromDivision} | To:${transfer.toDivision} | Status:${transfer.status} | Reason:${transfer.reason}`);
-          });
-          return of(mockTransfers);
-        } else {
-          console.log(' No mock transfers found - returning empty array');
-          return of([]);
-        }
+        console.error('Error fetching user transfers:', error);
+        return of([]);
       })
     );
-  } */
+  }
+
 
   // Get outgoing transfers where status=PendingOwnerApproval & current user=transferredBy
   getOutgoingTransfersForApproval(): Observable<any> {

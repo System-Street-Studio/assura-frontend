@@ -1,18 +1,10 @@
-<<<<<<< HEAD
-import { Component, signal, computed, HostListener, inject, OnInit } from '@angular/core';
-=======
 import { Component, signal, computed, OnInit, OnDestroy, inject, ElementRef } from '@angular/core';
->>>>>>> feature/division-head-part
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-<<<<<<< HEAD
-import { AssetService } from '../../../../core/services/asset.service';
-=======
 import { AssetPoolService } from '../../services/asset-pool.service';
 import { ProfileService } from '../../../../core/services/profile.service';
->>>>>>> feature/division-head-part
 
 interface Asset {
   id: string;
@@ -39,57 +31,6 @@ interface Asset {
   templateUrl: './division-assets.html',
   styleUrls: ['./division-assets.css']
 })
-<<<<<<< HEAD
-export class DivisionAssetsComponent implements OnInit {
-  private assetService = inject(AssetService);
-
-  assets = signal<Asset[]>([]);
-
-  totalAssetsCount = computed(() => this.assets().length);
-  inUseCount = computed(() => this.assets().filter(a => a.status === 'In Use').length);
-  maintenanceCount = computed(() => this.assets().filter(a => a.status === 'Maintenance').length);
-
-  ngOnInit() {
-    this.loadAssets();
-  }
-
-  loadAssets() {
-    this.assetService.getAssets().subscribe({
-      next: (data: any[]) => {
-        const mapped = data.map(a => ({
-          id: a.assetCode || `AST${a.id}`,
-          name: a.productName || 'Unknown Asset',
-          type: a.productName || 'Asset',
-          status: this.mapStatus(a.status),
-          assignedTo: a.assignedUserName || 'Unassigned',
-          image: this.getDefaultImage(a.categoryName),
-          specs: a.notes || 'No specifications provided',
-          category: a.categoryName,
-          division: a.divisionName,
-          condition: 'Unknown' // Not directly in DTO
-        }));
-        this.assets.set(mapped);
-      }
-    });
-  }
-
-  private mapStatus(status: number): string {
-    switch (status) {
-      case 0: return 'Disconnected';
-      case 1: return 'In Use';
-      case 2: return 'Maintenance';
-      case 3: return 'Transferred';
-      case 4: return 'Disposed';
-      default: return 'Unknown';
-    }
-  }
-
-  private getDefaultImage(category: string): string {
-    if (category?.toLowerCase().includes('laptop')) return 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220';
-    if (category?.toLowerCase().includes('device')) return 'https://tse4.mm.bing.net/th/id/OIP.sJPzc8VZD1qRzKUvudISdwHaFj?pid=Api&P=0&h=220';
-    return 'https://tse3.mm.bing.net/th/id/OIP.n1PgBAsks9Nsp78Q3NvXngHaHa?pid=Api&P=0&h=220';
-  }
-=======
 export class DivisionAssetsComponent implements OnInit, OnDestroy {
   private assetPoolService = inject(AssetPoolService);
   private profileService = inject(ProfileService);
@@ -100,14 +41,11 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   selectedAsset = signal<Asset | null>(null);
   isLoading = signal(false);
   errorMessage = signal('');
->>>>>>> feature/division-head-part
 
   // Dropdown selections
   selectedCategory = signal<string>('all');
   selectedStatus = signal<string>('all');
   searchQuery = signal<string>('');
-<<<<<<< HEAD
-=======
   showCategoryMenu = signal<boolean>(false);
   showStatusMenu = signal<boolean>(false);
   
@@ -118,8 +56,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   totalAssets = computed(() => this.assets().length);
   inUseAssets = computed(() => this.assets().filter(asset => asset.status === 'In Use').length);
   maintenanceAssets = computed(() => this.assets().filter(asset => asset.status === 'Maintenance').length);
-  transferredAssets = computed(() => this.assets().filter(asset => asset.status === 'Transferred'));
->>>>>>> feature/division-head-part
+  transferredAssets = computed(() => this.assets().filter(asset => asset.status === 'Transferred').length);
 
   ngOnInit(): void {
     console.log('=== DIVISION ASSETS PAGE INITIALIZED ===');
@@ -196,7 +133,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
           type: asset.category || asset.assetType || '',
           status: this.mapAssetStatus(asset.status),
           assignedTo: asset.assignedUserName || asset.assignedTo || 'Unassigned',
-          image: asset.image || asset.assetImage || asset.imageUrl || asset.photo || '',
+          image: asset.image || asset.assetImage || asset.imageUrl || asset.photo || this.getDefaultImage(asset.categoryName),
           specs: asset.specs || asset.description || '',
           category: asset.categoryName || asset.category || '',
           division: asset.divisionName || asset.division || '',
@@ -215,13 +152,6 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
         this.availableCategories.set(uniqueCategories);
         
         this.isLoading.set(false);
-        
-        console.log('Transformed assets for division:', transformedAssets);
-        console.log('Available categories:', uniqueCategories);
-        console.log('Asset counts - Total:', this.totalAssets());
-        console.log('Asset counts - In Use:', this.inUseAssets());
-        console.log('Asset counts - Maintenance:', this.maintenanceAssets());
-        console.log('Asset counts - Transferred:', this.transferredAssets());
       },
       error: (error: any) => {
         console.error('Error loading assets:', error);
@@ -231,62 +161,51 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private mapAssetStatus(status: string): Asset['status'] {
-    const statusMap: { [key: string]: Asset['status'] } = {
+  private mapAssetStatus(status: any): string {
+    if (typeof status === 'number') {
+      switch (status) {
+        case 0: return 'Disconnected';
+        case 1: return 'In Use';
+        case 2: return 'Maintenance';
+        case 3: return 'Transferred';
+        case 4: return 'Disposed';
+        default: return 'In Use';
+      }
+    }
+    
+    const statusStr = String(status || 'In Use');
+    const statusMap: { [key: string]: string } = {
       'In Use': 'In Use',
       'Maintenance': 'Maintenance',
       'Transferred': 'Transferred',
       'Available': 'In Use',
       'Assigned': 'In Use'
     };
-    return statusMap[status] || 'In Use';
+    return statusMap[statusStr] || 'In Use';
   }
 
-  
+  private getDefaultImage(category: string): string {
+    if (category?.toLowerCase().includes('laptop')) return 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220';
+    if (category?.toLowerCase().includes('device')) return 'https://tse4.mm.bing.net/th/id/OIP.sJPzc8VZD1qRzKUvudISdwHaFj?pid=Api&P=0&h=220';
+    return 'https://tse3.mm.bing.net/th/id/OIP.n1PgBAsks9Nsp78Q3NvXngHaHa?pid=Api&P=0&h=220';
+  }
 
   selectAsset(asset: Asset): void {
     console.log('Selected asset:', asset);
     this.selectedAsset.set(asset);
   }
 
-  goBack(): void {
-    // Navigate back to previous page
-    window.history.back();
-  }
-
-<<<<<<< HEAD
-  // Action methods
-  setFilterCategory(val: string) {
-=======
   viewAsset(asset: Asset): void {
-    console.log('Selected asset:', asset);
     this.selectedAsset.set(asset);
   }
 
-  // Filter methods for different asset types
-  getInUseAssets(): Asset[] {
-    return this.assets().filter(asset => asset.status === 'In Use');
+  goBack(): void {
+    window.history.back();
   }
 
-  getMaintenanceAssets(): Asset[] {
-    return this.assets().filter(asset => asset.status === 'Maintenance');
-  }
-
-  getTransferredAssets(): Asset[] {
-    return this.assets().filter(asset => asset.status === 'Transferred');
-  }
-
-  // Asset status class helper
-  getAssetStatusClass(status: string): string {
-    return status.toLowerCase().replace(' ', '-');
-  }
-
-  
-  // Filter methods
   toggleCategoryMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.showCategoryMenu.set(!this.showCategoryMenu());
-    // Close other menu when opening this one
     if (this.showCategoryMenu()) {
       this.showStatusMenu.set(false);
     }
@@ -295,14 +214,12 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   toggleStatusMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.showStatusMenu.set(!this.showStatusMenu());
-    // Close other menu when opening this one
     if (this.showStatusMenu()) {
       this.showCategoryMenu.set(false);
     }
   }
 
   setFilterCategory(val: string): void {
->>>>>>> feature/division-head-part
     this.selectedCategory.set(val);
     this.showCategoryMenu.set(false);
   }
@@ -316,10 +233,6 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     this.searchQuery.set(event.target.value);
   }
 
-<<<<<<< HEAD
-=======
-  // Computed filtered assets
->>>>>>> feature/division-head-part
   filteredAssets = computed(() => {
     const query = this.searchQuery().toLowerCase();
     const cat = this.selectedCategory();
@@ -328,35 +241,6 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     return this.assets().filter(asset => {
       const categoryMatch = cat === 'all' || asset.category === cat;
       const statusMatch = stat === 'all' || asset.status === stat;
-<<<<<<< HEAD
-      const searchMatch = !query ||
-        asset.name.toLowerCase().includes(query) ||
-        asset.id.toLowerCase().includes(query);
-
-      return categoryMatch && statusMatch && searchMatch;
-    });
-  });
-
-  // UI elements
-  showCategoryMenu = signal<boolean>(false);
-  showStatusMenu = signal<boolean>(false);
-  selectedAsset = signal<Asset | null>(null);
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    const inCategoryFilter = target.closest('[data-filter="category"]') !== null;
-    const inStatusFilter = target.closest('[data-filter="status"]') !== null;
-
-    if (this.showCategoryMenu() && !inCategoryFilter) {
-      this.showCategoryMenu.set(false);
-    }
-    if (this.showStatusMenu() && !inStatusFilter) {
-      this.showStatusMenu.set(false);
-    }
-  }
-}
-=======
       const searchMatch = !query || 
                           asset.name.toLowerCase().includes(query) || 
                           asset.id.toLowerCase().includes(query);
@@ -364,5 +248,8 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
       return categoryMatch && statusMatch && searchMatch;
     });
   });
+
+  getAssetStatusClass(status: string): string {
+    return status.toLowerCase().replace(' ', '-');
+  }
 }
->>>>>>> feature/division-head-part

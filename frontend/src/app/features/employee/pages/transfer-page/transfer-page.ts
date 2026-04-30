@@ -40,7 +40,7 @@ interface TransferDataLocal {
   requestedBy: string;
   assetNeedTo: string;
   reason: string;
-  status: 'Incoming' | 'Outgoing' | 'Active' | 'Pending' | 'Approved' | 'Completed';
+  status: 'IncomingActive' | 'OutgoingActive' | 'Pending' | 'Approved' | 'Completed' | 'Active';
   timeAgo: string;
   image?: string;
   type?: 'Incoming' | 'Outgoing'; // Active/Completed 
@@ -80,14 +80,15 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     let data = this.allData();
 
     //  Tab  filter 
-    if (tab === 'incoming') data = data.filter(i => i.status === 'Incoming');
+    if (tab === 'incoming') data = data.filter(i => i.status === 'IncomingActive');
     else if (tab === 'pending') data = data.filter(i => i.status === 'Pending' || i.status === 'Approved');
     else if (tab === 'active') data = data.filter(i => i.status === 'Active');
     else if (tab === 'completed') data = data.filter(i => i.status === 'Completed');
 
     //  Incoming/Outgoing filter  apply  (only Active/Completed tabs )
     if ((tab === 'active' || tab === 'completed') && typeFilter !== 'all') {
-      data = data.filter(item => item.type === typeFilter);
+      const mappedFilter = typeFilter.replace('Active', '');
+      data = data.filter(item => item.type === mappedFilter);
     }
 
     if (query) {
@@ -111,7 +112,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   }
 
   // Summary Counts (Card )
-  incomingCount = computed(() => this.allData().filter(i => i.status === 'Incoming').length);
+  incomingCount = computed(() => this.allData().filter(i => i.status === 'IncomingActive').length);
   pendingCount = computed(() => this.allData().filter(i => i.status === 'Pending' || i.status === 'Approved').length);
   activeCount = computed(() => this.allData().filter(i => i.status === 'Active').length);
   completedCount = computed(() => this.allData().filter(i => i.status === 'Completed').length);
@@ -212,7 +213,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
             
             console.log('📋 Combined transfer data loaded:', combinedData);
             console.log('📊 Transfer status distribution:');
-            console.log('  Incoming (PendingOwnerApproval):', combinedData.filter(t => t.status === 'Incoming').length);
+            console.log('  Incoming (PendingOwnerApproval):', combinedData.filter(t => t.status === 'IncomingActive').length);
             console.log('  Pending (Approved):', combinedData.filter(t => t.status === 'Pending').length);
             console.log('  Active:', combinedData.filter(t => t.status === 'Active').length);
             console.log('  Completed:', combinedData.filter(t => t.status === 'Completed').length);
@@ -227,7 +228,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
               console.log(`     Asset Name: ${transfer.assetName}`);
             });
           },
-          error: (error) => {
+          error: (error: any) => {
             console.log('❌ === ERROR LOADING ALL TRANSFERS ===');
             console.log('❌ Failed to load all transfers:', error);
             // Still set incoming data if available
@@ -236,7 +237,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
           }
         });
       },
-      error: (error) => {
+      error: (error: any) => {
         console.log('❌ === ERROR LOADING INCOMING TRANSFERS ===');
         console.log('❌ Failed to load incoming transfers:', error);
         this.errorMessage.set('Failed to load incoming transfers');
@@ -256,12 +257,12 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  private mapBackendStatus(status: string): 'Incoming' | 'Outgoing' | 'Active' | 'Pending' | 'Approved' | 'Completed' {
+  private mapBackendStatus(status: string): 'IncomingActive' | 'OutgoingActive' | 'Active' | 'Pending' | 'Approved' | 'Completed' {
     // Map backend status to frontend status
     switch (status) {
       case '1':
       case 'PendingOwnerApproval':
-        return 'Incoming';
+        return 'IncomingActive';
       case '2':
       case 'Approved':
         return 'Pending';
@@ -272,7 +273,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
       case 'Completed':
         return 'Completed';
       default:
-        return 'Incoming';
+        return 'IncomingActive';
     }
   }
 

@@ -1,65 +1,41 @@
-<<<<<<< HEAD
-
-
-import { Component, signal, computed, OnInit, inject } from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { RequestService } from '../../services/requests.service';
-=======
-import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
 import { TransferService } from '../../services/transfer.service';
->>>>>>> feature/division-head-part
 
 // Data structure interface
 interface TransferData {
-<<<<<<< HEAD
   id: string; // This is the record ID for operations
-  dbId: number;
+  dbId?: number;
+  transferNumber: string;
+  assetId: string;
+  assetTag: string;
+  assetCode: string;
+  productName: string;
   assetName: string;
   division: string;
   duration: string;
   requestedBy: string;
-=======
-  id: string;
-  transferNumber:string;
-  assetId:string;
-  assetTag:string;
-  assetCode:string;
-  productName: string;
->>>>>>> feature/division-head-part
   assetNeedTo: string;
   assetNeedToId?: string;
   assetOwner?: string;
   assetOwnerId?: string;
   fromDivisionId: string;
-  fromDivisionName:string;
+  fromDivisionName: string;
   toDivisionId: string;
-  toDivisionName:string;
+  toDivisionName: string;
   requestedByName: string;
   requestedById: string;
   reason: string;
-<<<<<<< HEAD
+  transferPeriod?: string;
   status: string;
   timeAgo: string;
   image?: string;
-  type?: 'Incoming' | 'Outgoing';
+  type?: 'Incoming' | 'Outgoing' | 'IncomingActive' | 'OutgoingActive';
   daysLeft?: string;
   acceptedBy?: string;
-  assetOwner?: string;
-=======
-  transferPeriod?: string;
-  status: 'Outgoing' | 'Incoming' | 'Active' | 'Pending' | 'Approved' | 'Completed' | 'Confirmed' | 'Transfer' | 'Transfered';
-  timeAgo: string;
-  image?: string;
-  type?: 'IncomingActive' | 'OutgoingActive';
-  daysLeft?: string;
-  acceptedBy?: string;
-  
->>>>>>> feature/division-head-part
 }
 
 @Component({
@@ -69,56 +45,14 @@ interface TransferData {
   templateUrl: './transfer-page.html',
   styleUrls: ['./transfer-page.css']
 })
-<<<<<<< HEAD
-export class TransferPageComponent implements OnInit {
-  private requestService = inject(RequestService);
-
-  activeTab = signal<'incoming' | 'pending' | 'active' | 'completed'>('incoming');
-
-  private allData = signal<TransferData[]>([]);
-
-  showMenu = false;
-  filterType = signal<'all' | 'Incoming' | 'Outgoing'>('all');
-  searchQuery = signal<string>('');
-
-  ngOnInit(): void {
-    this.loadTransfers();
-  }
-
-  loadTransfers() {
-    this.requestService.getAllRequests(true).subscribe({
-      next: (requests: any[]) => {
-        const transfers = requests
-          .filter(r => r.type === 'Transfer')
-          .map(r => {
-            const status = this.mapWorkflowStatus(r.status);
-            return {
-              id: r.requestNumber || r.id.toString(),
-              dbId: r.id,
-              assetName: r.assetName || 'Unknown Asset',
-              division: r.assetDivisionName || 'General',
-              duration: 'As requested',
-              requestedBy: r.requesterName,
-              assetNeedTo: r.requesterName,
-              reason: r.description || 'Asset Transfer Request',
-              status: status,
-              timeAgo: 'Recently',
-              image: this.getDefaultImage(r.category),
-              // Logic: If requester's department is the current head's department, it's Outgoing from their perspective? 
-              // Actually, Incoming = we receive, Outgoing = we send.
-              // If AssetDivisionName is ours, we are SENDING (Outgoing).
-              type: r.assetDivisionName === r.department ? 'Incoming' : 'Outgoing',
-              acceptedBy: 'Pending',
-              assetOwner: r.requesterName
-            } as TransferData;
-          });
-        this.allData.set(transfers);
-=======
 export class TransferPageComponent implements OnInit, OnDestroy {
+  private requestService = inject(RequestService);
+  private transferService = inject(TransferService);
+
   // Component signals
   isLoading = signal(false);
   errorMessage = signal('');
-  activeTab = signal<'outgoing'|'incoming' | 'pending' | 'active' | 'completed'>('outgoing');
+  activeTab = signal<'outgoing' | 'incoming' | 'pending' | 'active' | 'completed'>('outgoing');
   filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
   searchQuery = signal<string>('');
   showMenu = false;
@@ -129,108 +63,110 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   // Real data store signal
   private allData = signal<TransferData[]>([]);
 
-  constructor( private transferService: TransferService) {
-    // Initialize with backend service
-  }
-
   ngOnInit(): void {
     console.log('=== APPROVALS TRANSFER PAGE INITIALIZED ===');
-    console.log('Loading transfers with specific filtering criteria...');
     this.loadApprovalTransfers();
-
-    // Start auto-refresh every 30 seconds
     this.startAutoRefresh();
   }
 
-  // Auto-refresh functionality
+  ngOnDestroy(): void {
+    this.stopAutoRefresh();
+  }
+
   private startAutoRefresh(): void {
-    console.log('Starting auto-refresh every 30 seconds');
-    
-    // Clear any existing interval
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-    }
-    
-    // Set up new interval to refresh every 30 seconds
+    if (this.refreshInterval) clearInterval(this.refreshInterval);
     this.refreshInterval = setInterval(() => {
-      console.log(' Auto-refreshing transfer data...');
-      //this.loadUserTransfers();
-    }, 30000); // 30 seconds
+      this.loadApprovalTransfers();
+    }, 30000);
   }
 
   private stopAutoRefresh(): void {
-    console.log(' Stopping auto-refresh');
-    
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
       this.refreshInterval = null;
     }
   }
 
-  ngOnDestroy(): void {
-    console.log(' Cleaning up transfer page component');
-    
-    // Clean up auto-refresh interval
-    this.stopAutoRefresh();
-  }
-
-  refreshTransfers(): void {
-   
-    console.log(' Force reloading all transfers from backend...');
-    //this.loadUserTransfers();
-  }
-
-  // Load transfers with specific filtering for approvals
   loadApprovalTransfers() {
-    console.log('=== LOADING APPROVAL TRANSFERS ===');
     this.isLoading.set(true);
-    this.errorMessage.set('');
-
-    // Load outgoing transfers (status=PendingOwnerApproval & current user=transferredBy)
-    console.log('Loading outgoing transfers for approval...');
+    
+    // Combine multiple sources of transfers for a division head
     this.transferService.getOutgoingTransfersForApproval().subscribe({
-      next: (outgoingTransfers: any[]) => {
-        console.log('=== OUTGOING TRANSFERS LOADED ===');
-        console.log(`Found ${outgoingTransfers.length} outgoing transfers for approval`);
-
-        // Load incoming transfers (status=PendingOwnerDivisionHeadApproval & current user=currentHolder division head)
-        console.log('Loading incoming transfers for division head approval...');
+      next: (outgoing) => {
         this.transferService.getIncomingTransfersForDivisionHeadApproval().subscribe({
-          next: (incomingTransfers: any[]) => {
-            console.log('=== INCOMING DIVISION HEAD TRANSFERS LOADED ===');
-            console.log(`Found ${incomingTransfers.length} incoming transfers for division head approval`);
-
-            // Load active transfers for division heads
-            console.log('Loading active transfers for division heads...');
-            this.loadActiveTransfers(outgoingTransfers, incomingTransfers);
+          next: (incoming) => {
+            this.transferService.getActiveIncomingTransfersForDivisionHead().subscribe({
+              next: (activeIncoming) => {
+                this.transferService.getActiveOutgoingTransfersForDivisionHead().subscribe({
+                  next: (activeOutgoing) => {
+                    const allRaw = [...outgoing, ...incoming, ...activeIncoming, ...activeOutgoing];
+                    const mapped = allRaw.map(t => this.mapToLocalFormat(t));
+                    this.allData.set(mapped);
+                    this.isLoading.set(false);
+                  },
+                  error: () => this.isLoading.set(false)
+                });
+              },
+              error: () => this.isLoading.set(false)
+            });
           },
-          error: (error) => {
-            console.log('=== ERROR LOADING INCOMING TRANSFERS ===');
-            console.log('Error details:', error);
-            this.errorMessage.set('Failed to load incoming transfers');
-            this.isLoading.set(false);
-          }
+          error: () => this.isLoading.set(false)
         });
       },
-      error: (error) => {
-        console.log('=== ERROR LOADING OUTGOING TRANSFERS ===');
-        console.log('Error details:', error);
-        this.errorMessage.set('Failed to load outgoing transfers');
-        this.isLoading.set(false);
->>>>>>> feature/division-head-part
-      }
+      error: () => this.isLoading.set(false)
     });
   }
 
-<<<<<<< HEAD
-  private mapWorkflowStatus(status: string): string {
-    if (status === 'PendingDivisionHeadApproval') return 'Incoming';
-    if (status === 'PendingStorekeeperReview') return 'Pending';
-    if (status === 'Approved') return 'Confirmed';
-    if (status === 'Rejected') return 'Rejected';
-    if (status === 'TemporaryAssigned') return 'Active';
-    if (status === 'Completed') return 'Completed';
-    return status;
+  private mapToLocalFormat(t: any): TransferData {
+    return {
+      id: t.id.toString(),
+      dbId: t.id,
+      transferNumber: `TRF-${t.id}`,
+      assetId: t.assetId?.toString() || 'Unknown',
+      assetTag: t.assetTag || 'Unknown',
+      assetCode: t.assetCode || `AST-${t.assetId}`,
+      productName: t.productName || t.assetName || `Asset ID: ${t.assetId}`,
+      assetName: t.assetName || t.productName || 'Unknown Asset',
+      division: t.toDivisionName || t.fromDivisionName || 'General',
+      duration: 'As requested',
+      requestedBy: t.transferredByName || 'Unknown',
+      assetNeedTo: t.targetUserName || 'Unknown',
+      assetNeedToId: t.targetUserId?.toString(),
+      assetOwner: t.currentHolderName || 'Unknown',
+      assetOwnerId: t.currentHolderId?.toString(),
+      fromDivisionId: t.fromDivisionId?.toString() || 'Unknown',
+      fromDivisionName: t.fromDivisionName || 'Unknown',
+      toDivisionId: t.toDivisionId?.toString() || 'Unknown',
+      toDivisionName: t.toDivisionName || 'Unknown',
+      requestedByName: t.transferredByName || 'Unknown',
+      requestedById: t.transferredById?.toString() || 'Unknown',
+      reason: t.reason || 'No reason provided',
+      transferPeriod: this.extractTransferPeriod(t.reason),
+      status: this.mapBackendStatus(t.status),
+      timeAgo: this.getTimeAgo(t.createdAt),
+      daysLeft: this.calculateDaysLeft(t.transferDate),
+      acceptedBy: t.acceptedBy || 'Pending',
+      type: this.getTransferType(t.status, t.fromDivisionId, t.toDivisionId),
+      image: this.getDefaultImage(t.assetCategory || '')
+    };
+  }
+
+  private mapBackendStatus(backendStatus: string): string {
+    const statusMap: { [key: string]: string } = {
+      'PendingOwnerApproval': 'Outgoing',
+      'PendingOwnerDivisionHeadApproval': 'Incoming',
+      'WaitingForFinalConfirmation': 'Approved',
+      'ReadyForHandover': 'Confirmed',
+      'Active': 'Active',
+      'Completed': 'Completed'
+    };
+    return statusMap[backendStatus] || backendStatus;
+  }
+
+  private getTransferType(status: string, fromId: number, toId: number): any {
+    if (status !== 'Active') return undefined;
+    // Simple logic for demo, in reality check against current user's division
+    return fromId < toId ? 'OutgoingActive' : 'IncomingActive';
   }
 
   private getDefaultImage(category: string): string {
@@ -238,325 +174,75 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     return 'https://tse2.mm.bing.net/th/id/OIP.U_KKE5Cp6OVgC8akAAmqPAHaHa?pid=Api&P=0&h=220';
   }
 
-=======
-  // Load active transfers for division heads
-  private loadActiveTransfers(outgoingTransfers: any[], incomingTransfers: any[]) {
-    // Load active incoming transfers (status=Active & current user=toDivision division head)
-    this.transferService.getActiveIncomingTransfersForDivisionHead().subscribe({
-      next: (activeIncomingTransfers: any[]) => {
-        console.log('=== ACTIVE INCOMING TRANSFERS LOADED ===');
-        console.log(`Found ${activeIncomingTransfers.length} active incoming transfers`);
-
-        // Load active outgoing transfers (status=Active & current user=fromDivision division head)
-        this.transferService.getActiveOutgoingTransfersForDivisionHead().subscribe({
-          next: (activeOutgoingTransfers: any[]) => {
-            console.log('=== ACTIVE OUTGOING TRANSFERS LOADED ===');
-            console.log(`Found ${activeOutgoingTransfers.length} active outgoing transfers`);
-
-            // Combine all transfer types
-            const allTransfers = [
-              ...outgoingTransfers, 
-              ...incomingTransfers, 
-              ...activeIncomingTransfers, 
-              ...activeOutgoingTransfers
-            ];
-            console.log(`Combined total: ${allTransfers.length} transfers`);
-
-            // Convert backend data to local format
-            const transferData: TransferData[] = allTransfers.map(transfer => {
-              console.log('=== DEBUG TRANSFER DATA ===');
-              console.log('Transfer ID:', transfer.id);
-              console.log('Status:', transfer.status);
-              console.log('TransferredBy:', transfer.transferredByName);
-              console.log('CurrentHolder:', transfer.currentHolderName);
-
-              return {
-                id: transfer.id.toString(),
-                transferNumber: `TRF-${transfer.id}`,
-                assetId: transfer.assetId?.toString() || 'Unknown',
-                assetTag: transfer.assetTag || 'Unknown',
-                assetCode: transfer.assetCode || `AST-${transfer.assetId}`,
-                productName: transfer.productName || transfer.assetName || `Asset ID: ${transfer.assetId}`,
-                assetNeedTo: transfer.targetUserName || 'Unknown',
-                assetNeedToId: transfer.targetUserId?.toString(),
-                assetOwner: transfer.currentHolderName || 'Unknown',
-                assetOwnerId: transfer.currentHolderId?.toString(),
-                fromDivisionId: transfer.fromDivisionId?.toString() || 'Unknown',
-                fromDivisionName: transfer.fromDivisionName || 'Unknown',
-                toDivisionId: transfer.toDivisionId?.toString() || 'Unknown',
-                toDivisionName: transfer.toDivisionName || 'Unknown',
-                requestedByName: transfer.transferredByName || 'Unknown',
-                requestedById: transfer.transferredById?.toString() || 'Unknown',
-                reason: transfer.reason || 'No reason provided',
-                transferPeriod: this.extractTransferPeriod(transfer.reason),
-                status: this.mapBackendStatus(transfer.status),
-                timeAgo: this.getTimeAgo(transfer.createdAt),
-                daysLeft: this.calculateDaysLeft(transfer.transferDate),
-                acceptedBy: transfer.acceptedBy,
-                type: this.getTransferType(transfer.status, transfer.fromDivisionId, transfer.toDivisionId)
-              };
-            });
-
-            this.allData.set(transferData);
-            this.isLoading.set(false);
-
-            console.log('=== TRANSFER DATA CONVERSION COMPLETE ===');
-            console.log(`Converted ${transferData.length} transfers to local format`);
-            console.log('Transfer status distribution:');
-            console.log('  Outgoing (PendingOwnerApproval):', transferData.filter(t => t.status === 'Outgoing').length);
-            console.log('  Incoming (PendingOwnerDivisionHeadApproval):', transferData.filter(t => t.status === 'Incoming').length);
-            console.log('  Active:', transferData.filter(t => t.status === 'Active').length);
-            console.log('Sample converted data:', transferData.slice(0, 2));
-          },
-          error: (error) => {
-            console.log('=== ERROR LOADING ACTIVE OUTGOING TRANSFERS ===');
-            console.log('Error details:', error);
-            // Still load what we have without active outgoing transfers
-            this.finalizeTransferData(outgoingTransfers, incomingTransfers, activeIncomingTransfers, []);
-          }
-        });
-      },
-      error: (error) => {
-        console.log('=== ERROR LOADING ACTIVE INCOMING TRANSFERS ===');
-        console.log('Error details:', error);
-        // Still load what we have without active transfers
-        this.finalizeTransferData(outgoingTransfers, incomingTransfers, [], []);
-      }
-    });
-  }
-
-  // Finalize transfer data processing
-  private finalizeTransferData(outgoingTransfers: any[], incomingTransfers: any[], activeIncomingTransfers: any[], activeOutgoingTransfers: any[]) {
-    const allTransfers = [
-      ...outgoingTransfers, 
-      ...incomingTransfers, 
-      ...activeIncomingTransfers, 
-      ...activeOutgoingTransfers
-    ];
-    console.log(`Combined total: ${allTransfers.length} transfers`);
-
-    // Convert backend data to local format
-    const transferData: TransferData[] = allTransfers.map(transfer => {
-      return {
-        id: transfer.id.toString(),
-        transferNumber: `TRF-${transfer.id}`,
-        assetId: transfer.assetId?.toString() || 'Unknown',
-        assetTag: transfer.assetTag || 'Unknown',
-        assetCode: transfer.assetCode || `AST-${transfer.assetId}`,
-        productName: transfer.productName || transfer.assetName || `Asset ID: ${transfer.assetId}`,
-        assetNeedTo: transfer.targetUserName || 'Unknown',
-        assetNeedToId: transfer.targetUserId?.toString(),
-        assetOwner: transfer.currentHolderName || 'Unknown',
-        assetOwnerId: transfer.currentHolderId?.toString(),
-        fromDivisionId: transfer.fromDivisionId?.toString() || 'Unknown',
-        fromDivisionName: transfer.fromDivisionName || 'Unknown',
-        toDivisionId: transfer.toDivisionId?.toString() || 'Unknown',
-        toDivisionName: transfer.toDivisionName || 'Unknown',
-        requestedByName: transfer.transferredByName || 'Unknown',
-        requestedById: transfer.transferredById?.toString() || 'Unknown',
-        reason: transfer.reason || 'No reason provided',
-        transferPeriod: this.extractTransferPeriod(transfer.reason),
-        status: this.mapBackendStatus(transfer.status),
-        timeAgo: this.getTimeAgo(transfer.createdAt),
-        daysLeft: this.calculateDaysLeft(transfer.transferDate),
-        acceptedBy: transfer.acceptedBy,
-        type: this.getTransferType(transfer.status, transfer.fromDivisionId, transfer.toDivisionId)
-      };
-    });
-
-    this.allData.set(transferData);
-    this.isLoading.set(false);
-
-    console.log('=== TRANSFER DATA CONVERSION COMPLETE ===');
-    console.log(`Converted ${transferData.length} transfers to local format`);
-  }
-
-  // Determine transfer type for active transfers
-  private getTransferType(status: string, fromDivisionId: number, toDivisionId: number): 'IncomingActive' | 'OutgoingActive' | undefined {
-    if (status !== 'Active') return undefined;
-    
-    // This would need to be based on current user's division head role
-    // For now, we'll use a simple logic based on division IDs
-    // In a real implementation, this would check if current user is division head of from/to division
-    return fromDivisionId < toDivisionId ? 'OutgoingActive' : 'IncomingActive';
-  }
-
-  // Helper methods
-  private mapBackendStatus(backendStatus: string): TransferData['status'] {
-    const statusMap: { [key: string]: TransferData['status'] } = { 
-    'PendingOwnerApproval':'Outgoing', 
-    'PendingOwnerDivisionHeadApproval': 'Incoming',
-    'WaitingForFinalConfirmation': 'Approved',
-    'ReadyForHandover': 'Confirmed',
-    'Active': 'Active',
-    'Completed': 'Completed',
-    'Transfer': 'Active',
-    'Transfered': 'Completed'
-    };
-    return statusMap[backendStatus] || 'Outgoing';
-  }
-
- 
-
   private getTimeAgo(dateString: string): string {
     const date = new Date(dateString);
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+    const diffDays = Math.ceil(Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return `${Math.floor(diffDays / 30)} months ago`;
+    return `${diffDays} days ago`;
   }
 
   private calculateDaysLeft(transferDate: string): string {
+    if (!transferDate) return '';
     const date = new Date(transferDate);
     const now = new Date();
-    const diffTime = date.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) return 'Overdue';
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Tomorrow';
-    return `${diffDays} days`;
+    const diffDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays < 0 ? 'Overdue' : `${diffDays} days`;
   }
 
   private extractTransferPeriod(reason: string): string {
     if (!reason) return '';
-
-    // Try multiple patterns to extract transfer period
-    const patterns = [
-      /\(Transfer periods?:\s*([^)]+)\)/i,  // "(Transfer periods: 4/25/2026 to 4/28/2026)"
-      /Transfer periods?:\s*(.+?)(?:\n|$)/i,
-      /Transfer period\s*[:\-]?\s*(.+?)(?:\n|$)/i,
-      /Period\s*:?\s*(.+?)(?:\n|$)/i,
-      /Duration\s*:?\s*(.+?)(?:\n|$)/i,
-      /For\s*(.+?)(?:\n|$)/i,
-      /(.+?)\s+transfer/i
-    ];
-
+    const patterns = [/\(Transfer periods?:\s*([^)]+)\)/i, /Transfer periods?:\s*(.+?)(?:\n|$)/i];
     for (const pattern of patterns) {
       const match = reason.match(pattern);
-      if (match) {
-        return match[1].trim();
-      }
+      if (match) return match[1].trim();
     }
-
     return '';
   }
 
-  
-
-  // Filtered logic (Computed signal for better performance)
->>>>>>> feature/division-head-part
   filteredResults = computed(() => {
     const tab = this.activeTab();
     const typeFilter = this.filterType();
     const query = this.searchQuery().toLowerCase().trim();
-<<<<<<< HEAD
-    let data = this.allData();
-
-    if (tab === 'incoming') data = data.filter(i => i.status === 'Incoming');
-    else if (tab === 'pending') data = data.filter(i => i.status === 'Pending' || i.status === 'Confirmed' || i.status === 'Rejected');
-    else if (tab === 'active') data = data.filter(i => i.status === 'Active');
-    else if (tab === 'completed') data = data.filter(i => i.status === 'Completed');
-
-    if ((tab === 'active' || tab === 'completed') && typeFilter !== 'all') {
-      data = data.filter(item => item.type === typeFilter);
-    }
-
-    if (query) {
-      data = data.filter(item =>
-        item.assetName.toLowerCase().includes(query) ||
-=======
     const data = this.allData();
 
-    let filtered = [...data];
+    let filtered = data.filter(i => {
+      if (tab === 'incoming') return i.status === 'Incoming';
+      if (tab === 'pending') return ['Pending', 'Transfer', 'Transfered', 'Confirmed', 'Approved'].includes(i.status);
+      if (tab === 'active') return i.status === 'Active';
+      if (tab === 'completed') return i.status === 'Completed';
+      if (tab === 'outgoing') return i.status === 'Outgoing';
+      return true;
+    });
 
-    // 1. Filter by tab
-    if (tab === 'incoming') {
-      filtered = filtered.filter(i => i.status === 'Incoming');
-    } else if (tab === 'pending') {
-      filtered = filtered.filter(i => ['Pending', 'Transfer', 'Transfered', 'Confirmed', 'Incomming Confirmation'].includes(i.status));
-    } else if (tab === 'active') {
-      filtered = filtered.filter(i => i.status === 'Active');
-    } else if (tab === 'completed') {
-      filtered = filtered.filter(i => i.status === 'Completed');
-    } else if (tab === 'outgoing') {
-      filtered = filtered.filter(i => i.status === 'Outgoing');
-    }
-
-    // 2. Incoming/Outgoing filter (for Active/Completed tabs)
     if ((tab === 'active' || tab === 'completed') && typeFilter !== 'all') {
-      filtered = filtered.filter(item => item.type === typeFilter);
+      const mappedFilter = typeFilter.replace('Active', '');
+      filtered = filtered.filter(item => item.type === mappedFilter || item.type === typeFilter);
     }
 
-    // 3. Search query filter
     if (query) {
-      filtered = filtered.filter(item => 
-        item.assetCode.toLowerCase().includes(query) || 
->>>>>>> feature/division-head-part
-        item.id.toLowerCase().includes(query)
+      filtered = filtered.filter(item =>
+        item.assetName.toLowerCase().includes(query) ||
+        item.id.toString().toLowerCase().includes(query)
       );
     }
 
-<<<<<<< HEAD
-    return data;
-  });
-
-=======
     return filtered;
   });
 
-  // Summary counts
   incomingCount = computed(() => this.allData().filter(i => i.status === 'Incoming').length);
-  pendingCount = computed(() => this.allData().filter(i => ['Pending', 'Transfer', 'Transfered', 'Confirmed', 'Incomming Confirmation'].includes(i.status)).length);
+  pendingCount = computed(() => this.allData().filter(i => ['Pending', 'Transfer', 'Transfered', 'Confirmed', 'Approved'].includes(i.status)).length);
   activeCount = computed(() => this.allData().filter(i => i.status === 'Active').length);
   completedCount = computed(() => this.allData().filter(i => i.status === 'Completed').length);
   outgoingCount = computed(() => this.allData().filter(i => i.status === 'Outgoing').length);
 
-  // Event handlers
->>>>>>> feature/division-head-part
   onSearchChange(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(value);
+    this.searchQuery.set((event.target as HTMLInputElement).value);
   }
 
-<<<<<<< HEAD
-  setFilterType(type: 'all' | 'Incoming' | 'Outgoing') {
-    this.filterType.set(type);
-  }
-
-  incomingCount = computed(() => this.allData().filter(i => i.status === 'Incoming').length);
-  pendingCount = computed(() => this.allData().filter(i => i.status === 'Pending' || i.status === 'Confirmed').length);
-  activeCount = computed(() => this.allData().filter(i => i.status === 'Active').length);
-  completedCount = computed(() => this.allData().filter(i => i.status === 'Completed').length);
-
-  setTab(tab: 'incoming' | 'pending' | 'active' | 'completed') {
-    this.activeTab.set(tab);
-  }
-
-  onAccept(id: number) {
-    this.requestService.approveRequest(id).subscribe({
-      next: () => {
-        console.log('✅ Approved transfer:', id);
-        this.loadTransfers();
-      }
-    });
-  }
-
-  onReject(id: number) {
-    this.requestService.rejectRequest(id, 'Rejected by division head').subscribe({
-      next: () => {
-        console.log('❌ Rejected transfer:', id);
-        this.loadTransfers();
-      }
-    });
-=======
   setFilterType(type: 'all' | 'IncomingActive' | 'OutgoingActive') {
-   this.filterType.set(type);
+    this.filterType.set(type);
   }
 
   setTab(tab: 'incoming' | 'pending' | 'active' | 'completed' | 'outgoing') {
@@ -564,23 +250,24 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   }
 
   onAccept(id: string) {
-    console.log('Accepted:', id);
-  
-    // this.apiService.acceptTransfer(id).then(() => {
-    //   console.log('Transfer accepted successfully');
-    // }).catch((error) => {
-    //   console.error('Error accepting transfer:', error);
-    // });
+    const dbId = parseInt(id, 10);
+    if (isNaN(dbId)) return;
+    this.requestService.approveRequest(dbId).subscribe({
+      next: () => {
+        console.log('✅ Approved transfer:', id);
+        this.loadApprovalTransfers();
+      }
+    });
   }
 
   onReject(id: string) {
-    console.log('Rejected:', id);
-   
-    // this.apiService.rejectTransfer(id).then(() => {
-    //   console.log('Transfer rejected successfully');
-    // }).catch((error) => {
-    //   console.error('Error rejecting transfer:', error);
-    // });
->>>>>>> feature/division-head-part
+    const dbId = parseInt(id, 10);
+    if (isNaN(dbId)) return;
+    this.requestService.rejectRequest(dbId, 'Rejected by division head').subscribe({
+      next: () => {
+        console.log('❌ Rejected transfer:', id);
+        this.loadApprovalTransfers();
+      }
+    });
   }
 }

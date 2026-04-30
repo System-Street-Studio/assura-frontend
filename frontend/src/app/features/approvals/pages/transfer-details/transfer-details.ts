@@ -2,16 +2,10 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-<<<<<<< HEAD
 import { Location } from '@angular/common';
 import { RequestService, SuggestedAsset } from '../../services/requests.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 
-=======
-//import { Location } from '@angular/common';
-import { RequestService } from '../../services/requests.service';
-//import { TransferService } from '../../../approvals/services/transfer.service';
->>>>>>> feature/division-head-part
 
 @Component({
   selector: 'app-transfer-asset-details',
@@ -25,11 +19,8 @@ export class TransferDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute); // මේ line එක අනිවාර්යයෙන් එක් කරන්න
   //private location = inject(Location);
   private requestService = inject(RequestService);
-<<<<<<< HEAD
   private authService = inject(AuthService);
-=======
-  //private transferService = inject(TransferService);
->>>>>>> feature/division-head-part
+
 
   // Navigation state එකෙන් එන දත්ත ලබා ගැනීම
   request = signal<any>({});
@@ -54,11 +45,9 @@ export class TransferDetailsComponent implements OnInit {
       const id = this.route.snapshot.paramMap.get('id');
       console.log("Route ID parameter:", id);
       if (id) {
-<<<<<<< HEAD
         this.loadSuggestedAssets(Number(id));
-=======
         console.log("get request by ID:", id);
->>>>>>> feature/division-head-part
+
         this.requestService.getRequestById(+id).subscribe({
           next: (data) => {
             console.log("Data fetched:", data);
@@ -144,8 +133,6 @@ export class TransferDetailsComponent implements OnInit {
     }
   }
 
-<<<<<<< HEAD
-
   approveRequest() {
     const id = this.request().id;
     if (!id || this.processing()) {
@@ -153,11 +140,7 @@ export class TransferDetailsComponent implements OnInit {
     }
 
     this.processing.set(true);
-=======
-  
-   approveRequest() {
-      const id = this.request().id;
->>>>>>> feature/division-head-part
+
     this.requestService.approveRequest(id).subscribe({
       next: () => {
         this.processing.set(false);
@@ -308,39 +291,30 @@ export class TransferDetailsComponent implements OnInit {
     return cleanedReason || reason.trim();
   }
 
-<<<<<<< HEAD
-  viewInPool() { console.log('Viewing in Pool'); }
+  viewInPool() {
+    const requestId = this.request().id;
+    console.log("received requestID-" + requestId + " to pool-page");
+    console.log("Navigating to pool with request ID:", requestId);
+    
+    this.router.navigate(['/approvals/asset-pool'], {
+      state: { 
+        transferRequestId: requestId,
+        message: 'received requestID-' + requestId + ' to pool-page'
+      }
+    }).then(nav => {
+      console.log('Navigation Status:', nav);
+    }, err => {
+      console.error('Navigation Error:', err); 
+    });
+  }
 
   close() {
     const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'transfer';
     this.router.navigate(['/approvals/requests'], { queryParams: { tab: returnTab } });
-=======
-viewInPool() {
-  const requestId = this.request().id;
-  console.log("received requestID-" + requestId + " to pool-page");
-  console.log("Navigating to pool with request ID:", requestId);
-  
-  this.router.navigate(['/approvals/asset-pool'], {
-    state: { 
-      transferRequestId: requestId,
-      message: 'received requestID-' + requestId + ' to pool-page'
-    }
-  }).then(nav => {
-    console.log('Navigation Status:', nav);
-  }, err => {
-    console.error('Navigation Error:', err); 
-  });
-}
-
-  
-  close() {
-    this.router.navigate(['approvals/requests']); // navigate to the requests page
->>>>>>> feature/division-head-part
   }
 
   closePopup() {
     this.showPopup.set(false);
-<<<<<<< HEAD
     const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'transfer';
     this.router.navigate(['approvals/requests'], { queryParams: { tab: returnTab } });
   }
@@ -359,9 +333,6 @@ viewInPool() {
       type: data.type ?? 'Transfer',
       category: data.type ?? 'Transfer'
     };
-=======
-   this.router.navigate(['approvals/requests']);
->>>>>>> feature/division-head-part
   }
 }
 

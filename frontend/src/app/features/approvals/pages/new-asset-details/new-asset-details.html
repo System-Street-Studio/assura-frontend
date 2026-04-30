@@ -1,96 +1,6 @@
 <div class="container">
-<<<<<<< HEAD
   <div class="header-section">
     <div class="page-title">Requests</div>
-=======
-<div class="header-section">
-      <div class ="page-title">Requests</div>      
-    </div>
-
-<div class="modal-overlay">
-  <div class="modal-container">
-    <div class="modal-header">
-      <h2>New Asset Request Details</h2>
-      <button class="close-btn" (click)="close()">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-
-    <div class="details-grid">
-      <!-- Line 1: Asset Name | Asset Category -->
-      <div class="info-group">
-        <label>Requested Asset</label>
-        <p class="bold-text">{{ request().assetName }}</p>
-      </div>
-
-      <div class="info-group">
-        <label>Asset Category</label>
-        <p class="bold-text">{{ request().category }}</p>
-      </div>
-
-      <!-- Line 2: Employee Name | Employee ID -->
-      <div class="info-group">
-        <label>Employee Name</label>
-        <p class="bold-text">{{ request().name }}</p>
-      </div>
-
-      <div class="info-group">
-        <label>Employee ID</label>
-        <p class="bold-text">{{ request().requesterId || request().employeeId || request().employee || 'N/A' }}</p>
-      </div>
-
-      <!-- Line 3: Requested Date & Time | Quantity -->
-      <div class="info-group">
-        <label>Requested Date & Time</label>
-        <p class="bold-text">{{ request().date | date:'medium' }}</p>
-      </div>
-
-      <div class="info-group">
-        <label>Quantity</label>
-        <p class="bold-text">{{ request().quantity }}</p>
-      </div>
-
-      <!-- Line 4: Priority -->
-      <div class="info-group">
-        <label>Priority</label>
-        <p class="bold-text" [ngClass]="'priority-' + request().priority.toLowerCase()">
-          {{ request().priority }}
-        </p>
-      </div>
-
-      <!-- Full Width: Specifications -->
-      <div class="info-group full-width">
-        <label>Specifications</label>
-        <p class="bold-text">{{ request().specs }}</p>
-      </div>
-
-      <!-- Full Width: Justification -->
-      <div class="info-group full-width">
-        <label>Justification</label>
-        <p class="bold-text">{{ request().justification }}</p>
-      </div>
-
-      <!-- Full Width: Status -->
-      <div class="info-group full-width">
-        <label>Status</label>
-        <span class="status-badge" [ngClass]="request().status.toLowerCase()">{{ request().status }}</span>
-      </div>
-    </div>
-
-    <hr />
-
-    <div class="action-buttons" *ngIf="!isReadOnly()">
-      <button class="btn-approve" (click)="approveRequest()">
-        <mat-icon>check_circle</mat-icon> Approve Request
-      </button>
-          
-      <button class="btn-reject" (click)="rejectRequest()">
-        <mat-icon>close</mat-icon> Reject with Reason
-      </button>
-    </div>
-   
-   
->>>>>>> feature/division-head-part
   </div>
 
   <div class="modal-overlay">
@@ -110,7 +20,7 @@
 
         <div class="info-group">
           <label>Employee ID</label>
-          <p class="bold-text">{{ request().employee }}</p>
+          <p class="bold-text">{{ request().requesterId || request().employeeId || request().employee || 'N/A' }}</p>
         </div>
 
         <div class="info-group">
@@ -130,15 +40,19 @@
 
         <div class="info-group">
           <label>Division</label>
-          <p class="bold-text">{{ request().division }}</p>
+          <p class="bold-text">{{ request().division || 'N/A' }}</p>
         </div>
 
         <div class="info-group">
           <label>Priority</label>
-          <p class="priority-text" [style.color]="request().priority === 'High' ? 'red' : 'inherit'"
-            [ngClass]="'priority-' + (request().priority || '').toLowerCase()">
+          <p class="priority-text" [ngClass]="'priority-' + (request().priority || '').toLowerCase()">
             {{ request().priority }}
           </p>
+        </div>
+
+        <div class="info-group">
+          <label>Status</label>
+          <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
         </div>
 
         <div class="info-group full-width">
@@ -150,17 +64,12 @@
           <label>Justification</label>
           <p class="justification-text">{{ request().justification || request().reason || 'N/A' }}</p>
         </div>
-
-        <div class="info-group">
-          <label>Status</label>
-          <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
-        </div>
       </div>
 
       <hr />
 
       <!-- Action buttons for Division Head -->
-      <div class="action-buttons" *ngIf="canDivisionHeadAct()">
+      <div class="action-buttons" *ngIf="!isReadOnly() && canDivisionHeadAct()">
         <button class="btn-approve" (click)="approveRequest()" [disabled]="processing()">
           <mat-icon>check_circle</mat-icon> Approve Request
         </button>
@@ -171,7 +80,7 @@
       </div>
 
       <!-- Action buttons for Storekeeper -->
-      <div class="action-buttons" *ngIf="canStorekeeperProcess()">
+      <div class="action-buttons" *ngIf="!isReadOnly() && canStorekeeperProcess()">
         <div class="suggestion-panel" *ngIf="suggestedAssets().length > 0">
           <label class="suggestion-title">Suggested In-Store Assets</label>
           <div class="suggestion-list">
@@ -199,7 +108,7 @@
       </div>
 
       <!-- Confirmation for Storekeeper -->
-      <div class="action-buttons" *ngIf="canStorekeeperConfirm()">
+      <div class="action-buttons" *ngIf="!isReadOnly() && canStorekeeperConfirm()">
         <button class="btn-approve" (click)="confirmTemporaryAssignment()" [disabled]="processing()">
           <mat-icon>verified</mat-icon> Confirm Physical Handover
         </button>

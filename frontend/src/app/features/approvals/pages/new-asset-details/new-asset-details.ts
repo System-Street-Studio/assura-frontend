@@ -22,12 +22,9 @@ export class NewAssetDetailsComponent implements OnInit {
   processing = signal(false);
   isLoading = signal<boolean>(true);
   error = signal<string>('');
-<<<<<<< HEAD
   suggestedAssets = signal<SuggestedAsset[]>([]);
   selectedSuggestedAssetId = signal<number | null>(null);
-=======
   isReadOnly = signal<boolean>(false);
->>>>>>> feature/division-head-part
 
   ngOnInit() {
     // Check for readOnly query parameter

@@ -4,7 +4,7 @@
     <div class="header-section">
       <h1 class="page-title">Division Assets</h1>
       @if (selectedAsset()) {
-      <div class="back-btn" (click)="goBack()">
+      <div class="back-btn" (click)="selectedAsset.set(null)">
         <mat-icon>arrow_back</mat-icon>
       </div>
       }
@@ -14,7 +14,6 @@
     <div class="details-view-container">
       <h3 class="section-label">Asset Details: {{ asset.name }}</h3>
 
-<<<<<<< HEAD
       <div class="details-layout">
         <div class="card-panel main-info">
           <h3>General Information</h3>
@@ -24,20 +23,16 @@
               <p class="name-bold">{{ asset.name }}</p>
               <p class="id-sub">ID: {{ asset.id }}</p>
               <p class="type-sub">{{ asset.type }}</p>
-=======
-            <div class="detail-row">
-              <span class="label">Assigned Employee :</span>
-              <span class="value">{{ asset.assignedUserName || asset.assignedTo }}</span>
->>>>>>> feature/division-head-part
             </div>
           </div>
           <hr class="divider">
 
-<<<<<<< HEAD
-          <div class="detail-row">
-            <span class="label">Asset Information :</span>
-            <span class="value">{{ asset.specs }}</span>
-=======
+          <div class="detail-info-grid">
+            <div class="detail-row">
+              <span class="label">Assigned Employee :</span>
+              <span class="value">{{ asset.assignedUserName || asset.assignedTo }}</span>
+            </div>
+
             @if (asset.assignedUserId) {
               <div class="detail-row">
                 <span class="label">Assigned User ID :</span>
@@ -57,76 +52,37 @@
 
             <div class="detail-row">
               <span class="label">Status :</span>
-              <span class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
+              <span class="status-badge" [ngClass]="getAssetStatusClass(asset.status)">
                 {{ asset.status }}
               </span>
             </div>
 
+            <div class="detail-row">
+              <span class="label">Specifications :</span>
+              <span class="value">{{ asset.specs || 'No specifications provided' }}</span>
+            </div>
+
             <button class="transfer-btn">Transfer</button>
->>>>>>> feature/division-head-part
           </div>
-
-          <div class="detail-row">
-            <span class="label">Assigned Employee :</span>
-            <span class="value">{{ asset.assignedTo }} (EST001)</span>
-          </div>
-
-          <div class="detail-row">
-            <span class="label">Asset Category :</span>
-            <span class="value">{{ asset.category }}</span>
-          </div>
-
-          <div class="detail-row">
-            <span class="label">Owned Division :</span>
-            <span class="value">{{ asset.division }}</span>
-          </div>
-
-          <div class="detail-row">
-            <span class="label">Status :</span>
-            <span class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
-              {{ asset.status }}
-            </span>
-          </div>
-
-          <button class="transfer-btn">Transfer</button>
         </div>
 
         <div class="side-column">
           <div class="card-panel">
             <h3>Asset Lifecycle</h3>
             <div class="timeline">
-
               <div class="timeline-item">
-                <span class="date">2022-01-10</span>
-                <p class="event">Purchased: Acquired new device</p>
+                <span class="date">N/A</span>
+                <p class="event">Lifecycle data not yet available for this asset</p>
               </div>
-
-              <div class="timeline-item">
-                <span class="date">2022-01-20</span>
-                <p class="event">Assigned: Given to {{ asset.assignedTo }}</p>
-              </div>
-
             </div>
           </div>
 
           <div class="card-panel mt-20">
-
             <h3>Condition Monitor</h3>
             <div class="detail-row">
               <span class="label">Health Indicator:</span>
               <span class="health-pill">{{ asset.condition }}</span>
             </div>
-
-            <div class="detail-row">
-              <span class="label">Purchased Date:</span>
-              <span class="value">2022-01-10</span>
-            </div>
-
-            <div class="detail-row">
-              <span class="label">Last Inspected:</span>
-              <span class="value">2024-11-15</span>
-            </div>
-
           </div>
         </div>
       </div>
@@ -141,31 +97,20 @@
             <span class="stat-title color-blue">Total Assets</span>
             <mat-icon>content_copy</mat-icon>
           </div>
-<<<<<<< HEAD
-          <div class="stat-value">{{ totalAssetsCount() }}</div>
-=======
           <div class="stat-value">{{ totalAssets() }}</div>
->>>>>>> feature/division-head-part
         </div>
         <div class="stat-card border-yellow">
           <div class="stat-header">
             <span class="stat-title color-yellow">In Use</span>
             <mat-icon>check_circle_outline</mat-icon>
           </div>
-<<<<<<< HEAD
-          <div class="stat-value">{{ inUseCount() }}</div>
-=======
           <div class="stat-value">{{ inUseAssets() }}</div>
->>>>>>> feature/division-head-part
         </div>
         <div class="stat-card border-red">
           <div class="stat-header">
             <span class="stat-title color-red">Under maintenance</span>
             <mat-icon>build</mat-icon>
           </div>
-<<<<<<< HEAD
-          <div class="stat-value">{{ maintenanceCount() }}</div>
-=======
           <div class="stat-value">{{ maintenanceAssets() }}</div>
         </div>
         <div class="stat-card border-green">
@@ -173,8 +118,7 @@
             <span class="stat-title color-green">Transferred</span>
             <mat-icon>swap_horiz</mat-icon>
           </div>
-          <div class="stat-value">{{ transferredAssets().length }}</div>
->>>>>>> feature/division-head-part
+          <div class="stat-value">{{ transferredAssets() }}</div>
         </div>
       </div>
     </section>
@@ -193,9 +137,8 @@
         </div>
 
         <div class="selected-filters">
-<<<<<<< HEAD
           <div class="styled-select" data-filter="category">
-            <button class="filter-btn" (click)="showCategoryMenu.set(!showCategoryMenu())">
+            <button class="filter-btn" (click)="toggleCategoryMenu($event)">
               <div class="filter-icon">
                 <mat-icon>tune</mat-icon>
                 <span>{{ selectedCategory() === 'all' ? 'All Categories' : selectedCategory() }}</span>
@@ -204,68 +147,31 @@
             </button>
 
             @if (showCategoryMenu()) {
-            <div class="filter-menu-card">
-              <div class="filter-option" (click)="setFilterCategory('all')"
-                [class.active]="selectedCategory() === 'all'">All Categories</div>
-              <div class="filter-option" (click)="setFilterCategory('Electronics')"
-                [class.active]="selectedCategory() === 'Electronics'">Electronics</div>
-              <div class="filter-option" (click)="setFilterCategory('IT Equipment')"
-                [class.active]="selectedCategory() === 'IT Equipment'">IT Equipment</div>
-              <div class="filter-option" (click)="setFilterCategory('Vehicles')"
-                [class.active]="selectedCategory() === 'Vehicles'">Vehicles</div>
-            </div>
+              <div class="filter-menu-card">
+                <div class="filter-option" (click)="setFilterCategory('all')" [class.active]="selectedCategory() === 'all'">All Categories</div>
+                @for (category of availableCategories(); track category) {
+                  <div class="filter-option" (click)="setFilterCategory(category)" [class.active]="selectedCategory() === category">{{ category }}</div>
+                }
+              </div>
             }
           </div>
 
           <div class="styled-select" data-filter="status">
-            <button class="filter-btn" (click)="showStatusMenu.set(!showStatusMenu())">
+            <button class="filter-btn" (click)="toggleStatusMenu($event)">
               <div class="filter-icon">
                 <mat-icon>filter_list</mat-icon>
                 <span>{{ selectedStatus() === 'all' ? 'All Status' : selectedStatus() }}</span>
               </div>
               <mat-icon class="arrow">expand_more</mat-icon>
             </button>
-=======
-    <div class="styled-select" data-filter="category">
-      <button class="filter-btn" (click)="toggleCategoryMenu($event)">
-        <div class="filter-icon">
-          <mat-icon>tune</mat-icon>
-          <span>{{ selectedCategory() === 'all' ? 'All Categories' : selectedCategory() }}</span>
-        </div>
-        <mat-icon class="arrow">expand_more</mat-icon>
-      </button>
-
-      @if (showCategoryMenu()) {
-        <div class="filter-menu-card">
-          <div class="filter-option" (click)="setFilterCategory('all')" [class.active]="selectedCategory() === 'all'">All Categories</div>
-          @for (category of availableCategories(); track category) {
-            <div class="filter-option" (click)="setFilterCategory(category)" [class.active]="selectedCategory() === category">{{ category }}</div>
-          }
-        </div>
-      }
-    </div>
-
-    <div class="styled-select" data-filter="status">
-      <button class="filter-btn" (click)="toggleStatusMenu($event)">
-        <div class="filter-icon">
-          <mat-icon>filter_list</mat-icon>
-          <span>{{ selectedStatus() === 'all' ? 'All Status' : selectedStatus() }}</span>
-        </div>
-        <mat-icon class="arrow">expand_more</mat-icon>
-      </button>
->>>>>>> feature/division-head-part
 
             @if (showStatusMenu()) {
-            <div class="filter-menu-card">
-              <div class="filter-option" (click)="setFilterStatus('all')" [class.active]="selectedStatus() === 'all'">
-                All Status</div>
-              <div class="filter-option" (click)="setFilterStatus('In Use')"
-                [class.active]="selectedStatus() === 'In Use'">In Use</div>
-              <div class="filter-option" (click)="setFilterStatus('Transferred')"
-                [class.active]="selectedStatus() === 'Transferred'">Transferred</div>
-              <div class="filter-option" (click)="setFilterStatus('Maintenance')"
-                [class.active]="selectedStatus() === 'Maintenance'">Maintenance</div>
-            </div>
+              <div class="filter-menu-card">
+                <div class="filter-option" (click)="setFilterStatus('all')" [class.active]="selectedStatus() === 'all'">All Status</div>
+                <div class="filter-option" (click)="setFilterStatus('In Use')" [class.active]="selectedStatus() === 'In Use'">In Use</div>
+                <div class="filter-option" (click)="setFilterStatus('Transferred')" [class.active]="selectedStatus() === 'Transferred'">Transferred</div>
+                <div class="filter-option" (click)="setFilterStatus('Maintenance')" [class.active]="selectedStatus() === 'Maintenance'">Maintenance</div>
+              </div>
             }
           </div>
         </div>
@@ -276,65 +182,27 @@
         </div>
       </div>
 
-
-
-      <!--assets grid-->
-<<<<<<< HEAD
       <div class="asset-grid">
         <div class="asset-card" *ngFor="let asset of filteredAssets()">
-
           <div class="img-container">
             <img [src]="asset.image" [alt]="asset.name">
           </div>
-
+          
           <div class="card-body">
             <h4 class="asset-name">{{ asset.name }}</h4>
             <p class="asset-id">ID: {{ asset.id }} · {{ asset.type }}</p>
-
-            <div class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
+            
+            <div class="status-badge" [ngClass]="getAssetStatusClass(asset.status)">
               {{ asset.status }}
             </div>
-
-            <p class="assigned-text">Assigned to {{ asset.assignedTo }}</p>
+            
+            <p class="assigned-text">Assigned to {{ asset.assignedUserName || asset.assignedTo }}</p>
           </div>
-
+          
           <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
         </div>
-
       </div>
     </section>
-=======
-        <div class="asset-grid">
-          <div class="asset-card" *ngFor="let asset of filteredAssets()">
-         
-            <div class="img-container">
-              <img [src]="asset.image" [alt]="asset.name">
-            </div>
-            
-            <div class="card-body">
-              <h4 class="asset-name">{{ asset.name }}</h4>
-              <p class="asset-id">ID: {{ asset.id }} · {{ asset.type }}</p>
-              
-              <div class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
-                {{ asset.status }}
-              </div>
-              
-              <p class="assigned-text">Assigned to {{ asset.assignedUserName || asset.assignedTo }}</p>
-            </div>
-            
-            <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
-          </div>
-        </div>
-
-      </section>
->>>>>>> feature/division-head-part
     }
-
   </div>
-
-<<<<<<< HEAD
-=======
-  
- 
->>>>>>> feature/division-head-part
 </div>

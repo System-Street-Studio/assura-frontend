@@ -5,7 +5,7 @@ export interface RequestItem {
   employee?: string;
   requesterId?: string;
   employeeId?: string;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'In Progress';
+  status: string; // Using string to allow all workflow statuses like PendingDivisionHeadApproval, etc.
   assetName: string;
   category?: string;
   division?: string;

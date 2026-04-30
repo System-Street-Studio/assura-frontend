@@ -88,30 +88,25 @@ ngOnInit() {
 
   // 1. Service Call
   loadData() {
-<<<<<<< HEAD
     this.isLoading.set(true);
-=======
-    Promise.resolve().then(() => this.isLoading.set(true));
-   const isDivisionHead = true; 
->>>>>>> feature/division-head-part
+
 
     this.requestService.getAllRequests().subscribe({
       next: (allData: any[]) => {
-<<<<<<< HEAD
         console.log("All Data:", allData);
-
-
+        
+        // Ensure data is mapped to RequestItem structure
         const mappedData: RequestItem[] = allData.map(item => ({
           id: item.id,
           requesterId: item.requesterId,
           requestNumber: item.requestNumber,
-          name: item.requesterName,
-          employee: item.requesterName,
+          name: item.requesterName || item.name,
+          employee: item.requesterName || item.employee,
           assetName: item.assetName ?? 'N/A',
           category: item.type || 'Asset',
-          division: item.department,
+          division: item.department || item.division,
           status: item.status,
-          date: item.createdAt,
+          date: item.createdAt || item.date,
           priority: item.priority,
           type: item.type,
           quantity: item.quantity,
@@ -126,34 +121,7 @@ ngOnInit() {
         this.transferRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'transfer'));
         this.maintenanceRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'maintenance'));
         this.discardRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'discard'));
-=======
-      console.log("All Data:", allData); 
-      
-      // Use the data directly from service since it's already mapped correctly
-      const mappedData: RequestItem[] = allData;
 
-      console.log('Mapped data:', mappedData);
-      console.log('Request types in data:', mappedData.map(r => ({ id: r.id, type: r.type, name: r.name })));
-      
-      const newAssetFiltered = mappedData.filter(r => r.type?.toLowerCase().replace(/\s/g, '') === 'newasset');
-      const transferFiltered = mappedData.filter(r => r.type?.toLowerCase() === 'transfer');
-      const maintenanceFiltered = mappedData.filter(r => r.type?.toLowerCase() === 'maintenance');
-      const discardFiltered = mappedData.filter(r => r.type?.toLowerCase() === 'discard');
-      
-      console.log('New Asset filtered:', newAssetFiltered.length);
-      console.log('Transfer filtered:', transferFiltered.length);
-      console.log('Maintenance filtered:', maintenanceFiltered.length);
-      console.log('Discard filtered:', discardFiltered.length);
-      
-      this.requests.set(newAssetFiltered);
-      this.transferRequests.set(transferFiltered);
-      this.maintenanceRequests.set(maintenanceFiltered);
-      this.discardRequests.set(discardFiltered);
-
-      console.log('Transfer requests after filtering:', this.transferRequests());
-      console.log('Transfer count:', this.transferRequests().length);
-      console.log('Current active tab:', this.activeTab());
->>>>>>> feature/division-head-part
 
         this.newAssetCount.set(this.requests().length);
         this.transferCount.set(this.transferRequests().length);
@@ -253,31 +221,22 @@ ngOnInit() {
     });
   }
 
-<<<<<<< HEAD
-=======
+  checkDetails(item: RequestItem) {
+    this.requestService.selectedRequest = item;
+    console.log("Checking data:", item);
+    const tab = this.activeTab();
+    let routePath = '';
 
-  this.router.navigate([routePath, item.id], { 
-   
-    queryParams: { tab: tab } 
-  });
-}
+    switch (tab) {
+      case 'new': routePath = '/approvals/new-asset-req'; break;
+      case 'transfer': routePath = '/approvals/transfer-req'; break;
+      case 'maintenance': routePath = '/approvals/maintenance-req'; break;
+      case 'discard': routePath = '/approvals/discard-req'; break;
+    }
 
-checkDetails(item: RequestItem) {
-  this.requestService.selectedRequest = item;
-  console.log("Checking data:", item);
-  const tab = this.activeTab();
-  let routePath = '';
-
-  switch (tab) {
-    case 'new': routePath = '/approvals/new-asset-req'; break;
-    case 'transfer': routePath = '/approvals/transfer-req'; break;
-    case 'maintenance': routePath = '/approvals/maintenance-req'; break;
-    case 'discard': routePath = '/approvals/discard-req'; break;
+    this.router.navigate([routePath, item.id], { 
+      queryParams: { tab: tab, readOnly: true } 
+    });
   }
 
-  this.router.navigate([routePath, item.id], { 
-    queryParams: { tab: tab, readOnly: true } 
-  });
-}
->>>>>>> feature/division-head-part
 }

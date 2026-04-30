@@ -5,34 +5,20 @@
     </div>
     <div class="overview-section">
       <h3>Overview</h3>
-
     </div>
   </header>
 
   <!-- Tabs -->
   <div class="transfer-tabs">
-<<<<<<< HEAD
-    <button class="tab-btn" [class.active]="activeTab() === 'incoming'" (click)="setTab('incoming')">Incoming
-      Approvals</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">Transfer
-      Confirmations</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'active'" (click)="setTab('active')">Active
-      Transfers</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">Completed
-      Transfers</button>
-=======
     <button class="tab-btn" [class.active]="activeTab() === 'outgoing'" (click)="setTab('outgoing')">Outgoing Requests</button>
     <button class="tab-btn" [class.active]="activeTab() === 'incoming'" (click)="setTab('incoming')">Incoming Approvals</button>
     <button class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">Transfer Confirmations</button>
     <button class="tab-btn" [class.active]="activeTab() === 'active'" (click)="setTab('active')">Active Transfers</button>
     <button class="tab-btn" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">Completed Transfers</button>
-    
->>>>>>> feature/division-head-part
   </div>
 
   <!-- Stats Grid -->
   <div class="stats-grid">
-
      <div class="card purple-border" [class.highlight]="activeTab() === 'outgoing'">
       <div class="card-content">
         <div>
@@ -57,7 +43,7 @@
       <div class="card-content">
         <div>
           <p class="card-title">Transfer Confirmations</p>
-          <h2 class="card-number">3</h2>
+          <h2 class="card-number">{{ pendingCount() }}</h2>
         </div>
       </div>
     </div>
@@ -66,8 +52,8 @@
       <div class="card-content">
         <div>
           <p class="card-title">Active Transfers</p>
-          <span class="badge green-bg">{{ incomingCount() }}</span>
-          <h2 class="card-number">2</h2>
+          <span class="badge green-bg">{{ activeCount() }}</span>
+          <h2 class="card-number">{{ activeCount() }}</h2>
         </div>
       </div>
     </div>
@@ -76,14 +62,11 @@
       <div class="card-content">
         <div>
           <p class="card-title">Completed Transfers</p>
-          <h2 class="card-number">5</h2>
+          <h2 class="card-number">{{ completedCount() }}</h2>
         </div>
       </div>
     </div>
-
-   
   </div>
-
 
   <!-- Quick Actions -->
   <section class="quick-actions-section">
@@ -93,8 +76,6 @@
         <mat-icon>swap_horiz</mat-icon>
         <span>Asset Transfer</span>
       </button>
-
-
       <button class="btn-cyan">
         <mat-icon>history</mat-icon>
         <span>Transfer History</span>
@@ -102,269 +83,116 @@
     </div>
   </section>
 
-
   <!-- Content  -->
   <section class="content-container">
-<<<<<<< HEAD
-
-    <h2 class="section-main-title">{{
-      activeTab() === 'incoming' ? 'Incoming Approvals' :
-      activeTab() === 'pending' ? 'Pending Confirmations' :
-      activeTab() === 'active' ? 'Active Transfers' : 'Completed Transfers' }}
-=======
-    
     <h2 class="section-main-title">{{ 
         activeTab() === 'incoming' ? 'Incoming Approvals' : 
          activeTab() === 'pending' ? 'Pending Confirmations' : 
          activeTab() === 'active' ? 'Active Transfers' : 
          activeTab() === 'completed' ? 'Completed Transfers' : 
          activeTab() === 'outgoing' ? 'Outgoing Requests' : 'Unknown' }}
->>>>>>> feature/division-head-part
     </h2>
 
     <!--Search and Filter -->
     @if (activeTab() === 'active' || activeTab() === 'completed') {
-<<<<<<< HEAD
-    <div class="table-actions">
-      <div class="input-wrapper">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input type="text" placeholder="Search Assets..." class="search-bar" [value]="searchQuery()"
-          (input)="onSearchChange($event)">
-=======
       <div class="table-actions">
         <div class="input-wrapper">
           <mat-icon class="search-icon">search</mat-icon>
           <input type="text" placeholder="Search Assets..." class="search-bar" [value]="searchQuery()" (input)="onSearchChange($event)">
         </div>
-        
 
         <div class="action-group">
-            
-              <div class="filter-dropdown">
-                <button class="filter-btn" (click)="showMenu = !showMenu">
-                  <div class="filter-icon">
-                  <mat-icon>tune</mat-icon>
-                  <span>{{ filterType() === 'all' ? 'All Types' : filterType() }}</span>
-                  </div>
-                  <mat-icon class="arrow">expand_more</mat-icon>
-
-                </button>
-
-                @if (showMenu) {
-                  <div class="filter-menu-card">
-                    <div class="filter-option" (click)="setFilterType('all'); showMenu = false" [class.active]="filterType() === 'all'">
-                      All Transfers
-                    </div>
-                    <div class="filter-option" (click)="setFilterType('IncomingActive'); showMenu = false" [class.active]="filterType() === 'IncomingActive'">
-                      Incoming
-                    </div>
-                    <div class="filter-option" (click)="setFilterType('OutgoingActive'); showMenu = false" [class.active]="filterType() === 'OutgoingActive'">
-                      Outgoing
-                    </div>
-                  </div>
-                }
+          <div class="filter-dropdown">
+            <button class="filter-btn" (click)="showMenu = !showMenu">
+              <div class="filter-icon">
+                <mat-icon>tune</mat-icon>
+                <span>{{ filterType() === 'all' ? 'All Types' : filterType() }}</span>
               </div>
-            </div>
+              <mat-icon class="arrow">expand_more</mat-icon>
+            </button>
 
->>>>>>> feature/division-head-part
-      </div>
-
-
-      <div class="action-group">
-
-        <div class="filter-dropdown">
-          <button class="filter-btn" (click)="showMenu = !showMenu">
-            <div class="filter-icon">
-              <mat-icon>tune</mat-icon>
-              <span>{{ filterType() === 'all' ? 'All Types' : filterType() }}</span>
-            </div>
-            <mat-icon class="arrow">expand_more</mat-icon>
-
-          </button>
-
-          @if (showMenu) {
-          <div class="filter-menu-card">
-            <div class="filter-option" (click)="setFilterType('all'); showMenu = false"
-              [class.active]="filterType() === 'all'">
-              All Transfers
-            </div>
-            <div class="filter-option" (click)="setFilterType('Incoming'); showMenu = false"
-              [class.active]="filterType() === 'Incoming'">
-              Incoming
-            </div>
-            <div class="filter-option" (click)="setFilterType('Outgoing'); showMenu = false"
-              [class.active]="filterType() === 'Outgoing'">
-              Outgoing
-            </div>
+            @if (showMenu) {
+              <div class="filter-menu-card">
+                <div class="filter-option" (click)="setFilterType('all'); showMenu = false" [class.active]="filterType() === 'all'">
+                  All Transfers
+                </div>
+                <div class="filter-option" (click)="setFilterType('IncomingActive'); showMenu = false" [class.active]="filterType() === 'IncomingActive'">
+                  Incoming
+                </div>
+                <div class="filter-option" (click)="setFilterType('OutgoingActive'); showMenu = false" [class.active]="filterType() === 'OutgoingActive'">
+                  Outgoing
+                </div>
+              </div>
+            }
           </div>
-          }
         </div>
       </div>
-
-    </div>
     }
-
-
 
     <div class="list-wrapper">
       @for (item of filteredResults(); track item.id) {
-<<<<<<< HEAD
-
-      <!-- Incoming Requests, Pending Approval -->
-      @if (activeTab() === 'incoming' || activeTab() === 'pending') {
-      <div class="asset-item-card">
-        <div class="asset-img-container">
-          @if (item.image) {
-          <img [src]="item.image" [alt]="item.assetName" class="asset-image">
-          } @else {
-          <div class="asset-img-placeholder"></div>
-          }
-        </div>
-=======
         
         <!-- Incoming Requests, Pending Approval -->
         @if (activeTab() === 'incoming' || activeTab() === 'pending' ) {
           <div class="asset-item-card">
-                <div class="asset-img-container">
-                  @if (item.image) {
-                    <img [src]="item.image" [alt]="item.assetTag" class="asset-image">
-                  } @else {
-                    <div class="asset-img-placeholder"></div>
-                  }
-                </div>
+            <div class="asset-img-container">
+              @if (item.image) {
+                <img [src]="item.image" [alt]="item.assetName" class="asset-image">
+              } @else {
+                <div class="asset-img-placeholder"></div>
+              }
+            </div>
 
             <div class="asset-info-box">
               <span class="time-stamp">{{ item.timeAgo }}</span>
               <div class="info-header">
-                <span class="asset-name-id">{{ item.assetTag }} ({{ item.id }})</span>
->>>>>>> feature/division-head-part
-
-        <div class="asset-info-box">
-          <span class="time-stamp">{{ item.timeAgo }}</span>
-          <div class="info-header">
-            <span class="asset-name-id">{{ item.assetName }} ({{ item.id }})</span>
-
-<<<<<<< HEAD
-
-
-          </div>
-          <div class="info-grid-details">
-            <p><span>Division:</span> {{ item.division }}</p>
-            <div class="Duration">
-              <p><span>Duration:</span> {{ item.duration }}</p>
-            </div>
-            <p><span>Requested by:</span> {{ item.requestedBy }}</p>
-            <p><span>Asset need to:</span> {{ item.assetNeedTo }}</p>
-            <p><span>Reason:</span> {{ item.reason }}</p>
-            <div class="AcceptedBy">
-              <p><span>Accepted By:</span> {{ item.acceptedBy }}</p>
-=======
+                <span class="asset-name-id">{{ item.assetName }} ({{ item.id }})</span>
               </div>
               <div class="info-grid-details">
-                <p><span>Division:</span> {{ item.toDivisionName }}</p>
-                <p><span>Requested by:</span> {{ item.requestedByName }}</p>
+                <p><span>Division:</span> {{ item.division }}</p>
+                <p><span>Requested by:</span> {{ item.requestedBy }}</p>
                 <p><span>Asset need to:</span> {{ item.assetNeedTo }}</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
-                <p><span>Transfer period:</span> {{ item.transferPeriod }}</p>
-                <div class ="AcceptedBy"><p><span >Accepted By:</span> {{ item.currentHolderName }}</p> </div>
+                <div class ="AcceptedBy"><p><span >Accepted By:</span> {{ item.acceptedBy || 'Pending' }}</p> </div>
               </div>
             </div>
             
             <div class="action-buttons-cell">
               @if (activeTab() === 'incoming') {
-                <button class="btn-accept">Approve</button>
-                <button class="btn-reject">Reject</button>
+                <button class="btn-accept" (click)="onAccept(item.id)">Approve</button>
+                <button class="btn-reject" (click)="onReject(item.id)">Reject</button>
               } @else {
-                @if (item.status === 'Pending') {
-                <span class="status-badge-outline pending">Pending Confirmation</span>
-                }
-                @if (item.status === 'Confirmed') {
-                    <span class="status-badge-outline confirmed">Confirmed</span>
-                }
-                 @if (item.status === 'Approved') {
-                    <span class="status-badge-outline confirm">Confirm</span>
-                    <span class="status-badge-outline rejected">Reject</span>
-                }
-                 @if (item.status === 'Transfer') {
-                    <span class="status-badge-outline transfer">Transfer</span>
-                }
-                @if (item.status === 'Transfered') {
-                    <span class="status-badge-outline transfered">Transfered</span>
-                }
-
+                <span class="status-badge-outline" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span>
               }
->>>>>>> feature/division-head-part
             </div>
           </div>
-        </div>
+        }
 
-<<<<<<< HEAD
-        <div class="action-buttons-cell">
-          @if (activeTab() === 'incoming') {
-          <button class="btn-accept" (click)="onAccept(item.dbId)">Approve</button>
-          <button class="btn-reject" (click)="onReject(item.dbId)">Reject</button>
-          } @else {
-          @if (item.status === 'Pending') {
-          <span class="status-badge-outline pending">Pending Confirmation</span>
-          }
-          @if (item.status === 'Confirmed') {
-          <span class="status-badge-outline confirmed">Confirmed</span>
-          }
-          @if (item.status === 'Incomming Confirmation') {
-          <span class="status-badge-outline confirm">Confirm</span>
-          <span class="status-badge-outline rejected">Reject</span>
-          }
-          @if (item.status === 'Transfer') {
-          <span class="status-badge-outline transfer">Transfer</span>
-          }
-          @if (item.status === 'Transfered') {
-          <span class="status-badge-outline transfered">Transfered</span>
-          }
-
-          }
-        </div>
-      </div>
-      }
-
-      <!-- Active Transfers, Completed Transfers -->
-      @if (activeTab() === 'active' || activeTab() === 'completed') {
-      <div class="asset-item-card horizontal">
-        <div class="asset-img-container">
-          @if (item.image) {
-          <img [src]="item.image" [alt]="item.assetName" class="asset-image">
-          } @else {
-          <div class="asset-img-placeholder"></div>
-          }
-        </div>
-        <div class="asset-info-box">
-          <div class="info-header">
-            <span class="asset-name-id">{{ item.assetName }}</span>
-=======
         <!-- Active Transfers, Completed Transfers -->
         @if (activeTab() === 'active' || activeTab() === 'completed') {
           <div class="asset-item-card horizontal">
             <div class="asset-img-container">
-                  @if (item.image) {
-                    <img [src]="item.image" [alt]="item.assetTag" class="asset-image">
-                  } @else {
-                    <div class="asset-img-placeholder"></div>
-                  }
-                </div>
+              @if (item.image) {
+                <img [src]="item.image" [alt]="item.assetName" class="asset-image">
+              } @else {
+                <div class="asset-img-placeholder"></div>
+              }
+            </div>
             <div class="asset-info-box">
               <div class="info-header">
-                <span class="asset-name-id">{{ item.assetTag }}</span>   
+                <span class="asset-name-id">{{ item.assetName }}</span>   
               </div>
 
-              <span class="badge-type" [ngClass]="item.type === 'IncomingActive' ? 'inc' : 'out'">{{ item.type }}</span>
-                @if (activeTab() === 'completed') {
-                    <div class="status-pill completed">Completed</div>
-             }
+              <span class="badge-type" [ngClass]="item.type === 'Incoming' || item.type === 'IncomingActive' ? 'inc' : 'out'">{{ item.type }}</span>
+              @if (activeTab() === 'completed') {
+                <div class="status-pill completed">Completed</div>
+              }
 
               <div class="info-grid-minimal">
-                <p><span>ID:</span> {{ item.assetCode }}</p>
+                <p><span>ID:</span> {{ item.id }}</p>
+                <p><span>Duration:</span> {{ item.duration }}</p>
                 <p><span>Asset transfer to:</span> {{ item.assetNeedTo }}</p>
-                <p><span>Division:</span> {{ item.toDivisionName }}</p>
-                <p><span>Asset Owner:</span> {{ item.assetOwner }}</p>
+                <p><span>Division:</span> {{ item.division }}</p>
               </div>
 
               @if (activeTab() === 'active') {
@@ -373,45 +201,17 @@
             </div>
 
             <div class="action-buttons-cell">
-               
-                 <button class="btn-view-outline">View</button>
-               
+              <button class="btn-view-outline">View</button>
             </div>
->>>>>>> feature/division-head-part
           </div>
-
-          <span class="badge-type" [ngClass]="item.type === 'Incoming' ? 'inc' : 'out'">{{ item.type }}</span>
-          @if (activeTab() === 'completed') {
-          <div class="status-pill completed">Completed</div>
-          }
-
-          <div class="info-grid-minimal">
-            <p><span>ID:</span> {{ item.id }}</p>
-            <p><span>Duration:</span> {{ item.duration }}</p>
-            <p><span>Asset transfer to:</span> {{ item.assetNeedTo }}</p>
-            <p><span>Division:</span> {{ item.division }}</p>
-            <p><span>Asset Owner:</span> {{ item.assetOwner }}</p>
-          </div>
-
-          @if (activeTab() === 'active') {
-          <div class="days-left-tag">{{ item.daysLeft }}</div>
-          }
-        </div>
-
-        <div class="action-buttons-cell">
-
-          <button class="btn-view-outline">View</button>
-
-        </div>
-      </div>
-      }
+        }
 
         <!-- Outgoing Requests -->
         @if (activeTab() === 'outgoing') {
           <div class="asset-item-card">
             <div class="asset-img-container">
               @if (item.image) {
-                <img [src]="item.image" [alt]="item.assetTag" class="asset-image">
+                <img [src]="item.image" [alt]="item.assetName" class="asset-image">
               } @else {
                 <div class="asset-img-placeholder"></div>
               }
@@ -420,18 +220,13 @@
             <div class="asset-info-box">
               <span class="time-stamp">{{ item.timeAgo || 'Just now' }}</span>
               <div class="info-header">
-                <span class="asset-name-id">{{ item.assetTag }} ({{ item.assetCode}})</span>
+                <span class="asset-name-id">{{ item.assetName }} ({{ item.id }})</span>
               </div>
               <div class="info-grid-details">
-                <p><span>Division:</span> {{ item.toDivisionName }}</p>
-                <p><span>Requested by:</span> {{ item.requestedByName}}</p>
-                <p><span>Asset need to:</span> {{ item.assetNeedTo }} (ID: {{ item.assetNeedToId }})</p>
+                <p><span>Division:</span> {{ item.division }}</p>
+                <p><span>Requested by:</span> {{ item.requestedBy }}</p>
+                <p><span>Asset need to:</span> {{ item.assetNeedTo }}</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
-                <div class="status-info">
-                  <p><span>Status:</span> 
-                    <span class="status-badge-outline pending">{{ item.status }}</span>
-                  </p>
-                </div>
               </div>
             </div>
             
@@ -442,16 +237,16 @@
         }
 
       } @empty {
-      <div class="empty-state">No records found.</div>
+        <div class="empty-state">No records found.</div>
       }
     </div>
 
     @if (filteredResults().length > 0) {
-    <div class="pagination-footer">
-      <button class="page-arrow"><mat-icon>chevron_left</mat-icon></button>
-      <span class="page-num">1</span>
-      <button class="page-arrow"><mat-icon>chevron_right</mat-icon></button>
-    </div>
+      <div class="pagination-footer">
+        <button class="page-arrow"><mat-icon>chevron_left</mat-icon></button>
+        <span class="page-num">1</span>
+        <button class="page-arrow"><mat-icon>chevron_right</mat-icon></button>
+      </div>
     }
   </section>
 </div>
