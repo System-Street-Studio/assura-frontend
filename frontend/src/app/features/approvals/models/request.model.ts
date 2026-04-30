@@ -1,11 +1,11 @@
-
 export interface RequestItem {
   id: number;
-  requesterId?: number;
   requestNumber?: string;
   name?: string;
   employee?: string;
-  status: string;
+  requesterId?: string;
+  employeeId?: string;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'In Progress';
   assetName: string;
   category?: string;
   division?: string;

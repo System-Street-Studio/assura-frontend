@@ -51,6 +51,10 @@ header h1 {
   border-bottom: 2px solid #e2e8f0;
   margin-bottom: 30px;
   width: 100%;
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 10;
 }
 
 
@@ -87,15 +91,16 @@ header h1 {
 /* --- Stats Grid & Summary Cards --- */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columns */
-  gap: 25px;
+  grid-template-columns: repeat(5, 1fr); /* 5 columns - matches tabs */
+  gap: 20px;
   margin-bottom: 40px;
+  width: 100%; /* Ensure full width like tabs */
 }
 
 .card {
   background: var(--white);
   border-radius: 16px;
-  padding: 30px;
+  padding: 20px;
   position: relative;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -125,10 +130,12 @@ header h1 {
 .card.green-border { box-shadow: 0px 4px 8px rgba(31, 243, 98, 0.4); }
 .card.orange-border {   box-shadow: 0px 4px 8px  rgba(242, 197, 63, 0.4); }
 .card.red-border {  box-shadow: 0px 4px 8px rgba(239, 129, 74, 0.4); }
+.card.purple-border {  box-shadow: 0px 4px 8px rgba(147, 51, 234, 0.4); }
 .card.blue-border:hover { box-shadow: 2px 5px 16px 2px rgba(157,157,237,0.6); }
 .card.green-border:hover { box-shadow: 2px 5px 16px 2px rgba(140,227,169,0.6); }
 .card.orange-border:hover { box-shadow: 2px 5px 16px 2px rgba(253,220,118,0.6); }
 .card.red-border:hover { box-shadow: 2px 5px 16px 2px rgba(250,162,118,0.6); }
+.card.purple-border:hover { box-shadow: 2px 5px 16px 2px rgba(196,181,253,0.6); }
 
 /* Summary Badges on Cards */
 .badge {
@@ -149,6 +156,7 @@ header h1 {
 .red-bg { background-color: #ef4444; }
 .orange-bg { background-color: #f59e0b; }
 .green-bg { background-color: #10b981; }
+.blue-bg { background-color: #3b82f6; }
 
 /* --- Quick Actions --- */
 .quick-actions-section h3 {
@@ -206,6 +214,7 @@ header h1 {
   gap: 16px;
   padding: 10px 0;
 }
+
 .action-group {
   display: flex;
   flex-direction: column;
@@ -219,8 +228,7 @@ header h1 {
   letter-spacing: 0.5px;
 }
 
-/* Search Input Styling */
-
+/* Modern Search & Filter Styling */
 .input-wrapper {
   position: relative;
   width: 320px;

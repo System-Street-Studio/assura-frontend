@@ -12,11 +12,41 @@
         </button>
       </div>
 
+<<<<<<< HEAD
       <div class="details-grid">
         <!-- Line 1: Asset Name | Asset Category -->
         <div class="info-group">
           <label>Asset Name</label>
           <p class="bold-text">{{ request().assetName }}</p>
+=======
+      <div class="info-group">
+        <label>Asset Category</label>
+        <p class="bold-text">{{ request().category }}</p>
+      </div>
+
+      <!-- Line 2: Employee Name | Employee ID -->
+      <div class="info-group">
+        <label>Employee Name</label>
+        <p class="bold-text">{{ request().name }}</p>
+      </div>
+
+      <div class="info-group">
+        <label>Employee ID</label>
+        <p class="bold-text">{{ request().requesterId || request().employeeId || request().employee || 'N/A' }}</p>
+      </div>
+
+      <!-- Line 3: Submitted Date & Time | Transfer Period -->
+      <div class="info-group">
+        <label>Submitted Date & Time</label>
+        <p class="bold-text">{{ request().date | date:'medium'}}</p>
+      </div>
+
+      <div class="info-group">
+        <label>Transfer Period</label>
+        <div class="timeline-row">
+          <span class="timeline-label">From:</span>
+          <p class="bold-text">{{ getTransferDates().from || (request().date | date:'yyyy-MM-dd') }}</p>
+>>>>>>> feature/division-head-part
         </div>
 
         <div class="info-group">
@@ -131,10 +161,48 @@
           <mat-icon>verified</mat-icon> Confirm Physical Handover
         </button>
       </div>
+<<<<<<< HEAD
+=======
+
+      <!-- Full Width: Reason -->
+      <div class="info-group full-width">
+        <label>Reason</label>
+        <p class="bold-text">{{ getCleanReason() }}</p>
+      </div>
+
+      <!-- Full Width: Status -->
+      <div class="info-group full-width">
+        <label>Status</label>
+        <span class="status-badge" [ngClass]="request().status.toLowerCase()">{{ request().status }}</span>
+      </div>
+      
+    </div>
+
+    <hr />
+
+    <div class="action-buttons" *ngIf="!isReadOnly()">
+      <button class="btn-approve" (click)="approveRequest()">
+        <mat-icon>check_circle</mat-icon> Approve Request
+      </button>
+      
+      <button class="btn-reject" (click)="rejectRequest()">
+        <mat-icon>close</mat-icon> Reject with Reason
+      </button>
+>>>>>>> feature/division-head-part
+    </div>
+
+    <div class="action-buttons" *ngIf="isReadOnly()">
+      <button class="btn-pool" (click)="viewInPool()">
+        <mat-icon>search</mat-icon> View in Pool
+      </button>
     </div>
   </div>
 
+<<<<<<< HEAD
   <!-- Success/Error Popup -->
+=======
+
+>>>>>>> feature/division-head-part
   <div class="overlay" *ngIf="showPopup()">
     <div class="glass-card" [class.reject]="popupType() === 'reject'">
       <div class="icon-container">

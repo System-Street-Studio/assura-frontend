@@ -2,7 +2,7 @@
   <div class="content-padding">
 
     <div class="header-section">
-      <h1 class="page-title">Assets</h1>
+      <h1 class="page-title">Division Assets</h1>
       @if (selectedAsset()) {
       <div class="back-btn" (click)="goBack()">
         <mat-icon>arrow_back</mat-icon>
@@ -14,6 +14,7 @@
     <div class="details-view-container">
       <h3 class="section-label">Asset Details: {{ asset.name }}</h3>
 
+<<<<<<< HEAD
       <div class="details-layout">
         <div class="card-panel main-info">
           <h3>General Information</h3>
@@ -23,13 +24,46 @@
               <p class="name-bold">{{ asset.name }}</p>
               <p class="id-sub">ID: {{ asset.id }}</p>
               <p class="type-sub">{{ asset.type }}</p>
+=======
+            <div class="detail-row">
+              <span class="label">Assigned Employee :</span>
+              <span class="value">{{ asset.assignedUserName || asset.assignedTo }}</span>
+>>>>>>> feature/division-head-part
             </div>
           </div>
           <hr class="divider">
 
+<<<<<<< HEAD
           <div class="detail-row">
             <span class="label">Asset Information :</span>
             <span class="value">{{ asset.specs }}</span>
+=======
+            @if (asset.assignedUserId) {
+              <div class="detail-row">
+                <span class="label">Assigned User ID :</span>
+                <span class="value">{{ asset.assignedUserId }}</span>
+              </div>
+            }
+
+            <div class="detail-row">
+              <span class="label">Asset Category :</span>
+              <span class="value">{{ asset.category }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="label">Owned Division :</span>
+              <span class="value">{{ asset.division }}</span>
+            </div>
+
+            <div class="detail-row">
+              <span class="label">Status :</span>
+              <span class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
+                {{ asset.status }}
+              </span>
+            </div>
+
+            <button class="transfer-btn">Transfer</button>
+>>>>>>> feature/division-head-part
           </div>
 
           <div class="detail-row">
@@ -107,21 +141,40 @@
             <span class="stat-title color-blue">Total Assets</span>
             <mat-icon>content_copy</mat-icon>
           </div>
+<<<<<<< HEAD
           <div class="stat-value">{{ totalAssetsCount() }}</div>
+=======
+          <div class="stat-value">{{ totalAssets() }}</div>
+>>>>>>> feature/division-head-part
         </div>
         <div class="stat-card border-yellow">
           <div class="stat-header">
             <span class="stat-title color-yellow">In Use</span>
             <mat-icon>check_circle_outline</mat-icon>
           </div>
+<<<<<<< HEAD
           <div class="stat-value">{{ inUseCount() }}</div>
+=======
+          <div class="stat-value">{{ inUseAssets() }}</div>
+>>>>>>> feature/division-head-part
         </div>
         <div class="stat-card border-red">
           <div class="stat-header">
             <span class="stat-title color-red">Under maintenance</span>
             <mat-icon>build</mat-icon>
           </div>
+<<<<<<< HEAD
           <div class="stat-value">{{ maintenanceCount() }}</div>
+=======
+          <div class="stat-value">{{ maintenanceAssets() }}</div>
+        </div>
+        <div class="stat-card border-green">
+          <div class="stat-header">
+            <span class="stat-title color-green">Transferred</span>
+            <mat-icon>swap_horiz</mat-icon>
+          </div>
+          <div class="stat-value">{{ transferredAssets().length }}</div>
+>>>>>>> feature/division-head-part
         </div>
       </div>
     </section>
@@ -140,6 +193,7 @@
         </div>
 
         <div class="selected-filters">
+<<<<<<< HEAD
           <div class="styled-select" data-filter="category">
             <button class="filter-btn" (click)="showCategoryMenu.set(!showCategoryMenu())">
               <div class="filter-icon">
@@ -171,6 +225,35 @@
               </div>
               <mat-icon class="arrow">expand_more</mat-icon>
             </button>
+=======
+    <div class="styled-select" data-filter="category">
+      <button class="filter-btn" (click)="toggleCategoryMenu($event)">
+        <div class="filter-icon">
+          <mat-icon>tune</mat-icon>
+          <span>{{ selectedCategory() === 'all' ? 'All Categories' : selectedCategory() }}</span>
+        </div>
+        <mat-icon class="arrow">expand_more</mat-icon>
+      </button>
+
+      @if (showCategoryMenu()) {
+        <div class="filter-menu-card">
+          <div class="filter-option" (click)="setFilterCategory('all')" [class.active]="selectedCategory() === 'all'">All Categories</div>
+          @for (category of availableCategories(); track category) {
+            <div class="filter-option" (click)="setFilterCategory(category)" [class.active]="selectedCategory() === category">{{ category }}</div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="styled-select" data-filter="status">
+      <button class="filter-btn" (click)="toggleStatusMenu($event)">
+        <div class="filter-icon">
+          <mat-icon>filter_list</mat-icon>
+          <span>{{ selectedStatus() === 'all' ? 'All Status' : selectedStatus() }}</span>
+        </div>
+        <mat-icon class="arrow">expand_more</mat-icon>
+      </button>
+>>>>>>> feature/division-head-part
 
             @if (showStatusMenu()) {
             <div class="filter-menu-card">
@@ -196,6 +279,7 @@
 
 
       <!--assets grid-->
+<<<<<<< HEAD
       <div class="asset-grid">
         <div class="asset-card" *ngFor="let asset of filteredAssets()">
 
@@ -219,8 +303,38 @@
 
       </div>
     </section>
+=======
+        <div class="asset-grid">
+          <div class="asset-card" *ngFor="let asset of filteredAssets()">
+         
+            <div class="img-container">
+              <img [src]="asset.image" [alt]="asset.name">
+            </div>
+            
+            <div class="card-body">
+              <h4 class="asset-name">{{ asset.name }}</h4>
+              <p class="asset-id">ID: {{ asset.id }} · {{ asset.type }}</p>
+              
+              <div class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
+                {{ asset.status }}
+              </div>
+              
+              <p class="assigned-text">Assigned to {{ asset.assignedUserName || asset.assignedTo }}</p>
+            </div>
+            
+            <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
+          </div>
+        </div>
+
+      </section>
+>>>>>>> feature/division-head-part
     }
 
   </div>
 
+<<<<<<< HEAD
+=======
+  
+ 
+>>>>>>> feature/division-head-part
 </div>

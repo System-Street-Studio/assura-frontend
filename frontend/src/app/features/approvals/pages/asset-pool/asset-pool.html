@@ -1,0 +1,272 @@
+<div class="pool-container">
+  <div class="header">
+    <button class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Centralized Asset Pool</h1>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading asset data...</p>
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="error-banner">
+        <mat-icon>error</mat-icon>
+        <p>{{ errorMessage() }}</p>
+      </div>
+    }
+
+    <div class="search-section">
+      <div class="search-input">
+        <mat-icon>search</mat-icon>
+        <input type="text" 
+               placeholder="Search by product name, asset tag, serial number, division, employee..." 
+               [ngModel]="searchQuery()" 
+               (ngModelChange)="searchQuery.set($event)">
+      </div>
+      <div class="search-info">
+        <small>Search across all divisions and assets</small>
+      </div>
+    </div>
+
+    <div class="transfer-request-section">
+      <div class="transfer-request-dropdown">
+        <label for="transferRequest">Select Approved Transfer Request:</label>
+        <select id="transferRequest" 
+                [ngModel]="selectedTransferRequest()?.id || ''" 
+                (ngModelChange)="onDropdownChange($event)">
+          <option value="">Select an approved transfer request...</option>
+          @for (request of approvedTransferRequests(); track request.id) {
+            <option [value]="request.id">
+              Request ID: {{ request.id }} - {{ request.requesterName || 'Unknown' }} (Requester ID: {{ request.requesterId || 'Unknown' }})
+            </option>
+          }
+        </select>
+        
+        <!-- DEBUG: Add test button to manually select first request -->
+        <button (click)="testSelectFirstRequest()" style="margin-top: 10px; padding: 5px; background: #007bff; color: white; border: none; border-radius: 3px;">
+          Test: Select First Request
+        </button>
+        
+        <!-- DEBUG: Show current selection -->
+        <div style="margin-top: 10px; font-size: 12px; color: #666;">
+          <small>Current Selection: {{ selectedTransferRequest()?.id || 'None' }}</small>
+        </div>
+      </div>
+      @if (approvedTransferRequests().length === 0) {
+        <div class="no-requests-info">
+          <small style="color: #666;">No approved transfer requests found in assetrequests table.</small>
+        </div>
+      }
+      @if (selectedTransferRequest()) {
+        <div class="selected-request-info">
+          <small>
+            <strong>Request ID:</strong> {{ selectedTransferRequest().id }}
+            <br>
+            <strong>Requester Name:</strong> {{ selectedTransferRequest().requesterName || 'Unknown' }}
+            <br>
+            <strong>Requester ID:</strong> {{ selectedTransferRequest().requesterId || 'Unknown' }}
+            <br>
+            <strong>Asset Name:</strong> {{ selectedTransferRequest().assetName || 'Not specified' }}
+            <br>
+            <strong>Status:</strong> {{ selectedTransferRequest().status }}
+          </small>
+        </div>
+      }
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-group">
+        <label for="category">Category</label>
+        <select id="category" 
+                [ngModel]="selectedCategory()" 
+                (ngModelChange)="onCategoryChange($event)">
+          <option value="">Select Category...</option>
+          <option value="Computers">Computers</option>
+          <option value="Furniture">Furniture</option>
+          <option value="Network Equipment">Network Equipment</option>
+          <option value="Printers">Printers</option>
+          <option value="Servers">Servers</option>
+          <option value="Mobile Devices">Mobile Devices</option>
+          <option value="Audio/Video">Audio/Video</option>
+          <option value="Office Equipment">Office Equipment</option>
+        </select>
+      </div>
+
+      @if (selectedCategory()) {
+        <div class="filter-group">
+          <label for="brand">Brand</label>
+          <select id="brand" 
+                  [ngModel]="selectedBrand()" 
+                  (ngModelChange)="selectedBrand.set($event)">
+            <option value="">All Brands</option>
+            @for (brand of availableBrands(); track brand) {
+              <option [value]="brand">{{ brand }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      @if (selectedCategory()) {
+        <div class="filter-group">
+          <label for="specification">Specification</label>
+          <select id="specification" 
+                  [ngModel]="selectedSpecification()" 
+                  (ngModelChange)="selectedSpecification.set($event)">
+            <option value="">Select Specification...</option>
+            @for (spec of availableSpecifications(); track spec) {
+              <option [value]="spec">{{ spec }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      @if (selectedSpecification()) {
+        <div class="filter-group">
+          <label for="specValue">Specification Value</label>
+          <input type="text" 
+                 id="specValue"
+                 placeholder="Enter specification value..."
+                 [ngModel]="specificationValue()" 
+                 (ngModelChange)="specificationValue.set($event)">
+        </div>
+      }
+
+      <div class="filter-group">
+        <label for="division">Division</label>
+        <select id="division" 
+                [ngModel]="selectedDivision()" 
+                (ngModelChange)="selectedDivision.set($event)">
+          <option value="">All Divisions</option>
+          @for (division of divisions(); track division.id) {
+            <option [value]="division.name">{{ division.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="employee">Employee</label>
+        <select id="employee" 
+                [ngModel]="selectedEmployee()" 
+                (ngModelChange)="selectedEmployee.set($event)">
+          <option value="">All Employees</option>
+          @for (emp of uniqueEmployees(); track emp.id) {
+            <option [value]="emp.id">{{ emp.name }} (ID:{{ emp.id }})</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    @if (searchQuery().trim() || selectedCategory() || selectedDivision() || selectedEmployee()) {
+      <div class="results-container">
+        <div class="results-header">
+          <h3>Results ({{ paginatedAssets().length }} assets)</h3>
+          @if (paginatedAssets().length > 0) {
+            <div class="pagination-info">
+              <span>Page {{ currentPage() }} of {{ totalPages() }} (Max 50 results)</span>
+            </div>
+          }
+        </div>
+        <div class="table-card">
+          @if (paginatedAssets().length === 0) {
+            <div class="no-results">
+              <mat-icon>search_off</mat-icon>
+              <h3>No assets found</h3>
+              <p>Try adjusting your search or filters to find assets.</p>
+            </div>
+          } @else {
+            <table>
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Category</th>
+                  <th>Assigned To</th>
+                  <th>Division</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (asset of paginatedAssets(); track asset.id) {
+                  <tr>
+                    <td>
+                      <div class="asset-info">
+                        <span class="asset-name">{{ asset.productName || asset.assetCode || 'N/A' }}</span>
+                        <span class="asset-code">#{{ asset.assetCode }}</span>
+                      </div>
+                    </td>
+                    <td>{{ asset.categoryName || 'N/A' }}</td>
+                    <td>
+                      <div class="assignee-info">
+                        <span class="name">{{ asset.assignedUserName || 'Unassigned' }}</span>
+                        @if (asset.assignedUserId) {
+                          <span class="id">(ID:{{ asset.assignedUserId }})</span>
+                        }
+                      </div>
+                    </td>
+                    <td>{{ asset.divisionName || 'N/A' }}</td>
+                    <td>
+                      <span class="status-badge" [ngClass]="'status-' + (asset.status || 'unknown')">
+                        {{ asset.status || 'Unknown' }}
+                      </span>
+                    </td>
+                    <td>
+                      @if (asset.assignedUserId) {
+                        <button class="btn-transfer" (click)="selectForTransfer(asset)">
+                          Select for transfer
+                        </button>
+                      } @else {
+                        <span class="text-muted">Not assigned</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+            
+            @if (totalPages() > 1) {
+              <div class="pagination-controls">
+                <button class="btn-pagination" 
+                        (click)="onPreviousPage()" 
+                        [disabled]="currentPage() === 1">
+                  <mat-icon>chevron_left</mat-icon>
+                  Previous
+                </button>
+                
+                <div class="page-numbers">
+                  @for (pageNum of getPageNumbers(); track pageNum) {
+                    <button class="btn-page" 
+                            [ngClass]="{'active': pageNum === currentPage()}"
+                            (click)="onPageChange(pageNum)">
+                      {{ pageNum }}
+                    </button>
+                  }
+                </div>
+                
+                <button class="btn-pagination" 
+                        (click)="onNextPage()" 
+                        [disabled]="currentPage() === totalPages()">
+                  Next
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="search-prompt">
+        <mat-icon>search</mat-icon>
+        <h3>Search for Assigned Assets</h3>
+        <p>Enter a search term or select filters to view assets assigned to employees across all divisions.</p>
+        <div class="search-hints">
+          <p><strong>Search by:</strong> Product name, asset tag, serial number, division, employee name</p>
+          <p><strong>Filter by:</strong> Category, brand, specifications, division, or employee</p>
+        </div>
+      </div>
+    }
+  }
+</div>

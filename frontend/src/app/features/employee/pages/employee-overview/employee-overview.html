@@ -57,10 +57,10 @@
             </tr>
           </thead>
           <tbody>
-            @for (req of pendingRequests(); track req.item) {
+            @for (req of pendingRequests(); track $index) {
             <tr>
               <td>{{ req.item }}</td>
-              <td>{{ req.date }}</td>
+              <td>{{ req.date | date:'medium' }}</td>
               <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
               <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
             </tr>
@@ -69,19 +69,18 @@
         </table>
       </div>
 
-      <!--recent activities table-->
-      <div class="white-panel">
-        <h3>Recent Activities</h3>
-        <div class="activity-feed">
-          @for (act of recentActivities(); track act.description) {
-          <div class="activity-item">
-            <p class="act-desc">{{ act.description }}</p>
-            <span class="act-time">{{ act.timestamp }}</span>
+        <!--recent activities table-->
+        <div class="white-panel">
+          <h3>Recent Activities</h3>
+          <div class="activity-feed">
+            @for (act of recentActivities(); track act.description) {
+            <div class="activity-item">
+              <p class="act-desc">{{ act.description }}</p>
+              <span class="act-time">{{ act.timestamp }}</span>
+            </div>
+            }
           </div>
-          }
         </div>
-      </div>
     </div>
   </div>
-
 </div>
