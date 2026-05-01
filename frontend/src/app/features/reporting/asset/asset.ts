@@ -14,8 +14,15 @@ export class ReportingAssetComponent implements OnInit {
   private reportingService = inject(ReportingService);
   private authService = inject(AuthService);
 
+  Math = Math;
+
   readonly assets = signal<any[]>([]);
   readonly selectedCount = signal(0);
+  readonly totalCount = signal(0);
+  readonly currentPage = signal(1);
+  readonly pageSize = signal(10);
+
+  totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
 
   isAuditor = computed(() => this.authService.hasRole('Auditor') || this.authService.hasRole('Admin'));
 
@@ -24,10 +31,17 @@ export class ReportingAssetComponent implements OnInit {
   }
 
   loadAssets(): void {
-    this.reportingService.getAssets().subscribe(data => {
+    this.reportingService.getAssets(this.currentPage(), this.pageSize()).subscribe(data => {
       this.assets.set(data.assets);
       this.selectedCount.set(data.selectedCount);
+      this.totalCount.set(data.totalCount);
     });
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages()) return;
+    this.currentPage.set(page);
+    this.loadAssets();
   }
 
   verifyAsset(asset: any): void {

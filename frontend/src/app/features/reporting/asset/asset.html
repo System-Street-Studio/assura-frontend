@@ -87,7 +87,31 @@
     }
   </div>
 
-  <button class="help-button" type="button" aria-label="Open help">
-    <span aria-hidden="true">?</span>
-  </button>
-</section>
+  <div class="pagination-footer">
+    <div class="page-info">
+      Showing <strong>{{ (currentPage() - 1) * pageSize() + 1 }} - {{ Math.min(currentPage() * pageSize(), totalCount()) }}</strong> of <strong>{{ totalCount() }}</strong> assets
+    </div>
+    
+    <div class="page-controls">
+      <button class="page-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">
+        <span aria-hidden="true">&laquo;</span>
+        Prev
+      </button>
+
+      <div class="page-numbers">
+        <button class="page-btn" [class.active]="currentPage() === 1" (click)="goToPage(1)">1</button>
+        @if (totalPages() > 1) {
+          <button class="page-btn" [class.active]="currentPage() === 2" (click)="goToPage(2)">2</button>
+        }
+        @if (totalPages() > 2) {
+          <span class="dots">...</span>
+          <button class="page-btn active">{{ currentPage() }}</button>
+        }
+      </div>
+
+      <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)">
+        Next
+        <span aria-hidden="true">&raquo;</span>
+      </button>
+    </div>
+  </div>

@@ -19,6 +19,9 @@ export interface ReportingAuditLogPage {
 
 export interface ReportingAssetsPage {
   selectedCount: number;
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
   assets: any[];
 }
 
@@ -43,8 +46,8 @@ export class ReportingService {
     return this.http.get<ReportingAuditLogPage>(`${this.apiUrl}/audit-logs`);
   }
 
-  getAssets(): Observable<ReportingAssetsPage> {
-    return this.http.get<ReportingAssetsPage>(`${this.apiUrl}/assets`);
+  getAssets(pageNumber: number = 1, pageSize: number = 20): Observable<ReportingAssetsPage> {
+    return this.http.get<ReportingAssetsPage>(`${this.apiUrl}/assets?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
   getReports(): Observable<ReportingReportsPage> {

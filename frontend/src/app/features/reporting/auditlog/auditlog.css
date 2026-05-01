@@ -159,6 +159,29 @@
   color: #1a1a1a;
 }
 
+.section-title button, .table-actions button {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.section-title button:hover, .table-actions button:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.table-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .timeline {
   display: flex;
   flex-direction: column;
