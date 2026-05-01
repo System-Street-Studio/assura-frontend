@@ -12,6 +12,7 @@
               <th>Role</th>
               <th>Division</th>
               <th>Joined Date</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -23,6 +24,9 @@
               <td>{{ user.role }}</td>
               <td>{{ user.division }}</td>
               <td>{{ user.joinedDate }}</td>
+              <td>
+                <button class="edit-btn" (click)="openEditForm(user.id)">Edit</button>
+              </td>
             </tr>
             }
           </tbody>

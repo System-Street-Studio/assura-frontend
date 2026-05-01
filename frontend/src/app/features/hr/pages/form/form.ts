@@ -51,6 +51,7 @@ export class HrAssignRoleFormComponent implements OnInit {
     jobTitle: ''
   };
 
+  isUpdate = false;
   submitted = false;
 
   ngOnInit(): void {
@@ -72,12 +73,14 @@ export class HrAssignRoleFormComponent implements OnInit {
         return;
       }
 
+      this.isUpdate = !!user.role; // If they already have a role, it's an update
+
       this.form = {
         dbId: user.id,
         employeeId: user.userId,
         employeeName: user.name,
         divisionId: user.divisionId || null,
-        role: user.requestedRole || '',
+        role: user.role || user.requestedRole || '',
         effectiveDate: this.getTodayDate(),
         note: '',
         jobTitle: user.jobTitle || ''
@@ -88,18 +91,41 @@ export class HrAssignRoleFormComponent implements OnInit {
   assignRole(): void {
     if (this.form.dbId === 0) return;
 
-    this.hrAssignmentService.assignRole(this.form.dbId, {
+    const payload = {
       role: this.form.role,
       divisionId: this.form.divisionId || undefined,
       jobTitle: this.form.jobTitle,
       notes: this.form.note,
-    }).subscribe({
+    };
+
+    const request = this.isUpdate 
+      ? this.hrAssignmentService.updateUser(this.form.dbId, payload)
+      : this.hrAssignmentService.assignRole(this.form.dbId, payload);
+
+    request.subscribe({
       next: () => {
         this.submitted = true;
       },
       error: (err) => {
-        console.error('Error assigning role:', err);
-        alert('Failed to assign role. Please try again.');
+        console.error('Error processing role:', err);
+        alert('Failed to process request. Please try again.');
+      }
+    });
+  }
+
+  rejectRole(): void {
+    if (this.form.dbId === 0) return;
+
+    if (!confirm('Are you sure you want to reject this role request?')) return;
+
+    this.hrAssignmentService.rejectUser(this.form.dbId, this.form.note).subscribe({
+      next: () => {
+        alert('User rejected successfully.');
+        this.router.navigate(['/hr/pending']);
+      },
+      error: (err) => {
+        console.error('Error rejecting user:', err);
+        alert('Failed to reject user.');
       }
     });
   }

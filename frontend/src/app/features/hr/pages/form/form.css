@@ -128,6 +128,21 @@ textarea {
   border-color: #cbd5e1;
 }
 
+.reject-button {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: 1px solid #fecaca;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reject-button:hover {
+  background: #fecaca;
+}
+
 /* Success Popup */
 .popup-backdrop {
   position: fixed;
