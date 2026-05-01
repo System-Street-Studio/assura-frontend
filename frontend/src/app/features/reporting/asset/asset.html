@@ -84,34 +84,25 @@
         </div>
       }
     </div>
+    } @empty {
+      <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">📭</span>
+        <p>No assets found in the system.</p>
+      </div>
     }
   </div>
 
-  <div class="pagination-footer">
+  <div class="pagination-container">
     <div class="page-info">
-      Showing <strong>{{ (currentPage() - 1) * pageSize() + 1 }} - {{ Math.min(currentPage() * pageSize(), totalCount()) }}</strong> of <strong>{{ totalCount() }}</strong> assets
+      Showing <strong>{{ totalCount() > 0 ? (currentPage() - 1) * pageSize() + 1 : 0 }} - {{ Math.min(currentPage() * pageSize(), totalCount()) }}</strong> of <strong>{{ totalCount() }}</strong> assets
     </div>
     
-    <div class="page-controls">
-      <button class="page-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">
-        <span aria-hidden="true">&laquo;</span>
-        Prev
-      </button>
-
-      <div class="page-numbers">
-        <button class="page-btn" [class.active]="currentPage() === 1" (click)="goToPage(1)">1</button>
-        @if (totalPages() > 1) {
-          <button class="page-btn" [class.active]="currentPage() === 2" (click)="goToPage(2)">2</button>
-        }
-        @if (totalPages() > 2) {
-          <span class="dots">...</span>
-          <button class="page-btn active">{{ currentPage() }}</button>
-        }
-      </div>
-
-      <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)">
-        Next
-        <span aria-hidden="true">&raquo;</span>
-      </button>
-    </div>
+    <app-pagination 
+      [currentPage]="currentPage()" 
+      [totalPages]="totalPages()" 
+      [pageNumbers]="pageNumbers()" 
+      (pageChange)="goToPage($event)">
+    </app-pagination>
   </div>
+
+</section>

@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ReportingService } from '../services/reporting.service';
 import { AuthService } from '../../../core/auth/auth.service';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-reporting-asset',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PaginationComponent],
   templateUrl: './asset.html',
   styleUrls: ['./asset.css'],
 })
@@ -23,6 +24,13 @@ export class ReportingAssetComponent implements OnInit {
   readonly pageSize = signal(10);
 
   totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
+  pageNumbers = computed(() => {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages(); i++) {
+      pages.push(i);
+    }
+    return pages;
+  });
 
   isAuditor = computed(() => this.authService.hasRole('Auditor') || this.authService.hasRole('Admin'));
 
