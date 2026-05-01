@@ -16,7 +16,7 @@
           </thead>
 
           <tbody>
-            @for (user of assignedUsers(); track user.userId) {
+            @for (user of assignedUsers(); track user.id) {
             <tr>
               <td>{{ user.userId }}</td>
               <td>{{ user.name }}</td>

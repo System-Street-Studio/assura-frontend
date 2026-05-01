@@ -27,7 +27,7 @@
     <div class="list-header">
       <label class="select-label">
         <input type="checkbox" />
-        <span>{{ selectedCount }} selected</span>
+        <span>{{ selectedCount() }} selected</span>
       </label>
       <span>ID</span>
       <span>Product</span>
@@ -38,15 +38,19 @@
       <span>Warranty</span>
       <span>End of Life</span>
       <span>Code Number</span>
+      @if (isAuditor()) {
+        <span>Actions</span>
+      }
     </div>
 
-    <div class="asset-row" *ngFor="let asset of assets">
+    @for (asset of assets(); track asset.id) {
+    <div class="asset-row">
       <label class="asset-select">
-        <input type="checkbox" [checked]="asset.selected" />
+        <input type="checkbox" [checked]="asset.selected" (change)="toggleSelect(asset)" />
         <span class="color-dot" [style.background]="asset.swatch"></span>
       </label>
 
-      <strong class="asset-id">{{ asset.id }}</strong>
+      <strong class="asset-id">{{ asset.assetId }}</strong>
 
       <div class="product-cell">
         <span class="product-thumb" [class]="asset.imageClass"></span>
@@ -71,7 +75,16 @@
       <span>{{ asset.warranty }}</span>
       <span>{{ asset.endOfLife }}</span>
       <span>{{ asset.codeNumber }}</span>
+
+      @if (isAuditor()) {
+        <div class="actions-cell">
+          <button class="verify-btn" type="button" (click)="verifyAsset(asset)">
+            Verify
+          </button>
+        </div>
+      }
     </div>
+    }
   </div>
 
   <button class="help-button" type="button" aria-label="Open help">

@@ -155,7 +155,7 @@
   grid-template-columns: repeat(4, 1fr);
 }
 
-.department-chart,
+.division-chart,
 .value-chart {
   grid-template-columns: repeat(5, 1fr);
 }

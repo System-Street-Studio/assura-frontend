@@ -19,13 +19,19 @@
         </label>
 
         <label>
-          <span>Department</span>
-          <select name="department" required [(ngModel)]="form.department">
-            <option value="" disabled>Select department</option>
-            @for (department of departments; track department) {
-            <option [value]="department">{{ department }}</option>
+          <span>Division</span>
+          <select name="divisionId" required [(ngModel)]="form.divisionId">
+            <option [ngValue]="null" disabled>Select division</option>
+            @for (division of divisions(); track division.id) {
+            <option [value]="division.id">{{ division.name }}</option>
             }
           </select>
+        </label>
+
+        <label>
+          <span>Job Title</span>
+          <input type="text" name="jobTitle" placeholder="Enter job title" required
+            [(ngModel)]="form.jobTitle" />
         </label>
 
         <label>
@@ -72,7 +78,7 @@
     <h2 id="success-title">Assigned Successfully</h2>
     <p>
       {{ form.employeeName || 'Selected employee' }} has been assigned to
-      {{ form.department || 'the selected department' }} as {{ form.role || 'the selected role' }}.
+      the selected division as {{ form.role || 'the selected role' }}.
     </p>
 
     <button class="popup-button" type="button" (click)="closePopup()">OK</button>

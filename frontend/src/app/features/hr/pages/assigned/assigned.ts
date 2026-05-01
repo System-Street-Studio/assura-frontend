@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HrAssignmentService } from '../../services/hr-assignment.service';
 
 @Component({
@@ -8,8 +8,13 @@ import { HrAssignmentService } from '../../services/hr-assignment.service';
   templateUrl: './assigned.html',
   styleUrls: ['./assigned.css'],
 })
-export class HrAssignedComponent {
+export class HrAssignedComponent implements OnInit {
   private hrAssignmentService = inject(HrAssignmentService);
 
   readonly assignedUsers = this.hrAssignmentService.assignedUsers;
+
+  ngOnInit(): void {
+    this.hrAssignmentService.getAssignedUsers().subscribe();
+  }
 }
+

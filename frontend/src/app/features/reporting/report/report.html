@@ -19,7 +19,7 @@
   </header>
 
   <div class="summary-grid">
-    @for (summary of summaries; track summary.label) {
+    @for (summary of summaries(); track summary.label) {
       <article class="summary-card" [class]="summary.tone">
         <span>{{ summary.label }}</span>
         <strong>{{ summary.value }}</strong>
@@ -50,7 +50,7 @@
           <span>Size</span>
         </div>
 
-        @for (report of reportItems; track report.id) {
+        @for (report of reportItems(); track report.id) {
           <div class="table-row">
             <strong>{{ report.id }}</strong>
             <span>{{ report.title }}</span>
@@ -70,7 +70,7 @@
         <h2>Report Insights</h2>
       </div>
 
-      @for (insight of insights; track insight.title) {
+      @for (insight of insights(); track insight.title) {
         <article class="insight-card" [class]="insight.tone">
           <span aria-hidden="true"></span>
           <div>

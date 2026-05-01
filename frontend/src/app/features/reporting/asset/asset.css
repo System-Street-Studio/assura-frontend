@@ -106,9 +106,9 @@
 
 .list-header,
 .asset-row {
-  min-width: 1080px;
+  min-width: 1200px;
   display: grid;
-  grid-template-columns: 72px 70px 130px 88px 130px 122px 108px 130px 132px 120px;
+  grid-template-columns: 72px 70px 130px 88px 130px 122px 108px 130px 132px 120px 100px;
   align-items: center;
   column-gap: 10px;
   box-sizing: border-box;
@@ -281,6 +281,28 @@ input[type='checkbox'] {
   font-weight: 800;
   box-shadow: 0 8px 18px rgba(8, 174, 176, 0.25);
   cursor: pointer;
+}
+
+.verify-btn {
+  background: #0f8c9a;
+  color: #ffffff;
+  border: 0;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 8px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.verify-btn:hover {
+  background: #0d7986;
+}
+
+.actions-cell {
+  display: flex;
+  justify-content: center;
 }
 
 @media (max-width: 860px) {
