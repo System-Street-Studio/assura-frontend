@@ -8,8 +8,7 @@ export interface AssignRoleForm {
   dbId: number;
   employeeId: string;
   employeeName: string;
-  divisionId: number | null;
-  role: string;
+  assignments: { divisionId: number | null, role: string }[];
   effectiveDate: string;
   note: string;
   jobTitle: string;
@@ -44,8 +43,7 @@ export class HrAssignRoleFormComponent implements OnInit {
     dbId: 0,
     employeeId: '',
     employeeName: '',
-    divisionId: null,
-    role: '',
+    assignments: [{ divisionId: null, role: '' }],
     effectiveDate: '',
     note: '',
     jobTitle: ''
@@ -73,14 +71,15 @@ export class HrAssignRoleFormComponent implements OnInit {
         return;
       }
 
-      this.isUpdate = !!user.role; // If they already have a role, it's an update
+      this.isUpdate = !!(user.assignedRole || (user.assignments && user.assignments.length > 0));
 
       this.form = {
         dbId: user.id,
-        employeeId: user.userId,
+        employeeId: user.username,
         employeeName: user.name,
-        divisionId: user.divisionId || null,
-        role: user.role || user.requestedRole || '',
+        assignments: user.assignments && user.assignments.length > 0 
+          ? user.assignments.map((a: any) => ({ divisionId: a.divisionId, role: a.role }))
+          : [{ divisionId: user.divisionId || null, role: user.assignedRole || user.requestedRole || '' }],
         effectiveDate: this.getTodayDate(),
         note: '',
         jobTitle: user.jobTitle || ''
@@ -88,12 +87,31 @@ export class HrAssignRoleFormComponent implements OnInit {
     });
   }
 
+  addAssignment(): void {
+    this.form.assignments.push({ divisionId: null, role: '' });
+  }
+
+  removeAssignment(index: number): void {
+    if (this.form.assignments.length > 1) {
+      this.form.assignments.splice(index, 1);
+    }
+  }
+
   assignRole(): void {
     if (this.form.dbId === 0) return;
 
+    // Filter out incomplete assignments
+    const validAssignments = this.form.assignments
+      .filter(a => a.divisionId && a.role)
+      .map(a => ({ divisionId: a.divisionId as number, role: a.role }));
+
+    if (validAssignments.length === 0) {
+      alert('Please add at least one valid division and role assignment.');
+      return;
+    }
+
     const payload = {
-      role: this.form.role,
-      divisionId: this.form.divisionId || undefined,
+      assignments: validAssignments,
       jobTitle: this.form.jobTitle,
       notes: this.form.note,
     };

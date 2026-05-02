@@ -18,30 +18,47 @@
             [(ngModel)]="form.employeeName" />
         </label>
 
-        <label>
-          <span>Division</span>
-          <select name="divisionId" required [(ngModel)]="form.divisionId">
-            <option [ngValue]="null" disabled>Select division</option>
-            @for (division of divisions(); track division.id) {
-            <option [value]="division.id">{{ division.name }}</option>
-            }
-          </select>
-        </label>
+        <div class="assignments-section">
+          <div class="section-header">
+            <h3>Division & Role Assignments</h3>
+            <button type="button" class="add-assignment-btn" (click)="addAssignment()">
+              + Add Assignment
+            </button>
+          </div>
 
-        <label>
+          @for (assignment of form.assignments; track $index) {
+          <div class="assignment-row">
+            <label>
+              <span>Division</span>
+              <select [name]="'divisionId_' + $index" required [(ngModel)]="assignment.divisionId">
+                <option [ngValue]="null" disabled>Select division</option>
+                @for (division of divisions(); track division.id) {
+                <option [value]="division.id">{{ division.name }}</option>
+                }
+              </select>
+            </label>
+
+            <label>
+              <span>Role</span>
+              <select [name]="'role_' + $index" required [(ngModel)]="assignment.role">
+                <option value="" disabled>Select role</option>
+                @for (role of roles; track role) {
+                <option [value]="role">{{ role }}</option>
+                }
+              </select>
+            </label>
+
+            <button type="button" class="remove-assignment-btn" (click)="removeAssignment($index)" [disabled]="form.assignments.length === 1">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          }
+        </div>
+
+        <label class="full-width">
           <span>Job Title</span>
           <input type="text" name="jobTitle" placeholder="Enter job title" required
             [(ngModel)]="form.jobTitle" />
-        </label>
-
-        <label>
-          <span>Role</span>
-          <select name="role" required [(ngModel)]="form.role">
-            <option value="" disabled>Select role</option>
-            @for (role of roles; track role) {
-            <option [value]="role">{{ role }}</option>
-            }
-          </select>
         </label>
 
         <label>
@@ -57,7 +74,7 @@
         <div class="form-actions">
           <button class="secondary-button" type="button" (click)="resetForm()">Clear</button>
           <button class="primary-button" type="submit" [disabled]="assignForm.invalid">
-            Assign Role
+            {{ isUpdate ? 'Update Assignment' : 'Assign Role' }}
           </button>
         </div>
       </form>
@@ -77,8 +94,8 @@
 
     <h2 id="success-title">Assigned Successfully</h2>
     <p>
-      {{ form.employeeName || 'Selected employee' }} has been assigned to
-      the selected division as {{ form.role || 'the selected role' }}.
+      {{ form.employeeName || 'Selected employee' }} has been successfully assigned to
+      {{ form.assignments.length }} division(s) with their respective roles.
     </p>
 
     <button class="popup-button" type="button" (click)="closePopup()">OK</button>

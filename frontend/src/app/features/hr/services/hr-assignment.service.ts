@@ -26,9 +26,13 @@ export interface AssignedUser {
   status?: string;
 }
 
-export interface RoleAssignmentPayload {
+export interface DivisionRoleAssignment {
+  divisionId: number;
   role: string;
-  divisionId?: number;
+}
+
+export interface RoleAssignmentPayload {
+  assignments: DivisionRoleAssignment[];
   jobTitle?: string;
   notes?: string;
 }

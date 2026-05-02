@@ -81,6 +81,81 @@ textarea {
   grid-column: 1 / -1;
 }
 
+.assignments-section {
+  grid-column: 1 / -1;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 0;
+}
+
+.add-assignment-btn {
+  background: #e0f2f1;
+  color: #0b6c78;
+  border: 1px solid #b2dfdb;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-assignment-btn:hover {
+  background: #b2dfdb;
+}
+
+.assignment-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 40px;
+  gap: 16px;
+  align-items: flex-end;
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #f1f5f9;
+}
+
+.remove-assignment-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #ffe4e6;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}
+
+.remove-assignment-btn:hover:not(:disabled) {
+  background: #ffe4e6;
+}
+
+.remove-assignment-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 .form-actions {
   grid-column: 1 / -1;
   display: flex;
