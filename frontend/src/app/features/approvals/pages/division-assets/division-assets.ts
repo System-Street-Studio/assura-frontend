@@ -3,25 +3,21 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AssetPoolService } from '../../services/asset-pool.service';
 import { ProfileService } from '../../../../core/services/profile.service';
+import { AssetService } from '../../../../features/inventory/services/asset.service';
 
 interface Asset {
   id: string;
   name: string;
-  type: string;
   status: 'Maintenance' | 'In Use' | 'Transferred';
-  assignedTo: string;
-  image: string;
-  specs: string;
   category: string;
   division: string;
-  condition: string;
+  assignedUserName: string;
+  assetTag: string;
+  specs: string;
+  image: string;
   assignedUserId?: string;
-  assignedUserName?: string;
-  assetTag?: string;
   divisionId?: string;
-  divisionName?: string;
 }
 
 @Component({
@@ -32,9 +28,8 @@ interface Asset {
   styleUrls: ['./division-assets.css']
 })
 export class DivisionAssetsComponent implements OnInit, OnDestroy {
-  private assetPoolService = inject(AssetPoolService);
   private profileService = inject(ProfileService);
-  private elementRef = inject(ElementRef);
+  private assetService = inject(AssetService);
 
   // Asset signals
   assets = signal<Asset[]>([]);
@@ -59,23 +54,8 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   transferredAssets = computed(() => this.assets().filter(asset => asset.status === 'Transferred'));
 
   ngOnInit(): void {
-    console.log('=== DIVISION ASSETS PAGE INITIALIZED ===');
-    
-    // Add global click listener for closing dropdowns
-    document.addEventListener('click', this.handleGlobalClick.bind(this));
-    
-    // Load profile first, then assets
-    this.profileService.getProfile().subscribe({
-      next: (profile) => {
-        console.log('Profile loaded:', profile);
-        this.loadDivisionAssets();
-      },
-      error: (error) => {
-        console.error('Error loading profile:', error);
-        this.errorMessage.set('Failed to load user profile');
-        this.isLoading.set(false);
-      }
-    });
+  
+    this.loadDivisionAssets();
   }
 
   ngOnDestroy(): void {
@@ -97,88 +77,51 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadDivisionAssets(): void {
-    console.log('Loading division assets from backend...');
+ loadDivisionAssets(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    // Get current user profile to determine their division
-    const currentProfile = this.profileService.profile();
-    
-    if (!currentProfile || !currentProfile.divisionId) {
-      console.error('User profile or division information not available');
-      this.errorMessage.set('User division information not available');
-      this.isLoading.set(false);
-      return;
-    }
-
-    console.log('Current user division:', currentProfile.divisionName, 'ID:', currentProfile.divisionId);
-
-    this.assetPoolService.getAllAssignedAssets().subscribe({
-      next: (assets: any[]) => {
-        console.log('All assets loaded from backend:', assets);
-        
-        // Filter assets by current user's division
-        const divisionAssets = assets.filter(asset => {
-          return asset.divisionId === currentProfile.divisionId || 
-                 asset.divisionName === currentProfile.divisionName;
-        });
-
-        console.log('Filtered assets for division:', divisionAssets);
-        
-        // Transform backend data to Asset interface
-        const transformedAssets: Asset[] = divisionAssets.map(asset => ({
-          id: asset.id?.toString() || asset.assetId?.toString() || '',
-          name: asset.productName || asset.assetName || asset.name || '',
-          type: asset.category || asset.assetType || '',
-          status: this.mapAssetStatus(asset.status),
-          assignedTo: asset.assignedUserName || asset.assignedTo || 'Unassigned',
-          image: asset.image || asset.assetImage || asset.imageUrl || asset.photo || '',
-          specs: asset.specs || asset.description || '',
-          category: asset.categoryName || asset.category || '',
-          division: asset.divisionName || asset.division || '',
-          condition: asset.condition || 'Good',
-          assignedUserId: asset.assignedUserId?.toString() || '',
-          assignedUserName: asset.assignedUserName || '',
-          assetTag: asset.assetTag || asset.assetCode || '',
-          divisionId: asset.divisionId?.toString() || '',
-          divisionName: asset.divisionName || ''
+    this.assetService.getAll().subscribe({
+      next: (data) => {
+        const mappedAssets: Asset[] = data.map(a => ({
+          id: a.id.toString(),
+          name: a.productName || 'N/A',
+          category: a.categoryName || 'General',
+          division: a.divisionName || 'N/A',
+          status: this.mapAssetStatus(a.status), 
+          assetTag: a.assetTag || 'NO-TAG',
+          assignedUserName: a.assignedUserName || 'Not Assigned',
+          assignedUserId: a.assignedUserId?.toString(),
+          
+          specs: a.notes || 'No details available', 
+          image: 'assets/images/placeholder-asset.png' 
         }));
 
-        this.assets.set(transformedAssets);
+        this.assets.set(mappedAssets);
         
-        // Extract unique categories from the assets
-        const uniqueCategories = [...new Set(transformedAssets.map(asset => asset.category).filter(cat => cat && cat.trim() !== ''))];
-        this.availableCategories.set(uniqueCategories);
+       
+        const categories = [...new Set(mappedAssets.map(a => a.category))];
+        this.availableCategories.set(categories);
         
         this.isLoading.set(false);
-        
-        console.log('Transformed assets for division:', transformedAssets);
-        console.log('Available categories:', uniqueCategories);
-        console.log('Asset counts - Total:', this.totalAssets());
-        console.log('Asset counts - In Use:', this.inUseAssets());
-        console.log('Asset counts - Maintenance:', this.maintenanceAssets());
-        console.log('Asset counts - Transferred:', this.transferredAssets());
       },
-      error: (error: any) => {
-        console.error('Error loading assets:', error);
-        this.errorMessage.set('Failed to load assets');
+      error: (err) => {
+        this.errorMessage.set("දත්ත ලබාගැනීමට අපොහොසත් විය.");
         this.isLoading.set(false);
       }
     });
   }
 
-  private mapAssetStatus(status: string): Asset['status'] {
-    const statusMap: { [key: string]: Asset['status'] } = {
-      'In Use': 'In Use',
-      'Maintenance': 'Maintenance',
-      'Transferred': 'Transferred',
-      'Available': 'In Use',
-      'Assigned': 'In Use'
-    };
-    return statusMap[status] || 'In Use';
+ 
+  private mapAssetStatus(backendStatus: any): Asset['status'] {
+    const statusStr = backendStatus.toString();
+    
+    if (statusStr === 'Maintenance' || statusStr === '2') return 'Maintenance';
+    if (statusStr === 'Transferred' || statusStr === '3') return 'Transferred';
+    
+    
+    return 'In Use';
   }
-
   
 
   selectAsset(asset: Asset): void {
@@ -196,24 +139,23 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     this.selectedAsset.set(asset);
   }
 
+
   // Filter methods for different asset types
-  getInUseAssets(): Asset[] {
-    return this.assets().filter(asset => asset.status === 'In Use');
-  }
+  filteredAssets = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const cat = this.selectedCategory();
+    const stat = this.selectedStatus();
 
-  getMaintenanceAssets(): Asset[] {
-    return this.assets().filter(asset => asset.status === 'Maintenance');
-  }
-
-  getTransferredAssets(): Asset[] {
-    return this.assets().filter(asset => asset.status === 'Transferred');
-  }
-
-  // Asset status class helper
-  getAssetStatusClass(status: string): string {
-    return status.toLowerCase().replace(' ', '-');
-  }
-
+    return this.assets().filter(asset => {
+      const categoryMatch = cat === 'all' || asset.category === cat;
+      const statusMatch = stat === 'all' || asset.status === stat;
+      const searchMatch = !query || 
+                          asset.name.toLowerCase().includes(query) || 
+                          asset.assetTag.toLowerCase().includes(query);
+      
+      return categoryMatch && statusMatch && searchMatch;
+    });
+  });
   
   // Filter methods
   toggleCategoryMenu(event: MouseEvent): void {
@@ -234,6 +176,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Setters for filter selections
   setFilterCategory(val: string): void {
     this.selectedCategory.set(val);
     this.showCategoryMenu.set(false);
@@ -248,20 +191,4 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     this.searchQuery.set(event.target.value);
   }
 
-  // Computed filtered assets
-  filteredAssets = computed(() => {
-    const query = this.searchQuery().toLowerCase();
-    const cat = this.selectedCategory();
-    const stat = this.selectedStatus();
-
-    return this.assets().filter(asset => {
-      const categoryMatch = cat === 'all' || asset.category === cat;
-      const statusMatch = stat === 'all' || asset.status === stat;
-      const searchMatch = !query || 
-                          asset.name.toLowerCase().includes(query) || 
-                          asset.id.toLowerCase().includes(query);
-      
-      return categoryMatch && statusMatch && searchMatch;
-    });
-  });
 }

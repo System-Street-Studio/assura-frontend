@@ -22,7 +22,7 @@
               <div class="identity-text">
                 <p class="name-bold">{{ asset.name }}</p>
                 <p class="id-sub">ID: {{ asset.id }}</p>
-                <p class="type-sub">{{ asset.type }}</p>
+                <p class="type-sub">{{ asset.category }}</p>
               </div>
             </div>
             <hr class="divider">
@@ -34,7 +34,7 @@
 
             <div class="detail-row">
               <span class="label">Assigned Employee :</span>
-              <span class="value">{{ asset.assignedUserName || asset.assignedTo }}</span>
+              <span class="value">{{ asset.assignedUserName  }}</span>
             </div>
 
             @if (asset.assignedUserId) {
@@ -61,7 +61,7 @@
               </span>
             </div>
 
-            <button class="transfer-btn">Transfer</button>
+           
           </div>
 
           <div class="side-column">
@@ -76,7 +76,7 @@
 
                 <div class="timeline-item">
                   <span class="date">2022-01-20</span>
-                  <p class="event">Assigned: Given to {{ asset.assignedTo }}</p>
+                  <p class="event">Assigned: Given to {{ asset.assignedUserName }}</p>
                 </div>
 
               </div>
@@ -84,11 +84,7 @@
 
             <div class="card-panel mt-20">
 
-              <h3>Condition Monitor</h3>
-              <div class="detail-row">
-                <span class="label">Health Indicator:</span>
-                <span class="health-pill">{{ asset.condition }}</span>
-              </div>
+              
 
               <div class="detail-row">
                 <span class="label">Purchased Date:</span>
@@ -200,6 +196,7 @@
      
         
 
+
       <!--assets grid-->
         <div class="asset-grid">
           <div class="asset-card" *ngFor="let asset of filteredAssets()">
@@ -210,13 +207,13 @@
             
             <div class="card-body">
               <h4 class="asset-name">{{ asset.name }}</h4>
-              <p class="asset-id">ID: {{ asset.id }} · {{ asset.type }}</p>
+              <p class="asset-id">ID: {{ asset.id }} · {{ asset.category }}</p>
               
               <div class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
                 {{ asset.status }}
               </div>
               
-              <p class="assigned-text">Assigned to {{ asset.assignedUserName || asset.assignedTo }}</p>
+              <p class="assigned-text">Assigned to {{ asset.assignedUserName }}</p>
             </div>
             
             <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
