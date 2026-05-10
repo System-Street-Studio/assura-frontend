@@ -76,72 +76,18 @@ export class RequestService {
     return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, {});
   }
 
-  getAllAssetRequests(): Observable<any[]> {
-    console.log('Fetching all asset requests...');
-    return this.http.get<any[]>(`${this.baseUrl}/assetrequests`).pipe(
-      map((apiData: any[]) => {
-        console.log('Received asset requests:', apiData);
-        return apiData;
-      })
-    );
-  }
+   
 
   //get approved transfer requests
-  getApprovedTransferRequests(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/assetrequests?requestType=Transfer&status=Approved`);
+ getApprovedTransferRequests(headId?: number): Observable<any[]> {
+    let url = `${this.baseUrl}/assetrequests/approved-transfers`;
+    
+    if (headId) {
+      url += `?headId=${headId}`;
+    }
+
+    return this.http.get<any[]>(url);
   }
 
-  
-
-/*
-  getApprovedTransferRequestsFromAllData(): Observable<any[]> {
-    console.log(' Getting approved transfer requests using same method as requests-page...');
-    
-    const isDivisionHead = true; // Same as requests-page
-    
-    return this.getAllRequests(isDivisionHead).pipe(
-      map((allData: RequestItem[]) => {
-        console.log(' All data from getAllRequests:', allData);
-        console.log(' Total requests received:', allData.length);
-        
-        // Filter for transfer requests (same logic as requests-page)
-        const transferFiltered = allData.filter(r => r.type?.toLowerCase() === 'transfer');
-        console.log('Transfer requests filtered:', transferFiltered.length);
-        
-        // Further filter for approved status only
-        const approvedTransferRequests = transferFiltered.filter(r => r.status === 'Approved');
-        console.log('Approved transfer requests:', approvedTransferRequests.length);
-        
-        // Convert back to original format for dropdown
-        const approvedTransfers = approvedTransferRequests.map(request => ({
-          id: request.id,
-          requesterName: request.name,
-          requesterId: request.requesterId,
-          assetName: request.assetName,
-          requestType: request.type,
-          status: request.status,
-          reason: request.reason,
-          submittedDate: request.date
-        }));
-        
-        console.log('Final approved transfer requests for dropdown:', approvedTransfers);
-        return approvedTransfers;
-      })
-    );
-  }
-*/
-
-
- /* getAllTransferRequests(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/assetrequests?requestType=Transfer`);
-  }*/
-
-  
-  
-  
-  
-
-  
- 
 
 }
