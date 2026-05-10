@@ -6,12 +6,14 @@
     <h1>Centralized Asset Pool</h1>
   </div>
 
+  <!-- Loading State: Displays a spinner while data is being fetched -->
   @if (isLoading()) {
     <div class="loading-container">
       <div class="spinner"></div>
       <p>Loading asset data...</p>
     </div>
   } @else {
+    <!-- Error Handling: Displays an error banner if the API request fails -->
     @if (errorMessage()) {
       <div class="error-banner">
         <mat-icon>error</mat-icon>
@@ -19,19 +21,21 @@
       </div>
     }
 
+    <!-- Search Section: Global search across all asset fields with debouncing -->
     <div class="search-section">
       <div class="search-input">
         <mat-icon>search</mat-icon>
         <input type="text" 
                placeholder="Search by product name, asset tag, serial number, division, employee..." 
                [ngModel]="searchQuery()" 
-               (ngModelChange)="searchQuery.set($event)">
+               (ngModelChange)="onSearchChange($event)">
       </div>
       <div class="search-info">
         <small>Search across all divisions and assets</small>
       </div>
     </div>
 
+    <!-- Transfer Request Selection: User must select an approved request before transferring an asset -->
     <div class="transfer-request-section">
       <div class="transfer-request-dropdown">
         <label for="transferRequest">Select Approved Transfer Request:</label>
@@ -46,21 +50,21 @@
           }
         </select>
         
-        <!-- DEBUG: Add test button to manually select first request -->
-        <button (click)="testSelectFirstRequest()" style="margin-top: 10px; padding: 5px; background: #007bff; color: white; border: none; border-radius: 3px;">
-          Test: Select First Request
-        </button>
         
         <!-- DEBUG: Show current selection -->
         <div style="margin-top: 10px; font-size: 12px; color: #666;">
           <small>Current Selection: {{ selectedTransferRequest()?.id || 'None' }}</small>
         </div>
       </div>
+
+      <!-- Displays a message if no approved requests are available -->
       @if (approvedTransferRequests().length === 0) {
         <div class="no-requests-info">
           <small style="color: #666;">No approved transfer requests found in assetrequests table.</small>
         </div>
       }
+
+      <!-- Detailed View: Shows information of the selected transfer request -->
       @if (selectedTransferRequest()) {
         <div class="selected-request-info">
           <small>
@@ -78,44 +82,28 @@
       }
     </div>
 
+    <!-- Filter Section: Dropdowns to narrow down assets by Category, Specs, Division, and User -->
     <div class="filter-section">
       <div class="filter-group">
+        <!-- Category Filter -->
         <label for="category">Category</label>
         <select id="category" 
                 [ngModel]="selectedCategory()" 
-                (ngModelChange)="onCategoryChange($event)">
+                (ngModelChange)="onCategoryChange($event); currentPage.set(1)">
           <option value="">Select Category...</option>
-          <option value="Computers">Computers</option>
-          <option value="Furniture">Furniture</option>
-          <option value="Network Equipment">Network Equipment</option>
-          <option value="Printers">Printers</option>
-          <option value="Servers">Servers</option>
-          <option value="Mobile Devices">Mobile Devices</option>
-          <option value="Audio/Video">Audio/Video</option>
-          <option value="Office Equipment">Office Equipment</option>
+          @for (cat of categories(); track cat.id) { 
+            <option [value]="cat.name">{{ cat.name }}</option>
+          }
         </select>
       </div>
 
-      @if (selectedCategory()) {
-        <div class="filter-group">
-          <label for="brand">Brand</label>
-          <select id="brand" 
-                  [ngModel]="selectedBrand()" 
-                  (ngModelChange)="selectedBrand.set($event)">
-            <option value="">All Brands</option>
-            @for (brand of availableBrands(); track brand) {
-              <option [value]="brand">{{ brand }}</option>
-            }
-          </select>
-        </div>
-      }
-
+      <!-- Specification Name Filter (Visible only if a Category is selected) -->
       @if (selectedCategory()) {
         <div class="filter-group">
           <label for="specification">Specification</label>
           <select id="specification" 
                   [ngModel]="selectedSpecification()" 
-                  (ngModelChange)="selectedSpecification.set($event)">
+                  (ngModelChange)="onSpecificationChange($event); currentPage.set(1)">
             <option value="">Select Specification...</option>
             @for (spec of availableSpecifications(); track spec) {
               <option [value]="spec">{{ spec }}</option>
@@ -124,6 +112,7 @@
         </div>
       }
 
+      <!-- Specification Value Search (Visible only if a Specification is selected) -->
       @if (selectedSpecification()) {
         <div class="filter-group">
           <label for="specValue">Specification Value</label>
@@ -131,15 +120,16 @@
                  id="specValue"
                  placeholder="Enter specification value..."
                  [ngModel]="specificationValue()" 
-                 (ngModelChange)="specificationValue.set($event)">
+                 (ngModelChange)="onSpecValueChange($event); currentPage.set(1)">
         </div>
       }
 
+      <!-- Division Filter -->
       <div class="filter-group">
         <label for="division">Division</label>
         <select id="division" 
                 [ngModel]="selectedDivision()" 
-                (ngModelChange)="selectedDivision.set($event)">
+                (ngModelChange)="onDivisionChange($event); currentPage.set(1)">
           <option value="">All Divisions</option>
           @for (division of divisions(); track division.id) {
             <option [value]="division.name">{{ division.name }}</option>
@@ -147,30 +137,42 @@
         </select>
       </div>
 
+      <!-- User/Employee Filter -->
       <div class="filter-group">
-        <label for="employee">Employee</label>
+        <label for="employee">User</label>
         <select id="employee" 
                 [ngModel]="selectedEmployee()" 
-                (ngModelChange)="selectedEmployee.set($event)">
-          <option value="">All Employees</option>
-          @for (emp of uniqueEmployees(); track emp.id) {
-            <option [value]="emp.id">{{ emp.name }} (ID:{{ emp.id }})</option>
+                (ngModelChange)="onEmployeeChange($event); currentPage.set(1)">
+          <option value="">All Users</option>
+          @for (emp of employeesList(); track emp.id) {
+            <option [value]="emp.id">{{ emp.name }} </option>
           }
         </select>
       </div>
     </div>
+    
+    <!-- Warning Banner: Reminds the user to select a request before they can transfer an asset -->
+      @if (paginatedAssets().length > 0 && !selectedTransferRequest()) {
+    <div class="alert-info-banner">
+      <mat-icon>info</mat-icon>
+      <span>To proceed with a transfer, please select an <strong>Approved Transfer Request</strong> from the dropdown above.</span>
+    </div>
+    }
 
-    @if (searchQuery().trim() || selectedCategory() || selectedDivision() || selectedEmployee()) {
+    <!-- Results Section: Displays the list of assets in a table format -->
+    @if (searchQuery().trim() || selectedCategory() || selectedDivision() || selectedEmployee() || allAssets().length > 0) {
       <div class="results-container">
         <div class="results-header">
           <h3>Results ({{ paginatedAssets().length }} assets)</h3>
+          <!-- Pagination Info Summary -->
           @if (paginatedAssets().length > 0) {
             <div class="pagination-info">
-              <span>Page {{ currentPage() }} of {{ totalPages() }} (Max 50 results)</span>
+              <span>Page {{ currentPage() }} of {{ totalPages() }} (Total: {{ allAssets().length }} assets)</span>
             </div>
           }
         </div>
         <div class="table-card">
+          <!-- Empty State: Shown when no assets match the applied filters -->
           @if (paginatedAssets().length === 0) {
             <div class="no-results">
               <mat-icon>search_off</mat-icon>
@@ -178,6 +180,7 @@
               <p>Try adjusting your search or filters to find assets.</p>
             </div>
           } @else {
+            <!-- Asset Data Table -->
             <table>
               <thead>
                 <tr>
@@ -192,6 +195,7 @@
               <tbody>
                 @for (asset of paginatedAssets(); track asset.id) {
                   <tr>
+                    <!-- Asset Basic Details -->
                     <td>
                       <div class="asset-info">
                         <span class="asset-name">{{ asset.productName || asset.assetCode || 'N/A' }}</span>
@@ -199,6 +203,7 @@
                       </div>
                     </td>
                     <td>{{ asset.categoryName || 'N/A' }}</td>
+                    <!-- Current Holder Info -->
                     <td>
                       <div class="assignee-info">
                         <span class="name">{{ asset.assignedUserName || 'Unassigned' }}</span>
@@ -208,11 +213,15 @@
                       </div>
                     </td>
                     <td>{{ asset.divisionName || 'N/A' }}</td>
+
+                    <!-- Status Badge with Dynamic CSS Classes -->
                     <td>
                       <span class="status-badge" [ngClass]="'status-' + (asset.status || 'unknown')">
                         {{ asset.status || 'Unknown' }}
                       </span>
                     </td>
+
+                    <!-- Action Button: Only enabled for assets currently assigned to someone -->
                     <td>
                       @if (asset.assignedUserId) {
                         <button class="btn-transfer" (click)="selectForTransfer(asset)">
@@ -227,6 +236,7 @@
               </tbody>
             </table>
             
+            <!-- Pagination Controls: Navigates through pages of results -->
             @if (totalPages() > 1) {
               <div class="pagination-controls">
                 <button class="btn-pagination" 
@@ -258,6 +268,7 @@
         </div>
       </div>
     } @else {
+      <!-- Initial Landing View: Shown before any search/filter is applied -->
       <div class="search-prompt">
         <mat-icon>search</mat-icon>
         <h3>Search for Assigned Assets</h3>
