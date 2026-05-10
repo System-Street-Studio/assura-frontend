@@ -90,7 +90,7 @@ private transferService = inject(TransferService);
   // Tab change function
   setTab(tab: 'incoming' | 'pending' | 'active' | 'completed') {
     this.activeTab.set(tab);
-    this.filterType.set('all'); // ටැබ් මාරු කරන විට filter එක reset කරන්න
+    this.filterType.set('all'); 
     this.loadTransfers();
   }
 
@@ -103,7 +103,7 @@ private transferService = inject(TransferService);
       return;
     }
 
-    // Backend API Call - ටැබ් එකට අදාළ දත්ත පමණක් ගලා එයි
+    // Backend API Call 
     this.transferService.getTransfers(this.activeTab()).subscribe({
       next: (data: TransferData[]) => {
         const mappedData = data.map(item => this.mapToLocal(item, Number(currentUserId)));
@@ -112,7 +112,6 @@ private transferService = inject(TransferService);
       },
       error: (err) => {
         console.error('Error loading transfers', err);
-        this.errorMessage.set('දත්ත ලබා ගැනීමේ දෝෂයකි.');
         this.isLoading.set(false);
       }
     });
@@ -147,7 +146,7 @@ private transferService = inject(TransferService);
       transferPeriod: item.transferPeriod || 'N/A',
       timeAgo: this.calculateTimeAgo(item.createdAt),
       type: userType,
-      daysLeft: '3 Days Left' // මෙය අවශ්‍ය නම් Backend එකෙන් ගණනය කර එවන්න
+      daysLeft: '3 Days Left' 
     };
   }
   
@@ -195,7 +194,7 @@ private transferService = inject(TransferService);
     return 'Just now'; 
   }
 
- acceptTransfer(id: number) {
+  acceptTransfer(id: number) {
   this.transferService.acceptTransfer(id).subscribe({
     next: () => {
       
@@ -219,6 +218,4 @@ private transferService = inject(TransferService);
       }
     });
   }
-
- 
 }
