@@ -116,17 +116,17 @@ private transferService = inject(TransferService);
       }
     });
   }
-
+  // 
   private mapToLocal(item: TransferData, loginUserId: number): TransferDataLocal {
-    // Logic: Active ටැබ් එකේදී Incoming/Outgoing තීරණය කිරීම
+   
     let userType: 'IncomingActive' | 'OutgoingActive' | undefined;
     
     if (this.activeTab() === 'active' || this.activeTab() === 'completed') {
-        // මම Target User නම් එය මට Incoming එකකි
+       
         if (item.targetUserId === loginUserId) {
             userType = 'IncomingActive';
         } 
-        // මම Current Holder නම් එය මගෙන් පිටතට යන (Outgoing) එකකි
+        
         else if (item.currentHolderId === loginUserId) {
             userType = 'OutgoingActive';
         }
@@ -150,11 +150,11 @@ private transferService = inject(TransferService);
     };
   }
   
-  // Filter සහ Search අනුව දත්ත පෙන්වීම
+  // Filter and search logic
   filteredResults = computed(() => {
     let results = this.allTransfers();
     
-    // 1. Active Tab Filter Logic
+    
     if (this.activeTab() === 'active' && this.filterType() !== 'all') {
       results = results.filter(t => t.type === this.filterType());
     }
@@ -172,7 +172,6 @@ private transferService = inject(TransferService);
     return results;
   });
 
-  // Incoming Requests ගණන (Badge එක සඳහා)
   incomingCount = computed(() => {
     
     return this.allTransfers().length; 

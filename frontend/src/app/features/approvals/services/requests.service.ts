@@ -6,6 +6,7 @@ import { Observable, forkJoin, throwError, of, timeout } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
+
 @Injectable({ providedIn: 'root' })
 export class RequestService {
   private http = inject(HttpClient);
@@ -89,5 +90,7 @@ export class RequestService {
     return this.http.get<any[]>(url);
   }
 
-
+  getPendingRequests(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/assetrequests/pending`);
+  }
 }

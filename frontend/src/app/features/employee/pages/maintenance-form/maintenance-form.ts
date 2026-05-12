@@ -52,6 +52,11 @@ export class MaintenanceFormComponent implements OnInit {
 
   // Submit logic
   onSubmit() {
+    // Validate required fields
+    if (!this.asset() || !this.issueType() || !this.priority()) {
+      alert('Failed to create maintenance request. Please fill all required fields.');
+      return;
+    }
     this.isSubmitting.set(true);
     const requestData = {
       employeeId: this.authService.getUserId() || '',

@@ -13,7 +13,7 @@
 
       <form (ngSubmit)="onSubmit()">
         <div class="field">
-          <label>Select Asset</label>
+          <label>Select Asset <span style="color: red">*</span></label>
           <select [ngModel]="asset()" (ngModelChange)="asset.set($event)" name="asset" required>
             <option value="" disabled selected>Select an asset</option>
             @for (a of assignedAssets(); track a.id) {

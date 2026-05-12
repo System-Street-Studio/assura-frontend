@@ -50,6 +50,11 @@ export class DiscardFormComponent implements OnInit {
 
   // Submit logic
   onSubmit() {
+    // Validate required fields
+    if (!this.asset()) {
+      alert('Failed to create discard request. Please fill all required fields.');
+      return;
+    }
     this.isSubmitting.set(true);
     const requestData = {
       employeeId: this.authService.getUserId() || '',

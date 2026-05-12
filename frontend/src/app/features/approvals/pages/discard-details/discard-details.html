@@ -58,6 +58,18 @@
         <p class="bold-text">{{ request().justification }}</p>
       </div>
 
+      <!-- Full Width: Attachments -->
+      <--<div class="info-group full-width">
+        <label>Attachments</label>
+        <span class="bold-text">
+          <ng-container *ngIf="request().attachments && request().attachments.length > 0; else noFiles">
+            <ng-container *ngFor="let file of request().attachments">
+              <a [href]="file.url" target="_blank">{{ file.name }}</a><br />
+            </ng-container>
+          </ng-container>
+          <ng-template #noFiles>No attachments</ng-template>
+        </span>
+      </div>-->
       <!-- Full Width: Status -->
       <div class="info-group full-width">
         <label>Status</label>

@@ -16,9 +16,9 @@ export class ReqMoreDetail implements OnInit {
   isLoading = signal(false);
   error = signal<string | null>(null);
 
-  private route = inject(ActivatedRoute);
+ 
   private router = inject(Router);
-  private assetService = inject(AssetService);
+
 
   ngOnInit() {
     // Use history.state to get data passed during navigation

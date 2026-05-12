@@ -98,6 +98,18 @@
                 <span class="text-block">{{ request()!.description }}</span>
               </div>
             }
+            <!-- <div class="detail-row">
+              <label>Attachments:</label>
+              <span class="text-block">
+                @if (request()!.attachments && request()!.attachments.length > 0) {
+                  @for (file of request()!.attachments; track file.name) {
+                    <a [href]="file.url" target="_blank">{{ file.name }}</a><br />
+                  }
+                } @else {
+                  No attachments
+                }
+              </span>
+            </div>-->
           </div>
         </ng-container>
 

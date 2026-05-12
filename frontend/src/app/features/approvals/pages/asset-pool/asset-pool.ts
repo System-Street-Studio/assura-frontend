@@ -165,7 +165,7 @@ export class AssetPoolComponent implements OnInit, OnDestroy {
         this.errorMessage.set('Failed to load divisions');
       }
     });
-    
+
 
     // Load assigned employees from backend 
     this.assetPoolService.getAssignedEmployees().subscribe({
@@ -224,7 +224,7 @@ export class AssetPoolComponent implements OnInit, OnDestroy {
   }
 
    
-
+   // Log the final filter parameters being sent to the API
     this.assetPoolService.getFilteredAssets(filterParams).subscribe({
     next: (response: any) => {
       if (response.success && response.data) {

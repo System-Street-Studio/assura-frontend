@@ -53,7 +53,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadTransfers();
-    // හැම තත්පර 30කටම දත්ත Refresh කිරීම
+    
     this.refreshInterval = setInterval(() => this.loadTransfers(), 30000);
   }
 
@@ -70,8 +70,8 @@ export class TransferPageComponent implements OnInit, OnDestroy {
         const mapped = data.map(item => ({
           ...item,
           id: item.id.toString(),
-          timeAgo: 'Just now', // Backend එකෙන් එන දින වකවානු මෙතැනට දැමිය හැක
-          // Active සහ Completed වලදී පමණක් Incoming/Outgoing වෙන් කිරීම
+          timeAgo: 'Just now', 
+         
           type: (this.activeTab() === 'active' || this.activeTab() === 'completed') 
                 ? (item.toDivisionId === userDivisionId ? 'IncomingActive' : 'OutgoingActive') 
                 : undefined
@@ -85,7 +85,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
 
   setTab(tab: 'outgoing' | 'incoming' | 'pending' | 'active' | 'completed') {
     this.activeTab.set(tab);
-    this.filterType.set('all'); // ටැබ් එක මාරු කරන විට filter එක reset කිරීම
+    this.filterType.set('all'); 
     this.loadTransfers();
   }
 
@@ -143,7 +143,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
  
   outgoingCount = computed(() => this.allData().length);
 
- /*
+ 
 
   private getTimeAgo(dateString: string): string {
     const date = new Date(dateString);
@@ -168,7 +168,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Tomorrow';
     return `${diffDays} days`;
-  }*/
+  }
 
   
 

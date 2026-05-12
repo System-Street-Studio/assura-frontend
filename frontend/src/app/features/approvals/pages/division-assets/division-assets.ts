@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ProfileService } from '../../../../core/services/profile.service';
 import { AssetService } from '../../../../features/inventory/services/asset.service';
+import { DivisionHeadDashboardService } from '../../services/division-head-dashboard.service';
 
 interface Asset {
   id: string;
@@ -28,8 +28,8 @@ interface Asset {
   styleUrls: ['./division-assets.css']
 })
 export class DivisionAssetsComponent implements OnInit, OnDestroy {
-  private profileService = inject(ProfileService);
   private assetService = inject(AssetService);
+  private dashboardService = inject(DivisionHeadDashboardService);
 
   // Asset signals
   assets = signal<Asset[]>([]);
@@ -99,14 +99,13 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
 
         this.assets.set(mappedAssets);
         
-       
+       this.dashboardService.updateAssetCount(mappedAssets.length);
         const categories = [...new Set(mappedAssets.map(a => a.category))];
         this.availableCategories.set(categories);
         
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.errorMessage.set("දත්ත ලබාගැනීමට අපොහොසත් විය.");
         this.isLoading.set(false);
       }
     });
