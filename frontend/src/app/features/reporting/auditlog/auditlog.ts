@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { downloadCsv, downloadPdf, type ExportColumn } from '../export-download';
 
 /* =========================================================
    AUDIT STAT INTERFACE
@@ -223,6 +224,19 @@ export class ReportingAuditlogComponent {
   selectedDateRange = 'All Dates';
   selectedModule = 'All Modules';
 
+  private readonly auditExportColumns: ExportColumn<AuditLogEntry>[] = [
+    { header: 'Date', value: (log) => log.date },
+    { header: 'Time', value: (log) => log.time },
+    { header: 'Actor', value: (log) => log.actor },
+    { header: 'Role', value: (log) => log.role },
+    { header: 'Action', value: (log) => log.action },
+    { header: 'Reference', value: (log) => log.asset },
+    { header: 'Module', value: (log) => log.module },
+    { header: 'IP Address', value: (log) => log.ip },
+    { header: 'Status', value: (log) => log.status },
+    { header: 'Detail', value: (log) => log.detail },
+  ];
+
   get uniqueModules(): string[] {
     const modules = new Set(this.logs.map((l) => l.module));
     return ['All Modules', ...Array.from(modules).sort()];
@@ -233,15 +247,33 @@ export class ReportingAuditlogComponent {
   }
 
   get filteredLogs(): AuditLogEntry[] {
+    let result = this.logs;
     const query = this.searchQuery.trim().toLowerCase();
-    if (!query) {
-      return this.logs;
+
+    if (this.selectedModule !== 'All Modules') {
+      result = result.filter((log) => log.module === this.selectedModule);
     }
 
-    return this.logs.filter((log) =>
-      [log.time, log.date, log.actor, log.role, log.action, log.asset, log.module, log.ip, log.status, log.detail]
-        .some((value) => value.toLowerCase().includes(query)),
-    );
+    result = result.filter((log) => this.matchesDateRange(log));
+
+    if (query) {
+      result = result.filter((log) =>
+        [
+          log.time,
+          log.date,
+          log.actor,
+          log.role,
+          log.action,
+          log.asset,
+          log.module,
+          log.ip,
+          log.status,
+          log.detail,
+        ].some((value) => value.toLowerCase().includes(query)),
+      );
+    }
+
+    return result;
   }
 
   searchLogs(query: string): void {
@@ -260,7 +292,7 @@ export class ReportingAuditlogComponent {
   }
 
   exportLogs(): void {
-    alert('Exporting audit log data.');
+    downloadCsv('audit-log.csv', this.auditExportColumns, this.filteredLogs);
   }
 
   refreshTimeline(): void {
@@ -276,10 +308,50 @@ export class ReportingAuditlogComponent {
   }
 
   downloadLogs(): void {
-    alert('Downloading the current audit log export.');
+    downloadPdf(
+      'audit-log.pdf',
+      'Audit Log Export',
+      this.filteredLogs.map(
+        (log) =>
+          `${log.date} ${log.time} | ${log.actor} (${log.role}) | ${log.action} | ${log.asset} | ${log.module} | ${log.ip} | ${log.status} | ${log.detail}`,
+      ),
+    );
   }
 
   openHelp(): void {
     alert('Opening audit log help guide.');
+  }
+
+  private matchesDateRange(log: AuditLogEntry): boolean {
+    if (this.selectedDateRange === 'All Dates') {
+      return true;
+    }
+
+    const logDate = new Date(log.date);
+
+    if (Number.isNaN(logDate.getTime())) {
+      return true;
+    }
+
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfLogDay = new Date(logDate.getFullYear(), logDate.getMonth(), logDate.getDate());
+    const ageInDays = Math.floor(
+      (startOfToday.getTime() - startOfLogDay.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    if (this.selectedDateRange === 'Today') {
+      return ageInDays === 0;
+    }
+
+    if (this.selectedDateRange === 'This Week') {
+      return ageInDays >= 0 && ageInDays < 7;
+    }
+
+    if (this.selectedDateRange === 'This Month') {
+      return logDate.getFullYear() === now.getFullYear() && logDate.getMonth() === now.getMonth();
+    }
+
+    return ageInDays >= 0 && ageInDays <= 93;
   }
 }

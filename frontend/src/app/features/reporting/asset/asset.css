@@ -190,9 +190,14 @@ button {
 ========================================================= */
 .asset-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   align-items: start;
+}
+
+/* Details column appears only after the user clicks an asset row. */
+.asset-layout.has-details {
+  grid-template-columns: minmax(0, 1fr) 320px;
 }
 
 /* Left content area */
@@ -534,6 +539,10 @@ input[type='checkbox'] {
 @media (max-width: 1280px) {
 
   .asset-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .asset-layout.has-details {
     grid-template-columns: 1fr;
   }
 

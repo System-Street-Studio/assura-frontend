@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { downloadCsv, type ExportColumn } from '../export-download';
 
 /* =========================================================
    ASSET TIMELINE INTERFACE
@@ -403,15 +404,34 @@ export class ReportingAssetComponent {
   ];
 
   /* =========================================================
-     DEFAULT SELECTED ASSET
-     Initially selected asset in details panel.
+     SELECTED ASSET
+     Set only after a table row is clicked, then used by the details panel.
   ========================================================= */
-  selectedAsset: ReportingAsset = this.assets[0];
+  selectedAsset?: ReportingAsset;
   searchQuery = '';
   selectedStatus = 'All Status';
   selectedCategory = 'All Categories';
   selectedDepartment = 'All Departments';
   selectedAuditor = 'All Auditors';
+
+  private readonly assetExportColumns: ExportColumn<ReportingAsset>[] = [
+    { header: 'Asset ID', value: (asset) => asset.id },
+    { header: 'Product', value: (asset) => asset.product },
+    { header: 'Category', value: (asset) => asset.category },
+    { header: 'Status', value: (asset) => asset.status },
+    { header: 'Health', value: (asset) => asset.health },
+    { header: 'Checked By', value: (asset) => asset.checkedBy || '-' },
+    { header: 'Checked Role', value: (asset) => asset.checkedRole || '-' },
+    { header: 'Assura Name', value: (asset) => asset.assuraName },
+    { header: 'Serial Number', value: (asset) => asset.serial },
+    { header: 'Warranty Status', value: (asset) => asset.warrantyStatus },
+    { header: 'Warranty', value: (asset) => asset.warranty },
+    { header: 'End Of Life', value: (asset) => asset.endOfLife },
+    { header: 'Code Number', value: (asset) => asset.codeNumber },
+    { header: 'Location', value: (asset) => asset.location },
+    { header: 'Purchase Date', value: (asset) => asset.purchaseDate },
+    { header: 'Purchase Price', value: (asset) => asset.purchasePrice },
+  ];
 
   /* =========================================================
      UNIQUE FILTER VALUES
@@ -499,7 +519,7 @@ export class ReportingAssetComponent {
   }
 
   exportAssetList(): void {
-    alert('Exporting the current asset list.');
+    downloadCsv('reporting-assets.csv', this.assetExportColumns, this.filteredAssets);
   }
 
   addNewAsset(): void {
@@ -545,17 +565,26 @@ export class ReportingAssetComponent {
   }
 
   exportSelectedAssets(): void {
-    const count = this.selectedCount;
-    alert(`Exporting ${count} selected asset(s).`);
+    const selectedAssets = this.assets.filter((asset) => asset.selected);
+
+    if (selectedAssets.length === 0) {
+      alert('Select at least one asset before exporting.');
+      return;
+    }
+
+    downloadCsv('reporting-selected-assets.csv', this.assetExportColumns, selectedAssets);
   }
 
   viewFullDetails(): void {
+    if (!this.selectedAsset) {
+      return;
+    }
+
     alert(`Viewing full details for ${this.selectedAsset.product}.`);
   }
 
   closeDetails(): void {
-    this.selectedAsset = this.assets[0];
-    alert('Closed details panel.');
+    this.selectedAsset = undefined;
   }
 
   openHelp(): void {

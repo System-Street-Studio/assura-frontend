@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { downloadCsv, downloadExcel, downloadPdf, type ExportColumn } from '../export-download';
 
 /* =========================================================
    REPORT SUMMARY INTERFACE
@@ -236,21 +237,46 @@ export class ReportingReportComponent {
   selectedReportType = 'All Types';
   selectedReportDate = 'All Dates';
 
+  private readonly reportExportColumns: ExportColumn<ReportItem>[] = [
+    { header: 'Report ID', value: (report) => report.id },
+    { header: 'Title', value: (report) => report.title },
+    { header: 'Owner', value: (report) => report.owner },
+    { header: 'Type', value: (report) => report.type },
+    { header: 'Period', value: (report) => report.period },
+    { header: 'Generated', value: (report) => report.generated },
+    { header: 'Status', value: (report) => report.status },
+    { header: 'Size', value: (report) => report.size },
+  ];
+
   get uniqueReportTypes(): string[] {
     const types = new Set(this.reportItems.map((r) => r.type));
     return ['All Types', ...Array.from(types).sort()];
   }
 
   get filteredReportItems(): ReportItem[] {
+    let result = this.reportItems;
     const query = this.searchQuery.trim().toLowerCase();
-    if (!query) {
-      return this.reportItems;
+
+    if (this.selectedReportType !== 'All Types') {
+      result = result.filter((report) => report.type === this.selectedReportType);
     }
 
-    return this.reportItems.filter((report) =>
-      [report.id, report.title, report.owner, report.type, report.period, report.generated, report.status, report.size]
-        .some((value) => value.toLowerCase().includes(query)),
-    );
+    if (query) {
+      result = result.filter((report) =>
+        [
+          report.id,
+          report.title,
+          report.owner,
+          report.type,
+          report.period,
+          report.generated,
+          report.status,
+          report.size,
+        ].some((value) => value.toLowerCase().includes(query)),
+      );
+    }
+
+    return result;
   }
 
   searchReports(query: string): void {
@@ -282,7 +308,7 @@ export class ReportingReportComponent {
   }
 
   exportReportLibrary(): void {
-    alert('Exporting report library.');
+    downloadCsv('report-library.csv', this.reportExportColumns, this.filteredReportItems);
   }
 
   changeQuickExportFormat(format: string): void {
@@ -294,7 +320,28 @@ export class ReportingReportComponent {
   }
 
   downloadQuickExport(): void {
-    alert(`Downloading ${this.selectedExportFormat} report for ${this.selectedExportRange}.`);
+    const reports = this.filteredReportItems;
+    const title = `Report Library - ${this.selectedExportRange}`;
+    const filenameBase = `report-library-${this.selectedExportRange.toLowerCase().replace(/\s+/g, '-')}`;
+
+    if (this.selectedExportFormat === 'CSV') {
+      downloadCsv(`${filenameBase}.csv`, this.reportExportColumns, reports);
+      return;
+    }
+
+    if (this.selectedExportFormat === 'Excel') {
+      downloadExcel(`${filenameBase}.xls`, this.reportExportColumns, reports, title);
+      return;
+    }
+
+    downloadPdf(
+      `${filenameBase}.pdf`,
+      title,
+      reports.map(
+        (report) =>
+          `${report.id} | ${report.title} | ${report.owner} | ${report.type} | ${report.period} | ${report.generated} | ${report.status} | ${report.size}`,
+      ),
+    );
   }
 
   openHelp(): void {

@@ -52,7 +52,7 @@
        Left side = asset table
        Right side = asset details panel
   ========================================================== -->
-  <div class="asset-layout">
+  <div class="asset-layout" [class.has-details]="!!selectedAsset">
 
     <!-- =========================================================
          MAIN TABLE AREA
@@ -88,9 +88,11 @@
 
           <!-- Status dropdown -->
           <select (change)="changeStatusFilter($any($event.target).value)">
-            <option *ngFor="let status of uniqueStatuses" [value]="status">
-              {{ status }}
-            </option>
+            @for (status of uniqueStatuses; track status) {
+              <option [value]="status">
+                {{ status }}
+              </option>
+            }
           </select>
         </label>
 
@@ -104,9 +106,11 @@
 
           <!-- Category dropdown -->
           <select (change)="changeCategoryFilter($any($event.target).value)">
-            <option *ngFor="let category of uniqueCategories" [value]="category">
-              {{ category }}
-            </option>
+            @for (category of uniqueCategories; track category) {
+              <option [value]="category">
+                {{ category }}
+              </option>
+            }
           </select>
         </label>
 
@@ -120,9 +124,11 @@
 
           <!-- Department dropdown -->
           <select (change)="changeDepartmentFilter($any($event.target).value)">
-            <option *ngFor="let dept of uniqueDepartments" [value]="dept">
-              {{ dept }}
-            </option>
+            @for (dept of uniqueDepartments; track dept) {
+              <option [value]="dept">
+                {{ dept }}
+              </option>
+            }
           </select>
         </label>
 
@@ -136,9 +142,11 @@
 
           <!-- Auditor dropdown -->
           <select (change)="changeAuditorFilter($any($event.target).value)">
-            <option *ngFor="let auditor of uniqueAuditors" [value]="auditor">
-              {{ auditor }}
-            </option>
+            @for (auditor of uniqueAuditors; track auditor) {
+              <option [value]="auditor">
+                {{ auditor }}
+              </option>
+            }
           </select>
         </label>
       </section>
@@ -249,13 +257,14 @@
                 <!-- =========================================================
                      SINGLE ASSET ROW
                 ========================================================== -->
-                <tr *ngFor="let asset of filteredAssets"
-                  class="asset-row"
-                  [class.active-row]="selectedAsset.id === asset.id"
-                  tabindex="0"
-                  (click)="selectAsset(asset)"
-                  (keydown.enter)="selectAsset(asset)"
-                >
+                @for (asset of filteredAssets; track asset.id) {
+                  <tr
+                    class="asset-row"
+                    [class.active-row]="selectedAsset?.id === asset.id"
+                    tabindex="0"
+                    (click)="selectAsset(asset)"
+                    (keydown.enter)="selectAsset(asset)"
+                  >
 
                   <!-- =========================================================
                        SELECT CHECKBOX
@@ -339,9 +348,12 @@
                     <span class="person-cell">
 
                       <!-- If checked by exists -->
-                        <strong *ngIf="asset.checkedBy">{{ asset.checkedBy }}</strong>
-                        <small *ngIf="asset.checkedBy">{{ asset.checkedRole }}</small>
-                        <strong *ngIf="!asset.checkedBy">-</strong>
+                        @if (asset.checkedBy) {
+                          <strong>{{ asset.checkedBy }}</strong>
+                          <small>{{ asset.checkedRole }}</small>
+                        } @else {
+                          <strong>-</strong>
+                        }
                     </span>
                   </td>
 
@@ -384,7 +396,8 @@
                       QR
                     </span>
                   </td>
-                </tr>
+                  </tr>
+                }
             </tbody>
           </table>
         </div>
@@ -395,7 +408,8 @@
          DETAILS PANEL
          Displays selected asset information.
     ========================================================== -->
-    <aside class="details-panel" aria-label="Selected asset details">
+    @if (selectedAsset; as assetDetails) {
+      <aside class="details-panel" aria-label="Selected asset details">
 
       <!-- =========================================================
            DETAILS HEADER
@@ -403,7 +417,7 @@
       <div class="details-header">
 
         <!-- Selected asset ID -->
-        <h2>{{ selectedAsset.id }}</h2>
+        <h2>{{ assetDetails.id }}</h2>
 
         <!-- Close details button -->
         <button type="button" aria-label="Close details" (click)="closeDetails()">
@@ -419,7 +433,7 @@
         <!-- Large preview device -->
         <span
           class="preview-device"
-          [class]="selectedAsset.imageClass"
+          [class]="assetDetails.imageClass"
         ></span>
       </div>
 
@@ -432,23 +446,23 @@
         <div>
 
           <!-- Product name -->
-          <h3>{{ selectedAsset.product }}</h3>
+          <h3>{{ assetDetails.product }}</h3>
 
           <!-- Asset status -->
           <span
             class="status-pill"
-            [class]="selectedAsset.status.toLowerCase().replace(' ', '-')"
+            [class]="assetDetails.status.toLowerCase().replace(' ', '-')"
           >
-            {{ selectedAsset.status }}
+            {{ assetDetails.status }}
           </span>
         </div>
 
         <!-- Health indicator -->
         <span
           class="health-dot"
-          [class]="selectedAsset.health.toLowerCase()"
+          [class]="assetDetails.health.toLowerCase()"
         >
-          {{ selectedAsset.health }}
+          {{ assetDetails.health }}
         </span>
       </div>
 
@@ -461,52 +475,52 @@
         <!-- Category -->
         <div>
           <dt>Category</dt>
-          <dd>{{ selectedAsset.category }}</dd>
+          <dd>{{ assetDetails.category }}</dd>
         </div>
 
         <!-- Serial number -->
         <div>
           <dt>Serial Number</dt>
-          <dd>{{ selectedAsset.serial }}</dd>
+          <dd>{{ assetDetails.serial }}</dd>
         </div>
 
         <!-- Assura name -->
         <div>
           <dt>Assura Name</dt>
-          <dd>{{ selectedAsset.assuraName }}</dd>
+          <dd>{{ assetDetails.assuraName }}</dd>
         </div>
 
         <!-- Code number -->
         <div>
           <dt>Code Number</dt>
-          <dd>{{ selectedAsset.codeNumber }}</dd>
+          <dd>{{ assetDetails.codeNumber }}</dd>
         </div>
 
         <!-- Purchase date -->
         <div>
           <dt>Purchase Date</dt>
-          <dd>{{ selectedAsset.purchaseDate }}</dd>
+          <dd>{{ assetDetails.purchaseDate }}</dd>
         </div>
 
         <!-- Purchase price -->
         <div>
           <dt>Purchase Price</dt>
-          <dd>{{ selectedAsset.purchasePrice }}</dd>
+          <dd>{{ assetDetails.purchasePrice }}</dd>
         </div>
 
         <!-- Checked by -->
         <div>
           <dt>Checked By</dt>
           <dd>
-            {{ selectedAsset.checkedBy || '-' }}
-            {{ selectedAsset.checkedRole ? '(' + selectedAsset.checkedRole + ')' : '' }}
+            {{ assetDetails.checkedBy || '-' }}
+            {{ assetDetails.checkedRole ? '(' + assetDetails.checkedRole + ')' : '' }}
           </dd>
         </div>
 
         <!-- Location -->
         <div>
           <dt>Location</dt>
-          <dd>{{ selectedAsset.location }}</dd>
+          <dd>{{ assetDetails.location }}</dd>
         </div>
       </dl>
 
@@ -527,7 +541,8 @@
           <!-- Loop through timeline items -->
 
             <!-- Timeline item -->
-            <article *ngFor="let item of selectedAsset.timeline" class="timeline-item">
+            @for (item of assetDetails.timeline; track item.label + item.date) {
+              <article class="timeline-item">
 
               <!-- Timeline colored dot -->
               <span
@@ -547,7 +562,8 @@
 
               <!-- Timeline date -->
               <time>{{ item.date }}</time>
-            </article>
+              </article>
+            }
         </div>
       </section>
 
@@ -557,7 +573,8 @@
       <button class="details-button" type="button" (click)="viewFullDetails()">
         View Full Details
       </button>
-    </aside>
+      </aside>
+    }
   </div>
 
   <!-- =========================================================
