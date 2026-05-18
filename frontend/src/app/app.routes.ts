@@ -27,6 +27,22 @@ export const routes: Routes = [
         loadComponent: () => import('./features/hr/pages/assigned/assigned').then((m) => m.HrAssignedComponent),
     },
     {
+        path: 'reporting-dashboard',
+        loadComponent: () => import('./features/reporting/pages/dashboard/reporting-dashboard').then((m) => m.ReportingDashboardComponent),
+    },
+    {
+        path: 'reporting-assets',
+        loadComponent: () => import('./features/reporting/pages/assets/reporting-assets').then((m) => m.ReportingAssetsComponent),
+    },
+    {
+        path: 'reporting-audit-logs',
+        loadComponent: () => import('./features/reporting/pages/audit-log/audit-log').then((m) => m.AuditLogComponent),
+    },
+    {
+        path: 'reporting-reports',
+        loadComponent: () => import('./features/reporting/pages/reports/reports').then((m) => m.ReportsComponent),
+    },
+    {
         path: 'auth',
         loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
     },
