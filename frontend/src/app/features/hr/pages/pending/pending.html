@@ -1,4 +1,5 @@
 <div class="hr-layout">
+  <!-- Shared shell keeps HR pages consistent while each page stays standalone. -->
   <app-shared-sidebar></app-shared-sidebar>
 
   <div class="main-area">
@@ -6,6 +7,7 @@
 
     <section class="pending-page" aria-labelledby="pending-title">
       <div class="content-shell">
+        <!-- Heading explains that this queue is for employees waiting on role approval. -->
         <div class="page-heading">
           <nav class="breadcrumbs" aria-label="Breadcrumb">
             <span>Home</span>
@@ -19,6 +21,7 @@
           <p>Review employees who are waiting for role assignment and take necessary action.</p>
         </div>
 
+        <!-- Cards surface the queue totals before HR reviews individual table rows. -->
         <div class="stats-grid" aria-label="Pending role overview">
           <article class="stat-card blue">
             <span class="stat-icon">ID</span>
@@ -57,6 +60,7 @@
           </article>
         </div>
 
+        <!-- Filter controls change component state and narrow the pending queue instantly. -->
         <section class="filter-panel" aria-label="Pending employee filters">
           <label class="search-field">
             <span>Search</span>
@@ -106,6 +110,7 @@
           <button class="clear-button" type="button" (click)="clearFilters()">Clear Filters</button>
         </section>
 
+        <!-- Assign stores the selected employee and opens the role assignment form. -->
         <section class="table-card" aria-label="Pending employees table">
           <div class="table-toolbar">
             <p>Showing {{ filteredUsers.length }} of {{ pendingUsers.length }} entries</p>
@@ -192,6 +197,7 @@
           </div>
 
           <div class="pagination-row">
+            <!-- Static paging controls document the intended table behavior for future backend data. -->
             <label>
               <span>Rows per page:</span>
               <select>

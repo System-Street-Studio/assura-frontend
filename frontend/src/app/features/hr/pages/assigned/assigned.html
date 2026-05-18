@@ -1,4 +1,5 @@
 <div class="hr-layout">
+  <!-- Shared shell keeps this standalone HR page visually aligned with the rest of the app. -->
   <app-shared-sidebar></app-shared-sidebar>
 
   <div class="main-area">
@@ -6,6 +7,7 @@
 
     <section class="assigned-page" aria-labelledby="assigned-title">
       <div class="content-shell">
+        <!-- Header gives users page context and the main action for creating another assignment. -->
         <div class="page-header">
           <div>
             <nav class="breadcrumbs" aria-label="Breadcrumb">
@@ -25,6 +27,7 @@
           </div>
         </div>
 
+        <!-- Summary cards reuse component getters so the counts stay tied to the table data. -->
         <div class="stats-grid" aria-label="Assigned role overview">
           <article class="stat-card blue">
             <span class="stat-icon">AR</span>
@@ -63,6 +66,7 @@
           </article>
         </div>
 
+        <!-- Filters update component state, then filteredAssignedUsers recalculates the table rows. -->
         <section class="filter-panel" aria-label="Assigned role filters">
           <label class="search-field">
             <span>Search</span>
@@ -112,6 +116,7 @@
           <button class="clear-button" type="button" (click)="clearFilters()">Clear Filters</button>
         </section>
 
+        <!-- The table shows the filtered role assignments and falls back to an empty state. -->
         <section class="table-card" aria-label="Assigned roles table">
           <div class="table-toolbar">
             <p>
@@ -193,6 +198,7 @@
           </div>
 
           <div class="pagination-row">
+            <!-- Pagination is visual for now; it reserves space for the real paging behavior later. -->
             <label>
               <span>Rows per page:</span>
               <select>

@@ -1,3 +1,4 @@
+/* Page-local styles for the HR overview dashboard. */
 :host {
   display: block;
   min-height: 100vh;
@@ -6,6 +7,7 @@
   color: #000000;
 }
 
+/* Shared shell layout keeps the dashboard aligned with the HR navigation. */
 .hr-layout {
   min-height: 100vh;
   display: grid;
@@ -37,6 +39,7 @@
   letter-spacing: 0;
 }
 
+/* Statistic cards summarize role assignment workload before the division breakdown. */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(220px, 1fr));
@@ -68,6 +71,7 @@
   font-weight: 700;
 }
 
+/* Division panel lists workforce distribution in a compact report-like block. */
 .division-panel {
   border-radius: 4px;
   background: #ffffff;
@@ -100,6 +104,7 @@
   text-align: right;
 }
 
+/* Mobile rules stack dashboard cards and reduce side padding. */
 @media (max-width: 720px) {
   .hr-layout {
     grid-template-columns: 88px 1fr;

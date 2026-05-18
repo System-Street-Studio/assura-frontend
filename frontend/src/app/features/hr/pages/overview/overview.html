@@ -1,4 +1,5 @@
 <div class="hr-layout">
+  <!-- Shared navigation wraps the dashboard so HR users keep the same app frame. -->
   <app-shared-sidebar></app-shared-sidebar>
 
   <div class="main-area">
@@ -8,6 +9,7 @@
       <div class="overview-container">
         <h1 id="statistics-title" class="page-title">Statistics</h1>
 
+        <!-- Stats are rendered from data so more cards can be added without changing markup. -->
         <div class="stats-grid" aria-label="Role assignment statistics">
           @for (stat of stats; track stat.label) {
             <article class="stat-card">
@@ -17,6 +19,7 @@
           }
         </div>
 
+        <!-- Division counts give HR a quick workforce distribution snapshot. -->
         <section class="division-panel" aria-labelledby="division-title">
           <h2 id="division-title" class="panel-title">Users by Division</h2>
 

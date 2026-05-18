@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+// Lazy HR routes keep each page in its own bundle until the user opens that screen.
 export const hrRoutes: Routes = [
     {
         path: 'overview',
@@ -21,5 +22,6 @@ export const hrRoutes: Routes = [
         path: 'assign-role',
         loadComponent: () => import('./pages/form/form').then((m) => m.HrAssignRoleFormComponent),
     },
+    // Opening /hr without a child page should land on the HR dashboard by default.
     { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];

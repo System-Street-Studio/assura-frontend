@@ -1,4 +1,5 @@
 <div class="hr-layout">
+  <!-- Shared shell keeps the audit screen aligned with the rest of the HR feature. -->
   <app-shared-sidebar></app-shared-sidebar>
 
   <div class="main-area">
@@ -8,6 +9,7 @@
       <div class="audit-shell">
         <h1 id="audit-title" class="page-title">HR My Assets</h1>
 
+        <!-- Toolbar controls search plus the department/role grouping used by filterOptions. -->
         <div class="toolbar" aria-label="Audit log filters">
           <label class="search-field" aria-label="Search audit logs">
             <input
@@ -39,6 +41,7 @@
           </label>
         </div>
 
+        <!-- The table reads filteredAuditLogs so search and dropdown choices update together. -->
         <div class="table-card">
           <table>
             <thead>

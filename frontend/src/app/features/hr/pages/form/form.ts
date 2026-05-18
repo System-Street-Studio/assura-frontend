@@ -5,6 +5,7 @@ import { SharedNavbarComponent } from '../../../../shared/components/shared-navb
 import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
 import { HrAssignmentService, PendingRoleUser } from '../../services/hr-assignment.service';
 
+// AssignRoleForm mirrors the template-driven form so every ngModel field has a known key.
 export interface AssignRoleForm {
   employeeId: string;
   employeeName: string;
@@ -33,6 +34,7 @@ export class HrAssignRoleFormComponent implements OnInit {
   private router = inject(Router);
   private hrAssignmentService = inject(HrAssignmentService);
 
+  // These option lists keep the template simple and make future API replacement easy.
   readonly departments = [
     'Human Resource',
     'Finance',
@@ -71,6 +73,7 @@ export class HrAssignRoleFormComponent implements OnInit {
   ];
   readonly assignmentStatuses = ['Active', 'Pending', 'Temporary'];
 
+  // Permission modules are editable because each checkbox writes its selected state here.
   readonly permissionModules = [
     { name: 'Dashboard', description: 'View dashboard', selected: false },
     { name: 'Assets', description: 'Manage assets', selected: false },
@@ -82,6 +85,7 @@ export class HrAssignRoleFormComponent implements OnInit {
     { name: 'Settings', description: 'System settings', selected: false },
   ];
 
+  // Empty defaults prevent undefined values while the form waits for a selected pending user.
   form: AssignRoleForm = {
     employeeId: '',
     employeeName: '',
@@ -103,6 +107,7 @@ export class HrAssignRoleFormComponent implements OnInit {
   submitted = false;
 
   ngOnInit(): void {
+    // When opened from the pending table, the saved employee fills the form automatically.
     const selectedUser = this.hrAssignmentService.getSelectedPendingUser();
 
     if (!selectedUser) {
@@ -122,6 +127,7 @@ export class HrAssignRoleFormComponent implements OnInit {
   }
 
   assignRole(): void {
+    // The service stores the assignment, then the popup confirms the action to the HR user.
     this.hrAssignmentService.assignRole({
       employeeId: this.form.employeeId,
       employeeName: this.form.employeeName,
@@ -133,11 +139,13 @@ export class HrAssignRoleFormComponent implements OnInit {
   }
 
   closePopup(): void {
+    // After confirmation, return to the assigned-role list so the new row is visible.
     this.submitted = false;
     this.router.navigate(['/hr-assigned']);
   }
 
   resetForm(): void {
+    // Clear both form fields and module checkboxes so no previous selection leaks into a new role.
     this.form = {
       employeeId: '',
       employeeName: '',
@@ -162,10 +170,12 @@ export class HrAssignRoleFormComponent implements OnInit {
   }
 
   backToList(): void {
+    // The back action returns to the pending queue where role assignment starts.
     this.router.navigate(['/hr-pending']);
   }
 
   private toDateInputValue(dateValue: string): string {
+    // Native date controls require yyyy-mm-dd, while the seed data is displayed as text dates.
     const parsedDate = new Date(dateValue);
 
     if (Number.isNaN(parsedDate.getTime())) {

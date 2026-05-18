@@ -1,3 +1,4 @@
+/* Page-local styles for the HR audit activity screen. */
 :host {
   display: block;
   min-height: 100vh;
@@ -6,6 +7,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Shared sidebar plus content area matches the other HR pages. */
 .hr-layout {
   min-height: 100vh;
   display: grid;
@@ -37,6 +39,7 @@
   color: #2f2f2f;
 }
 
+/* Toolbar controls search plus the department/role filtering mode. */
 .toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -88,6 +91,7 @@
   box-shadow: 0 0 0 2px rgba(0, 71, 119, 0.12);
 }
 
+/* The table card contains the audit log and handles overflow for many columns. */
 .table-card {
   width: min(100%, 940px);
   overflow-x: auto;
@@ -132,6 +136,7 @@ td:first-child {
   gap: 2px;
 }
 
+/* Result badges map audit outcomes to clear colors in the final column. */
 .result-badge {
   display: inline-flex;
   align-items: center;
@@ -166,6 +171,7 @@ td:first-child {
   color: #777777;
 }
 
+/* Mobile spacing keeps filters and the audit table usable on small screens. */
 @media (max-width: 720px) {
   .hr-layout {
     grid-template-columns: 88px 1fr;

@@ -2,9 +2,11 @@ import { Component } from '@angular/core';
 import { SharedNavbarComponent } from '../../../../shared/components/shared-navbar/shared-navbar';
 import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
 
+// Result and filter unions restrict the table to the badge/filter states it knows how to render.
 export type AuditResult = 'Success' | 'Rejected' | 'Pending';
 export type AuditFilterMode = 'department' | 'role';
 
+// AuditLogEntry describes one HR action so the template can display a readable audit trail.
 export interface AuditLogEntry {
   date: string;
   time: string;
@@ -26,10 +28,12 @@ export interface AuditLogEntry {
   styleUrls: ['./myasset.css'],
 })
 export class HrMyAssetComponent {
+  // Filter state is local because this audit screen only searches the in-memory demo list.
   searchTerm = '';
   filterMode: AuditFilterMode = 'department';
   selectedFilter = '';
 
+  // Demo audit rows show how HR activity will look once connected to real audit data.
   readonly auditLogs: AuditLogEntry[] = [
     {
       date: '2026-02-13',
@@ -94,6 +98,7 @@ export class HrMyAssetComponent {
   ];
 
   get filteredAuditLogs(): AuditLogEntry[] {
+    // Search is broad, while selectedFilter narrows by either department or role.
     const term = this.searchTerm.trim().toLowerCase();
     const selectedFilter = this.selectedFilter.trim().toLowerCase();
 
@@ -120,6 +125,7 @@ export class HrMyAssetComponent {
   }
 
   get filterOptions(): string[] {
+    // The second dropdown changes its options when the user switches between department and role.
     const options = this.auditLogs.map((entry) => entry[this.filterMode]).filter(Boolean);
 
     return Array.from(new Set(options)).sort((first, second) => first.localeCompare(second));
@@ -133,6 +139,7 @@ export class HrMyAssetComponent {
   updateFilterMode(event: Event): void {
     const select = event.target as HTMLSelectElement;
     this.filterMode = select.value as AuditFilterMode;
+    // Reset the selected value because a department option is not valid for role mode.
     this.selectedFilter = '';
   }
 

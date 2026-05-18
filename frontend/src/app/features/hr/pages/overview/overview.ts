@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { SharedNavbarComponent } from '../../../../shared/components/shared-navbar/shared-navbar';
 import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
 
+// OverviewStat keeps the statistic cards small and consistent in the template.
 export interface OverviewStat {
   label: string;
   value: number;
 }
 
+// DivisionUserCount powers the division list without tying the template to a backend shape.
 export interface DivisionUserCount {
   division: string;
   users: number;
@@ -20,6 +22,7 @@ export interface DivisionUserCount {
   styleUrls: ['./overview.css'],
 })
 export class HrOverviewComponent {
+  // Static numbers give HR a dashboard preview until these totals are wired to real services.
   readonly stats: OverviewStat[] = [
     {
       label: 'Pending to Assign Roles',
@@ -31,6 +34,7 @@ export class HrOverviewComponent {
     },
   ];
 
+  // Division rows are kept as data so the template can render the list with one @for block.
   readonly usersByDivision: DivisionUserCount[] = [
     { division: 'Information Technology', users: 212 },
     { division: 'Industrial Services', users: 23 },

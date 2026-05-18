@@ -4,6 +4,7 @@ import { SharedNavbarComponent } from '../../../../shared/components/shared-navb
 import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
 import { HrAssignmentService, PendingRoleUser } from '../../services/hr-assignment.service';
 
+// PendingRoleView adds UI-only values that help HR prioritize each pending employee.
 interface PendingRoleView extends PendingRoleUser {
   designation: string;
   suggestedRole: string;
@@ -22,12 +23,14 @@ export class HrPendingComponent {
   private router = inject(Router);
   private hrAssignmentService = inject(HrAssignmentService);
 
+  // Native input/select values are mirrored here so filtering is instant and local to the page.
   searchTerm = '';
   selectedDepartment = '';
   selectedStatus = '';
   selectedRole = '';
   selectedDate = '';
 
+  // The pending list is seed data enriched with status and priority badges for the table.
   readonly pendingUsers: PendingRoleView[] = this.hrAssignmentService.pendingUsers.map(
     (user, index) => ({
       ...user,
@@ -39,6 +42,7 @@ export class HrPendingComponent {
   );
 
   get departments(): string[] {
+    // Options are generated from the visible data so new departments appear automatically.
     return this.uniqueSorted(this.pendingUsers.map((user) => user.department));
   }
 
@@ -53,6 +57,7 @@ export class HrPendingComponent {
   get filteredUsers(): PendingRoleView[] {
     const term = this.searchTerm.trim().toLowerCase();
 
+    // Text search and dropdown filters are combined so HR can narrow long request lists quickly.
     return this.pendingUsers.filter((user) => {
       const matchesSearch =
         !term ||
@@ -82,6 +87,7 @@ export class HrPendingComponent {
   }
 
   get pendingCount(): number {
+    // The dashboard card counts the same pending records shown in the table.
     return this.pendingUsers.filter((user) => user.statusLabel === 'Pending').length;
   }
 
@@ -106,6 +112,7 @@ export class HrPendingComponent {
   }
 
   clearFilters(): void {
+    // Clearing restores the unfiltered queue before HR starts another review pass.
     this.searchTerm = '';
     this.selectedDepartment = '';
     this.selectedStatus = '';
@@ -114,11 +121,13 @@ export class HrPendingComponent {
   }
 
   openAssignForm(userId: string): void {
+    // Save the selected pending row, then the form page reads it back and pre-fills fields.
     this.hrAssignmentService.selectPendingUser(userId);
     this.router.navigate(['/hr-assign-role']);
   }
 
   private getDesignation(user: PendingRoleUser): string {
+    // Designations are mapped from departments for demo data until this comes from the API.
     const designations: Record<string, string> = {
       Finance: 'Account Executive',
       'Human Resource': 'HR Executive',
@@ -132,7 +141,8 @@ export class HrPendingComponent {
   }
 
   private getPriority(index: number): 'High' | 'Medium' | 'Low' {
-    const priorities: Array<'High' | 'Medium' | 'Low'> = [
+    // Cycling priority values lets the table show the different badge styles.
+    const priorities: ('High' | 'Medium' | 'Low')[] = [
       'High',
       'Medium',
       'Medium',
@@ -144,10 +154,12 @@ export class HrPendingComponent {
   }
 
   private uniqueSorted(values: string[]): string[] {
+    // Set removes duplicates; localeCompare gives stable alphabetical dropdowns.
     return Array.from(new Set(values)).sort((first, second) => first.localeCompare(second));
   }
 
   private toDateInputValue(dateValue: string): string {
+    // Convert display dates into the yyyy-mm-dd value used by native date inputs.
     const parsedDate = new Date(dateValue);
 
     if (Number.isNaN(parsedDate.getTime())) {

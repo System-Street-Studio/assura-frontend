@@ -1,10 +1,12 @@
 <div class="hr-layout">
+  <!-- Shared navigation keeps the form inside the same HR workspace frame. -->
   <app-shared-sidebar></app-shared-sidebar>
 
   <div class="main-area">
     <app-shared-navbar title="Human Resource"></app-shared-navbar>
 
     <section class="form-page" aria-labelledby="assign-title">
+      <!-- Header gives the form purpose and a direct return path to the pending queue. -->
       <div class="page-header">
         <div>
           <nav class="breadcrumbs" aria-label="Breadcrumb">
@@ -19,6 +21,7 @@
         <button class="back-button" type="button" (click)="backToList()">Back to List</button>
       </div>
 
+      <!-- Employee summary confirms which pending user is being assigned before editing fields. -->
       <article class="employee-card" aria-label="Employee summary">
         <div class="employee-grid">
           <div>
@@ -58,11 +61,13 @@
         </div>
       </article>
 
+      <!-- Template-driven form is used here because the page is simple and field state is local. -->
       <form class="assignment-layout" #assignForm="ngForm" (ngSubmit)="assignRole()">
         <div class="left-column">
           <section class="panel" aria-labelledby="assignment-info-title">
             <h2 id="assignment-info-title">Assignment Information</h2>
 
+            <!-- Required fields become the payload saved by HrAssignmentService.assignRole(). -->
             <div class="field-grid">
               <label>
                 <span>Employee ID *</span>
@@ -177,6 +182,7 @@
             <h2>Module Permissions</h2>
             <p class="section-note">Select modules accessible for this role.</p>
 
+            <!-- Each checkbox writes to permissionModules so selected access can be reviewed. -->
             <div class="module-grid">
               @for (module of permissionModules; track module.name) {
                 <label class="module-card">
@@ -221,6 +227,7 @@
         </div>
 
         <aside class="right-column">
+          <!-- Preview repeats the current choices so HR can verify the role before submitting. -->
           <section class="panel preview-panel" aria-labelledby="role-preview-title">
             <h2 id="role-preview-title">Role Preview</h2>
             <div class="preview-row">
@@ -241,6 +248,7 @@
             </p>
           </section>
 
+          <!-- Current roles is a placeholder for future employee role history. -->
           <section class="panel" aria-labelledby="current-roles-title">
             <h2 id="current-roles-title">Current Assigned Roles</h2>
             <div class="mini-table">
@@ -257,6 +265,7 @@
             </div>
           </section>
 
+          <!-- Notes capture optional HR context without blocking the assignment submit. -->
           <section class="panel" aria-labelledby="notes-title">
             <h2 id="notes-title">Notes</h2>
             <label class="notes-field">
@@ -283,6 +292,7 @@
   </div>
 
   @if (submitted) {
+    <!-- Confirmation appears after the service saves the role, then OK returns to Assigned Roles. -->
     <div class="popup-backdrop" role="presentation" (click)="closePopup()">
       <section
         class="success-popup"
@@ -290,6 +300,7 @@
         aria-modal="true"
         aria-labelledby="success-title"
         (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()"
       >
         <div class="success-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">

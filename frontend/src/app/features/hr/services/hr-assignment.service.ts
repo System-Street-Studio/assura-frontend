@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
+// PendingRoleUser represents employees waiting for HR to approve their system role.
 export interface PendingRoleUser {
   userId: string;
   name: string;
@@ -11,6 +12,7 @@ export interface PendingRoleUser {
   status: string;
 }
 
+// AssignedUser is the smaller shape needed by screens that only display confirmed roles.
 export interface AssignedUser {
   userId: string;
   name: string;
@@ -19,6 +21,7 @@ export interface AssignedUser {
   joinedDate: string;
 }
 
+// The form submits only the fields needed to create or replace an assigned role row.
 export interface RoleAssignmentPayload {
   employeeId: string;
   employeeName: string;
@@ -27,14 +30,17 @@ export interface RoleAssignmentPayload {
   effectiveDate: string;
 }
 
+// localStorage keys let this prototype keep assigned roles after a browser refresh.
 const ASSIGNED_USERS_KEY = 'hrAssignedUsers';
 const SELECTED_PENDING_USER_KEY = 'hrSelectedPendingUserId';
+// Old demo rows are filtered out so stale browser data does not reintroduce removed examples.
 const REMOVED_PLACEHOLDER_USER_IDS = new Set(['E977', 'E899', 'E900']);
 
 @Injectable({
   providedIn: 'root',
 })
 export class HrAssignmentService {
+  // Demo pending data drives the pending list until the backend endpoint is connected.
   readonly pendingUsers: PendingRoleUser[] = [
     {
       userId: 'E1223',
@@ -88,6 +94,7 @@ export class HrAssignmentService {
     },
   ];
 
+  // Default rows give the assigned screen useful content even before HR submits a new assignment.
   readonly defaultAssignedUsers: AssignedUser[] = [
     {
       userId: 'EMP001',
@@ -126,21 +133,26 @@ export class HrAssignmentService {
     },
   ];
 
+  // Signals notify every HR page immediately when the assigned-role list changes.
   readonly assignedUsers = signal<AssignedUser[]>(this.loadAssignedUsers());
 
+  // Finds one pending employee so the assign form can be pre-filled from the selected row.
   getPendingUser(userId: string): PendingRoleUser | undefined {
     return this.pendingUsers.find((user) => user.userId === userId);
   }
 
+  // Stores the row the HR user clicked before navigating to the assign form.
   selectPendingUser(userId: string): void {
     localStorage.setItem(SELECTED_PENDING_USER_KEY, userId);
   }
 
+  // Reads the selected row back after route navigation creates the form component.
   getSelectedPendingUser(): PendingRoleUser | undefined {
     const userId = localStorage.getItem(SELECTED_PENDING_USER_KEY);
     return userId ? this.getPendingUser(userId) : undefined;
   }
 
+  // Adds the new assignment first and removes any older row for the same employee.
   assignRole(payload: RoleAssignmentPayload): void {
     const assignedUser: AssignedUser = {
       userId: payload.employeeId,
@@ -156,6 +168,7 @@ export class HrAssignmentService {
     ];
 
     this.assignedUsers.set(nextUsers);
+    // Persisting mirrors the signal state so a refresh does not lose the submitted role.
     localStorage.setItem(ASSIGNED_USERS_KEY, JSON.stringify(nextUsers));
   }
 
@@ -167,6 +180,7 @@ export class HrAssignmentService {
     }
 
     try {
+      // Keep user-created rows, then append current defaults so demo data can evolve safely.
       const parsedUsers = (JSON.parse(savedUsers) as AssignedUser[]).filter(
         (user) => !REMOVED_PLACEHOLDER_USER_IDS.has(user.userId),
       );
@@ -175,6 +189,7 @@ export class HrAssignmentService {
 
       return [...savedCustomUsers, ...this.defaultAssignedUsers];
     } catch {
+      // Bad browser storage should not break the HR pages; fall back to the known seed data.
       return this.defaultAssignedUsers;
     }
   }
@@ -187,6 +202,7 @@ export class HrAssignmentService {
     const date = new Date(dateValue);
 
     if (Number.isNaN(date.getTime())) {
+      // If the browser sends an unexpected value, preserve it instead of hiding the data.
       return dateValue;
     }
 

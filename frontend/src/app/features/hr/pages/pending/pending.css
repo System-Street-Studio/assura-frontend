@@ -1,3 +1,4 @@
+/* Page-local styles for the Pending Role Assignments screen. */
 :host {
   display: block;
   height: 100vh;
@@ -8,6 +9,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Two-column shell keeps the shared sidebar fixed while queue content scrolls. */
 .hr-layout {
   height: 100vh;
   display: grid;
@@ -64,6 +66,7 @@
   font-size: 13px;
 }
 
+/* Dashboard cards show workload signals before HR reviews the detailed queue. */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -71,6 +74,7 @@
   margin-bottom: 16px;
 }
 
+/* Cards, filters, and tables share a surface style so the workflow feels connected. */
 .stat-card,
 .filter-panel,
 .table-card {
@@ -141,6 +145,7 @@
   text-decoration: none;
 }
 
+/* Filters are laid out as a compact review form for narrowing pending employees. */
 .filter-panel {
   display: grid;
   grid-template-columns: minmax(220px, 1.5fr) repeat(4, minmax(150px, 1fr)) auto;
@@ -202,6 +207,7 @@ select:focus {
   cursor: pointer;
 }
 
+/* The table area scrolls horizontally because the queue has many HR fields. */
 .table-card {
   padding: 14px 14px 20px;
 }
@@ -293,6 +299,7 @@ tbody tr:last-child td {
   font-weight: 800;
 }
 
+/* Badges make department, role, status, and priority readable at a glance. */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -368,6 +375,7 @@ tbody tr:last-child td {
   color: #728096;
 }
 
+/* Pagination is presentational until the queue is backed by server-side paging. */
 .pagination-row {
   margin-top: 18px;
 }
@@ -398,6 +406,7 @@ tbody tr:last-child td {
   cursor: not-allowed;
 }
 
+/* Responsive rules stack cards and filters before columns become too narrow. */
 @media (max-width: 1120px) {
   .stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

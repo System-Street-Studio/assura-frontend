@@ -1,3 +1,4 @@
+/* Page-local styles for the role assignment form. */
 :host {
   display: block;
   height: 100vh;
@@ -8,6 +9,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* The form uses the same shared HR frame as the list pages. */
 .hr-layout {
   height: 100vh;
   display: grid;
@@ -32,6 +34,7 @@
   box-sizing: border-box;
 }
 
+/* Header gives the form context and keeps the back action visible. */
 .page-header {
   display: flex;
   align-items: flex-start;
@@ -63,6 +66,7 @@
   font-size: 13px;
 }
 
+/* Form buttons share sizing so primary, secondary, and popup actions feel related. */
 .back-button,
 .primary-button,
 .secondary-button,
@@ -108,6 +112,7 @@
   transform: translateY(-1px);
 }
 
+/* Panels group related fields so HR can review each part of the assignment separately. */
 .employee-card,
 .panel {
   background: #ffffff;
@@ -116,6 +121,7 @@
   box-shadow: 0 10px 26px rgba(30, 51, 86, 0.08);
 }
 
+/* The employee card summarizes the selected pending user before fields are edited. */
 .employee-card {
   margin-bottom: 14px;
   padding: 16px 18px;
@@ -164,6 +170,7 @@ label span,
   color: #53627a;
 }
 
+/* Main form layout keeps editable fields wide and supporting preview content narrow. */
 .assignment-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(300px, 0.9fr);
@@ -189,6 +196,7 @@ label span,
   line-height: 1.2;
 }
 
+/* Field grids keep labels and controls aligned without hard-coding every row. */
 .field-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -282,6 +290,7 @@ input:disabled {
   margin: -8px 0 12px;
 }
 
+/* Permission cards make module access toggles easy to scan and click. */
 .module-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -315,6 +324,7 @@ input:disabled {
   line-height: 1.25;
 }
 
+/* Preview and mini-table styles repeat the current selection for final review. */
 .preview-panel p {
   margin: 14px 0 0;
   color: #56637a;
@@ -382,6 +392,7 @@ input:disabled {
   padding: 14px 0 0;
 }
 
+/* The popup blocks the page after submit so the saved assignment is clearly confirmed. */
 .popup-backdrop {
   position: fixed;
   inset: 0;
@@ -435,6 +446,7 @@ input:disabled {
   line-height: 1.5;
 }
 
+/* Responsive rules stack the form columns before fields become hard to read. */
 @media (max-width: 1120px) {
   .assignment-layout {
     grid-template-columns: 1fr;
