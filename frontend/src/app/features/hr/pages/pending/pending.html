@@ -6,74 +6,209 @@
 
     <section class="pending-page" aria-labelledby="pending-title">
       <div class="content-shell">
-        <h1 id="pending-title" class="page-title">Pending to Assign Roles</h1>
+        <div class="page-heading">
+          <nav class="breadcrumbs" aria-label="Breadcrumb">
+            <span>Home</span>
+            <span aria-hidden="true">/</span>
+            <span>Human Resource</span>
+            <span aria-hidden="true">/</span>
+            <span>Pending to Assign Roles</span>
+          </nav>
 
-        <div class="table-panel">
-          <table>
-            <thead>
-              <tr>
-                <th>User ID</th>
-                <th>Name</th>
-                <th>Joined Date</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              @for (user of pendingUsers; track user.userId) {
-                <tr
-                  tabindex="0"
-                  [class.show-details]="activeUserId === user.userId"
-                  (mouseenter)="showDetails(user.userId)"
-                  (mouseleave)="hideDetails()"
-                  (focusin)="showDetails(user.userId)"
-                  (focusout)="hideDetails()"
-                  (click)="openAssignForm(user.userId)"
-                >
-                  <td>{{ user.userId }}</td>
-                  <td>
-                    <span class="name-popover">
-                      <span class="name-trigger">{{ user.name }}</span>
-
-                      <span class="detail-card" role="tooltip">
-                        <span class="detail-header">
-                          <span class="detail-avatar">{{ user.name.charAt(0) }}</span>
-                          <span>
-                            <strong>{{ user.name }}</strong>
-                            <small>{{ user.userId }}</small>
-                          </span>
-                        </span>
-
-                        <span class="detail-grid">
-                          <span>
-                            <b>Email</b>
-                            {{ user.email }}
-                          </span>
-                          <span>
-                            <b>Department</b>
-                            {{ user.department }}
-                          </span>
-                          <span>
-                            <b>Requested Role</b>
-                            {{ user.requestedRole }}
-                          </span>
-                          <span>
-                            <b>Phone</b>
-                            {{ user.phone }}
-                          </span>
-                          <span>
-                            <b>Status</b>
-                            {{ user.status }}
-                          </span>
-                        </span>
-                      </span>
-                    </span>
-                  </td>
-                  <td>{{ user.joinedDate }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
+          <h1 id="pending-title">Pending to Assign Roles</h1>
+          <p>Review employees who are waiting for role assignment and take necessary action.</p>
         </div>
+
+        <div class="stats-grid" aria-label="Pending role overview">
+          <article class="stat-card blue">
+            <span class="stat-icon">ID</span>
+            <div>
+              <span>Pending Assignments</span>
+              <strong>{{ pendingUsers.length }}</strong>
+            </div>
+            <a routerLink="/hr-pending">View all</a>
+          </article>
+
+          <article class="stat-card green">
+            <span class="stat-icon">OK</span>
+            <div>
+              <span>Roles Assigned Today</span>
+              <strong>8</strong>
+            </div>
+            <a routerLink="/hr-assigned">View all</a>
+          </article>
+
+          <article class="stat-card purple">
+            <span class="stat-icon">HR</span>
+            <div>
+              <span>Active Employees</span>
+              <strong>128</strong>
+            </div>
+            <a routerLink="/hr-assigned">View all</a>
+          </article>
+
+          <article class="stat-card amber">
+            <span class="stat-icon">!</span>
+            <div>
+              <span>Pending Approvals</span>
+              <strong>{{ pendingCount }}</strong>
+            </div>
+            <a routerLink="/hr-pending">View all</a>
+          </article>
+        </div>
+
+        <section class="filter-panel" aria-label="Pending employee filters">
+          <label class="search-field">
+            <span>Search</span>
+            <input
+              type="search"
+              placeholder="Search by Employee ID or Name..."
+              [value]="searchTerm"
+              (input)="updateSearch($event)"
+            />
+          </label>
+
+          <label>
+            <span>Department</span>
+            <select [value]="selectedDepartment" (change)="updateDepartment($event)">
+              <option value="">All Departments</option>
+              @for (department of departments; track department) {
+                <option [value]="department">{{ department }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Status</span>
+            <select [value]="selectedStatus" (change)="updateStatus($event)">
+              <option value="">All Status</option>
+              @for (status of statuses; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Requested Role</span>
+            <select [value]="selectedRole" (change)="updateRole($event)">
+              <option value="">All Roles</option>
+              @for (role of requestedRoles; track role) {
+                <option [value]="role">{{ role }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Joined Date</span>
+            <input type="date" [value]="selectedDate" (input)="updateDate($event)" />
+          </label>
+
+          <button class="clear-button" type="button" (click)="clearFilters()">Clear Filters</button>
+        </section>
+
+        <section class="table-card" aria-label="Pending employees table">
+          <div class="table-toolbar">
+            <p>Showing {{ filteredUsers.length }} of {{ pendingUsers.length }} entries</p>
+            <div class="table-actions">
+              <button type="button">Export</button>
+              <button type="button" class="add-button">Add Request</button>
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Designation</th>
+                  <th>Joined Date</th>
+                  <th>Requested Role</th>
+                  <th>Suggested Role</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (user of filteredUsers; track user.userId) {
+                  <tr>
+                    <td>{{ user.userId }}</td>
+                    <td>
+                      <span class="employee-cell">
+                        <span class="avatar">{{ user.name.charAt(0) }}</span>
+                        <span>{{ user.name }}</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge department">{{ user.department }}</span>
+                    </td>
+                    <td>{{ user.designation }}</td>
+                    <td>{{ user.joinedDate }}</td>
+                    <td>
+                      <span class="badge requested">{{ user.requestedRole }}</span>
+                    </td>
+                    <td>
+                      <span class="badge suggested">{{ user.suggestedRole }}</span>
+                    </td>
+                    <td>
+                      <span class="badge status" [class.review]="user.statusLabel === 'Review'">
+                        {{ user.statusLabel }}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        class="badge priority"
+                        [class.medium]="user.priority === 'Medium'"
+                        [class.low]="user.priority === 'Low'"
+                      >
+                        {{ user.priority }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="action-group">
+                        <button
+                          class="assign-button"
+                          type="button"
+                          (click)="openAssignForm(user.userId)"
+                        >
+                          Assign
+                        </button>
+                        <button class="icon-button" type="button" aria-label="View employee">
+                          View
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td class="empty-state" colspan="10">No pending employees found</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination-row">
+            <label>
+              <span>Rows per page:</span>
+              <select>
+                <option>10</option>
+                <option>20</option>
+              </select>
+            </label>
+
+            <div class="pagination">
+              <button type="button" disabled>Previous</button>
+              <button type="button" class="active">1</button>
+              <button type="button">2</button>
+              <button type="button">3</button>
+              <button type="button">Next</button>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   </div>

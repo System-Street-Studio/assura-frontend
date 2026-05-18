@@ -8,14 +8,36 @@
       <div class="audit-shell">
         <h1 id="audit-title" class="page-title">HR My Assets</h1>
 
-        <label class="search-field" aria-label="Search audit logs">
-          <input
-            type="search"
-            placeholder="Search by HR Officer, Employee, or Status"
-            [value]="searchTerm"
-            (input)="updateSearch($event)"
-          />
-        </label>
+        <div class="toolbar" aria-label="Audit log filters">
+          <label class="search-field" aria-label="Search audit logs">
+            <input
+              type="search"
+              placeholder="Search by HR Officer, Employee, or Status"
+              [value]="searchTerm"
+              (input)="updateSearch($event)"
+            />
+          </label>
+
+          <label class="filter-field">
+            <span>View by</span>
+            <select [value]="filterMode" (change)="updateFilterMode($event)">
+              <option value="department">Department wise</option>
+              <option value="role">Role wise</option>
+            </select>
+          </label>
+
+          <label class="filter-field">
+            <span>{{ filterMode === 'department' ? 'Department' : 'Role' }}</span>
+            <select [value]="selectedFilter" (change)="updateSelectedFilter($event)">
+              <option value="">
+                All {{ filterMode === 'department' ? 'departments' : 'roles' }}
+              </option>
+              @for (option of filterOptions; track option) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+          </label>
+        </div>
 
         <div class="table-card">
           <table>

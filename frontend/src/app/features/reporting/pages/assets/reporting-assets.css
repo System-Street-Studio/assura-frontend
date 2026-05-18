@@ -1,0 +1,87 @@
+.list-card {
+  overflow: hidden;
+}
+
+.list-header,
+.asset-row {
+  display: grid;
+  grid-template-columns: 110px 100px 180px 110px 150px 150px 120px 110px 110px 120px;
+  gap: 16px;
+  align-items: center;
+  min-width: 1350px;
+}
+
+.list-header {
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.86);
+  color: #6b7280;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid rgba(33, 45, 68, 0.08);
+}
+
+.asset-row {
+  padding: 18px 22px;
+  border-top: 1px solid rgba(33, 45, 68, 0.06);
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.select-label,
+.asset-select,
+.product-cell,
+.person-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.person-cell {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.select-label input,
+.asset-select input {
+  accent-color: #0f766e;
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.asset-id {
+  color: #0f766e;
+}
+
+.product-thumb {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+}
+
+.product-thumb.monitor {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+}
+
+.product-thumb.phone {
+  background: linear-gradient(135deg, #fde68a, #fdba74);
+}
+
+.product-thumb.tablet {
+  background: linear-gradient(135deg, #e9d5ff, #c4b5fd);
+}
+
+.muted,
+.person-cell small {
+  color: #6b7280;
+}
+
+.list-card {
+  overflow-x: auto;
+}

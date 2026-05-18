@@ -1,0 +1,139 @@
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.stat-card {
+  padding: 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(33, 45, 68, 0.08);
+}
+
+.stat-card span {
+  display: block;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.stat-card strong {
+  font-size: 1.9rem;
+}
+
+.stat-card.success {
+  background: rgba(15, 118, 110, 0.12);
+}
+
+.stat-card.warning {
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.stat-card.danger {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.audit-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
+}
+
+.timeline-card,
+.table-card {
+  padding: 22px;
+}
+
+.timeline {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.timeline-dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: #0f766e;
+  box-shadow: 0 0 0 6px rgba(15, 118, 110, 0.12);
+}
+
+.timeline-item.flagged .timeline-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.16);
+}
+
+.timeline-item.failed .timeline-dot {
+  background: #dc2626;
+  box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.12);
+}
+
+.timeline-item p,
+.timeline-item small {
+  margin-top: 6px;
+}
+
+.timeline-item small,
+.table-row small {
+  color: #6b7280;
+}
+
+.audit-table {
+  margin-top: 18px;
+  overflow-x: auto;
+}
+
+.table-head,
+.table-row {
+  display: grid;
+  grid-template-columns: 120px 150px minmax(220px, 2fr) 110px 100px 120px 100px;
+  gap: 16px;
+  align-items: center;
+}
+
+.table-head {
+  padding: 0 0 12px;
+  color: #6b7280;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.table-row {
+  padding: 16px 0;
+  border-top: 1px solid rgba(33, 45, 68, 0.08);
+  font-size: 0.92rem;
+}
+
+.table-row div {
+  display: grid;
+  gap: 4px;
+}
+
+@media (max-width: 1200px) {
+  .audit-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

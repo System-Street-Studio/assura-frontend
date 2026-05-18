@@ -1,0 +1,82 @@
+<section class="asset-page">
+  <header class="asset-toolbar">
+    <div>
+      <h1>Asset List</h1>
+    </div>
+
+    <div class="toolbar-actions">
+      <label class="search-box">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" placeholder="Search assets..." />
+      </label>
+      <button class="filter-button" type="button">Bulk Edit</button>
+      <button class="filter-button" type="button">Columns</button>
+      <button class="filter-button" type="button">Add new asset</button>
+      <button class="new-button" type="button">
+        <span aria-hidden="true">+</span>
+        New
+      </button>
+      <button class="delete-button" type="button">
+        <span aria-hidden="true">×</span>
+        Delete
+      </button>
+    </div>
+  </header>
+
+  <div class="list-card">
+    <div class="list-header">
+      <label class="select-label">
+        <input type="checkbox" />
+        <span>{{ selectedCount }} selected</span>
+      </label>
+      <span>ID</span>
+      <span>Product</span>
+      <span>Status</span>
+      <span>Checked by</span>
+      <span>Assura Name</span>
+      <span>Serial</span>
+      <span>Warranty</span>
+      <span>End of Life</span>
+      <span>Code Number</span>
+    </div>
+
+    @for (asset of assets; track asset.id) {
+      <div class="asset-row">
+        <label class="asset-select">
+          <input type="checkbox" [checked]="asset.selected" />
+          <span class="color-dot" [style.background]="asset.swatch"></span>
+        </label>
+
+        <strong class="asset-id">{{ asset.id }}</strong>
+
+        <div class="product-cell">
+          <span class="product-thumb" [class]="asset.imageClass"></span>
+          <span>{{ asset.product }}</span>
+        </div>
+
+        <span class="status-pill" [class]="asset.status.toLowerCase()">
+          {{ asset.status }}
+        </span>
+
+        <div class="person-cell">
+          @if (asset.checkedBy) {
+            <span>{{ asset.checkedBy }}</span>
+            <small>{{ asset.checkedRole }}</small>
+          } @else {
+            <span class="muted">--</span>
+          }
+        </div>
+
+        <span>{{ asset.assuraName }}</span>
+        <span>{{ asset.serial }}</span>
+        <span>{{ asset.warranty }}</span>
+        <span>{{ asset.endOfLife }}</span>
+        <span>{{ asset.codeNumber }}</span>
+      </div>
+    }
+  </div>
+
+  <button class="help-button" type="button" aria-label="Open help">
+    <span aria-hidden="true">?</span>
+  </button>
+</section>

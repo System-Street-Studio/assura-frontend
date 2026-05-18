@@ -5,78 +5,280 @@
     <app-shared-navbar title="Human Resource"></app-shared-navbar>
 
     <section class="form-page" aria-labelledby="assign-title">
-      <div class="form-card">
-        <div class="form-header">
-          <h1 id="assign-title">Assign Role and Department</h1>
-          <p>Select the employee, department, and role to complete role assignment.</p>
+      <div class="page-header">
+        <div>
+          <nav class="breadcrumbs" aria-label="Breadcrumb">
+            <span>Home</span>
+            <span aria-hidden="true">/</span>
+            <span>Assign Role</span>
+          </nav>
+          <h1 id="assign-title">Assign Role</h1>
+          <p>Create role placements, review department fit, and confirm joined dates.</p>
         </div>
 
-        <form class="assign-form" #assignForm="ngForm" (ngSubmit)="assignRole()">
-          <label>
-            <span>Employee ID</span>
-            <input
-              type="text"
-              name="employeeId"
-              placeholder="E1223"
-              required
-              [(ngModel)]="form.employeeId"
-            />
-          </label>
-
-          <label>
-            <span>Employee Name</span>
-            <input
-              type="text"
-              name="employeeName"
-              placeholder="Enter employee name"
-              required
-              [(ngModel)]="form.employeeName"
-            />
-          </label>
-
-          <label>
-            <span>Department</span>
-            <select name="department" required [(ngModel)]="form.department">
-              <option value="" disabled>Select department</option>
-              @for (department of departments; track department) {
-                <option [value]="department">{{ department }}</option>
-              }
-            </select>
-          </label>
-
-          <label>
-            <span>Role</span>
-            <select name="role" required [(ngModel)]="form.role">
-              <option value="" disabled>Select role</option>
-              @for (role of roles; track role) {
-                <option [value]="role">{{ role }}</option>
-              }
-            </select>
-          </label>
-
-          <label>
-            <span>Effective Date</span>
-            <input type="date" name="effectiveDate" required [(ngModel)]="form.effectiveDate" />
-          </label>
-
-          <label class="full-width">
-            <span>Notes</span>
-            <textarea
-              name="note"
-              rows="4"
-              placeholder="Add assignment note"
-              [(ngModel)]="form.note"
-            ></textarea>
-          </label>
-
-          <div class="form-actions">
-            <button class="secondary-button" type="button" (click)="resetForm()">Clear</button>
-            <button class="primary-button" type="submit" [disabled]="assignForm.invalid">
-              Assign Role
-            </button>
-          </div>
-        </form>
+        <button class="back-button" type="button" (click)="backToList()">Back to List</button>
       </div>
+
+      <article class="employee-card" aria-label="Employee summary">
+        <div class="employee-grid">
+          <div>
+            <span>Employee ID</span>
+            <strong>{{ form.employeeId || 'Not selected' }}</strong>
+          </div>
+          <div>
+            <span>Employee Name</span>
+            <strong>{{ form.employeeName || 'Not selected' }}</strong>
+          </div>
+          <div>
+            <span>Status</span>
+            <strong class="status-pill">{{ selectedPendingUser?.status || 'Not selected' }}</strong>
+          </div>
+          <div>
+            <span>Department</span>
+            <strong>{{ form.department || 'Not selected' }}</strong>
+          </div>
+          <div>
+            <span>Role</span>
+            <strong>{{ form.role || 'Not selected' }}</strong>
+          </div>
+          <div>
+            <span>Joined Date</span>
+            <strong>{{
+              selectedPendingUser?.joinedDate || form.effectiveDate || 'Not selected'
+            }}</strong>
+          </div>
+          <div>
+            <span>Email</span>
+            <strong>{{ selectedPendingUser?.email || 'Not selected' }}</strong>
+          </div>
+          <div>
+            <span>Phone</span>
+            <strong>{{ selectedPendingUser?.phone || 'Not selected' }}</strong>
+          </div>
+        </div>
+      </article>
+
+      <form class="assignment-layout" #assignForm="ngForm" (ngSubmit)="assignRole()">
+        <div class="left-column">
+          <section class="panel" aria-labelledby="assignment-info-title">
+            <h2 id="assignment-info-title">Assignment Information</h2>
+
+            <div class="field-grid">
+              <label>
+                <span>Employee ID *</span>
+                <input
+                  type="text"
+                  name="employeeId"
+                  placeholder="Enter employee ID"
+                  required
+                  [(ngModel)]="form.employeeId"
+                />
+              </label>
+
+              <label>
+                <span>Employee Name *</span>
+                <input
+                  type="text"
+                  name="employeeName"
+                  placeholder="Enter employee name"
+                  required
+                  [(ngModel)]="form.employeeName"
+                />
+              </label>
+
+              <label>
+                <span>Department *</span>
+                <select name="department" required [(ngModel)]="form.department">
+                  <option value="" disabled>Select department</option>
+                  @for (department of departments; track department) {
+                    <option [value]="department">{{ department }}</option>
+                  }
+                </select>
+              </label>
+
+              <label>
+                <span>Role *</span>
+                <select name="role" required [(ngModel)]="form.role">
+                  <option value="" disabled>Select role</option>
+                  @for (role of roles; track role) {
+                    <option [value]="role">{{ role }}</option>
+                  }
+                </select>
+              </label>
+
+              <label>
+                <span>Access Level *</span>
+                <select name="accessLevel" required [(ngModel)]="form.accessLevel">
+                  <option value="" disabled>Select access level</option>
+                  @for (accessLevel of accessLevels; track accessLevel) {
+                    <option [value]="accessLevel">{{ accessLevel }}</option>
+                  }
+                </select>
+              </label>
+
+              <label>
+                <span>Employment Type</span>
+                <select name="employmentType" [(ngModel)]="form.employmentType">
+                  <option value="" disabled>Select employment type</option>
+                  @for (employmentType of employmentTypes; track employmentType) {
+                    <option [value]="employmentType">{{ employmentType }}</option>
+                  }
+                </select>
+              </label>
+
+              <label>
+                <span>Work Location / Branch</span>
+                <select name="workLocation" [(ngModel)]="form.workLocation">
+                  <option value="" disabled>Select work location</option>
+                  @for (workLocation of workLocations; track workLocation) {
+                    <option [value]="workLocation">{{ workLocation }}</option>
+                  }
+                </select>
+              </label>
+
+              <label>
+                <span>Supervisor / Reporting Manager</span>
+                <select name="supervisor" [(ngModel)]="form.supervisor">
+                  <option value="" disabled>Select supervisor</option>
+                  @for (supervisor of supervisors; track supervisor) {
+                    <option [value]="supervisor">{{ supervisor }}</option>
+                  }
+                </select>
+              </label>
+
+              <label>
+                <span>Joined Date *</span>
+                <input type="date" name="effectiveDate" required [(ngModel)]="form.effectiveDate" />
+              </label>
+
+              <label>
+                <span>Access Expiry Date</span>
+                <input type="date" name="expiryDate" [(ngModel)]="form.expiryDate" />
+              </label>
+
+              <label>
+                <span>Shift / Working Schedule</span>
+                <select name="schedule" [(ngModel)]="form.schedule">
+                  <option value="" disabled>Select schedule</option>
+                  @for (schedule of schedules; track schedule) {
+                    <option [value]="schedule">{{ schedule }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+
+            <label class="checkbox-line">
+              <input type="checkbox" name="approvalRequired" ngModel />
+              <span>Approval Required</span>
+            </label>
+
+            <div class="divider"></div>
+
+            <h2>Module Permissions</h2>
+            <p class="section-note">Select modules accessible for this role.</p>
+
+            <div class="module-grid">
+              @for (module of permissionModules; track module.name) {
+                <label class="module-card">
+                  <input
+                    type="checkbox"
+                    [name]="'module' + module.name"
+                    [(ngModel)]="module.selected"
+                  />
+                  <span>
+                    <strong>{{ module.name }}</strong>
+                    <small>{{ module.description }}</small>
+                  </span>
+                </label>
+              }
+            </div>
+
+            <div class="divider"></div>
+
+            <h2>Assignment Details</h2>
+            <div class="field-grid compact-grid">
+              <label>
+                <span>Assigned By</span>
+                <input type="text" value="HR Manager" disabled />
+              </label>
+
+              <label>
+                <span>Assigned Date</span>
+                <input type="date" name="assignedDate" [(ngModel)]="form.assignedDate" />
+              </label>
+
+              <label>
+                <span>Assignment Status</span>
+                <select name="assignmentStatus" [(ngModel)]="form.assignmentStatus">
+                  <option value="" disabled>Select status</option>
+                  @for (assignmentStatus of assignmentStatuses; track assignmentStatus) {
+                    <option [value]="assignmentStatus">{{ assignmentStatus }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <aside class="right-column">
+          <section class="panel preview-panel" aria-labelledby="role-preview-title">
+            <h2 id="role-preview-title">Role Preview</h2>
+            <div class="preview-row">
+              <span>Role</span>
+              <strong>{{ form.role || 'Select role' }}</strong>
+            </div>
+            <div class="preview-row">
+              <span>Department</span>
+              <strong>{{ form.department || 'Select department' }}</strong>
+            </div>
+            <div class="preview-row">
+              <span>Access Level</span>
+              <strong>{{ form.accessLevel || 'Select access' }}</strong>
+            </div>
+            <p>
+              The selected role and department will be assigned after confirmation. Permissions are
+              based on the modules selected in the assignment form.
+            </p>
+          </section>
+
+          <section class="panel" aria-labelledby="current-roles-title">
+            <h2 id="current-roles-title">Current Assigned Roles</h2>
+            <div class="mini-table">
+              <div class="mini-head">
+                <span>Role</span>
+                <span>Department</span>
+                <span>Status</span>
+              </div>
+              <div class="mini-row">
+                <span>-</span>
+                <span>-</span>
+                <span class="status-muted">None</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="notes-title">
+            <h2 id="notes-title">Notes</h2>
+            <label class="notes-field">
+              <textarea
+                name="note"
+                rows="4"
+                maxlength="250"
+                placeholder="Add assignment note (optional)"
+                [(ngModel)]="form.note"
+              ></textarea>
+              <span>{{ form.note.length }} / 250</span>
+            </label>
+          </section>
+        </aside>
+
+        <div class="form-actions">
+          <button class="secondary-button" type="button" (click)="resetForm()">Clear</button>
+          <button class="primary-button" type="submit" [disabled]="assignForm.invalid">
+            Assign Role
+          </button>
+        </div>
+      </form>
     </section>
   </div>
 
@@ -98,7 +300,8 @@
         <h2 id="success-title">Assigned Successfully</h2>
         <p>
           {{ form.employeeName || 'Selected employee' }} has been assigned to
-          {{ form.department || 'the selected department' }} as {{ form.role || 'the selected role' }}.
+          {{ form.department || 'the selected department' }} as
+          {{ form.role || 'the selected role' }}.
         </p>
 
         <button class="popup-button" type="button" (click)="closePopup()">OK</button>

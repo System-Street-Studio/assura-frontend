@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SharedNavbarComponent } from '../../../../shared/components/shared-navbar/shared-navbar';
 import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
-import { HrAssignmentService } from '../../services/hr-assignment.service';
+import { HrAssignmentService, PendingRoleUser } from '../../services/hr-assignment.service';
 
 export interface AssignRoleForm {
   employeeId: string;
@@ -11,6 +11,14 @@ export interface AssignRoleForm {
   department: string;
   role: string;
   effectiveDate: string;
+  accessLevel: string;
+  employmentType: string;
+  workLocation: string;
+  supervisor: string;
+  expiryDate: string;
+  schedule: string;
+  assignedDate: string;
+  assignmentStatus: string;
   note: string;
 }
 
@@ -46,15 +54,52 @@ export class HrAssignRoleFormComponent implements OnInit {
     'Intern',
   ];
 
+  readonly accessLevels = ['Full Control', 'Edit Access', 'View Only', 'Approval Only'];
+  readonly employmentTypes = ['Permanent', 'Contract', 'Probation', 'Internship'];
+  readonly workLocations = [
+    'Colombo - Head Office',
+    'Chennai - Head Office',
+    'Remote',
+    'Branch Office',
+  ];
+  readonly supervisors = ['HR Manager', 'Finance Manager', 'IT Manager', 'Operations Manager'];
+  readonly schedules = [
+    'General Shift (9 AM - 6 PM)',
+    'Morning Shift',
+    'Evening Shift',
+    'Flexible',
+  ];
+  readonly assignmentStatuses = ['Active', 'Pending', 'Temporary'];
+
+  readonly permissionModules = [
+    { name: 'Dashboard', description: 'View dashboard', selected: false },
+    { name: 'Assets', description: 'Manage assets', selected: false },
+    { name: 'Inventory', description: 'Manage inventory', selected: false },
+    { name: 'Procurement', description: 'Manage procurement', selected: false },
+    { name: 'Audit', description: 'Audit and compliance', selected: false },
+    { name: 'HR', description: 'Human resource', selected: false },
+    { name: 'Reports', description: 'View reports', selected: false },
+    { name: 'Settings', description: 'System settings', selected: false },
+  ];
+
   form: AssignRoleForm = {
     employeeId: '',
     employeeName: '',
     department: '',
     role: '',
     effectiveDate: '',
+    accessLevel: '',
+    employmentType: '',
+    workLocation: '',
+    supervisor: '',
+    expiryDate: '',
+    schedule: '',
+    assignedDate: '',
+    assignmentStatus: '',
     note: '',
   };
 
+  selectedPendingUser?: PendingRoleUser;
   submitted = false;
 
   ngOnInit(): void {
@@ -64,13 +109,15 @@ export class HrAssignRoleFormComponent implements OnInit {
       return;
     }
 
+    this.selectedPendingUser = selectedUser;
     this.form = {
+      ...this.form,
       employeeId: selectedUser.userId,
       employeeName: selectedUser.name,
       department: selectedUser.department,
       role: selectedUser.requestedRole,
-      effectiveDate: this.getTodayDate(),
-      note: '',
+      effectiveDate: this.toDateInputValue(selectedUser.joinedDate),
+      assignmentStatus: 'Pending',
     };
   }
 
@@ -97,12 +144,34 @@ export class HrAssignRoleFormComponent implements OnInit {
       department: '',
       role: '',
       effectiveDate: '',
+      accessLevel: '',
+      employmentType: '',
+      workLocation: '',
+      supervisor: '',
+      expiryDate: '',
+      schedule: '',
+      assignedDate: '',
+      assignmentStatus: '',
       note: '',
     };
+    this.permissionModules.forEach((module) => {
+      module.selected = false;
+    });
+    this.selectedPendingUser = undefined;
     this.submitted = false;
   }
 
-  private getTodayDate(): string {
-    return new Date().toISOString().slice(0, 10);
+  backToList(): void {
+    this.router.navigate(['/hr-pending']);
+  }
+
+  private toDateInputValue(dateValue: string): string {
+    const parsedDate = new Date(dateValue);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return '';
+    }
+
+    return parsedDate.toISOString().slice(0, 10);
   }
 }

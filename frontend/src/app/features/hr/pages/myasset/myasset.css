@@ -37,13 +37,30 @@
   color: #2f2f2f;
 }
 
-.search-field {
-  display: block;
-  width: 216px;
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
   margin-bottom: 18px;
 }
 
-.search-field input {
+.search-field {
+  display: block;
+  width: 216px;
+}
+
+.filter-field {
+  display: grid;
+  gap: 5px;
+  width: 156px;
+  color: #36454f;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.search-field input,
+.filter-field select {
   width: 100%;
   height: 30px;
   border: 1px solid #d8dce5;
@@ -61,7 +78,12 @@
   color: #8b909b;
 }
 
-.search-field input:focus {
+.filter-field select {
+  cursor: pointer;
+}
+
+.search-field input:focus,
+.filter-field select:focus {
   border-color: #004777;
   box-shadow: 0 0 0 2px rgba(0, 71, 119, 0.12);
 }
@@ -157,7 +179,9 @@ td:first-child {
     font-size: 20px;
   }
 
-  .search-field {
+  .toolbar,
+  .search-field,
+  .filter-field {
     width: min(100%, 260px);
   }
 }

@@ -3,6 +3,7 @@ import { SharedNavbarComponent } from '../../../../shared/components/shared-navb
 import { SharedSidebarComponent } from '../../../../shared/components/shared-sidebar/shared-sidebar';
 
 export type AuditResult = 'Success' | 'Rejected' | 'Pending';
+export type AuditFilterMode = 'department' | 'role';
 
 export interface AuditLogEntry {
   date: string;
@@ -26,6 +27,8 @@ export interface AuditLogEntry {
 })
 export class HrMyAssetComponent {
   searchTerm = '';
+  filterMode: AuditFilterMode = 'department';
+  selectedFilter = '';
 
   readonly auditLogs: AuditLogEntry[] = [
     {
@@ -92,32 +95,49 @@ export class HrMyAssetComponent {
 
   get filteredAuditLogs(): AuditLogEntry[] {
     const term = this.searchTerm.trim().toLowerCase();
+    const selectedFilter = this.selectedFilter.trim().toLowerCase();
 
-    if (!term) {
-      return this.auditLogs;
-    }
-
-    return this.auditLogs.filter((entry) =>
-      [
-        entry.date,
-        entry.time,
-        entry.officer,
-        entry.action,
-        entry.employee,
-        entry.department,
-        entry.role,
-        entry.device,
-        entry.notes,
-        entry.result,
-      ]
-        .join(' ')
-        .toLowerCase()
-        .includes(term),
+    return this.auditLogs.filter(
+      (entry) =>
+        (!selectedFilter || entry[this.filterMode].toLowerCase() === selectedFilter) &&
+        (!term ||
+          [
+            entry.date,
+            entry.time,
+            entry.officer,
+            entry.action,
+            entry.employee,
+            entry.department,
+            entry.role,
+            entry.device,
+            entry.notes,
+            entry.result,
+          ]
+            .join(' ')
+            .toLowerCase()
+            .includes(term)),
     );
+  }
+
+  get filterOptions(): string[] {
+    const options = this.auditLogs.map((entry) => entry[this.filterMode]).filter(Boolean);
+
+    return Array.from(new Set(options)).sort((first, second) => first.localeCompare(second));
   }
 
   updateSearch(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchTerm = input.value;
+  }
+
+  updateFilterMode(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.filterMode = select.value as AuditFilterMode;
+    this.selectedFilter = '';
+  }
+
+  updateSelectedFilter(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.selectedFilter = select.value;
   }
 }
