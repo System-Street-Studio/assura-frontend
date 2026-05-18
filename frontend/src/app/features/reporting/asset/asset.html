@@ -1,80 +1,579 @@
-<section class="asset-page">
-  <header class="asset-toolbar">
+<section class="asset-page" aria-labelledby="asset-title">
+
+  <!-- =========================================================
+       PAGE HEADER
+       Displays page title, subtitle, and action buttons.
+  ========================================================== -->
+  <header class="asset-header">
+
+    <!-- =========================================================
+         TITLE SECTION
+         Main heading and page description.
+    ========================================================== -->
     <div>
-      <h1>Asset List</h1>
+
+      <!-- Main page title -->
+      <h1 id="asset-title">Asset List</h1>
+
+      <!-- Subtitle/description -->
+      <p>Manage and monitor all assets in the system.</p>
     </div>
 
-    <div class="toolbar-actions">
-      <label class="search-box">
-        <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Search assets..." />
-      </label>
-      <button class="filter-button" type="button">Bulk Edit</button>
-      <button class="filter-button" type="button">Columns</button>
-      <button class="filter-button" type="button">Add new asset</button>
-      <button class="new-button" type="button">
-        <span aria-hidden="true">+</span>
-        New
+    <!-- =========================================================
+         HEADER ACTION BUTTONS
+         Used for quick actions on assets.
+    ========================================================== -->
+    <div class="header-actions">
+
+      <!-- Quick filter button -->
+      <button type="button">
+        Quick Filters
       </button>
-      <button class="delete-button" type="button">
-        <span aria-hidden="true">×</span>
-        Delete
+
+      <!-- QR scanning button -->
+      <button type="button">
+        Scan QR
+      </button>
+
+      <!-- Export asset list -->
+      <button type="button">
+        Export
+      </button>
+
+      <!-- Add new asset button -->
+      <button type="button" class="primary-button">
+        Add New Asset
       </button>
     </div>
   </header>
 
-  <div class="list-card">
-    <div class="list-header">
-      <label class="select-label">
-        <input type="checkbox" />
-        <span>{{ selectedCount }} selected</span>
-      </label>
-      <span>ID</span>
-      <span>Product</span>
-      <span>Status</span>
-      <span>Checked by</span>
-      <span>Assura Name</span>
-      <span>Serial</span>
-      <span>Warranty</span>
-      <span>End of Life</span>
-      <span>Code Number</span>
-    </div>
+  <!-- =========================================================
+       MAIN PAGE LAYOUT
+       Left side = asset table
+       Right side = asset details panel
+  ========================================================== -->
+  <div class="asset-layout">
 
-    <div class="asset-row" *ngFor="let asset of assets">
-      <label class="asset-select">
-        <input type="checkbox" [checked]="asset.selected" />
-        <span class="color-dot" [style.background]="asset.swatch"></span>
-      </label>
+    <!-- =========================================================
+         MAIN TABLE AREA
+    ========================================================== -->
+    <main class="table-area">
 
-      <strong class="asset-id">{{ asset.id }}</strong>
+      <!-- =========================================================
+           FILTER PANEL
+           Used to filter and search assets.
+      ========================================================== -->
+      <section class="filter-panel" aria-label="Asset filters">
 
-      <div class="product-cell">
-        <span class="product-thumb" [class]="asset.imageClass"></span>
-        <span>{{ asset.product }}</span>
+        <!-- =========================================================
+             SEARCH FIELD
+             Search assets by name, ID, etc.
+        ========================================================== -->
+        <label class="search-field">
+
+          <!-- Hidden accessibility label -->
+          <span>Search</span>
+
+          <!-- Search input -->
+          <input type="search" placeholder="Search assets..." />
+        </label>
+
+        <!-- =========================================================
+             STATUS FILTER
+        ========================================================== -->
+        <label>
+
+          <!-- Filter label -->
+          <span>Status</span>
+
+          <!-- Status dropdown -->
+          <select>
+            <option>All Status</option>
+          </select>
+        </label>
+
+        <!-- =========================================================
+             CATEGORY FILTER
+        ========================================================== -->
+        <label>
+
+          <!-- Filter label -->
+          <span>Category</span>
+
+          <!-- Category dropdown -->
+          <select>
+            <option>All Categories</option>
+          </select>
+        </label>
+
+        <!-- =========================================================
+             DEPARTMENT FILTER
+        ========================================================== -->
+        <label>
+
+          <!-- Filter label -->
+          <span>Department</span>
+
+          <!-- Department dropdown -->
+          <select>
+            <option>All Departments</option>
+          </select>
+        </label>
+
+        <!-- =========================================================
+             CHECKED BY FILTER
+        ========================================================== -->
+        <label>
+
+          <!-- Filter label -->
+          <span>Checked By</span>
+
+          <!-- Auditor dropdown -->
+          <select>
+            <option>All Auditors</option>
+          </select>
+        </label>
+      </section>
+
+      <!-- =========================================================
+           ASSET TABLE CARD
+      ========================================================== -->
+      <section class="table-card" aria-label="Assets table">
+
+        <!-- =========================================================
+             TABLE TOOLBAR
+             Bulk selection and actions.
+        ========================================================== -->
+        <div class="table-toolbar">
+
+          <!-- Selected item counter -->
+          <label class="select-label">
+
+            <!-- Select all checkbox -->
+            <input type="checkbox" />
+
+            <!-- Selected count -->
+            <span>{{ selectedCount }} selected</span>
+          </label>
+
+          <!-- =========================================================
+               BULK ACTION BUTTONS
+          ========================================================== -->
+          <div class="table-actions">
+
+            <!-- Assign assets -->
+            <button type="button">
+              Assign
+            </button>
+
+            <!-- Verify selected assets -->
+            <button type="button">
+              Verify
+            </button>
+
+            <!-- Export selected assets -->
+            <button type="button">
+              Export Selected
+            </button>
+          </div>
+        </div>
+
+        <!-- =========================================================
+             TABLE SCROLL CONTAINER
+             Enables horizontal scrolling on smaller screens.
+        ========================================================== -->
+        <div class="table-scroll">
+
+          <!-- =========================================================
+               ASSET TABLE
+          ========================================================== -->
+          <table>
+
+            <!-- =========================================================
+                 TABLE HEADER
+            ========================================================== -->
+            <thead>
+              <tr>
+
+                <!-- Checkbox column -->
+                <th aria-label="Select asset"></th>
+
+                <!-- Asset ID -->
+                <th>ID</th>
+
+                <!-- Asset name -->
+                <th>Asset</th>
+
+                <!-- Asset category -->
+                <th>Category</th>
+
+                <!-- Asset status -->
+                <th>Status</th>
+
+                <!-- Asset health -->
+                <th>Health</th>
+
+                <!-- Checked by -->
+                <th>Checked By</th>
+
+                <!-- Asset location -->
+                <th>Location</th>
+
+                <!-- Warranty -->
+                <th>Warranty</th>
+
+                <!-- End of life -->
+                <th>End of Life</th>
+
+                <!-- QR code -->
+                <th>QR Code</th>
+              </tr>
+            </thead>
+
+            <!-- =========================================================
+                 TABLE BODY
+                 Dynamic asset rows.
+            ========================================================== -->
+            <tbody>
+
+              <!-- Loop through assets -->
+              @for (asset of assets; track asset.id) {
+
+                <!-- =========================================================
+                     SINGLE ASSET ROW
+                ========================================================== -->
+                <tr
+                  class="asset-row"
+                  [class.active-row]="selectedAsset.id === asset.id"
+                  tabindex="0"
+                  (click)="selectAsset(asset)"
+                  (keydown.enter)="selectAsset(asset)"
+                >
+
+                  <!-- =========================================================
+                       SELECT CHECKBOX
+                  ========================================================== -->
+                  <td>
+                    <input
+                      type="checkbox"
+                      [checked]="asset.selected"
+                      (click)="$event.stopPropagation()"
+                    />
+                  </td>
+
+                  <!-- =========================================================
+                       ASSET ID
+                  ========================================================== -->
+                  <td>
+                    <strong class="asset-id">
+                      {{ asset.id }}
+                    </strong>
+                  </td>
+
+                  <!-- =========================================================
+                       ASSET PRODUCT INFO
+                  ========================================================== -->
+                  <td>
+
+                    <!-- Product image + title -->
+                    <span class="product-cell">
+
+                      <!-- Product thumbnail -->
+                      <span
+                        class="product-thumb"
+                        [class]="asset.imageClass"
+                      ></span>
+
+                      <!-- Product name -->
+                      <strong>{{ asset.product }}</strong>
+                    </span>
+                  </td>
+
+                  <!-- =========================================================
+                       CATEGORY
+                  ========================================================== -->
+                  <td>{{ asset.category }}</td>
+
+                  <!-- =========================================================
+                       STATUS PILL
+                  ========================================================== -->
+                  <td>
+
+                    <!-- Dynamic status styling -->
+                    <span
+                      class="status-pill"
+                      [class]="asset.status.toLowerCase().replace(' ', '-')"
+                    >
+                      {{ asset.status }}
+                    </span>
+                  </td>
+
+                  <!-- =========================================================
+                       HEALTH STATUS
+                  ========================================================== -->
+                  <td>
+
+                    <!-- Dynamic health pill -->
+                    <span
+                      class="health-pill"
+                      [class]="asset.health.toLowerCase()"
+                    >
+                      {{ asset.health }}
+                    </span>
+                  </td>
+
+                  <!-- =========================================================
+                       CHECKED BY INFO
+                  ========================================================== -->
+                  <td>
+
+                    <!-- Person details -->
+                    <span class="person-cell">
+
+                      <!-- If checked by exists -->
+                      @if (asset.checkedBy) {
+
+                        <!-- Auditor name -->
+                        <strong>{{ asset.checkedBy }}</strong>
+
+                        <!-- Auditor role -->
+                        <small>{{ asset.checkedRole }}</small>
+
+                      } @else {
+
+                        <!-- Empty value -->
+                        <strong>-</strong>
+                      }
+                    </span>
+                  </td>
+
+                  <!-- =========================================================
+                       LOCATION
+                  ========================================================== -->
+                  <td>{{ asset.location }}</td>
+
+                  <!-- =========================================================
+                       WARRANTY INFO
+                  ========================================================== -->
+                  <td>
+
+                    <!-- Warranty status -->
+                    <span
+                      class="warranty-text"
+                      [class.expired]="asset.warrantyStatus === 'Expired'"
+                    >
+                      {{ asset.warrantyStatus }}
+                    </span>
+
+                    <!-- Warranty remaining text -->
+                    <small>
+                      {{ asset.warranty.replace(asset.warrantyStatus, '').trim() }}
+                    </small>
+                  </td>
+
+                  <!-- =========================================================
+                       END OF LIFE DATE
+                  ========================================================== -->
+                  <td>{{ asset.endOfLife }}</td>
+
+                  <!-- =========================================================
+                       QR CODE
+                  ========================================================== -->
+                  <td>
+
+                    <!-- QR placeholder -->
+                    <span class="qr-box">
+                      QR
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- =========================================================
+         DETAILS PANEL
+         Displays selected asset information.
+    ========================================================== -->
+    <aside class="details-panel" aria-label="Selected asset details">
+
+      <!-- =========================================================
+           DETAILS HEADER
+      ========================================================== -->
+      <div class="details-header">
+
+        <!-- Selected asset ID -->
+        <h2>{{ selectedAsset.id }}</h2>
+
+        <!-- Close details button -->
+        <button type="button" aria-label="Close details">
+          X
+        </button>
       </div>
 
-      <span class="status-pill" [class]="asset.status.toLowerCase().replace(' ', '-')">
-        {{ asset.status }}
-      </span>
+      <!-- =========================================================
+           ASSET PREVIEW IMAGE
+      ========================================================== -->
+      <div class="asset-preview">
 
-      <div class="person-cell">
-        @if (asset.checkedBy) {
-          <span>{{ asset.checkedBy }}</span>
-          <small>{{ asset.checkedRole }}</small>
-        } @else {
-          <span class="muted">--</span>
-        }
+        <!-- Large preview device -->
+        <span
+          class="preview-device"
+          [class]="selectedAsset.imageClass"
+        ></span>
       </div>
 
-      <span>{{ asset.assuraName }}</span>
-      <span>{{ asset.serial }}</span>
-      <span>{{ asset.warranty }}</span>
-      <span>{{ asset.endOfLife }}</span>
-      <span>{{ asset.codeNumber }}</span>
-    </div>
+      <!-- =========================================================
+           ASSET TITLE + STATUS
+      ========================================================== -->
+      <div class="asset-title-row">
+
+        <!-- Product information -->
+        <div>
+
+          <!-- Product name -->
+          <h3>{{ selectedAsset.product }}</h3>
+
+          <!-- Asset status -->
+          <span
+            class="status-pill"
+            [class]="selectedAsset.status.toLowerCase().replace(' ', '-')"
+          >
+            {{ selectedAsset.status }}
+          </span>
+        </div>
+
+        <!-- Health indicator -->
+        <span
+          class="health-dot"
+          [class]="selectedAsset.health.toLowerCase()"
+        >
+          {{ selectedAsset.health }}
+        </span>
+      </div>
+
+      <!-- =========================================================
+           DETAIL LIST
+           Asset information fields.
+      ========================================================== -->
+      <dl class="detail-list">
+
+        <!-- Category -->
+        <div>
+          <dt>Category</dt>
+          <dd>{{ selectedAsset.category }}</dd>
+        </div>
+
+        <!-- Serial number -->
+        <div>
+          <dt>Serial Number</dt>
+          <dd>{{ selectedAsset.serial }}</dd>
+        </div>
+
+        <!-- Assura name -->
+        <div>
+          <dt>Assura Name</dt>
+          <dd>{{ selectedAsset.assuraName }}</dd>
+        </div>
+
+        <!-- Code number -->
+        <div>
+          <dt>Code Number</dt>
+          <dd>{{ selectedAsset.codeNumber }}</dd>
+        </div>
+
+        <!-- Purchase date -->
+        <div>
+          <dt>Purchase Date</dt>
+          <dd>{{ selectedAsset.purchaseDate }}</dd>
+        </div>
+
+        <!-- Purchase price -->
+        <div>
+          <dt>Purchase Price</dt>
+          <dd>{{ selectedAsset.purchasePrice }}</dd>
+        </div>
+
+        <!-- Checked by -->
+        <div>
+          <dt>Checked By</dt>
+          <dd>
+            {{ selectedAsset.checkedBy || '-' }}
+            {{ selectedAsset.checkedRole ? '(' + selectedAsset.checkedRole + ')' : '' }}
+          </dd>
+        </div>
+
+        <!-- Location -->
+        <div>
+          <dt>Location</dt>
+          <dd>{{ selectedAsset.location }}</dd>
+        </div>
+      </dl>
+
+      <!-- =========================================================
+           ASSET TIMELINE
+           Shows asset activity history.
+      ========================================================== -->
+      <section class="timeline-card" aria-labelledby="timeline-title">
+
+        <!-- Timeline title -->
+        <h3 id="timeline-title">
+          Asset Timeline
+        </h3>
+
+        <!-- Timeline list -->
+        <div class="timeline-list">
+
+          <!-- Loop through timeline items -->
+          @for (item of selectedAsset.timeline; track item.label + item.date) {
+
+            <!-- Timeline item -->
+            <article class="timeline-item">
+
+              <!-- Timeline colored dot -->
+              <span
+                class="timeline-dot"
+                [class]="item.tone"
+              ></span>
+
+              <!-- Timeline content -->
+              <div>
+
+                <!-- Timeline label -->
+                <strong>{{ item.label }}</strong>
+
+                <!-- Timeline detail -->
+                <small>{{ item.detail }}</small>
+              </div>
+
+              <!-- Timeline date -->
+              <time>{{ item.date }}</time>
+            </article>
+          }
+        </div>
+      </section>
+
+      <!-- =========================================================
+           FULL DETAILS BUTTON
+      ========================================================== -->
+      <button class="details-button" type="button">
+        View Full Details
+      </button>
+    </aside>
   </div>
 
-  <button class="help-button" type="button" aria-label="Open help">
-    <span aria-hidden="true">?</span>
+  <!-- =========================================================
+       HELP BUTTON
+       Floating help/support button.
+  ========================================================== -->
+  <button
+    class="help-button"
+    type="button"
+    aria-label="Open help"
+  >
+    ?
   </button>
 </section>

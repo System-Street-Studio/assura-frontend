@@ -1,298 +1,578 @@
+/* =========================================================
+   ROOT COMPONENT
+   Styles the entire Angular component container.
+
+   display:block
+   - makes component behave like block element
+
+   min-height:100%
+   - allows full page height
+
+   background
+   - overall page background color
+
+   font-family
+   - changes typography for whole page
+========================================================= */
 :host {
   display: block;
   min-height: 100%;
-  background: #f5f7f8;
-  color: #17232b;
-  font-family: 'Jost', Arial, sans-serif;
+  background: #f5f9ff;
+  color: #071936;
+  font-family: Inter, 'Segoe UI', Arial, sans-serif;
 }
 
+/* =========================================================
+   UNIVERSAL BOX SIZING
+
+   box-sizing:border-box
+   - padding and border included inside width/height
+
+   If removed:
+   - layouts and widths may overflow
+========================================================= */
+* {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   MAIN PAGE CONTAINER
+
+   padding
+   - controls page spacing
+
+   background gradient
+   - gives soft professional UI look
+========================================================= */
 .asset-page {
   min-height: 100%;
-  padding: 14px 18px 40px;
-  box-sizing: border-box;
   position: relative;
+  padding: 28px 28px 40px;
+  background: linear-gradient(180deg, #f8fbff 0%, #f4f8ff 100%);
 }
 
-.asset-toolbar {
+/* =========================================================
+   COMMON FLEX ALIGNMENTS
+
+   display:flex
+   - places items in row
+
+   align-items:center
+   - vertical alignment
+========================================================= */
+.asset-header,
+.header-actions,
+.table-toolbar,
+.table-actions,
+.details-header,
+.asset-title-row,
+.timeline-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+}
+
+/* =========================================================
+   HEADER SECTION
+
+   justify-content:space-between
+   - separates title and action buttons
+========================================================= */
+.asset-header {
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 12px;
+  gap: 18px;
+  margin-bottom: 20px;
 }
 
-.asset-toolbar h1 {
+/* =========================================================
+   REMOVE DEFAULT MARGINS
+========================================================= */
+h1,
+h2,
+h3,
+p {
   margin: 0;
+}
+
+/* =========================================================
+   MAIN PAGE TITLE
+
+   font-size
+   - controls title size
+
+   font-weight
+   - controls boldness
+========================================================= */
+h1 {
+  color: #081b42;
+  font-size: 27px;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+/* Page subtitle */
+.asset-header p {
+  margin-top: 8px;
+  color: #53647f;
   font-size: 14px;
-  font-weight: 800;
-}
-
-.toolbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.search-box {
-  width: 130px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0 8px;
-  border: 1px solid #e1e8ec;
-  border-radius: 4px;
-  background: #ffffff;
-  box-sizing: border-box;
-}
-
-.search-box span {
-  color: #7a878e;
-  font-size: 11px;
-}
-
-.search-box input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  font: inherit;
-  font-size: 9px;
-}
-
-.filter-button,
-.new-button,
-.delete-button {
-  height: 24px;
-  border: 0;
-  border-radius: 4px;
-  padding: 0 10px;
-  font: inherit;
-  font-size: 9px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.filter-button {
-  background: #ffffff;
-  border: 1px solid #e1e8ec;
-  color: #33424a;
-}
-
-.new-button {
-  background: #16a676;
-  color: #ffffff;
-}
-
-.delete-button {
-  background: #e21c2b;
-  color: #ffffff;
-}
-
-.new-button span,
-.delete-button span {
-  margin-right: 4px;
-}
-
-.list-card {
-  width: 100%;
-  overflow-x: auto;
-  background: #ffffff;
-  border: 1px solid #e1e8ec;
-  border-radius: 5px;
-}
-
-.list-header,
-.asset-row {
-  min-width: 1080px;
-  display: grid;
-  grid-template-columns: 72px 70px 130px 88px 130px 122px 108px 130px 132px 120px;
-  align-items: center;
-  column-gap: 10px;
-  box-sizing: border-box;
-}
-
-.list-header {
-  height: 34px;
-  padding: 0 12px;
-  color: #50616a;
-  border-bottom: 1px solid #e7edf1;
-  font-size: 9px;
-  font-weight: 800;
-}
-
-.asset-row {
-  min-height: 60px;
-  padding: 8px 12px;
-  border-bottom: 1px solid #e7edf1;
-  color: #1f2b33;
-  font-size: 9px;
-}
-
-.asset-row:last-child {
-  border-bottom: 0;
-}
-
-.select-label,
-.asset-select {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-input[type='checkbox'] {
-  width: 11px;
-  height: 11px;
-  margin: 0;
-  accent-color: #0f8c9a;
-}
-
-.color-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-  display: inline-block;
-}
-
-.asset-id {
-  font-size: 9px;
-}
-
-.product-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 800;
-}
-
-.product-thumb {
-  width: 24px;
-  height: 24px;
-  border-radius: 3px;
-  display: inline-block;
-  border: 1px solid #cdd7dd;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.12)),
-    #dce3e7;
-  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.08);
-}
-
-.product-thumb.laptop {
-  background:
-    linear-gradient(#27343b 0 55%, #b8c1c8 55% 68%, transparent 68%),
-    #e8eef1;
-}
-
-.product-thumb.phone {
-  background:
-    linear-gradient(90deg, transparent 28%, #26343d 28% 72%, transparent 72%),
-    #e8eef1;
-}
-
-.product-thumb.printer {
-  background:
-    linear-gradient(#34434b 0 42%, #e4eaee 42% 72%, #65747c 72%),
-    #f2f5f7;
-}
-
-.product-thumb.server {
-  background:
-    repeating-linear-gradient(45deg, #202a30 0 3px, #eef2f4 3px 6px),
-    #d8e0e4;
-}
-
-.product-thumb.desktop {
-  background:
-    linear-gradient(#c9d2d7 0 58%, #26343b 58% 70%, transparent 70%),
-    #eef2f4;
-}
-
-.product-thumb.tablet {
-  background:
-    linear-gradient(90deg, transparent 18%, #26343b 18% 82%, transparent 82%),
-    #eceff2;
-}
-
-.status-pill {
-  width: max-content;
-  min-width: 54px;
-  padding: 4px 7px;
-  border-radius: 4px;
-  text-align: center;
-  font-size: 8px;
-  font-weight: 800;
-}
-
-.status-pill.assigned {
-  background: #eef3f5;
-  color: #1f2b33;
-}
-
-.status-pill.in-repair {
-  background: #f3f5f6;
-  color: #1f2b33;
-}
-
-.status-pill.available {
-  background: #eef7f1;
-  color: #19764a;
-}
-
-.status-pill.retired {
-  background: #ef3348;
-  color: #ffffff;
-}
-
-.person-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.person-cell span {
-  font-weight: 800;
-}
-
-.person-cell small {
-  color: #66767f;
-  font-size: 8px;
   font-weight: 700;
 }
 
-.muted {
-  color: #7c8c94;
+/* =========================================================
+   FORM ELEMENT FONT RESET
+========================================================= */
+button,
+input,
+select {
+  font: inherit;
 }
 
+/* Makes cursor become pointer */
+button {
+  cursor: pointer;
+}
+
+/* =========================================================
+   HEADER ACTION BUTTONS
+
+   flex-wrap
+   - moves buttons to next line on small screens
+========================================================= */
+.header-actions {
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   BUTTON STYLES
+
+   border-radius
+   - rounded corners
+
+   box-shadow
+   - soft elevation effect
+========================================================= */
+.header-actions button,
+.table-actions button,
+.details-button {
+  min-height: 38px;
+  border: 1px solid #cad8ea;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #0f285c;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: 0;
+  box-shadow: 0 8px 20px rgba(18, 47, 88, 0.05);
+}
+
+/* =========================================================
+   PRIMARY BUTTON
+
+   background
+   - main action color
+========================================================= */
+.header-actions .primary-button,
+.details-button {
+  border-color: #0f68df;
+  background: #0f68df;
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(15, 104, 223, 0.22);
+}
+
+/* =========================================================
+   MAIN PAGE LAYOUT
+
+   grid-template-columns
+   - left content + right details panel
+========================================================= */
+.asset-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 18px;
+  align-items: start;
+}
+
+/* Left content area */
+.table-area {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+/* =========================================================
+   CARD STYLING
+
+   Used for filter panel, table, and details card
+========================================================= */
+.filter-panel,
+.table-card,
+.details-panel {
+  border: 1px solid #dfe7f2;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(10, 37, 82, 0.06);
+}
+
+/* =========================================================
+   FILTER PANEL GRID
+
+   Creates responsive filter form layout
+========================================================= */
+.filter-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(150px, 1fr));
+  gap: 14px;
+  align-items: end;
+  padding: 16px;
+}
+
+/* =========================================================
+   LABEL STYLING
+========================================================= */
+label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: #243754;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+/* =========================================================
+   ACCESSIBILITY SEARCH LABEL
+
+   Hides label visually but keeps it for screen readers
+========================================================= */
+.search-field span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* =========================================================
+   INPUT & SELECT FIELDS
+
+   outline:none
+   - removes browser default border
+========================================================= */
+input,
+select {
+  width: 100%;
+  height: 36px;
+  min-width: 0;
+  border: 1px solid #cfd8e6;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #14213b;
+  padding: 0 11px;
+  font-size: 12px;
+  outline: none;
+}
+
+/* Placeholder text color */
+input::placeholder {
+  color: #8b96aa;
+}
+
+/* =========================================================
+   INPUT FOCUS EFFECT
+
+   box-shadow
+   - blue glow when focused
+========================================================= */
+input:focus,
+select:focus {
+  border-color: #0065d8;
+  box-shadow: 0 0 0 3px rgba(0, 101, 216, 0.12);
+}
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+.table-card {
+  padding: 14px;
+}
+
+/* =========================================================
+   TOOLBAR SECTION
+========================================================= */
+.table-toolbar {
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+/* =========================================================
+   SELECT LABEL
+
+   inline-flex
+   - label + dropdown in same row
+========================================================= */
+.select-label {
+  display: inline-flex;
+  grid-template-columns: none;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Action buttons */
+.table-actions {
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   TABLE SCROLL
+
+   overflow-x:auto
+   - enables horizontal scroll
+========================================================= */
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid #dfe6f0;
+  border-radius: 7px;
+}
+
+/* =========================================================
+   TABLE STRUCTURE
+========================================================= */
+table {
+  width: 100%;
+  min-width: 1080px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+/* Table header background */
+thead {
+  background: #f3f6fb;
+}
+
+/* =========================================================
+   TABLE CELLS
+========================================================= */
+th,
+td {
+  min-height: 56px;
+  padding: 13px 12px;
+  border-bottom: 1px solid #e1e7f0;
+  text-align: left;
+  vertical-align: middle;
+  color: #1d2a44;
+  font-size: 12px;
+}
+
+/* Table header styling */
+th {
+  color: #4c5a70;
+  font-weight: 900;
+}
+
+/* Remove last row border */
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* =========================================================
+   CHECKBOX STYLE
+
+   accent-color
+   - changes checkbox color
+========================================================= */
+input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: #0f68df;
+}
+
+/* =========================================================
+   TABLE ROW INTERACTION
+========================================================= */
+.asset-row {
+  cursor: pointer;
+}
+
+/* Hover and active row */
+.asset-row:hover,
+.active-row {
+  background: #f7fbff;
+}
+
+/* Keyboard accessibility focus */
+.asset-row:focus-visible {
+  outline: 3px solid rgba(0, 101, 216, 0.18);
+  outline-offset: -3px;
+}
+
+/* =========================================================
+   ASSET ID STYLE
+========================================================= */
+.asset-id {
+  color: #081b42;
+  font-weight: 950;
+}
+
+/* =========================================================
+   PRODUCT CELL LAYOUT
+========================================================= */
+.product-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Product name */
+.product-cell strong {
+  color: #081b42;
+  font-weight: 950;
+}
+
+/* =========================================================
+   PRODUCT IMAGE PLACEHOLDER
+========================================================= */
+.product-thumb,
+.preview-device {
+  display: inline-block;
+  border: 1px solid #cdd7dd;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.12)), #dce3e7;
+}
+
+/* Small thumbnail */
+.product-thumb {
+  width: 44px;
+  height: 36px;
+  border-radius: 5px;
+}
+
+/* =========================================================
+   STATUS & HEALTH PILLS
+========================================================= */
+.status-pill,
+.health-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* Assigned asset */
+.status-pill.assigned {
+  background: #eaf2ff;
+  color: #0f68df;
+}
+
+/* Repair status */
+.status-pill.in-repair {
+  background: #fff0d6;
+  color: #df7d00;
+}
+
+/* Available asset */
+.status-pill.available {
+  background: #e8f8ef;
+  color: #16a85b;
+}
+
+/* Retired asset */
+.status-pill.retired {
+  background: #ffe2e5;
+  color: #df2634;
+}
+
+/* =========================================================
+   DETAILS PANEL
+
+   position:sticky
+   - stays visible while scrolling
+========================================================= */
+.details-panel {
+  position: sticky;
+  top: 16px;
+  min-height: 620px;
+  padding: 16px;
+}
+
+/* =========================================================
+   HELP BUTTON
+
+   position:fixed
+   - floating bottom-right button
+========================================================= */
 .help-button {
   position: fixed;
-  right: 22px;
-  bottom: 20px;
-  width: 30px;
-  height: 30px;
+  right: 24px;
+  bottom: 22px;
+  z-index: 20;
+  width: 38px;
+  height: 38px;
   border: 0;
   border-radius: 50%;
-  background: #08aeb0;
+  background: #11b7b2;
   color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  box-shadow: 0 8px 18px rgba(8, 174, 176, 0.25);
-  cursor: pointer;
+  font-size: 18px;
+  font-weight: 950;
+  box-shadow: 0 16px 30px rgba(17, 183, 178, 0.28);
 }
 
-@media (max-width: 860px) {
-  .asset-toolbar {
+/* =========================================================
+   RESPONSIVE DESIGN
+
+   Tablet layout changes
+========================================================= */
+@media (max-width: 1280px) {
+
+  .asset-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .details-panel {
+    position: static;
+    min-height: auto;
+  }
+
+  .filter-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE DESIGN
+========================================================= */
+@media (max-width: 720px) {
+
+  .asset-page {
+    padding: 20px 14px 32px;
+  }
+
+  .asset-header,
+  .table-toolbar {
+    align-items: flex-start;
     flex-direction: column;
   }
 
-  .toolbar-actions {
-    justify-content: flex-start;
+  .header-actions,
+  .table-actions {
+    width: 100%;
   }
 
-  .search-box {
-    width: 100%;
+  .header-actions button,
+  .table-actions button {
+    flex: 1 1 150px;
+  }
+
+  .filter-panel {
+    grid-template-columns: 1fr;
   }
 }
