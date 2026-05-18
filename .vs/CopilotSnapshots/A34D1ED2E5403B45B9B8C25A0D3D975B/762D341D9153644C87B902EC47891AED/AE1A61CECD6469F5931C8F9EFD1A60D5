@@ -1,0 +1,177 @@
+﻿import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartOptions } from 'chart.js';
+import { forkJoin } from 'rxjs';
+import { DashboardService } from '../../services/dashboard.service';
+import { Kpi, ChartDatasets, RecentActivity, WarrantyAlert } from '../../models/dashboard.model';
+import { ToastService } from '../../../../shared/services/toast.service';
+
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [CommonModule, RouterLink, MatIconModule, BaseChartDirective],
+  templateUrl: './dashboard.html',
+  styleUrls: ['./dashboard.css'],
+})
+export class DashboardComponent implements OnInit {
+  private svc = inject(DashboardService);
+  private toast = inject(ToastService);
+
+  loading = true;
+  kpis: Kpi = { totalAssets: 0, checkedOut: 0, available: 0, totalAssetValue: '$0', pendingRequests: 0, maintenanceDue: 0 };
+  charts!: ChartDatasets;
+  recentActivity: RecentActivity[] = [];
+  warrantyAlerts: WarrantyAlert[] = [];
+  anomalies = { ghostAssets: 0, missingAssets: 0, maintenanceDue: 0 };
+
+  today = new Date();
+
+  get utilizationRate(): number {
+    return this.kpis.totalAssets > 0
+      ? Math.round((this.kpis.checkedOut / this.kpis.totalAssets) * 100)
+      : 0;
+  }
+
+  get availableRate(): number {
+    return this.kpis.totalAssets > 0
+      ? Math.round((this.kpis.available / this.kpis.totalAssets) * 100)
+      : 0;
+  }
+
+  doughnutData!: ChartConfiguration<'doughnut'>['data'];
+  doughnutOptions: ChartOptions<'doughnut'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '65%',
+    plugins: {
+      legend: { position: 'right', labels: { boxWidth: 12, padding: 14, font: { family: 'Jost' } } },
+    },
+  };
+
+  barOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#6b7b7b', font: { family: 'Jost' } } },
+      y: { grid: { color: '#f0f4f4' }, ticks: { color: '#6b7b7b', font: { family: 'Jost' } } },
+    },
+    plugins: { legend: { display: false } },
+  };
+
+  lineData!: ChartConfiguration<'line'>['data'];
+  lineOptions: ChartOptions<'line'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#6b7b7b', font: { family: 'Jost' } } },
+      y: { grid: { color: '#f0f4f4' }, ticks: { color: '#6b7b7b', font: { family: 'Jost' } } },
+    },
+    plugins: { legend: { display: false } },
+    elements: {
+      line: { tension: 0.4 },
+      point: { radius: 4, hoverRadius: 6 },
+    },
+  };
+
+  assetsByStatusData!: ChartConfiguration<'bar'>['data'];
+  assetsByDepartmentData!: ChartConfiguration<'bar'>['data'];
+
+  ngOnInit(): void {
+    forkJoin({
+      kpis: this.svc.getKpis(),
+      charts: this.svc.getCharts(),
+      activity: this.svc.getRecentActivity(),
+      warranty: this.svc.getWarrantyAlerts(),
+    }).subscribe({
+      next: ({ kpis, charts, activity, warranty }: { kpis: Kpi; charts: ChartDatasets; activity: RecentActivity[]; warranty: WarrantyAlert[] }) => {
+        this.kpis = kpis;
+        this.charts = charts;
+        this.recentActivity = activity;
+        this.warrantyAlerts = warranty;
+        this.anomalies = charts.anomalies;
+        this.prepareCharts();
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.toast.error('Failed to load dashboard data');
+      },
+    });
+  }
+
+  formatTimeAgo(date: Date): string {
+    const now = Date.now();
+    const diff = now - date.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  }
+
+  formatActionLabel(action: string): string {
+    const map: Record<string, string> = {
+      checked_out: 'Checked Out',
+      checked_in: 'Checked In',
+      registered: 'Registered',
+      maintenance: 'Sent to Maintenance',
+      disposed: 'Disposed',
+      transferred: 'Transferred',
+    };
+    return map[action] || action;
+  }
+
+  getSeverityLabel(severity: string): string {
+    const map: Record<string, string> = { critical: 'Expiring Soon', warning: 'Upcoming', info: 'Scheduled' };
+    return map[severity] || severity;
+  }
+
+  private prepareCharts(): void {
+    this.doughnutData = {
+      labels: this.charts.assetsByCategory.labels,
+      datasets: [{
+        data: this.charts.assetsByCategory.data,
+        backgroundColor: this.charts.assetsByCategory.colors,
+        hoverOffset: 8,
+        borderWidth: 2,
+        borderColor: '#fff',
+      }],
+    };
+
+    this.assetsByStatusData = {
+      labels: this.charts.assetsByStatus.labels,
+      datasets: [{
+        data: this.charts.assetsByStatus.data,
+        backgroundColor: this.charts.assetsByStatus.colors,
+        borderRadius: 6,
+      }],
+    };
+
+    this.assetsByDepartmentData = {
+      labels: this.charts.assetsByDepartment.labels,
+      datasets: [{
+        data: this.charts.assetsByDepartment.data,
+        backgroundColor: this.charts.assetsByDepartment.colors,
+        borderRadius: 6,
+      }],
+    };
+
+    this.lineData = {
+      labels: this.charts.checkoutTrend.labels,
+      datasets: [{
+        data: this.charts.checkoutTrend.data,
+        borderColor: '#0b6c78',
+        backgroundColor: 'rgba(11, 108, 120, 0.08)',
+        fill: true,
+        pointBackgroundColor: '#0b6c78',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+      }],
+    };
+  }
+}

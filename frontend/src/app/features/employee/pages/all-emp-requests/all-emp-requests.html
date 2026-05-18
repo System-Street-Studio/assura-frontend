@@ -1,0 +1,95 @@
+<div class="container">
+  <!-- Back link and title -->
+  <h1 class="section-label">Requests </h1>
+  <a routerLink="/employee/requests-main" class="back-link">←</a>
+  <div class="header-row">
+    <h2 class="page-title">My All Requests</h2>
+
+    <!-- Search  -->
+    <div class="controls">
+
+      <div class="search-container">
+        <mat-icon class="search-icon">search</mat-icon>
+
+        <input type="text" placeholder="Search requests..." [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)" />
+      </div>
+
+
+
+      <!-- Filter -->
+      <div class="filter-container">
+
+        <button class="filter-btn" (click)="toggleMenu()">
+          Filter ({{ filterStatus() }}) <span class="arrow">▼</span>
+        </button>
+
+        @if (isMenuOpen()) {
+        <div class="filter-options">
+          <div class="option" (click)="setStatus('All')">All</div>
+          <div class="option" (click)="setStatus('Pending')">Pending</div>
+          <div class="option" (click)="setStatus('Approved')">Approved</div>
+          <div class="option" (click)="setStatus('Rejected')">Rejected</div>
+        </div>
+        }
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Table -->
+  <table class="requests-table">
+    <thead>
+      <tr>
+        <th>Request ID</th>
+        <th>Type</th>
+        <th>Submitted Date</th>
+        <th>Submitted By</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- requests -->
+      @for (req of paginatedRequests(); track req.id) {
+      <tr>
+        <td>{{ req.id }}</td>
+        <td>{{ req.requestType }}</td>
+        <td>{{ req.submittedDate | date:'yyyy-MM-dd' }}</td>
+        <td>{{ req.submittedBy }}</td>
+        <td>
+          <span [class]="'priority-label ' + getPriorityClass(req.priority)">
+            {{ req.priority }}
+          </span>
+        </td>
+        <!-- Status with colored badge -->
+        <td>
+          <span [class]="'status-badge ' + getStatusClass(req.status)">
+            {{ req.status }}
+          </span>
+        </td>
+
+        <!-- Actions -->
+        <td class="actions">
+          <button class="btn-view">
+            <mat-icon class="eye">visibility</mat-icon> View Details
+          </button>
+
+          @if (req.status === 'Pending') {
+          <button class="btn-cancel" (click)="cancelRequest(req.id)">
+            <mat-icon class="close">close</mat-icon> Cancel
+          </button>
+          }
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <app-pagination [currentPage]="currentPage()" [totalPages]="totalPages()" [pageNumbers]="pageNumbers()"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
+</div>

@@ -1,0 +1,96 @@
+<div class="buyer-container">
+    <div class="header-section">
+        <div class="title-area">
+            <h1>Buyers</h1>
+            <p>Manage your vendor and supplier relationships</p>
+        </div>
+        <button class="add-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Buyer
+        </button>
+    </div>
+
+    <div class="buyer-grid">
+        <div class="buyer-card" *ngFor="let buyer of buyers" (click)="selectBuyer(buyer)">
+            <div class="buyer-avatar">
+                <span>{{ buyer.name.charAt(0) }}</span>
+            </div>
+            <div class="buyer-info">
+                <div class="buyer-top">
+                    <h3>{{ buyer.name }}</h3>
+                    <span class="buyer-status" [ngClass]="buyer.status.toLowerCase()">{{ buyer.status }}</span>
+                </div>
+                <p class="buyer-contact">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    {{ buyer.contact }}
+                </p>
+                <p class="buyer-category">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                        <line x1="7" y1="7" x2="7.01" y2="7" />
+                    </svg>
+                    {{ buyer.category }}
+                </p>
+                <div class="buyer-actions-row">
+                    <a class="email-link" href="mailto:{{ buyer.email }}">{{ buyer.email }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="detail-overlay" *ngIf="selectedBuyer" (click)="closeDetail()">
+        <div class="detail-card" (click)="$event.stopPropagation()">
+            <button class="detail-close-x" (click)="closeDetail()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="detail-body">
+                <div class="detail-avatar">
+                    <span>{{ selectedBuyer.name.charAt(0) }}</span>
+                </div>
+
+                <div class="detail-name-row">
+                    <h2>{{ selectedBuyer.name }}</h2>
+                    <span class="buyer-status" [ngClass]="selectedBuyer.status.toLowerCase()">{{ selectedBuyer.status
+                        }}</span>
+                </div>
+
+                <div class="detail-info-grid">
+                    <div class="detail-info-item">
+                        <label>Contact Person</label>
+                        <span>{{ selectedBuyer.contact }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Category</label>
+                        <span>{{ selectedBuyer.category }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Email</label>
+                        <span>{{ selectedBuyer.email }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Phone</label>
+                        <span>{{ selectedBuyer.phone }}</span>
+                    </div>
+                </div>
+                <div class="detail-actions">
+                    <button class="close-detail-btn" (click)="closeDetail()">Close</button>
+                    <button class="contact-btn">Contact Buyer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

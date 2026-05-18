@@ -1,0 +1,79 @@
+<div class="acc-discarded-container">
+    <h1 class="page-title">Discarded</h1>
+
+    <div class="discarded-layout">
+        <div class="table-card">
+            <table class="discarded-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Division</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of discardedItems" (click)="selectItem(item)"
+                        [class.active-row]="selectedItem === item">
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.division }}</td>
+                        <td>{{ item.date }}</td>
+                    </tr>
+                    <tr *ngIf="discardedItems.length === 0">
+                        <td colspan="3" class="empty-row">No discarded items yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Detail Panel -->
+        <div class="detail-panel" *ngIf="selectedItem">
+            <div class="detail-panel-card">
+                <div class="detail-panel-header">
+                    <h3 class="detail-panel-name">{{ selectedItem.name }}</h3>
+                    <button class="btn-close-detail" (click)="closeDetail()">✕</button>
+                </div>
+                <hr class="detail-panel-divider" />
+
+                <div class="detail-panel-grid">
+                    <div class="detail-panel-item">
+                        <label>Division</label>
+                        <span>{{ selectedItem.division }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Date</label>
+                        <span>{{ selectedItem.date }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Asset Type</label>
+                        <span>{{ selectedItem.assetType }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Time</label>
+                        <span>{{ selectedItem.time }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Current User</label>
+                        <span>{{ selectedItem.currentUser }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Status</label>
+                        <span class="status-discarded">Discarded</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Value at Purchasing</label>
+                        <span>{{ selectedItem.valueAtPurchasing }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Current Value</label>
+                        <span>{{ selectedItem.currentValue }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-panel-note">
+                    <label>Special Note</label>
+                    <div class="detail-panel-note-box">{{ selectedItem.specialNote || 'No special note' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

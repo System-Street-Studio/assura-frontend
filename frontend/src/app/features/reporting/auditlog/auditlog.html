@@ -1,0 +1,289 @@
+<section class="audit-page">
+
+  <!-- =========================================================
+       PAGE HEADER
+       Contains page title, subtitle, search bar,
+       filters, and export button.
+  ========================================================== -->
+  <header class="audit-header">
+
+    <!-- =========================================================
+         TITLE SECTION
+         Displays page heading and short description.
+    ========================================================== -->
+    <div>
+
+      <!-- Main page title -->
+      <h1>Audit Log</h1>
+
+      <!-- Page description -->
+      <p>Track reporting, asset, export, and verification activity.</p>
+    </div>
+
+    <!-- =========================================================
+         HEADER ACTIONS
+         Search field and filter/action buttons.
+    ========================================================== -->
+    <div class="header-actions">
+
+      <!-- =========================================================
+           SEARCH FIELD
+           Used to search audit log entries.
+      ========================================================== -->
+      <label class="search-field">
+
+        <!-- Search icon -->
+        <span aria-hidden="true">⌕</span>
+
+        <!-- Search input -->
+        <input type="search" placeholder="Search audit log..." (input)="searchLogs($any($event.target).value)" />
+      </label>
+
+      <!-- =========================================================
+           DATE RANGE FILTER BUTTON
+           Filters logs based on selected date range.
+      ========================================================== -->
+      <button class="secondary-button" type="button" (click)="changeDateRange()">
+        Date Range
+      </button>
+
+      <!-- =========================================================
+           MODULE FILTER BUTTON
+           Filters logs based on selected module.
+      ========================================================== -->
+      <button class="secondary-button" type="button" (click)="changeModuleFilter()">
+        Module
+      </button>
+
+      <!-- =========================================================
+           EXPORT LOG BUTTON
+           Downloads or exports audit logs.
+      ========================================================== -->
+      <button class="primary-button" type="button" (click)="exportLogs()">
+        Export Log
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       STATISTICS GRID
+       Displays audit summary cards.
+  ========================================================== -->
+  <div class="stats-grid">
+
+    <!-- Loop through stat cards dynamically -->
+      <article *ngFor="let stat of stats" class="stat-card" [class]="stat.tone">
+
+        <!-- Stat title -->
+        <span>{{ stat.label }}</span>
+
+        <!-- Stat value -->
+        <strong>{{ stat.value }}</strong>
+      </article>
+  </div>
+
+  <!-- =========================================================
+       MAIN AUDIT LAYOUT
+       Contains recent activity timeline and audit trail table.
+  ========================================================== -->
+  <div class="audit-layout">
+
+    <!-- =========================================================
+         RECENT ACTIVITY TIMELINE
+         Displays latest audit activities.
+    ========================================================== -->
+    <section class="timeline-card">
+
+      <!-- Timeline section header -->
+      <div class="section-title">
+
+        <!-- Section title -->
+        <h2>Recent Activity</h2>
+
+        <!-- Refresh timeline button -->
+        <button type="button" (click)="refreshTimeline()">
+          Refresh
+        </button>
+      </div>
+
+      <!-- =========================================================
+           TIMELINE CONTAINER
+           Holds recent audit activity items.
+      ========================================================== -->
+      <div class="timeline">
+
+        <!-- Loop through first 4 recent logs -->
+          <article *ngFor="let log of filteredLogs.slice(0, 4)" class="timeline-item" [class]="log.status.toLowerCase()">
+
+            <!-- Timeline colored dot -->
+            <span class="timeline-dot" aria-hidden="true"></span>
+
+            <!-- Timeline content -->
+            <div>
+
+              <!-- Action title -->
+              <strong>{{ log.action }}</strong>
+
+              <!-- Action detail -->
+              <p>{{ log.detail }}</p>
+
+              <!-- Actor and time -->
+              <small>
+                {{ log.actor }} · {{ log.date }} {{ log.time }}
+              </small>
+            </div>
+          </article>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         AUDIT TRAIL TABLE
+         Displays complete audit records in table format.
+    ========================================================== -->
+    <section class="table-card">
+
+      <!-- Table section title -->
+      <div class="section-title">
+
+        <!-- Table heading -->
+        <h2>Audit Trail</h2>
+
+        <!-- =========================================================
+             TABLE ACTION BUTTONS
+             Used for filtering and downloading logs.
+        ========================================================== -->
+        <div class="table-actions">
+
+          <!-- Status filter -->
+          <button type="button" (click)="filterStatus()">
+            Status
+          </button>
+
+          <!-- Actor filter -->
+          <button type="button" (click)="filterActor()">
+            Actor
+          </button>
+
+          <!-- Download logs -->
+          <button type="button" (click)="downloadLogs()">
+            Download
+          </button>
+        </div>
+      </div>
+
+      <!-- =========================================================
+           AUDIT TABLE CONTAINER
+           Scrollable audit log table.
+      ========================================================== -->
+      <div class="audit-table">
+
+        <!-- =========================================================
+             TABLE HEADER
+             Column titles for audit logs.
+        ========================================================== -->
+        <div class="table-head">
+
+          <!-- Log time -->
+          <span>Time</span>
+
+          <!-- User/actor -->
+          <span>Actor</span>
+
+          <!-- Action performed -->
+          <span>Action</span>
+
+          <!-- Asset/reference -->
+          <span>Reference</span>
+
+          <!-- System module -->
+          <span>Module</span>
+
+          <!-- User IP -->
+          <span>IP Address</span>
+
+          <!-- Status -->
+          <span>Status</span>
+        </div>
+
+        <!-- =========================================================
+             TABLE ROWS
+             Loop through all audit log records.
+        ========================================================== -->
+          <div *ngFor="let log of filteredLogs" class="table-row">
+
+            <!-- =========================================================
+                 TIME COLUMN
+            ========================================================== -->
+            <div>
+
+              <!-- Log time -->
+              <strong>{{ log.time }}</strong>
+
+              <!-- Log date -->
+              <small>{{ log.date }}</small>
+            </div>
+
+            <!-- =========================================================
+                 ACTOR COLUMN
+            ========================================================== -->
+            <div>
+
+              <!-- Actor name -->
+              <strong>{{ log.actor }}</strong>
+
+              <!-- Actor role -->
+              <small>{{ log.role }}</small>
+            </div>
+
+            <!-- =========================================================
+                 ACTION COLUMN
+            ========================================================== -->
+            <span>{{ log.action }}</span>
+
+            <!-- =========================================================
+                 REFERENCE COLUMN
+                 Usually asset or record ID.
+            ========================================================== -->
+            <span>{{ log.asset }}</span>
+
+            <!-- =========================================================
+                 MODULE COLUMN
+                 System module related to activity.
+            ========================================================== -->
+            <span>{{ log.module }}</span>
+
+            <!-- =========================================================
+                 IP ADDRESS COLUMN
+            ========================================================== -->
+            <span>{{ log.ip }}</span>
+
+            <!-- =========================================================
+                 STATUS COLUMN
+                 Dynamic status pill styling.
+            ========================================================== -->
+            <span
+              class="status-pill"
+              [class]="log.status.toLowerCase()"
+            >
+              {{ log.status }}
+            </span>
+          </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- =========================================================
+       HELP BUTTON
+       Floating support/help access button.
+  ========================================================== -->
+  <button
+    class="help-button"
+    type="button"
+    aria-label="Open help"
+    (click)="openHelp()"
+  >
+
+    <!-- Help icon -->
+    <span aria-hidden="true">?</span>
+  </button>
+</section>

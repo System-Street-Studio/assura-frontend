@@ -1,0 +1,129 @@
+﻿import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { AssetService } from '../../services/asset.service';
+import { AssetDetail, AssetStatus } from '../../models/asset.model';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
+
+@Component({
+  selector: 'app-asset-form',
+  standalone: true,
+  imports: [CommonModule, FormsModule, MatIconModule, ResultOverlayComponent],
+  templateUrl: './asset-form.html',
+  styleUrls: ['./asset-form.css'],
+})
+export class AssetFormComponent implements OnInit {
+  private assetService = inject(AssetService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private location = inject(Location);
+  private toast = inject(ToastService);
+
+  mode: 'edit' | 'clone' | 'create' = 'edit';
+  assetId = '';
+  saving = false;
+  submitted = false;
+
+  showResult = false;
+  resultType: 'success' | 'error' = 'success';
+  resultTitle = '';
+  resultMessage = '';
+  private navigateTarget: string[] = [];
+
+  statuses: AssetStatus[] = ['Deployed', 'In Repair', 'Available', 'Retired'];
+
+  form: AssetDetail = {
+    id: '',
+    name: '',
+    assetId: '',
+    productName: '',
+    serial: '',
+    warranty: '',
+    endOfLife: '',
+    orderNumber: '',
+    album: '',
+    status: 'Available',
+  };
+
+  ngOnInit(): void {
+    this.mode = this.route.snapshot.data['mode'] || 'edit';
+    this.assetId = this.route.snapshot.paramMap.get('id') || '';
+
+    if (this.assetId) {
+      this.assetService.getAssetById(this.assetId).subscribe((a) => {
+        this.form = { ...a };
+        if (this.mode === 'clone') {
+          this.form.id = '';
+          this.form.assetId = '';
+          this.form.name = a.name + ' (Copy)';
+          this.form.productName = a.productName + ' (Copy)';
+        }
+      });
+    }
+  }
+
+  get pageTitle(): string {
+    if (this.mode === 'clone') return 'Clone Asset';
+    if (this.mode === 'create') return 'New Asset';
+    return 'Edit Asset';
+  }
+
+  onSave(): void {
+    this.submitted = true;
+    if (!this.form.productName.trim() || !this.form.serial.trim()) {
+      this.toast.warning('Please fill in all required fields');
+      return;
+    }
+    this.saving = true;
+
+    if (this.mode === 'clone') {
+      this.assetService.createAsset(this.form).subscribe((created) => {
+        this.saving = false;
+        this.showResultOverlay(
+          'success',
+          'Cloned!',
+          `"${created.productName}" has been created successfully.`,
+          ['/inventory/assets', created.id]
+        );
+      });
+    } else {
+      this.assetService.updateAsset(this.form).subscribe(() => {
+        this.saving = false;
+        this.showResultOverlay(
+          'success',
+          'Updated!',
+          `"${this.form.productName}" has been saved successfully.`,
+          ['/inventory/assets', this.form.id]
+        );
+      });
+    }
+  }
+
+  onCancel(): void {
+    this.location.back();
+  }
+
+  onResultClosed(): void {
+    this.showResult = false;
+    if (this.navigateTarget.length) {
+      this.router.navigate(this.navigateTarget);
+    }
+  }
+
+  private showResultOverlay(
+    type: 'success' | 'error',
+    title: string,
+    message: string,
+    navigateTo: string[]
+  ): void {
+    this.resultType = type;
+    this.resultTitle = title;
+    this.resultMessage = message;
+    this.navigateTarget = navigateTo;
+    this.showResult = true;
+    setTimeout(() => this.onResultClosed(), 2000);
+  }
+}

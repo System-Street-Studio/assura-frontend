@@ -1,0 +1,6300 @@
+{
+  "metadata": {
+    "exportedAt": "2026-02-24T11:31:23.102Z",
+    "componentName": "Accountant",
+    "totalElements": 406,
+    "nestingDepth": 5,
+    "plugin": "Figma to JSON Exporter"
+  },
+  "designTokens": {
+    "colors": {
+      "color-rgb(68, 68, 68)": "rgb(68, 68, 68)",
+      "color-rgb(239, 239, 239)": "rgb(239, 239, 239)",
+      "color-rgb(0, 188, 212)": "rgb(0, 188, 212)",
+      "color-rgb(0, 71, 119)": "rgb(0, 71, 119)",
+      "color-rgb(0, 0, 0)": "rgb(0, 0, 0)",
+      "color-rgb(255, 255, 255)": "rgb(255, 255, 255)",
+      "color-rgb(0, 175, 181)": "rgb(0, 175, 181)",
+      "color-rgb(163, 0, 0)": "rgb(163, 0, 0)",
+      "color-rgb(255, 119, 0)": "rgb(255, 119, 0)",
+      "color-rgb(239, 210, 141)": "rgb(239, 210, 141)",
+      "color-rgb(237, 242, 141)": "rgb(237, 242, 141)"
+    },
+    "fonts": {
+      "jost": {
+        "family": "Jost",
+        "sizes": {
+          "size-30": "30px",
+          "size-15": "15px",
+          "size-25": "25px",
+          "size-14": "14px",
+          "size-32": "32px",
+          "size-20": "20px",
+          "size-40": "40px"
+        },
+        "weights": {
+          "weight-700": "700",
+          "weight-400": "400"
+        }
+      },
+      "arial": {
+        "family": "Arial",
+        "sizes": {
+          "size-15": "15px"
+        },
+        "weights": {
+          "weight-400": "400"
+        }
+      }
+    },
+    "spacing": {
+      "gap-10": "10px",
+      "padding-top-76": "76px",
+      "padding-right-25": "25px",
+      "padding-bottom-76": "76px",
+      "padding-left-25": "25px",
+      "gap-148": "148px",
+      "padding-top-14": "14px",
+      "padding-right-19": "19px",
+      "padding-bottom-14": "14px",
+      "padding-left-19": "19px"
+    },
+    "effects": {
+      "shadow-4-4": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(0, 0, 0, 0.25)"
+      }
+    }
+  },
+  "structure": {
+    "name": "accountant",
+    "type": "SECTION",
+    "size": {
+      "w": 12371,
+      "h": 7923
+    },
+    "styles": {
+      "bg": "rgb(68, 68, 68)"
+    },
+    "children": [
+      {
+        "name": "accountant-dashboard",
+        "type": "FRAME",
+        "size": {
+          "w": 1280,
+          "h": 1007
+        },
+        "styles": {
+          "bg": "rgb(239, 239, 239)",
+          "layout": {
+            "direction": "row",
+            "gap": 0,
+            "align": {
+              "main": "start",
+              "cross": "start"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "rectangle-135",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 228,
+              "h": 1007
+            },
+            "styles": {
+              "bg": "rgb(0, 188, 212)"
+            }
+          },
+          {
+            "name": "rectangle-136",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 1052,
+              "h": 62
+            },
+            "styles": {
+              "bg": "rgb(0, 71, 119)"
+            }
+          },
+          {
+            "name": "profile",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 50,
+              "h": 50
+            }
+          },
+          {
+            "name": "overview",
+            "type": "TEXT",
+            "size": {
+              "w": 391,
+              "h": 45
+            },
+            "content": "Overview",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 30,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-149",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 610,
+              "h": 459
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "comment",
+            "type": "TEXT",
+            "size": {
+              "w": 67,
+              "h": 22
+            },
+            "content": "Comment",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "division",
+            "type": "TEXT",
+            "size": {
+              "w": 57,
+              "h": 22
+            },
+            "content": "Division",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 148,
+              "h": 22
+            },
+            "content": "Information technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "type": "TEXT",
+            "size": {
+              "w": 44,
+              "h": 22
+            },
+            "content": "Status",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "pending--waiting-for-confirmation-",
+            "type": "TEXT",
+            "size": {
+              "w": 228,
+              "h": 22
+            },
+            "content": "Pending (Waiting for Confirmation)",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "asset-type",
+            "type": "TEXT",
+            "size": {
+              "w": 78,
+              "h": 22
+            },
+            "content": "Asset Type",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "computer",
+            "type": "TEXT",
+            "size": {
+              "w": 65,
+              "h": 22
+            },
+            "content": "Computer",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "date",
+            "type": "TEXT",
+            "size": {
+              "w": 34,
+              "h": 22
+            },
+            "content": "Date",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "time",
+            "type": "TEXT",
+            "size": {
+              "w": 35,
+              "h": 22
+            },
+            "content": "Time",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "13-42",
+            "type": "TEXT",
+            "size": {
+              "w": 38,
+              "h": 22
+            },
+            "content": "13:42",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 231,
+              "h": 36
+            },
+            "content": "Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 25,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "line-43",
+            "type": "LINE",
+            "size": {
+              "w": 610,
+              "h": 0
+            },
+            "styles": {
+              "border": {
+                "width": 1,
+                "color": "rgb(0, 0, 0)"
+              }
+            }
+          },
+          {
+            "name": "line-41",
+            "type": "LINE",
+            "size": {
+              "w": 610,
+              "h": 0
+            },
+            "styles": {
+              "border": {
+                "width": 1,
+                "color": "rgb(0, 0, 0)"
+              }
+            }
+          },
+          {
+            "name": "line-42",
+            "type": "LINE",
+            "size": {
+              "w": 610,
+              "h": 0
+            },
+            "styles": {
+              "border": {
+                "width": 1,
+                "color": "rgb(0, 0, 0)"
+              }
+            }
+          },
+          {
+            "name": "rectangle-150",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 186,
+              "h": 29
+            },
+            "styles": {
+              "bg": "rgb(0, 175, 181)",
+              "radius": 8
+            }
+          },
+          {
+            "name": "confirm-discarding",
+            "type": "TEXT",
+            "size": {
+              "w": 131,
+              "h": 22
+            },
+            "content": "Confirm Discarding",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "rectangle-153",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 610,
+              "h": 521
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "special-note",
+            "type": "TEXT",
+            "size": {
+              "w": 110,
+              "h": 22
+            },
+            "content": "Special Note",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "division",
+            "type": "TEXT",
+            "size": {
+              "w": 57,
+              "h": 22
+            },
+            "content": "Division",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 148,
+              "h": 22
+            },
+            "content": "Information technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "type": "TEXT",
+            "size": {
+              "w": 44,
+              "h": 22
+            },
+            "content": "Status",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "pending--waiting-for-confirmation-",
+            "type": "TEXT",
+            "size": {
+              "w": 228,
+              "h": 22
+            },
+            "content": "Pending (Waiting for Confirmation)",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "asset-type",
+            "type": "TEXT",
+            "size": {
+              "w": 78,
+              "h": 22
+            },
+            "content": "Asset Type",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "computer",
+            "type": "TEXT",
+            "size": {
+              "w": 65,
+              "h": 22
+            },
+            "content": "Computer",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "date",
+            "type": "TEXT",
+            "size": {
+              "w": 34,
+              "h": 22
+            },
+            "content": "Date",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "time",
+            "type": "TEXT",
+            "size": {
+              "w": 35,
+              "h": 22
+            },
+            "content": "Time",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "13-42",
+            "type": "TEXT",
+            "size": {
+              "w": 38,
+              "h": 22
+            },
+            "content": "13:42",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 231,
+              "h": 36
+            },
+            "content": "Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 25,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "line-46",
+            "type": "LINE",
+            "size": {
+              "w": 610,
+              "h": 0
+            },
+            "styles": {
+              "border": {
+                "width": 1,
+                "color": "rgb(0, 0, 0)"
+              }
+            }
+          },
+          {
+            "name": "line-47",
+            "type": "LINE",
+            "size": {
+              "w": 610,
+              "h": 0
+            },
+            "styles": {
+              "border": {
+                "width": 1,
+                "color": "rgb(0, 0, 0)"
+              }
+            }
+          },
+          {
+            "name": "rectangle-154",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 186,
+              "h": 29
+            },
+            "styles": {
+              "bg": "rgb(0, 175, 181)",
+              "radius": 8
+            }
+          },
+          {
+            "name": "confirm-discarding",
+            "type": "TEXT",
+            "size": {
+              "w": 131,
+              "h": 22
+            },
+            "content": "Confirm Discarding",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "1",
+            "type": "TEXT",
+            "size": {
+              "w": 7,
+              "h": 20
+            },
+            "content": "1",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "1",
+            "type": "TEXT",
+            "size": {
+              "w": 7,
+              "h": 20
+            },
+            "content": "1",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "3",
+            "type": "TEXT",
+            "size": {
+              "w": 8,
+              "h": 20
+            },
+            "content": "3",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "2",
+            "type": "TEXT",
+            "size": {
+              "w": 8,
+              "h": 20
+            },
+            "content": "2",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "-previous",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 20
+            },
+            "content": "←Previous",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "next--",
+            "type": "TEXT",
+            "size": {
+              "w": 46,
+              "h": 20
+            },
+            "content": "Next →",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "rectangle-229",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 564,
+              "h": 90
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 0,
+                "color": "rgb(0, 0, 0)"
+              },
+              "radius": 8
+            }
+          },
+          {
+            "name": "performance-of-this-laptop-is-not-enough",
+            "type": "TEXT",
+            "size": {
+              "w": 295,
+              "h": 22
+            },
+            "content": "Performance of this laptop is not enough",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "logo2-3",
+            "type": "FRAME",
+            "size": {
+              "w": 25,
+              "h": 25
+            },
+            "styles": {
+              "layout": {
+                "direction": "row",
+                "gap": 0,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(163, 0, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 71, 119)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(255, 119, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(239, 210, 141)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 175, 181)"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "assura",
+            "type": "TEXT",
+            "size": {
+              "w": 113,
+              "h": 46
+            },
+            "content": "Assura",
+            "styles": {
+              "bg": "rgb(0, 71, 119)",
+              "text": {
+                "family": "Jost",
+                "size": 32,
+                "weight": "700",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "menu",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "rectangle-145",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 480,
+              "h": 145
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 3,
+                "color": "rgb(239, 210, 141)"
+              },
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "rectangle-143",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 499,
+              "h": 145
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 3,
+                "color": "rgb(255, 119, 0)"
+              },
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "confirmed",
+            "type": "TEXT",
+            "size": {
+              "w": 91,
+              "h": 29
+            },
+            "content": "Confirmed",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "to-be-confirmed",
+            "type": "TEXT",
+            "size": {
+              "w": 143,
+              "h": 29
+            },
+            "content": "To be Confirmed",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "7",
+            "type": "TEXT",
+            "size": {
+              "w": 25,
+              "h": 58
+            },
+            "content": "7",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 40,
+                "weight": "700",
+                "align": "right"
+              }
+            }
+          },
+          {
+            "name": "4",
+            "type": "TEXT",
+            "size": {
+              "w": 28,
+              "h": 58
+            },
+            "content": "4",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 40,
+                "weight": "700",
+                "align": "right"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(237, 242, 141)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "new-asset---dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 214,
+              "h": 22
+            },
+            "content": "New Asset : Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Arial",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "allison-paul",
+            "type": "TEXT",
+            "size": {
+              "w": 76,
+              "h": 22
+            },
+            "content": "Allison Paul",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(237, 242, 141)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 124,
+              "h": 22
+            },
+            "content": "Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 151,
+              "h": 22
+            },
+            "content": "Information Technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "macbook-pro",
+            "type": "TEXT",
+            "size": {
+              "w": 86,
+              "h": 22
+            },
+            "content": "MacBook Pro",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "admin",
+            "type": "TEXT",
+            "size": {
+              "w": 43,
+              "h": 22
+            },
+            "content": "Admin",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "12---12---2025",
+            "type": "TEXT",
+            "size": {
+              "w": 95,
+              "h": 22
+            },
+            "content": "12 . 12 . 2025",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "discarding-confirmation-queue",
+            "type": "TEXT",
+            "size": {
+              "w": 347,
+              "h": 29
+            },
+            "content": "Discarding Confirmation Queue",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "confirmation-request",
+            "type": "TEXT",
+            "size": {
+              "w": 347,
+              "h": 29
+            },
+            "content": "Confirmation Request",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-151",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 480,
+              "h": 145
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 3,
+                "color": "rgb(239, 210, 141)"
+              },
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "rectangle-152",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 499,
+              "h": 145
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 3,
+                "color": "rgb(255, 119, 0)"
+              },
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "confirmed",
+            "type": "TEXT",
+            "size": {
+              "w": 91,
+              "h": 29
+            },
+            "content": "Confirmed",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "to-be-confirmed",
+            "type": "TEXT",
+            "size": {
+              "w": 143,
+              "h": 29
+            },
+            "content": "To be Confirmed",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "7",
+            "type": "TEXT",
+            "size": {
+              "w": 25,
+              "h": 58
+            },
+            "content": "7",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 40,
+                "weight": "700",
+                "align": "right"
+              }
+            }
+          },
+          {
+            "name": "4",
+            "type": "TEXT",
+            "size": {
+              "w": 28,
+              "h": 58
+            },
+            "content": "4",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 40,
+                "weight": "700",
+                "align": "right"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(237, 242, 141)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "new-asset---dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 214,
+              "h": 22
+            },
+            "content": "New Asset : Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Arial",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "allison-paul",
+            "type": "TEXT",
+            "size": {
+              "w": 76,
+              "h": 22
+            },
+            "content": "Allison Paul",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 148,
+              "h": 22
+            },
+            "content": "Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 180,
+              "h": 22
+            },
+            "content": "Information Technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 76,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "intel-nuc",
+            "type": "TEXT",
+            "size": {
+              "w": 71,
+              "h": 22
+            },
+            "content": "Intel NUC",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "hr",
+            "type": "TEXT",
+            "size": {
+              "w": 23,
+              "h": 22
+            },
+            "content": "HR",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "2-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 73,
+              "h": 22
+            },
+            "content": "2 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "macbook-pro",
+            "type": "TEXT",
+            "size": {
+              "w": 86,
+              "h": 22
+            },
+            "content": "MacBook Pro",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "admin",
+            "type": "TEXT",
+            "size": {
+              "w": 43,
+              "h": 22
+            },
+            "content": "Admin",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "12---12---2025",
+            "type": "TEXT",
+            "size": {
+              "w": 95,
+              "h": 22
+            },
+            "content": "12 . 12 . 2025",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "discarding-confirmation-queue",
+            "type": "TEXT",
+            "size": {
+              "w": 347,
+              "h": 29
+            },
+            "content": "Discarding Confirmation Queue",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "confirmation-request",
+            "type": "TEXT",
+            "size": {
+              "w": 347,
+              "h": 29
+            },
+            "content": "Confirmation Request",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "current-user",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Current User",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "value-at-purchasing",
+            "type": "TEXT",
+            "size": {
+              "w": 176,
+              "h": 22
+            },
+            "content": "Value at Purchasing",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "allison-paul",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Allison Paul",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "150-000",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "150,000",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "current-value",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Current Value",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "50-000",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "50,000",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "frame-38",
+            "type": "FRAME",
+            "size": {
+              "w": 130,
+              "h": 111
+            },
+            "styles": {
+              "layout": {
+                "direction": "row",
+                "gap": 10,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "home",
+                "type": "RECTANGLE",
+                "size": {
+                  "w": 25,
+                  "h": 25
+                }
+              },
+              {
+                "name": "overview",
+                "type": "TEXT",
+                "size": {
+                  "w": 80,
+                  "h": 29
+                },
+                "content": "Overview",
+                "styles": {
+                  "bg": "rgb(0, 0, 0)",
+                  "text": {
+                    "family": "Jost",
+                    "size": 20,
+                    "weight": "400",
+                    "align": "center"
+                  }
+                }
+              },
+              {
+                "name": "box",
+                "type": "RECTANGLE",
+                "size": {
+                  "w": 25,
+                  "h": 25
+                }
+              },
+              {
+                "name": "my-assets",
+                "type": "TEXT",
+                "size": {
+                  "w": 84,
+                  "h": 29
+                },
+                "content": "My Assets",
+                "styles": {
+                  "bg": "rgb(0, 0, 0)",
+                  "text": {
+                    "family": "Jost",
+                    "size": 20,
+                    "weight": "400",
+                    "align": "left"
+                  }
+                }
+              },
+              {
+                "name": "cancel",
+                "type": "RECTANGLE",
+                "size": {
+                  "w": 25,
+                  "h": 25
+                }
+              },
+              {
+                "name": "discarded",
+                "type": "TEXT",
+                "size": {
+                  "w": 86,
+                  "h": 29
+                },
+                "content": "Discarded",
+                "styles": {
+                  "bg": "rgb(0, 0, 0)",
+                  "text": {
+                    "family": "Jost",
+                    "size": 20,
+                    "weight": "400",
+                    "align": "left"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "discarded-assets-list",
+        "type": "FRAME",
+        "size": {
+          "w": 1280,
+          "h": 869
+        },
+        "styles": {
+          "bg": "rgb(239, 239, 239)",
+          "layout": {
+            "direction": "row",
+            "gap": 0,
+            "align": {
+              "main": "start",
+              "cross": "start"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "rectangle-135",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 228,
+              "h": 869
+            },
+            "styles": {
+              "bg": "rgb(0, 188, 212)"
+            }
+          },
+          {
+            "name": "overview",
+            "type": "TEXT",
+            "size": {
+              "w": 80,
+              "h": 29
+            },
+            "content": "Overview",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "my-assets",
+            "type": "TEXT",
+            "size": {
+              "w": 84,
+              "h": 29
+            },
+            "content": "My Assets",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "discarded",
+            "type": "TEXT",
+            "size": {
+              "w": 86,
+              "h": 29
+            },
+            "content": "Discarded",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-136",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 1052,
+              "h": 62
+            },
+            "styles": {
+              "bg": "rgb(0, 71, 119)"
+            }
+          },
+          {
+            "name": "home",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "box",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "profile",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 50,
+              "h": 50
+            }
+          },
+          {
+            "name": "logo2-3",
+            "type": "FRAME",
+            "size": {
+              "w": 25,
+              "h": 25
+            },
+            "styles": {
+              "layout": {
+                "direction": "row",
+                "gap": 0,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(163, 0, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 71, 119)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(255, 119, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(239, 210, 141)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 175, 181)"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "assura",
+            "type": "TEXT",
+            "size": {
+              "w": 113,
+              "h": 46
+            },
+            "content": "Assura",
+            "styles": {
+              "bg": "rgb(0, 71, 119)",
+              "text": {
+                "family": "Jost",
+                "size": 32,
+                "weight": "700",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "menu",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "accountant",
+            "type": "TEXT",
+            "size": {
+              "w": 286,
+              "h": 29
+            },
+            "content": "Accountant",
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "cancel",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "discarded",
+            "type": "TEXT",
+            "size": {
+              "w": 391,
+              "h": 45
+            },
+            "content": "Discarded",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 30,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-153",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 962,
+              "h": 612
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "name",
+            "type": "TEXT",
+            "size": {
+              "w": 36,
+              "h": 20
+            },
+            "content": "Name",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "division",
+            "type": "TEXT",
+            "size": {
+              "w": 48,
+              "h": 20
+            },
+            "content": "Division",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "date",
+            "type": "TEXT",
+            "size": {
+              "w": 27,
+              "h": 20
+            },
+            "content": "Date",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "line-51",
+            "type": "LINE",
+            "size": {
+              "w": 929,
+              "h": 0
+            },
+            "styles": {
+              "border": {
+                "width": 1,
+                "color": "rgb(0, 0, 0)"
+              }
+            }
+          },
+          {
+            "name": "macbook-air",
+            "type": "TEXT",
+            "size": {
+              "w": 76,
+              "h": 20
+            },
+            "content": "MacBook Air",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "13-dec-2025",
+            "type": "TEXT",
+            "size": {
+              "w": 78,
+              "h": 20
+            },
+            "content": "13 Dec 2025",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 136,
+              "h": 20
+            },
+            "content": "Information technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "discarded-assets-list",
+        "type": "FRAME",
+        "size": {
+          "w": 1280,
+          "h": 720
+        },
+        "styles": {
+          "bg": "rgb(239, 239, 239)",
+          "layout": {
+            "direction": "row",
+            "gap": 0,
+            "align": {
+              "main": "start",
+              "cross": "start"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "rectangle-135",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 228,
+              "h": 720
+            },
+            "styles": {
+              "bg": "rgb(0, 188, 212)"
+            }
+          },
+          {
+            "name": "overview",
+            "type": "TEXT",
+            "size": {
+              "w": 80,
+              "h": 29
+            },
+            "content": "Overview",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "my-assets",
+            "type": "TEXT",
+            "size": {
+              "w": 84,
+              "h": 29
+            },
+            "content": "My Assets",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "discarded",
+            "type": "TEXT",
+            "size": {
+              "w": 86,
+              "h": 29
+            },
+            "content": "Discarded",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-136",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 1052,
+              "h": 62
+            },
+            "styles": {
+              "bg": "rgb(0, 71, 119)"
+            }
+          },
+          {
+            "name": "home",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "box",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "profile",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 50,
+              "h": 50
+            }
+          },
+          {
+            "name": "logo2-3",
+            "type": "FRAME",
+            "size": {
+              "w": 25,
+              "h": 25
+            },
+            "styles": {
+              "layout": {
+                "direction": "row",
+                "gap": 0,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(163, 0, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 71, 119)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(255, 119, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(239, 210, 141)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 175, 181)"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "assura",
+            "type": "TEXT",
+            "size": {
+              "w": 113,
+              "h": 46
+            },
+            "content": "Assura",
+            "styles": {
+              "bg": "rgb(0, 71, 119)",
+              "text": {
+                "family": "Jost",
+                "size": 32,
+                "weight": "700",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "menu",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "accountant",
+            "type": "TEXT",
+            "size": {
+              "w": 286,
+              "h": 29
+            },
+            "content": "Accountant",
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "cancel",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "rectangle-205",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 474,
+              "h": 206
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "saved-as-discarded",
+            "type": "TEXT",
+            "size": {
+              "w": 170,
+              "h": 29
+            },
+            "content": "Saved As Discarded",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-207",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 100,
+              "h": 206
+            },
+            "styles": {
+              "bg": "rgb(0, 175, 181)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "tick-box",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 50,
+              "h": 50
+            }
+          }
+        ]
+      },
+      {
+        "name": "discarded-assets-list",
+        "type": "FRAME",
+        "size": {
+          "w": 1280,
+          "h": 720
+        },
+        "styles": {
+          "bg": "rgb(239, 239, 239)",
+          "layout": {
+            "direction": "row",
+            "gap": 0,
+            "align": {
+              "main": "start",
+              "cross": "start"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "rectangle-135",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 228,
+              "h": 720
+            },
+            "styles": {
+              "bg": "rgb(0, 188, 212)"
+            }
+          },
+          {
+            "name": "overview",
+            "type": "TEXT",
+            "size": {
+              "w": 80,
+              "h": 29
+            },
+            "content": "Overview",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "my-assets",
+            "type": "TEXT",
+            "size": {
+              "w": 84,
+              "h": 29
+            },
+            "content": "My Assets",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "discarded",
+            "type": "TEXT",
+            "size": {
+              "w": 86,
+              "h": 29
+            },
+            "content": "Discarded",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-136",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 1052,
+              "h": 62
+            },
+            "styles": {
+              "bg": "rgb(0, 71, 119)"
+            }
+          },
+          {
+            "name": "home",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "box",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "profile",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 50,
+              "h": 50
+            }
+          },
+          {
+            "name": "logo2-3",
+            "type": "FRAME",
+            "size": {
+              "w": 25,
+              "h": 25
+            },
+            "styles": {
+              "layout": {
+                "direction": "row",
+                "gap": 0,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(163, 0, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 71, 119)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(255, 119, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(239, 210, 141)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 175, 181)"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "assura",
+            "type": "TEXT",
+            "size": {
+              "w": 113,
+              "h": 46
+            },
+            "content": "Assura",
+            "styles": {
+              "bg": "rgb(0, 71, 119)",
+              "text": {
+                "family": "Jost",
+                "size": 32,
+                "weight": "700",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "menu",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "accountant",
+            "type": "TEXT",
+            "size": {
+              "w": 286,
+              "h": 29
+            },
+            "content": "Accountant",
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "cancel",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "frame-53",
+            "type": "FRAME",
+            "size": {
+              "w": 474,
+              "h": 206
+            },
+            "styles": {
+              "layout": {
+                "direction": "column",
+                "gap": 10,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                },
+                "padding": [
+                  76,
+                  25,
+                  76,
+                  25
+                ]
+              }
+            },
+            "children": [
+              {
+                "name": "frame-52",
+                "type": "FRAME",
+                "size": {
+                  "w": 474,
+                  "h": 206
+                },
+                "styles": {
+                  "bg": "rgb(255, 255, 255)",
+                  "radius": 16,
+                  "layout": {
+                    "direction": "row",
+                    "gap": 10,
+                    "align": {
+                      "main": "start",
+                      "cross": "center"
+                    }
+                  }
+                },
+                "children": [
+                  {
+                    "name": "rectangle-207",
+                    "type": "RECTANGLE",
+                    "size": {
+                      "w": 100,
+                      "h": 206
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 175, 181)",
+                      "radius": 16
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "frame-51",
+                "type": "FRAME",
+                "size": {
+                  "w": 305,
+                  "h": 50
+                },
+                "styles": {
+                  "layout": {
+                    "direction": "row",
+                    "gap": 148,
+                    "align": {
+                      "main": "space-between",
+                      "cross": "center"
+                    }
+                  }
+                },
+                "children": [
+                  {
+                    "name": "tick-box",
+                    "type": "RECTANGLE",
+                    "size": {
+                      "w": 50,
+                      "h": 50
+                    }
+                  },
+                  {
+                    "name": "downloaded",
+                    "type": "TEXT",
+                    "size": {
+                      "w": 107,
+                      "h": 29
+                    },
+                    "content": "Downloaded",
+                    "styles": {
+                      "bg": "rgb(0, 0, 0)",
+                      "text": {
+                        "family": "Jost",
+                        "size": 20,
+                        "weight": "400",
+                        "align": "left"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "add-the-receipt-from-superintnd",
+        "type": "FRAME",
+        "size": {
+          "w": 1280,
+          "h": 947
+        },
+        "styles": {
+          "bg": "rgb(239, 239, 239)",
+          "layout": {
+            "direction": "row",
+            "gap": 0,
+            "align": {
+              "main": "start",
+              "cross": "start"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "rectangle-135",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 228,
+              "h": 947
+            },
+            "styles": {
+              "bg": "rgb(0, 188, 212)"
+            }
+          },
+          {
+            "name": "overview",
+            "type": "TEXT",
+            "size": {
+              "w": 80,
+              "h": 29
+            },
+            "content": "Overview",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "my-assets",
+            "type": "TEXT",
+            "size": {
+              "w": 84,
+              "h": 29
+            },
+            "content": "My Assets",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "discarded",
+            "type": "TEXT",
+            "size": {
+              "w": 86,
+              "h": 29
+            },
+            "content": "Discarded",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-136",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 1052,
+              "h": 62
+            },
+            "styles": {
+              "bg": "rgb(0, 71, 119)"
+            }
+          },
+          {
+            "name": "home",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "box",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "profile",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 50,
+              "h": 50
+            }
+          },
+          {
+            "name": "logo2-3",
+            "type": "FRAME",
+            "size": {
+              "w": 25,
+              "h": 25
+            },
+            "styles": {
+              "layout": {
+                "direction": "row",
+                "gap": 0,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(163, 0, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 71, 119)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(255, 119, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(239, 210, 141)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 175, 181)"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "assura",
+            "type": "TEXT",
+            "size": {
+              "w": 113,
+              "h": 46
+            },
+            "content": "Assura",
+            "styles": {
+              "bg": "rgb(0, 71, 119)",
+              "text": {
+                "family": "Jost",
+                "size": 32,
+                "weight": "700",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "menu",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "accountant",
+            "type": "TEXT",
+            "size": {
+              "w": 286,
+              "h": 29
+            },
+            "content": "Accountant",
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "cancel",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "overview",
+            "type": "TEXT",
+            "size": {
+              "w": 391,
+              "h": 45
+            },
+            "content": "Overview",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 30,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-153",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 787,
+              "h": 626
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "add-the-receipt",
+            "type": "TEXT",
+            "size": {
+              "w": 173,
+              "h": 22
+            },
+            "content": "Add the receipt",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 231,
+              "h": 36
+            },
+            "content": "Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 25,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "division",
+            "type": "TEXT",
+            "size": {
+              "w": 57,
+              "h": 22
+            },
+            "content": "Division",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "date",
+            "type": "TEXT",
+            "size": {
+              "w": 34,
+              "h": 22
+            },
+            "content": "Date",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 148,
+              "h": 22
+            },
+            "content": "Information technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "type": "TEXT",
+            "size": {
+              "w": 44,
+              "h": 22
+            },
+            "content": "Status",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "time",
+            "type": "TEXT",
+            "size": {
+              "w": 35,
+              "h": 22
+            },
+            "content": "Time",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "pending--waiting-for-confirmation-",
+            "type": "TEXT",
+            "size": {
+              "w": 228,
+              "h": 22
+            },
+            "content": "Pending (Waiting for Confirmation)",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "13-42",
+            "type": "TEXT",
+            "size": {
+              "w": 38,
+              "h": 22
+            },
+            "content": "13:42",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "asset-type",
+            "type": "TEXT",
+            "size": {
+              "w": 78,
+              "h": 22
+            },
+            "content": "Asset Type",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "computer",
+            "type": "TEXT",
+            "size": {
+              "w": 65,
+              "h": 22
+            },
+            "content": "Computer",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "special-note",
+            "type": "TEXT",
+            "size": {
+              "w": 173,
+              "h": 22
+            },
+            "content": "Special Note",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "current-user",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Current User",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "allison-paul",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Allison Paul",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-229",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 702,
+              "h": 90
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 0,
+                "color": "rgb(0, 0, 0)"
+              },
+              "radius": 8
+            }
+          },
+          {
+            "name": "rectangle-230",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 702,
+              "h": 90
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 0,
+                "color": "rgb(0, 0, 0)"
+              },
+              "radius": 8
+            }
+          },
+          {
+            "name": "upload-the-receipt",
+            "type": "TEXT",
+            "size": {
+              "w": 124,
+              "h": 22
+            },
+            "content": "Upload the Receipt",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "upload-the-receipt",
+            "type": "TEXT",
+            "size": {
+              "w": 124,
+              "h": 22
+            },
+            "content": "Upload the Receipt",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 187,
+              "h": 29
+            },
+            "styles": {
+              "bg": "rgb(163, 0, 0)",
+              "radius": 8
+            }
+          },
+          {
+            "name": "save-as-discarded",
+            "type": "TEXT",
+            "size": {
+              "w": 124,
+              "h": 22
+            },
+            "content": "Save as Discarded",
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "performance-of-this-laptop-is-not-enough",
+            "type": "TEXT",
+            "size": {
+              "w": 376,
+              "h": 22
+            },
+            "content": "Performance of this laptop is not enough",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "1-day-ago",
+        "type": "TEXT",
+        "size": {
+          "w": 64,
+          "h": 22
+        },
+        "content": "1 day ago",
+        "styles": {
+          "bg": "rgb(0, 0, 0)",
+          "text": {
+            "family": "Jost",
+            "size": 15,
+            "weight": "400",
+            "align": "left"
+          }
+        }
+      },
+      {
+        "name": "accountant-dashboard",
+        "type": "FRAME",
+        "size": {
+          "w": 1280,
+          "h": 1009
+        },
+        "styles": {
+          "bg": "rgb(239, 239, 239)",
+          "layout": {
+            "direction": "row",
+            "gap": 0,
+            "align": {
+              "main": "start",
+              "cross": "start"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "rectangle-135",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 228,
+              "h": 1009
+            },
+            "styles": {
+              "bg": "rgb(0, 188, 212)"
+            }
+          },
+          {
+            "name": "overview",
+            "type": "TEXT",
+            "size": {
+              "w": 80,
+              "h": 29
+            },
+            "content": "Overview",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "my-assets",
+            "type": "TEXT",
+            "size": {
+              "w": 84,
+              "h": 29
+            },
+            "content": "My Assets",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "discarded",
+            "type": "TEXT",
+            "size": {
+              "w": 86,
+              "h": 29
+            },
+            "content": "Discarded",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-136",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 1052,
+              "h": 62
+            },
+            "styles": {
+              "bg": "rgb(0, 71, 119)"
+            }
+          },
+          {
+            "name": "home",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "box",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "profile",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 50,
+              "h": 50
+            }
+          },
+          {
+            "name": "overview",
+            "type": "TEXT",
+            "size": {
+              "w": 391,
+              "h": 45
+            },
+            "content": "Overview",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 30,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "logo2-3",
+            "type": "FRAME",
+            "size": {
+              "w": 25,
+              "h": 25
+            },
+            "styles": {
+              "layout": {
+                "direction": "row",
+                "gap": 0,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(163, 0, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 71, 119)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(255, 119, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(239, 210, 141)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 175, 181)"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "assura",
+            "type": "TEXT",
+            "size": {
+              "w": 113,
+              "h": 46
+            },
+            "content": "Assura",
+            "styles": {
+              "bg": "rgb(0, 71, 119)",
+              "text": {
+                "family": "Jost",
+                "size": 32,
+                "weight": "700",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "menu",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "cancel",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "rectangle-145",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 480,
+              "h": 145
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 3,
+                "color": "rgb(239, 210, 141)"
+              },
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "rectangle-143",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 499,
+              "h": 145
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 3,
+                "color": "rgb(255, 119, 0)"
+              },
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "confirmed",
+            "type": "TEXT",
+            "size": {
+              "w": 91,
+              "h": 29
+            },
+            "content": "Confirmed",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "to-be-confirmed",
+            "type": "TEXT",
+            "size": {
+              "w": 143,
+              "h": 29
+            },
+            "content": "To be Confirmed",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "7",
+            "type": "TEXT",
+            "size": {
+              "w": 25,
+              "h": 58
+            },
+            "content": "7",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 40,
+                "weight": "700",
+                "align": "right"
+              }
+            }
+          },
+          {
+            "name": "4",
+            "type": "TEXT",
+            "size": {
+              "w": 28,
+              "h": 58
+            },
+            "content": "4",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 40,
+                "weight": "700",
+                "align": "right"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(237, 242, 141)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "new-asset---dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 214,
+              "h": 22
+            },
+            "content": "New Asset : Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Arial",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "allison-paul",
+            "type": "TEXT",
+            "size": {
+              "w": 76,
+              "h": 22
+            },
+            "content": "Allison Paul",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(237, 242, 141)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 124,
+              "h": 22
+            },
+            "content": "Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 151,
+              "h": 22
+            },
+            "content": "Information Technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "intel-nuc",
+            "type": "TEXT",
+            "size": {
+              "w": 71,
+              "h": 22
+            },
+            "content": "Intel NUC",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "hr",
+            "type": "TEXT",
+            "size": {
+              "w": 23,
+              "h": 22
+            },
+            "content": "HR",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "2-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 73,
+              "h": 22
+            },
+            "content": "2 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "macbook-pro",
+            "type": "TEXT",
+            "size": {
+              "w": 86,
+              "h": 22
+            },
+            "content": "MacBook Pro",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "admin",
+            "type": "TEXT",
+            "size": {
+              "w": 43,
+              "h": 22
+            },
+            "content": "Admin",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "12---12---2025",
+            "type": "TEXT",
+            "size": {
+              "w": 95,
+              "h": 22
+            },
+            "content": "12 . 12 . 2025",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "discarding-confirmation-queue",
+            "type": "TEXT",
+            "size": {
+              "w": 347,
+              "h": 29
+            },
+            "content": "Discarding Confirmation Queue",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-151",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 480,
+              "h": 145
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 3,
+                "color": "rgb(239, 210, 141)"
+              },
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "rectangle-152",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 499,
+              "h": 145
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 3,
+                "color": "rgb(255, 119, 0)"
+              },
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "confirmed",
+            "type": "TEXT",
+            "size": {
+              "w": 91,
+              "h": 29
+            },
+            "content": "Confirmed",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "to-be-confirmed",
+            "type": "TEXT",
+            "size": {
+              "w": 143,
+              "h": 29
+            },
+            "content": "To be Confirmed",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "7",
+            "type": "TEXT",
+            "size": {
+              "w": 25,
+              "h": 58
+            },
+            "content": "7",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 40,
+                "weight": "700",
+                "align": "right"
+              }
+            }
+          },
+          {
+            "name": "4",
+            "type": "TEXT",
+            "size": {
+              "w": 28,
+              "h": 58
+            },
+            "content": "4",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 40,
+                "weight": "700",
+                "align": "right"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(237, 242, 141)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "new-asset---dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 214,
+              "h": 22
+            },
+            "content": "New Asset : Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Arial",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "allison-paul",
+            "type": "TEXT",
+            "size": {
+              "w": 76,
+              "h": 22
+            },
+            "content": "Allison Paul",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 149,
+              "h": 22
+            },
+            "content": "Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 181,
+              "h": 22
+            },
+            "content": "Information Technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 77,
+              "h": 22
+            },
+            "content": "1 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "intel-nuc",
+            "type": "TEXT",
+            "size": {
+              "w": 71,
+              "h": 22
+            },
+            "content": "Intel NUC",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "hr",
+            "type": "TEXT",
+            "size": {
+              "w": 23,
+              "h": 22
+            },
+            "content": "HR",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "2-day-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 73,
+              "h": 22
+            },
+            "content": "2 day ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 349,
+              "h": 113
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16
+            }
+          },
+          {
+            "name": "macbook-pro",
+            "type": "TEXT",
+            "size": {
+              "w": 86,
+              "h": 22
+            },
+            "content": "MacBook Pro",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "admin",
+            "type": "TEXT",
+            "size": {
+              "w": 43,
+              "h": 22
+            },
+            "content": "Admin",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "12---12---2025",
+            "type": "TEXT",
+            "size": {
+              "w": 95,
+              "h": 22
+            },
+            "content": "12 . 12 . 2025",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "discarding-confirmation-queue",
+            "type": "TEXT",
+            "size": {
+              "w": 347,
+              "h": 29
+            },
+            "content": "Discarding Confirmation Queue",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "accountant",
+            "type": "TEXT",
+            "size": {
+              "w": 286,
+              "h": 29
+            },
+            "content": "Accountant",
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "1",
+            "type": "TEXT",
+            "size": {
+              "w": 7,
+              "h": 20
+            },
+            "content": "1",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "3",
+            "type": "TEXT",
+            "size": {
+              "w": 8,
+              "h": 20
+            },
+            "content": "3",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "2",
+            "type": "TEXT",
+            "size": {
+              "w": 8,
+              "h": 20
+            },
+            "content": "2",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "-previous",
+            "type": "TEXT",
+            "size": {
+              "w": 64,
+              "h": 20
+            },
+            "content": "←Previous",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "next--",
+            "type": "TEXT",
+            "size": {
+              "w": 46,
+              "h": 20
+            },
+            "content": "Next →",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 14,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "rectangle-149",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 610,
+              "h": 524
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "intel-nuc",
+            "type": "TEXT",
+            "size": {
+              "w": 231,
+              "h": 36
+            },
+            "content": "Intel Nuc",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 25,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "line-41",
+            "type": "LINE",
+            "size": {
+              "w": 610,
+              "h": 0
+            },
+            "styles": {
+              "border": {
+                "width": 1,
+                "color": "rgb(0, 0, 0)"
+              }
+            }
+          },
+          {
+            "name": "division",
+            "type": "TEXT",
+            "size": {
+              "w": 57,
+              "h": 22
+            },
+            "content": "Division",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "date",
+            "type": "TEXT",
+            "size": {
+              "w": 34,
+              "h": 22
+            },
+            "content": "Date",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 148,
+              "h": 22
+            },
+            "content": "Information technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "2-days-ago",
+            "type": "TEXT",
+            "size": {
+              "w": 94,
+              "h": 22
+            },
+            "content": "2 days ago",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "type": "TEXT",
+            "size": {
+              "w": 44,
+              "h": 22
+            },
+            "content": "Status",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "time",
+            "type": "TEXT",
+            "size": {
+              "w": 35,
+              "h": 22
+            },
+            "content": "Time",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "pending--waiting-for-confirmation-",
+            "type": "TEXT",
+            "size": {
+              "w": 228,
+              "h": 22
+            },
+            "content": "Pending (Waiting for Confirmation)",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "13-42",
+            "type": "TEXT",
+            "size": {
+              "w": 38,
+              "h": 22
+            },
+            "content": "13:42",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "asset-category",
+            "type": "TEXT",
+            "size": {
+              "w": 117,
+              "h": 22
+            },
+            "content": "Asset Category",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "computer",
+            "type": "TEXT",
+            "size": {
+              "w": 65,
+              "h": 22
+            },
+            "content": "Computer",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "special-note",
+            "type": "TEXT",
+            "size": {
+              "w": 110,
+              "h": 22
+            },
+            "content": "Special Note",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-229",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 564,
+              "h": 90
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 0,
+                "color": "rgb(0, 0, 0)"
+              },
+              "radius": 8
+            }
+          },
+          {
+            "name": "rectangle-154",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 186,
+              "h": 29
+            },
+            "styles": {
+              "bg": "rgb(0, 175, 181)",
+              "radius": 8
+            }
+          },
+          {
+            "name": "confirm-discarding",
+            "type": "TEXT",
+            "size": {
+              "w": 131,
+              "h": 22
+            },
+            "content": "Confirm Discarding",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "confirmation-request",
+            "type": "TEXT",
+            "size": {
+              "w": 347,
+              "h": 29
+            },
+            "content": "Confirmation Request",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "current-user",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Current User",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "allison-paul",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Allison Paul",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "current-value",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Current Value",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "value-at-purchasing",
+            "type": "TEXT",
+            "size": {
+              "w": 176,
+              "h": 22
+            },
+            "content": "Value at Purchasing",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "50-000",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "50,000",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "150-000",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "150,000",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "line-51",
+        "type": "LINE",
+        "size": {
+          "w": 929,
+          "h": 0
+        },
+        "styles": {
+          "border": {
+            "width": 1,
+            "color": "rgb(0, 0, 0)"
+          }
+        }
+      },
+      {
+        "name": "add-the-receipt-from-superintnd",
+        "type": "FRAME",
+        "size": {
+          "w": 1280,
+          "h": 947
+        },
+        "styles": {
+          "bg": "rgb(239, 239, 239)",
+          "layout": {
+            "direction": "row",
+            "gap": 0,
+            "align": {
+              "main": "start",
+              "cross": "start"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "rectangle-135",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 228,
+              "h": 947
+            },
+            "styles": {
+              "bg": "rgb(0, 188, 212)"
+            }
+          },
+          {
+            "name": "rectangle-136",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 1052,
+              "h": 62
+            },
+            "styles": {
+              "bg": "rgb(0, 71, 119)"
+            }
+          },
+          {
+            "name": "profile",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 50,
+              "h": 50
+            }
+          },
+          {
+            "name": "logo2-3",
+            "type": "FRAME",
+            "size": {
+              "w": 25,
+              "h": 25
+            },
+            "styles": {
+              "layout": {
+                "direction": "row",
+                "gap": 0,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(163, 0, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 71, 119)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(255, 119, 0)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(239, 210, 141)"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "group",
+                "type": "GROUP",
+                "size": {
+                  "w": 9,
+                  "h": 9
+                },
+                "children": [
+                  {
+                    "name": "vector",
+                    "type": "VECTOR",
+                    "size": {
+                      "w": 9,
+                      "h": 9
+                    },
+                    "styles": {
+                      "bg": "rgb(0, 175, 181)"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "assura",
+            "type": "TEXT",
+            "size": {
+              "w": 113,
+              "h": 46
+            },
+            "content": "Assura",
+            "styles": {
+              "bg": "rgb(0, 71, 119)",
+              "text": {
+                "family": "Jost",
+                "size": 32,
+                "weight": "700",
+                "align": "center"
+              }
+            }
+          },
+          {
+            "name": "menu",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 25,
+              "h": 25
+            }
+          },
+          {
+            "name": "accountant",
+            "type": "TEXT",
+            "size": {
+              "w": 286,
+              "h": 29
+            },
+            "content": "Accountant",
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "text": {
+                "family": "Jost",
+                "size": 20,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "frame-37",
+            "type": "FRAME",
+            "size": {
+              "w": 130,
+              "h": 111
+            },
+            "styles": {
+              "layout": {
+                "direction": "row",
+                "gap": 10,
+                "align": {
+                  "main": "start",
+                  "cross": "start"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "home",
+                "type": "RECTANGLE",
+                "size": {
+                  "w": 25,
+                  "h": 25
+                }
+              },
+              {
+                "name": "overview",
+                "type": "TEXT",
+                "size": {
+                  "w": 80,
+                  "h": 29
+                },
+                "content": "Overview",
+                "styles": {
+                  "bg": "rgb(0, 0, 0)",
+                  "text": {
+                    "family": "Jost",
+                    "size": 20,
+                    "weight": "400",
+                    "align": "center"
+                  }
+                }
+              },
+              {
+                "name": "box",
+                "type": "RECTANGLE",
+                "size": {
+                  "w": 25,
+                  "h": 25
+                }
+              },
+              {
+                "name": "my-assets",
+                "type": "TEXT",
+                "size": {
+                  "w": 84,
+                  "h": 29
+                },
+                "content": "My Assets",
+                "styles": {
+                  "bg": "rgb(0, 0, 0)",
+                  "text": {
+                    "family": "Jost",
+                    "size": 20,
+                    "weight": "400",
+                    "align": "left"
+                  }
+                }
+              },
+              {
+                "name": "cancel",
+                "type": "RECTANGLE",
+                "size": {
+                  "w": 25,
+                  "h": 25
+                }
+              },
+              {
+                "name": "discarded",
+                "type": "TEXT",
+                "size": {
+                  "w": 86,
+                  "h": 29
+                },
+                "content": "Discarded",
+                "styles": {
+                  "bg": "rgb(0, 0, 0)",
+                  "text": {
+                    "family": "Jost",
+                    "size": 20,
+                    "weight": "400",
+                    "align": "left"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "overview",
+            "type": "TEXT",
+            "size": {
+              "w": 391,
+              "h": 45
+            },
+            "content": "Overview",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 30,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "rectangle-153",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 787,
+              "h": 555
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "radius": 16,
+              "shadow": {
+                "x": 0,
+                "y": 4,
+                "blur": 4,
+                "color": "rgba(0, 0, 0, 0.25)"
+              }
+            }
+          },
+          {
+            "name": "dell-xps-15-laptop",
+            "type": "TEXT",
+            "size": {
+              "w": 231,
+              "h": 36
+            },
+            "content": "Dell XPS 15 Laptop",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 25,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "division",
+            "type": "TEXT",
+            "size": {
+              "w": 57,
+              "h": 22
+            },
+            "content": "Division",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "confimed-date",
+            "type": "TEXT",
+            "size": {
+              "w": 127,
+              "h": 22
+            },
+            "content": "Confimed Date",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "information-technology",
+            "type": "TEXT",
+            "size": {
+              "w": 148,
+              "h": 22
+            },
+            "content": "Information technology",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "13-dec-2025",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "13 Dec 2025",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "current-value--lkr-",
+            "type": "TEXT",
+            "size": {
+              "w": 167,
+              "h": 22
+            },
+            "content": "Current Value (LKR)",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "sold-price--lkr-",
+            "type": "TEXT",
+            "size": {
+              "w": 151,
+              "h": 22
+            },
+            "content": "Sold Price (LKR)",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "50-000",
+            "type": "TEXT",
+            "size": {
+              "w": 228,
+              "h": 22
+            },
+            "content": "50,000",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "40-000",
+            "type": "TEXT",
+            "size": {
+              "w": 74,
+              "h": 22
+            },
+            "content": "40,000",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "asset-type",
+            "type": "TEXT",
+            "size": {
+              "w": 78,
+              "h": 22
+            },
+            "content": "Asset Type",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "computer",
+            "type": "TEXT",
+            "size": {
+              "w": 65,
+              "h": 22
+            },
+            "content": "Computer",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "special-note",
+            "type": "TEXT",
+            "size": {
+              "w": 173,
+              "h": 22
+            },
+            "content": "Special Note",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "loss--lkr-",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Loss (LKR)",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "700",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "allison-paul",
+            "type": "TEXT",
+            "size": {
+              "w": 109,
+              "h": 22
+            },
+            "content": "Allison Paul",
+            "styles": {
+              "bg": "rgb(0, 0, 0)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "left"
+              }
+            }
+          },
+          {
+            "name": "frame-54",
+            "type": "FRAME",
+            "size": {
+              "w": 702,
+              "h": 90
+            },
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "border": {
+                "width": 0,
+                "color": "rgb(0, 0, 0)"
+              },
+              "radius": 8,
+              "layout": {
+                "direction": "row",
+                "gap": 10,
+                "align": {
+                  "main": "center",
+                  "cross": "center"
+                },
+                "padding": [
+                  14,
+                  19,
+                  14,
+                  19
+                ]
+              }
+            },
+            "children": [
+              {
+                "name": "performance-of-this-laptop-is-not-enough",
+                "type": "TEXT",
+                "size": {
+                  "w": 259,
+                  "h": 22
+                },
+                "content": "Performance of this laptop is not enough",
+                "styles": {
+                  "bg": "rgb(0, 0, 0)",
+                  "text": {
+                    "family": "Jost",
+                    "size": 15,
+                    "weight": "400",
+                    "align": "left"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "rounded-rectangle",
+            "type": "RECTANGLE",
+            "size": {
+              "w": 187,
+              "h": 29
+            },
+            "styles": {
+              "bg": "rgb(163, 0, 0)",
+              "radius": 8
+            }
+          },
+          {
+            "name": "download-the-receipt",
+            "type": "TEXT",
+            "size": {
+              "w": 173,
+              "h": 22
+            },
+            "content": "Download the Receipt",
+            "styles": {
+              "bg": "rgb(255, 255, 255)",
+              "text": {
+                "family": "Jost",
+                "size": 15,
+                "weight": "400",
+                "align": "center"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "upload-to-cloud",
+        "type": "RECTANGLE",
+        "size": {
+          "w": 50,
+          "h": 50
+        }
+      }
+    ]
+  },
+  "summary": {
+    "components": 0,
+    "instances": 0,
+    "frames": 20,
+    "texts": 214,
+    "hasAutoLayout": true,
+    "hasEffects": true
+  }
+}

@@ -1,0 +1,336 @@
+.acc-receipt-container {
+    padding: 32px;
+    background-color: rgb(239, 239, 239);
+    min-height: calc(100vh - 62px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.page-title {
+    font-family: 'Jost', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: rgb(0, 0, 0);
+    margin: 0;
+}
+
+.btn-add-receipt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgb(0, 71, 119);
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-add-receipt:hover {
+    background: rgb(0, 55, 95);
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgb(255, 255, 255);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    color: rgb(0, 0, 0);
+    flex: 1;
+    background: transparent;
+}
+
+.search-bar input::placeholder {
+    color: #999;
+}
+
+/* Table */
+.table-wrapper {
+    background: rgb(255, 255, 255);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    flex: 1;
+}
+
+.receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Jost', sans-serif;
+}
+
+.receipt-table thead tr {
+    border-bottom: 2px solid rgb(0, 188, 212);
+}
+
+.receipt-table th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgb(0, 0, 0);
+}
+
+.receipt-table td {
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgb(0, 0, 0);
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.receipt-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.receipt-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+/* Status Badge */
+.status-badge {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.status-badge.uploaded {
+    color: #059669;
+}
+
+.status-badge.pending {
+    color: #b45309;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-view,
+.btn-download {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: rgb(255, 255, 255);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(0, 71, 119);
+    transition: all 0.2s;
+}
+
+.btn-view:hover {
+    background: rgb(0, 71, 119);
+    color: rgb(255, 255, 255);
+    border-color: rgb(0, 71, 119);
+}
+
+.btn-download:hover {
+    background: rgb(0, 175, 181);
+    color: rgb(255, 255, 255);
+    border-color: rgb(0, 175, 181);
+}
+
+.empty-row {
+    text-align: center;
+    color: #999;
+    padding: 40px 20px !important;
+}
+
+/* ============ Modal ============ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-card {
+    background: rgb(255, 255, 255);
+    border-radius: 16px;
+    width: 480px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+    font-family: 'Jost', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: rgb(0, 0, 0);
+    margin: 0;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.btn-close:hover {
+    background: #f0f0f0;
+}
+
+.modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgb(0, 0, 0);
+}
+
+.form-group input {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: rgb(0, 188, 212);
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* Upload Area */
+.upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-area:hover {
+    border-color: rgb(0, 188, 212);
+    background: #f9fefe;
+}
+
+.upload-area span {
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    color: #999;
+}
+
+/* Modal Footer */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #eee;
+}
+
+.btn-cancel {
+    background: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    border: 1px solid #ccc;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #f0f0f0;
+}
+
+.btn-submit {
+    background: rgb(0, 71, 119);
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-submit:hover {
+    background: rgb(0, 55, 95);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

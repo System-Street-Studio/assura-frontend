@@ -1,24 +1,12 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-header">
-    <img
-      *ngIf="!isCollapsed"
-      src="assets/images/LOGO2.png"
-      alt="Assura Logo"
-      class="sidebar-logo"
-    />
-    <span *ngIf="!isCollapsed" class="sidebar-title">Assura</span>
-    <button class="menu-toggle" (click)="toggleMenu()">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#000000"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
+    <div class="brand">
+      <img *ngIf="!isCollapsed" src="assets/images/LOGO2.png" alt="Assura Logo" class="sidebar-logo" />
+      <span *ngIf="!isCollapsed" class="sidebar-title">Assura</span>
+    </div>
+    <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="6" x2="21" y2="6" />
         <line x1="3" y1="12" x2="21" y2="12" />
         <line x1="3" y1="18" x2="21" y2="18" />
@@ -27,15 +15,22 @@
   </div>
 
   <nav class="sidebar-nav">
-    <a
-      class="nav-item"
-      *ngFor="let item of menuItems"
-      [routerLink]="item.link"
-      routerLinkActive="active"
-      [title]="item.label"
-    >
-      <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
-      <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
-    </a>
+    @for (item of filteredMenuItems; track item.link) {
+      <a class="nav-item" [routerLink]="item.link" routerLinkActive="active" [title]="item.label">
+        <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+        @if (!isCollapsed) {
+          <span class="nav-label">{{ item.label }}</span>
+        }
+      </a>
+    }
   </nav>
+
+  <div class="sidebar-footer">
+    <a class="nav-item logout" (click)="logout()">
+      <mat-icon class="nav-icon">logout</mat-icon>
+      @if (!isCollapsed) {
+        <span class="nav-label">Sign Out</span>
+      }
+    </a>
+  </div>
 </aside>

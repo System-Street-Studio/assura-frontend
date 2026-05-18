@@ -1,0 +1,49 @@
+<div class="modal-overlay">
+    <div class="create-note-container">
+        <div class="note-header">
+            <h1>Add New Repairing Firm</h1>
+            <button class="close-btn" (click)="close()">×</button>
+        </div>
+
+        <form (ngSubmit)="save()" #firmForm="ngForm">
+            <div class="note-grid">
+                <div class="note-item full-width">
+                    <label for="name">Firm Name:</label>
+                    <input type="text" id="name" name="name" [(ngModel)]="formData.name" required
+                        placeholder="Enter firm name">
+                </div>
+                <div class="note-item">
+                    <label for="contactPerson">Contact Person:</label>
+                    <input type="text" id="contactPerson" name="contactPerson" [(ngModel)]="formData.contactPerson"
+                        placeholder="Enter contact name">
+                </div>
+                <div class="note-item">
+                    <label for="phone">Phone Number:</label>
+                    <input type="text" id="phone" name="phone" [(ngModel)]="formData.phone"
+                        placeholder="Enter phone number">
+                </div>
+                <div class="note-item">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" [(ngModel)]="formData.email"
+                        placeholder="Enter email address">
+                </div>
+                <div class="note-item full-width">
+                    <label for="address">Address:</label>
+                    <textarea id="address" name="address" [(ngModel)]="formData.address"
+                        placeholder="Enter firm address"></textarea>
+                </div>
+            </div>
+
+            <div class="note-footer">
+                <button type="button" class="cancel-btn" (click)="close()">Cancel</button>
+                <button type="submit" class="save-btn" [disabled]="!firmForm.form.valid || isSaving">
+                    {{ isSaving ? 'Saving...' : 'Save Firm' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<app-status-card *ngIf="showSuccessPopup" status="success" message="Repairing firm added successfully!"
+    subMessage="Return to firm list">
+</app-status-card>

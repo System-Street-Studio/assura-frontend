@@ -1,0 +1,112 @@
+.po-details-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.back-btn:hover {
+    background: #f0f0f0;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.details-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.details-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1.5fr;
+    gap: 3rem;
+    margin-bottom: 2.5rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.detail-row .label {
+    font-weight: 600;
+    color: #000;
+}
+
+.detail-row .value {
+    color: #333;
+    text-align: right;
+}
+
+.spacing-bottom {
+    margin-bottom: auto;
+    /* Push VAT down? Or just keep standard gap */
+}
+
+/* Specific adjustment to match screenshot layout roughly */
+.details-column:nth-child(2) {
+    justify-content: center;
+    /* Center vertically relative to others */
+    gap: 0.5rem;
+}
+
+.total-row {
+    margin-top: 0.5rem;
+}
+
+/* Special Note */
+.special-note-section {
+    margin-top: 2rem;
+}
+
+.note-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: #000;
+}
+
+.note-box {
+    border: 1px solid #333;
+    /* Darker border as per screenshot */
+    border-radius: 8px;
+    padding: 1.5rem;
+    min-height: 120px;
+    font-size: 14px;
+    color: #333;
+}

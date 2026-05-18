@@ -1,0 +1,587 @@
+/* =========================================================
+   ROOT COMPONENT
+   Styles the entire Angular component container.
+
+   display:block
+   - makes component behave like block element
+
+   min-height:100%
+   - allows full page height
+
+   background
+   - overall page background color
+
+   font-family
+   - changes typography for whole page
+========================================================= */
+:host {
+  display: block;
+  min-height: 100%;
+  background: #f5f9ff;
+  color: #071936;
+  font-family: Inter, 'Segoe UI', Arial, sans-serif;
+}
+
+/* =========================================================
+   UNIVERSAL BOX SIZING
+
+   box-sizing:border-box
+   - padding and border included inside width/height
+
+   If removed:
+   - layouts and widths may overflow
+========================================================= */
+* {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   MAIN PAGE CONTAINER
+
+   padding
+   - controls page spacing
+
+   background gradient
+   - gives soft professional UI look
+========================================================= */
+.asset-page {
+  min-height: 100%;
+  position: relative;
+  padding: 28px 28px 40px;
+  background: linear-gradient(180deg, #f8fbff 0%, #f4f8ff 100%);
+}
+
+/* =========================================================
+   COMMON FLEX ALIGNMENTS
+
+   display:flex
+   - places items in row
+
+   align-items:center
+   - vertical alignment
+========================================================= */
+.asset-header,
+.header-actions,
+.table-toolbar,
+.table-actions,
+.details-header,
+.asset-title-row,
+.timeline-item {
+  display: flex;
+  align-items: center;
+}
+
+/* =========================================================
+   HEADER SECTION
+
+   justify-content:space-between
+   - separates title and action buttons
+========================================================= */
+.asset-header {
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+/* =========================================================
+   REMOVE DEFAULT MARGINS
+========================================================= */
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+/* =========================================================
+   MAIN PAGE TITLE
+
+   font-size
+   - controls title size
+
+   font-weight
+   - controls boldness
+========================================================= */
+h1 {
+  color: #081b42;
+  font-size: 27px;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+/* Page subtitle */
+.asset-header p {
+  margin-top: 8px;
+  color: #53647f;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   FORM ELEMENT FONT RESET
+========================================================= */
+button,
+input,
+select {
+  font: inherit;
+}
+
+/* Makes cursor become pointer */
+button {
+  cursor: pointer;
+}
+
+/* =========================================================
+   HEADER ACTION BUTTONS
+
+   flex-wrap
+   - moves buttons to next line on small screens
+========================================================= */
+.header-actions {
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   BUTTON STYLES
+
+   border-radius
+   - rounded corners
+
+   box-shadow
+   - soft elevation effect
+========================================================= */
+.header-actions button,
+.table-actions button,
+.details-button {
+  min-height: 38px;
+  border: 1px solid #cad8ea;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #0f285c;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: 0;
+  box-shadow: 0 8px 20px rgba(18, 47, 88, 0.05);
+}
+
+/* =========================================================
+   PRIMARY BUTTON
+
+   background
+   - main action color
+========================================================= */
+.header-actions .primary-button,
+.details-button {
+  border-color: #0f68df;
+  background: #0f68df;
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(15, 104, 223, 0.22);
+}
+
+/* =========================================================
+   MAIN PAGE LAYOUT
+
+   grid-template-columns
+   - left content + right details panel
+========================================================= */
+.asset-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+/* Details column appears only after the user clicks an asset row. */
+.asset-layout.has-details {
+  grid-template-columns: minmax(0, 1fr) 320px;
+}
+
+/* Left content area */
+.table-area {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+/* =========================================================
+   CARD STYLING
+
+   Used for filter panel, table, and details card
+========================================================= */
+.filter-panel,
+.table-card,
+.details-panel {
+  border: 1px solid #dfe7f2;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(10, 37, 82, 0.06);
+}
+
+/* =========================================================
+   FILTER PANEL GRID
+
+   Creates responsive filter form layout
+========================================================= */
+.filter-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(150px, 1fr));
+  gap: 14px;
+  align-items: end;
+  padding: 16px;
+}
+
+/* =========================================================
+   LABEL STYLING
+========================================================= */
+label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: #243754;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+/* =========================================================
+   ACCESSIBILITY SEARCH LABEL
+
+   Hides label visually but keeps it for screen readers
+========================================================= */
+.search-field span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* =========================================================
+   INPUT & SELECT FIELDS
+
+   outline:none
+   - removes browser default border
+========================================================= */
+input,
+select {
+  width: 100%;
+  height: 36px;
+  min-width: 0;
+  border: 1px solid #cfd8e6;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #14213b;
+  padding: 0 11px;
+  font-size: 12px;
+  outline: none;
+}
+
+/* Placeholder text color */
+input::placeholder {
+  color: #8b96aa;
+}
+
+/* =========================================================
+   INPUT FOCUS EFFECT
+
+   box-shadow
+   - blue glow when focused
+========================================================= */
+input:focus,
+select:focus {
+  border-color: #0065d8;
+  box-shadow: 0 0 0 3px rgba(0, 101, 216, 0.12);
+}
+
+/* =========================================================
+   TABLE CARD
+========================================================= */
+.table-card {
+  padding: 14px;
+}
+
+/* =========================================================
+   TOOLBAR SECTION
+========================================================= */
+.table-toolbar {
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+/* =========================================================
+   SELECT LABEL
+
+   inline-flex
+   - label + dropdown in same row
+========================================================= */
+.select-label {
+  display: inline-flex;
+  grid-template-columns: none;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Action buttons */
+.table-actions {
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   TABLE SCROLL
+
+   overflow-x:auto
+   - enables horizontal scroll
+========================================================= */
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid #dfe6f0;
+  border-radius: 7px;
+}
+
+/* =========================================================
+   TABLE STRUCTURE
+========================================================= */
+table {
+  width: 100%;
+  min-width: 1080px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+/* Table header background */
+thead {
+  background: #f3f6fb;
+}
+
+/* =========================================================
+   TABLE CELLS
+========================================================= */
+th,
+td {
+  min-height: 56px;
+  padding: 13px 12px;
+  border-bottom: 1px solid #e1e7f0;
+  text-align: left;
+  vertical-align: middle;
+  color: #1d2a44;
+  font-size: 12px;
+}
+
+/* Table header styling */
+th {
+  color: #4c5a70;
+  font-weight: 900;
+}
+
+/* Remove last row border */
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* =========================================================
+   CHECKBOX STYLE
+
+   accent-color
+   - changes checkbox color
+========================================================= */
+input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: #0f68df;
+}
+
+/* =========================================================
+   TABLE ROW INTERACTION
+========================================================= */
+.asset-row {
+  cursor: pointer;
+}
+
+/* Hover and active row */
+.asset-row:hover,
+.active-row {
+  background: #f7fbff;
+}
+
+/* Keyboard accessibility focus */
+.asset-row:focus-visible {
+  outline: 3px solid rgba(0, 101, 216, 0.18);
+  outline-offset: -3px;
+}
+
+/* =========================================================
+   ASSET ID STYLE
+========================================================= */
+.asset-id {
+  color: #081b42;
+  font-weight: 950;
+}
+
+/* =========================================================
+   PRODUCT CELL LAYOUT
+========================================================= */
+.product-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Product name */
+.product-cell strong {
+  color: #081b42;
+  font-weight: 950;
+}
+
+/* =========================================================
+   PRODUCT IMAGE PLACEHOLDER
+========================================================= */
+.product-thumb,
+.preview-device {
+  display: inline-block;
+  border: 1px solid #cdd7dd;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.12)), #dce3e7;
+}
+
+/* Small thumbnail */
+.product-thumb {
+  width: 44px;
+  height: 36px;
+  border-radius: 5px;
+}
+
+/* =========================================================
+   STATUS & HEALTH PILLS
+========================================================= */
+.status-pill,
+.health-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* Assigned asset */
+.status-pill.assigned {
+  background: #eaf2ff;
+  color: #0f68df;
+}
+
+/* Repair status */
+.status-pill.in-repair {
+  background: #fff0d6;
+  color: #df7d00;
+}
+
+/* Available asset */
+.status-pill.available {
+  background: #e8f8ef;
+  color: #16a85b;
+}
+
+/* Retired asset */
+.status-pill.retired {
+  background: #ffe2e5;
+  color: #df2634;
+}
+
+/* =========================================================
+   DETAILS PANEL
+
+   position:sticky
+   - stays visible while scrolling
+========================================================= */
+.details-panel {
+  position: sticky;
+  top: 16px;
+  min-height: 620px;
+  padding: 16px;
+}
+
+/* =========================================================
+   HELP BUTTON
+
+   position:fixed
+   - floating bottom-right button
+========================================================= */
+.help-button {
+  position: fixed;
+  right: 24px;
+  bottom: 22px;
+  z-index: 20;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: #11b7b2;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 950;
+  box-shadow: 0 16px 30px rgba(17, 183, 178, 0.28);
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN
+
+   Tablet layout changes
+========================================================= */
+@media (max-width: 1280px) {
+
+  .asset-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .asset-layout.has-details {
+    grid-template-columns: 1fr;
+  }
+
+  .details-panel {
+    position: static;
+    min-height: auto;
+  }
+
+  .filter-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE DESIGN
+========================================================= */
+@media (max-width: 720px) {
+
+  .asset-page {
+    padding: 20px 14px 32px;
+  }
+
+  .asset-header,
+  .table-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-actions,
+  .table-actions {
+    width: 100%;
+  }
+
+  .header-actions button,
+  .table-actions button {
+    flex: 1 1 150px;
+  }
+
+  .filter-panel {
+    grid-template-columns: 1fr;
+  }
+}

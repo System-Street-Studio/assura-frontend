@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class TruncatePipe implements PipeTransform {
 
-    transform(value: string | null | undefined, limit: number = 20, suffix: string = '...'): string {
+    transform(value: string | null | undefined, limit = 20, suffix = '...'): string {
         if (!value) return '';
 
         if (value.length <= limit) {

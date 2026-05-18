@@ -1,0 +1,303 @@
+<div class="page">
+
+    <!-- Back navigation -->
+    <div class="back-row">
+        <button class="back-btn" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            <span>Back to Checkouts</span>
+        </button>
+    </div>
+
+    <!-- Loading skeleton -->
+    <div class="checkin-skeleton" *ngIf="loading">
+        <div class="skel-header">
+            <div class="skel-block title"></div>
+            <div class="skel-block badge"></div>
+        </div>
+        <div class="skel-cards">
+            <div class="skel-block card"></div>
+            <div class="skel-block card"></div>
+        </div>
+        <div class="skel-block form-card"></div>
+    </div>
+
+    <!-- Not found -->
+    <div class="not-found-card" *ngIf="!loading && loadError">
+        <div class="not-found-icon-wrap">
+            <mat-icon>cloud_off</mat-icon>
+        </div>
+        <h2>Unable to Load Check-In Record</h2>
+        <p>The server did not return check-in details. Please retry.</p>
+        <button class="btn primary" (click)="retryLoad()">
+            <mat-icon class="btn-icon">refresh</mat-icon>
+            Retry
+        </button>
+    </div>
+
+    <div class="not-found-card" *ngIf="!loading && notFound">
+        <div class="not-found-icon-wrap">
+            <mat-icon>search_off</mat-icon>
+        </div>
+        <h2>Record Not Found</h2>
+        <p>The checkout record you're looking for doesn't exist or has already been returned.</p>
+        <button class="btn primary" (click)="goBack()">
+            <mat-icon class="btn-icon">arrow_back</mat-icon>
+            Back to Checkouts
+        </button>
+    </div>
+
+    <div class="picker-card" *ngIf="!loading && !record && !notFound && !loadError">
+        <div class="picker-header">
+            <div class="picker-icon-wrap">
+                <mat-icon>login</mat-icon>
+            </div>
+            <div>
+                <h2>Start Check-In</h2>
+                <p>Select an active checkout record to open the return form.</p>
+            </div>
+        </div>
+
+        <div class="picker-list" *ngIf="activeCheckouts.length > 0; else noActiveCheckouts">
+            <button class="picker-row" *ngFor="let checkout of activeCheckouts" (click)="openCheckinRecord(checkout)">
+                <div class="picker-main">
+                    <strong>{{ checkout.assetName }}</strong>
+                    <span>{{ checkout.checkedOutTo }} · {{ checkout.division }}</span>
+                </div>
+                <div class="picker-meta">
+                    <span class="picker-id">{{ checkout.id }}</span>
+                    <span class="picker-due">Due {{ formatDate(checkout.dueDate) }}</span>
+                </div>
+            </button>
+        </div>
+
+        <ng-template #noActiveCheckouts>
+            <div class="picker-empty">
+                <mat-icon>assignment_turned_in</mat-icon>
+                <p>No active checkout records are available right now.</p>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- Main content -->
+    <div class="checkin-content" *ngIf="!loading && !notFound && !loadError && record">
+
+        <!-- Page Header -->
+        <div class="checkin-header">
+            <div class="header-left">
+                <h1 class="page-title">Check In Asset</h1>
+                <span class="record-id">{{ record.id }}</span>
+            </div>
+            <div class="status-badge" [ngClass]="getStatusClass()">
+                <span class="status-dot"></span>
+                {{ record.status }}
+            </div>
+        </div>
+
+        <!-- Alert banner for overdue -->
+        <div class="alert-banner overdue" *ngIf="isOverdue()">
+            <mat-icon class="alert-icon">warning</mat-icon>
+            <div class="alert-content">
+                <strong>This asset is overdue!</strong>
+                <span>It was due on {{ formatDate(record.dueDate) }} — {{ getDaysInfo() }}.</span>
+            </div>
+        </div>
+
+        <!-- Info Cards Row -->
+        <div class="info-cards">
+            <!-- Asset Card -->
+            <div class="info-card">
+                <div class="card-header">
+                    <div class="card-icon-wrap asset-icon">
+                        <mat-icon>devices</mat-icon>
+                    </div>
+                    <h3>Asset Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <div class="asset-visual">
+                            <div class="asset-thumb" [ngClass]="getCategoryThumbClass()">
+                                <mat-icon class="thumb-icon">{{ getCategoryIcon() }}</mat-icon>
+                            </div>
+                            <div>
+                                <div class="asset-name">{{ record.assetName }}</div>
+                                <div class="asset-category">{{ record.category }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Asset ID</span>
+                            <span class="detail-value mono">{{ record.assetId }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Serial Number</span>
+                            <span class="detail-value mono">{{ record.serial }}</span>
+                        </div>
+                    </div>
+                    <div class="detail-item detail-item-spaced" *ngIf="record.checkoutNotes">
+                        <span class="detail-label">Checkout Notes</span>
+                        <p class="detail-notes">{{ record.checkoutNotes }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignment Card -->
+            <div class="info-card">
+                <div class="card-header">
+                    <div class="card-icon-wrap person-icon">
+                        <mat-icon>person</mat-icon>
+                    </div>
+                    <h3>Assignment Details</h3>
+                </div>
+                <div class="card-body">
+                    <div class="person-row">
+                        <div class="avatar">{{ getInitials(record.checkedOutTo) }}</div>
+                        <div>
+                            <div class="person-name">{{ record.checkedOutTo }}</div>
+                            <div class="person-sub">{{ record.division }} · {{ record.email }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Checkout Date</span>
+                            <span class="detail-value">{{ formatDate(record.checkoutDate) }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Due Date</span>
+                            <span class="detail-value" [class.text-overdue]="isOverdue()">
+                                {{ formatDate(record.dueDate) }}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Duration</span>
+                            <span class="detail-value">{{ getDuration() }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Checked Out By</span>
+                            <span class="detail-value">{{ record.checkedOutBy }}</span>
+                        </div>
+                        <div class="detail-item" *ngIf="record.returnDate">
+                            <span class="detail-label">Returned At</span>
+                            <span class="detail-value">{{ formatDate(record.returnDate) }}</span>
+                        </div>
+                        <div class="detail-item" *ngIf="record.checkedInBy">
+                            <span class="detail-label">Checked In By</span>
+                            <span class="detail-value">{{ record.checkedInBy }}</span>
+                        </div>
+                        <div class="detail-item" *ngIf="record.maintenanceNumber">
+                            <span class="detail-label">Maintenance Ticket</span>
+                            <span class="detail-value mono">{{ record.maintenanceNumber }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Check-In Form Card -->
+        <div class="form-card">
+            <div class="card-header">
+                <div class="card-icon-wrap checkin-icon">
+                    <mat-icon>login</mat-icon>
+                </div>
+                <div>
+                    <h3>Check-In Details</h3>
+                    <p class="card-subtitle">Confirm the asset condition and add any return notes.</p>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- Condition select (visual) -->
+                <div class="form-field">
+                    <label class="field-label">Asset Condition *</label>
+                    <div class="condition-options">
+                        <div class="condition-option" [class.selected]="checkinForm.condition === 'Good'"
+                            [class.good]="checkinForm.condition === 'Good'" (click)="onConditionChange('Good')">
+                            <mat-icon class="condition-opt-icon">check_circle</mat-icon>
+                            <div>
+                                <span class="condition-title">Good</span>
+                                <span class="condition-desc">No damage, fully functional</span>
+                            </div>
+                        </div>
+                        <div class="condition-option" [class.selected]="checkinForm.condition === 'Fair'"
+                            [class.fair]="checkinForm.condition === 'Fair'" (click)="onConditionChange('Fair')">
+                            <mat-icon class="condition-opt-icon">info</mat-icon>
+                            <div>
+                                <span class="condition-title">Fair</span>
+                                <span class="condition-desc">Minor wear or cosmetic issues</span>
+                            </div>
+                        </div>
+                        <div class="condition-option" [class.selected]="checkinForm.condition === 'Damaged'"
+                            [class.damaged]="checkinForm.condition === 'Damaged'"
+                            (click)="onConditionChange('Damaged')">
+                            <mat-icon class="condition-opt-icon">warning</mat-icon>
+                            <div>
+                                <span class="condition-title">Damaged</span>
+                                <span class="condition-desc">Needs repair or replacement</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label class="field-label">Maintenance Action</label>
+                    <label class="toggle-row">
+                        <input type="checkbox" [(ngModel)]="checkinForm.repairNeeded"
+                            (ngModelChange)="onRepairNeededChange()" />
+                        <span>Create maintenance ticket for this return</span>
+                    </label>
+                </div>
+
+                <div class="form-field" *ngIf="requiresSeverity">
+                    <label class="field-label">Damage Severity *</label>
+                    <select class="severity-select" [(ngModel)]="checkinForm.damageSeverity">
+                        <option [ngValue]="undefined">Select severity</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                        <option value="Critical">Critical</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label class="field-label">Damage Evidence <span class="optional">(optional image, max
+                            5MB)</span></label>
+                    <input class="evidence-input" type="file" accept="image/*" (change)="onEvidenceSelected($event)" />
+                    <div class="evidence-name" *ngIf="checkinForm.evidenceFileName">Selected: {{
+                        checkinForm.evidenceFileName }}</div>
+                    <div class="evidence-error" *ngIf="evidenceFileError">{{ evidenceFileError }}</div>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-field">
+                    <label class="field-label">Return Notes <span class="optional">(optional)</span></label>
+                    <textarea class="form-textarea" rows="4"
+                        placeholder="Describe the condition, any issues found, or actions taken…"
+                        [(ngModel)]="checkinForm.notes"></textarea>
+                </div>
+
+                <div class="form-field ack-field" [class.invalid]="submitted && !checkinForm.acknowledged">
+                    <label class="toggle-row">
+                        <input type="checkbox" [(ngModel)]="checkinForm.acknowledged" />
+                        <span>I confirm this inspection is accurate and complete. *</span>
+                    </label>
+                    <div class="evidence-error" *ngIf="submitted && !checkinForm.acknowledged">Acknowledgement is
+                        required.</div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="form-actions">
+                    <button class="btn outline" (click)="goBack()" [disabled]="processing">Cancel</button>
+                    <button class="btn primary lg" (click)="confirmCheckin()" [disabled]="processing">
+                        <mat-icon class="btn-icon" *ngIf="!processing">login</mat-icon>
+                        <mat-icon class="btn-icon spin" *ngIf="processing">sync</mat-icon>
+                        {{ processing ? 'Processing...' : 'Confirm Check-In' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Overlay -->
+    <app-result-overlay *ngIf="showResult" [type]="resultType" [title]="resultTitle" [message]="resultMessage"
+        (closed)="onResultClosed()"></app-result-overlay>
+</div>

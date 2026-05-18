@@ -1,0 +1,931 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\projects\\assura-frontend\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\inventory.routes.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\inventory.routes.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\dashboard.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\models\\dashboard.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\CONTRIBUTING.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CONTRIBUTING.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\BEGINNERS_GUIDE.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:BEGINNERS_GUIDE.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\DEVELOPER_GUIDE.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:DEVELOPER_GUIDE.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\dashboard.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\services\\dashboard.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\shell.routes.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\shell\\shell.routes.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\app.config.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\app.config.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\asset.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\models\\asset.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\asset.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\services\\asset.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\tsconfig.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:tsconfig.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\tsconfig.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\tsconfig.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\services\\toast.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\shared\\services\\toast.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\components\\toast\\toast.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\shared\\components\\toast\\toast.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\shell.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\shell\\shell.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\components\\result-overlay\\result-overlay.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\shared\\components\\result-overlay\\result-overlay.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\shell.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\shell\\shell.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\services\\notification.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\shared\\services\\notification.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1606212503\\inventory-dashboard.component.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1606212503\\inventory-dashboard.component.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1606212503\\inventory-dashboard.component.scss||{181FE41B-5A5D-479F-9F8F-BF665F4EBC2A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\product.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\models\\product.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\product.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\services\\product.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\products\\products.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\products\\products.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\products\\products.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\products\\products.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\products\\products.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\products\\products.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\supplier.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\models\\supplier.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\supplier.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\services\\supplier.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\request.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\models\\request.model.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\request.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\services\\request.service.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:135:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:136:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 55,
+              "Title": "asset-requests.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAALMBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-23T12:05:29.106Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "product.model.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\product.model.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\models\\product.model.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\product.model.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\models\\product.model.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T10:54:07.784Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "inventory-dashboard.component.scss",
+              "DocumentMoniker": "C:\\Users\\HP\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1606212503\\inventory-dashboard.component.scss",
+              "ToolTip": "C:\\Users\\HP\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1606212503\\inventory-dashboard.component.scss",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002663|",
+              "WhenOpened": "2026-02-23T09:39:12.575Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "inventory-dashboard.component.html",
+              "DocumentMoniker": "C:\\Users\\HP\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1606212503\\inventory-dashboard.component.html",
+              "ToolTip": "C:\\Users\\HP\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1606212503\\inventory-dashboard.component.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-23T09:39:12.538Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "dashboard.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.css",
+              "ViewState": "AgIAAGYCAAAAAAAAAAAAAKsCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-21T07:15:08.373Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 56,
+              "Title": "asset-requests.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEYEAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-23T12:07:14.324Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "inventory-dashboard.component.ts",
+              "DocumentMoniker": "C:\\Users\\HP\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1606212503\\inventory-dashboard.component.ts",
+              "ToolTip": "C:\\Users\\HP\\AppData\\Local\\Temp\\CopilotBaseline\\Deleted\\1606212503\\inventory-dashboard.component.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T09:39:12.49Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 54,
+              "Title": "asset-requests.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\asset-requests\\asset-requests.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC4BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T12:04:34.918Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 53,
+              "Title": "request.service.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\request.service.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\services\\request.service.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\request.service.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\services\\request.service.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAOYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T12:04:02.345Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 52,
+              "Title": "request.model.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\request.model.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\models\\request.model.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\request.model.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\models\\request.model.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwBUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T12:03:29.509Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 51,
+              "Title": "suppliers.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAPsCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-23T11:09:17.666Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
+              "Title": "suppliers.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-23T11:08:12.057Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "suppliers.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\suppliers\\suppliers.ts",
+              "ViewState": "AgIAANoAAAAAAAAAAIBJwPQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T11:07:37.594Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "supplier.service.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\supplier.service.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\services\\supplier.service.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\supplier.service.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\services\\supplier.service.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAANoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T11:07:10.438Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "supplier.model.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\supplier.model.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\models\\supplier.model.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\supplier.model.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\models\\supplier.model.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwCAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T11:06:42.086Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "products.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\products\\products.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\products\\products.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\products\\products.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\products\\products.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwDAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-23T10:59:33.149Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "products.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\products\\products.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\products\\products.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\products\\products.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\products\\products.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAO4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-23T10:55:43.462Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "products.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\products\\products.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\products\\products.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\products\\products.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\products\\products.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAN4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T10:55:06.701Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "product.service.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\product.service.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\services\\product.service.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\product.service.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\services\\product.service.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAALwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T10:54:38.169Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "navbar.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.html",
+              "ViewState": "AgIAAFEAAAAAAAAAAEBVwFUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-23T08:46:25.32Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "navbar.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.css",
+              "ViewState": "AgIAAHQBAAAAAAAAAABBwHUBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-23T08:47:07.47Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "navbar.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\shell\\components\\navbar\\navbar.ts",
+              "ViewState": "AgIAAAMAAAAAAAAAAIBJwFcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T08:46:06.997Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "notification.service.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\services\\notification.service.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\shared\\services\\notification.service.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\services\\notification.service.ts",
+              "RelativeToolTip": "frontend\\src\\app\\shared\\services\\notification.service.ts",
+              "ViewState": "AgIAAEQAAAAAAAAAAIBJwGEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T08:45:53.187Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "sidebar.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.css",
+              "ViewState": "AgIAAIsAAAAAAAAAAAAYwJwAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-21T07:39:43.719Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "dashboard.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.html",
+              "ViewState": "AgIAABcBAAAAAAAAAAAYwCsBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-21T07:14:42.969Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "inventory-dashboard.component.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-23T09:32:47.118Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "inventory-dashboard.component.scss",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.scss",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.scss",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.scss",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.scss",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002663|",
+              "WhenOpened": "2026-02-23T09:32:47.85Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "inventory-dashboard.component.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\inventory-dashboard\\inventory-dashboard.component.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-23T09:32:47.286Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "asset-details.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.ts",
+              "ViewState": "AgIAAAEAAAAAAAAAAIBJwLMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T14:51:42.757Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "inventory.routes.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\inventory.routes.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\inventory.routes.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\inventory.routes.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\inventory.routes.ts",
+              "ViewState": "AgIAACgAAAAAAAAAAAAswDYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T07:15:25.861Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "asset-form.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.ts",
+              "ViewState": "AgIAABAAAAAAAAAAAIBQwNoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-22T03:57:06.499Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "asset-form.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.html",
+              "ViewState": "AgIAAK4AAAAAAAAAAABRwLIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-22T03:57:21.131Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "asset-form.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\asset-form\\asset-form.css",
+              "ViewState": "AgIAAKYAAAAAAAAAAABBwJsBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-22T03:57:38.331Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "shell.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\shell.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\shell\\shell.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\shell.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\shell\\shell.css",
+              "ViewState": "AgIAABUAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-22T05:15:02.128Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "toast.service.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\services\\toast.service.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\shared\\services\\toast.service.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\services\\toast.service.ts",
+              "RelativeToolTip": "frontend\\src\\app\\shared\\services\\toast.service.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-22T04:42:48.133Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "result-overlay.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\components\\result-overlay\\result-overlay.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\shared\\components\\result-overlay\\result-overlay.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\components\\result-overlay\\result-overlay.ts",
+              "RelativeToolTip": "frontend\\src\\app\\shared\\components\\result-overlay\\result-overlay.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-22T04:52:45.005Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "shell.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\shell.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\shell\\shell.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\shell.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\shell\\shell.ts",
+              "ViewState": "AgIAABYAAAAAAAAAAIBQwBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-22T04:43:31.93Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "toast.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\components\\toast\\toast.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\shared\\components\\toast\\toast.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\shared\\components\\toast\\toast.ts",
+              "RelativeToolTip": "frontend\\src\\app\\shared\\components\\toast\\toast.ts",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAALEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-22T04:43:10.062Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "dashboard.model.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\dashboard.model.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\models\\dashboard.model.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\dashboard.model.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\models\\dashboard.model.ts",
+              "ViewState": "AgIAACEAAAAAAAAAAIBJwCMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T07:13:43.335Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CONTRIBUTING.md",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\CONTRIBUTING.md",
+              "RelativeDocumentMoniker": "CONTRIBUTING.md",
+              "ToolTip": "D:\\projects\\assura-frontend\\CONTRIBUTING.md",
+              "RelativeToolTip": "CONTRIBUTING.md",
+              "ViewState": "AgIAAHAAAAAAAAAAAEBiwDcAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-21T15:16:43.397Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BEGINNERS_GUIDE.md",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\BEGINNERS_GUIDE.md",
+              "RelativeDocumentMoniker": "BEGINNERS_GUIDE.md",
+              "ToolTip": "D:\\projects\\assura-frontend\\BEGINNERS_GUIDE.md",
+              "RelativeToolTip": "BEGINNERS_GUIDE.md",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-21T15:16:35.626Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "tsconfig.json",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\tsconfig.json",
+              "RelativeDocumentMoniker": "tsconfig.json",
+              "ToolTip": "D:\\projects\\assura-frontend\\tsconfig.json",
+              "RelativeToolTip": "tsconfig.json",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-21T15:41:35.61Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "tsconfig.json",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\tsconfig.json",
+              "RelativeDocumentMoniker": "frontend\\tsconfig.json",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\tsconfig.json",
+              "RelativeToolTip": "frontend\\tsconfig.json",
+              "ViewState": "AgIAAA4AAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-21T15:42:10.485Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DEVELOPER_GUIDE.md",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\DEVELOPER_GUIDE.md",
+              "RelativeDocumentMoniker": "DEVELOPER_GUIDE.md",
+              "ToolTip": "D:\\projects\\assura-frontend\\DEVELOPER_GUIDE.md",
+              "RelativeToolTip": "DEVELOPER_GUIDE.md",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-02-21T15:16:25.413Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "assets.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.css",
+              "ViewState": "AgIAAGgBAAAAAAAAAABRwAIDAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-21T13:35:43.116Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "assets.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.html",
+              "ViewState": "AgIAAAkBAAAAAAAAAEBVwA4BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-21T13:34:03.769Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "assets.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\assets\\assets.ts",
+              "ViewState": "AgIAAIgAAAAAAAAAAIBJwLAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T13:33:30.178Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "asset.service.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\asset.service.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\services\\asset.service.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\asset.service.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\services\\asset.service.ts",
+              "ViewState": "AgIAAPkAAAAAAAAAAIBJwPwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T13:33:05.77Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "asset.model.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\asset.model.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\models\\asset.model.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\models\\asset.model.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\models\\asset.model.ts",
+              "ViewState": "AgIAAAUAAAAAAAAAAEBVwDQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T13:32:39.206Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "dashboard.service.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\dashboard.service.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\services\\dashboard.service.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\services\\dashboard.service.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\services\\dashboard.service.ts",
+              "ViewState": "AgIAAEkAAAAAAAAAAIBJwEwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T07:14:07.341Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "asset-details.css",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.css",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.css",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.css",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.css",
+              "ViewState": "AgIAAO4CAAAAAAAAAABRwPMCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-21T15:00:09.764Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "asset-details.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\asset-details\\asset-details.html",
+              "ViewState": "AgIAAMoAAAAAAAAAAEBVwEkBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-21T14:59:34.581Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "dashboard.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\inventory\\pages\\dashboard\\dashboard.ts",
+              "ViewState": "AgIAAFYAAAAAAAAAAIBJwLEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T07:14:25.411Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "sidebar.html",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.html",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.html",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.html",
+              "RelativeToolTip": "frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.html",
+              "ViewState": "AgIAADgAAAAAAAAAAABRwDsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-21T07:38:52.521Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "sidebar.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\shell\\components\\sidebar\\sidebar.ts",
+              "ViewState": "AgIAABwAAAAAAAAAAEBVwDYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T07:37:57.768Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "app.config.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\app.config.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\app.config.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\app.config.ts",
+              "RelativeToolTip": "frontend\\src\\app\\app.config.ts",
+              "ViewState": "AgIAAA4AAAAAAAAAAIBJwBAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T07:15:53.757Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "shell.routes.ts",
+              "DocumentMoniker": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\shell.routes.ts",
+              "RelativeDocumentMoniker": "frontend\\src\\app\\features\\shell\\shell.routes.ts",
+              "ToolTip": "D:\\projects\\assura-frontend\\frontend\\src\\app\\features\\shell\\shell.routes.ts",
+              "RelativeToolTip": "frontend\\src\\app\\features\\shell\\shell.routes.ts",
+              "ViewState": "AgIAAAcAAAAAAAAAAIBJwAkAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-02-21T07:15:40.085Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,346 @@
+<section class="reporting-dashboard" aria-labelledby="dashboard-title">
+
+  <!-- HEADER SECTION
+       This section shows the page title, short description, date filter,
+       department/category/status filters, and refresh button. -->
+  <header class="dashboard-header">
+    <div>
+      <h1 id="dashboard-title">Reporting &amp; Analytics Dashboard</h1>
+      <p>Overview of asset inventory, audit findings and compliance status.</p>
+    </div>
+
+    <!-- Dashboard filter buttons.
+         These buttons will call TS methods to open/change filters. -->
+    <div class="header-filters" aria-label="Dashboard filters">
+      <button class="filter-button date-filter" type="button" (click)="openDateFilter()">
+        {{ selectedDateRange }}
+        <span class="mini-icon calendar-icon" aria-hidden="true"></span>
+      </button>
+
+      <button class="filter-button" type="button" (click)="openDepartmentFilter()">
+        {{ selectedDepartment }}
+      </button>
+
+      <button class="filter-button" type="button" (click)="openCategoryFilter()">
+        {{ selectedCategory }}
+      </button>
+
+      <button class="filter-button" type="button" (click)="openStatusFilter()">
+        {{ selectedStatus }}
+      </button>
+
+      <button class="refresh-button" type="button" (click)="refreshDashboard()">
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  <!-- METRIC CARDS SECTION
+       These cards show the most important auditor dashboard values. -->
+  <div class="metrics-grid" aria-label="Reporting overview metrics">
+      <article *ngFor="let metric of metrics" class="metric-card" (click)="viewMetricDetails(metric)">
+        <span class="metric-icon metric-{{ metric.tone }}">
+          <span class="mini-icon icon-{{ metric.icon }}" aria-hidden="true"></span>
+        </span>
+
+        <div>
+          <span class="metric-label">
+            {{ metric.label }}
+
+            <i *ngIf="metric.info" aria-hidden="true" title="More information">i</i>
+          </span>
+
+          <strong>{{ metric.value }}</strong>
+          <small class="trend trend-{{ metric.tone }}">{{ metric.trend }}</small>
+        </div>
+      </article>
+  </div>
+
+  <!-- MAIN DASHBOARD GRID
+       Left side contains charts and activities.
+       Right side contains alerts, compliance score, and risk departments. -->
+  <div class="dashboard-grid">
+
+    <!-- PRIMARY CONTENT AREA -->
+    <main class="primary-grid">
+
+      <!-- ASSETS BY CATEGORY CHART
+           Donut chart shows asset distribution by category. -->
+      <section class="panel category-panel" aria-labelledby="category-title">
+        <h2 id="category-title">Assets by Category</h2>
+
+        <div class="donut-row">
+          <div class="donut-chart" aria-label="Assets by category donut chart"></div>
+
+          <div class="legend-list">
+              <div *ngFor="let item of categoryLegend" (click)="filterByCategory(item.label)">
+                <span class="legend-dot" [style.background]="item.color"></span>
+                <span>{{ item.label }}</span>
+                <strong>{{ item.value }}</strong>
+              </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASSETS BY STATUS CHART
+           Bar chart shows assigned, available, maintenance, and retired assets. -->
+      <section class="panel" aria-labelledby="status-title">
+        <h2 id="status-title">Assets by Status</h2>
+
+        <div class="bar-chart status-chart">
+            <div *ngFor="let bar of statusBars" class="bar-item" (click)="filterByStatus(bar.label)">
+              <strong>{{ bar.display }}</strong>
+              <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
+              <small>{{ bar.label }}</small>
+            </div>
+        </div>
+      </section>
+
+      <!-- ASSETS BY DEPARTMENT CHART
+           Shows which department owns more assets. -->
+      <section class="panel" aria-labelledby="department-title">
+        <h2 id="department-title">Assets by Department</h2>
+
+        <div class="bar-chart department-chart">
+            <div *ngFor="let bar of departmentBars" class="bar-item" (click)="filterByDepartment(bar.label)">
+              <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
+              <small>{{ bar.label }}</small>
+            </div>
+        </div>
+      </section>
+
+      <!-- ASSET VALUE BY CATEGORY
+           Shows which asset category has the highest value. -->
+      <section class="panel" aria-labelledby="value-title">
+        <h2 id="value-title">Asset Value by Category</h2>
+
+        <div class="bar-chart value-chart">
+            <div *ngFor="let bar of valueBars" class="bar-item" (click)="viewValueCategory(bar.label)">
+              <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
+              <small>{{ bar.label }}</small>
+            </div>
+        </div>
+      </section>
+
+      <!-- MONTHLY AUDIT FINDINGS TREND
+           Line chart shows missing assets, ghost assets, and maintenance issues by month. -->
+      <section class="panel trend-panel" aria-labelledby="trend-title">
+        <div class="panel-heading">
+          <h2 id="trend-title">Monthly Audit Findings Trend</h2>
+
+          <button class="small-select" type="button" (click)="changeTrendPeriod()">
+            {{ selectedTrendPeriod }}
+          </button>
+        </div>
+
+        <div class="legend-inline">
+          <span class="dot red"></span> Missing Assets
+          <span class="dot blue"></span> Ghost Assets
+          <span class="dot orange"></span> Maintenance Issues
+        </div>
+
+        <div class="line-chart">
+          <svg viewBox="0 0 720 230" aria-hidden="true">
+            <path
+              class="line red-line"
+              d="M20 116 L82 83 L144 120 L206 83 L268 111 L330 53 L392 83 L454 21 L516 47 L578 21 L640 62 L700 53"
+            ></path>
+
+            <path
+              class="line blue-line"
+              d="M20 143 L82 139 L144 162 L206 116 L268 139 L330 98 L392 116 L454 83 L516 111 L578 79 L640 103 L700 111"
+            ></path>
+
+            <path
+              class="line orange-line"
+              d="M20 185 L82 191 L144 185 L206 174 L268 179 L330 174 L392 151 L454 174 L516 174 L578 146 L640 151 L700 151"
+            ></path>
+          </svg>
+
+          <div class="chart-points">
+            <ng-container *ngFor="let finding of monthlyFindings; let index = index">
+              <span
+                class="chart-point red"
+                [ngStyle]="getPointStyle(index, finding.missing)"
+                (click)="viewMonthlyFinding(finding.month, 'Missing Assets')"
+              ></span>
+
+              <span
+                class="chart-point blue"
+                [ngStyle]="getPointStyle(index, finding.ghost)"
+                (click)="viewMonthlyFinding(finding.month, 'Ghost Assets')"
+              ></span>
+
+              <span
+                class="chart-point orange"
+                [ngStyle]="getPointStyle(index, finding.maintenance)"
+                (click)="viewMonthlyFinding(finding.month, 'Maintenance Issues')"
+              ></span>
+            </ng-container>
+          </div>
+
+          <div class="month-axis">
+              <span *ngFor="let finding of monthlyFindings">{{ finding.month }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASSET VERIFICATION PROGRESS
+           Shows verification percentage of each department. -->
+      <section class="panel progress-panel" aria-labelledby="progress-title">
+        <h2 id="progress-title">Asset Verification Progress by Department</h2>
+
+        <div class="progress-list">
+            <div *ngFor="let item of progressItems" class="progress-row" (click)="viewDepartmentProgress(item.department)">
+              <span>{{ item.department }}</span>
+
+              <div class="progress-track">
+                <i [style.width.%]="item.value" [style.background]="item.color"></i>
+              </div>
+
+              <strong>{{ item.value }}%</strong>
+            </div>
+        </div>
+      </section>
+
+      <!-- RECENT AUDIT ACTIVITIES
+           Displays latest actions performed in the system. -->
+      <section class="panel activity-panel" aria-labelledby="activity-title">
+        <div class="panel-heading">
+          <h2 id="activity-title">Recent Audit Activities</h2>
+          <a href="#" (click)="viewAllActivities($event)">View All</a>
+        </div>
+
+        <div class="activity-table">
+          <div class="activity-head">
+            <span>Date &amp; Time</span>
+            <span>Activity</span>
+            <span>Asset / ID</span>
+            <span>Department</span>
+            <span>Performed By</span>
+          </div>
+
+            <div *ngFor="let activity of auditActivities" class="activity-row" (click)="viewActivityDetails(activity)">
+              <span>{{ activity.date }}</span>
+              <strong class="activity-name activity-{{ activity.tone }}">
+                {{ activity.activity }}
+              </strong>
+              <span>{{ activity.assetId }}</span>
+              <span>{{ activity.department }}</span>
+              <span>{{ activity.performedBy }}</span>
+            </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- SIDE CONTENT AREA -->
+    <aside class="side-grid" aria-label="Audit side panels">
+
+      <!-- AUDIT ALERTS
+           Shows important audit warnings and critical issues. -->
+      <section class="panel alert-panel" aria-labelledby="alerts-title">
+        <div class="panel-heading">
+          <h2 id="alerts-title">Audit Alerts <b>{{ alerts.length }}</b></h2>
+          <a href="#" (click)="viewAllAlerts($event)">View All</a>
+        </div>
+
+        <div class="alert-list">
+            <article *ngFor="let alert of alerts" class="alert-item" (click)="viewAlertDetails(alert)">
+              <span class="alert-icon alert-{{ alert.tone }}">{{ alert.icon }}</span>
+
+              <div>
+                <strong>{{ alert.title }}</strong>
+                <span>{{ alert.detail }}</span>
+              </div>
+
+              <small class="level level-{{ alert.level.toLowerCase() }}">
+                {{ alert.level }}
+              </small>
+
+              <time>{{ alert.time }}</time>
+            </article>
+        </div>
+
+        <button class="wide-outline" type="button" (click)="viewAllAlerts()">
+          View All Alerts
+        </button>
+      </section>
+
+      <!-- COMPLIANCE SCORE
+           Shows verified, unverified, and risky asset percentage. -->
+      <section class="panel compliance-panel" aria-labelledby="compliance-title">
+        <h2 id="compliance-title">Compliance Score</h2>
+
+        <div class="compliance-body">
+          <div class="score-ring" (click)="viewComplianceReport()">
+            <strong>92%</strong>
+            <span>Score</span>
+          </div>
+
+          <div class="score-list">
+            <div (click)="viewVerifiedAssets()">
+              <span class="score-dot green"></span>
+              Verified Assets
+              <strong>4,140 (92%)</strong>
+            </div>
+
+            <div (click)="viewUnverifiedAssets()">
+              <span class="score-dot orange"></span>
+              Unverified Assets
+              <strong>360 (8%)</strong>
+            </div>
+
+            <div (click)="viewRiskAssets()">
+              <span class="score-dot red"></span>
+              At Risk Assets
+              <strong>42 (0.9%)</strong>
+            </div>
+          </div>
+        </div>
+
+        <small class="score-trend">+4% from last month</small>
+      </section>
+
+      <!-- TOP RISK DEPARTMENTS
+           Shows departments with high audit risk. -->
+      <section class="panel risk-panel" aria-labelledby="risk-title">
+        <div class="panel-heading">
+          <h2 id="risk-title">Top Risk Departments</h2>
+          <a href="#" (click)="viewAllRiskDepartments($event)">View All</a>
+        </div>
+
+        <div class="risk-table">
+          <div class="risk-head">
+            <span>Department</span>
+            <span>Risk Level</span>
+            <span>Risk Score</span>
+            <span>Open Issues</span>
+          </div>
+
+            <div *ngFor="let risk of riskDepartments" class="risk-row" (click)="viewRiskDepartment(risk)">
+              <span>{{ risk.department }}</span>
+
+              <strong class="risk-level risk-{{ risk.riskLevel.toLowerCase() }}">
+                {{ risk.riskLevel }}
+              </strong>
+
+              <span>{{ risk.riskScore }}</span>
+              <b>{{ risk.openIssues }}</b>
+            </div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- FOOTER
+       Shows the last updated time of dashboard data. -->
+  <footer class="dashboard-footer">
+    All data is updated as of {{ lastUpdated }}
+  </footer>
+
+  <!-- HELP BUTTON
+       Opens help/support popup or guide. -->
+  <button class="help-button" type="button" aria-label="Open help" (click)="openHelp()">
+    ?
+  </button>
+</section>

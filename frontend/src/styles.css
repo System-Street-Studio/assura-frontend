@@ -5,6 +5,30 @@
     font-display: swap;
 }
 
+*:not(.material-icons):not(.mat-icon):not(mat-icon),
+*::before,
+*::after,
+*::placeholder,
+html,
+body,
+button,
+input,
+select,
+textarea,
+span:not(.material-icons):not(.mat-icon),
+div,
+p,
+a,
+label,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Jost', sans-serif !important;
+}
+
 *,
 *::before,
 *::after {
@@ -18,4 +42,40 @@ body {
     height: 100%;
     width: 100%;
     overflow: hidden;
+}
+
+/* Global Custom Select Styling */
+.custom-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 0.8rem 2.5rem 0.8rem 1.2rem;
+    font-size: 1rem;
+    color: #333;
+    width: 100%;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234b5563'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.25rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.custom-select:focus {
+    border-color: #004777;
+    box-shadow: 0 0 0 3px rgba(0, 71, 119, 0.1);
+}
+
+.custom-select:hover {
+    border-color: #9ca3af;
+}
+
+.custom-select:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+    color: #9ca3af;
 }

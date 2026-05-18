@@ -1,0 +1,182 @@
+<div class="page">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-left">
+            <h1 class="page-title">Maintenance</h1>
+            <span class="item-count">{{ filteredRequests.length }} of {{ allRequests.length }} requests</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn outline" title="Export to CSV">
+                <mat-icon class="btn-icon">file_download</mat-icon>
+                Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Stat cards -->
+    <section class="stats-strip">
+        <div class="stat-card" (click)="filterStatus = ''; applyFilters();" [class.active]="!filterStatus">
+            <div class="stat-icon-wrap all"><mat-icon>build_circle</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ totalCount }}</div>
+                <div class="stat-label">All Requests</div>
+            </div>
+        </div>
+        <div class="stat-card" (click)="filterStatus = 'Pending'; applyFilters();"
+            [class.active]="filterStatus === 'Pending'">
+            <div class="stat-icon-wrap pending"><mat-icon>schedule</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ pendingCount }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+        <div class="stat-card" (click)="filterStatus = 'In Progress'; applyFilters();"
+            [class.active]="filterStatus === 'In Progress'">
+            <div class="stat-icon-wrap in-progress"><mat-icon>autorenew</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ inProgressCount }}</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+        </div>
+        <div class="stat-card" (click)="filterStatus = 'Completed'; applyFilters();"
+            [class.active]="filterStatus === 'Completed'">
+            <div class="stat-icon-wrap completed"><mat-icon>check_circle</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ completedCount }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <div class="search-box">
+                <mat-icon class="search-icon">search</mat-icon>
+                <input class="search-input" placeholder="Search by ID, asset, description..." [(ngModel)]="searchTerm"
+                    (input)="applyFilters()" />
+                <button class="search-clear" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <select class="filter-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
+                <option value="">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Forwarded">Forwarded</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+
+            <button class="btn-text" *ngIf="searchTerm || filterStatus" (click)="clearFilters()">
+                <mat-icon>filter_list_off</mat-icon> Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        <table class="mnt-table">
+            <thead>
+                <tr>
+                    <th class="col-check">
+                        <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll()" />
+                    </th>
+                    <th>Maintenance №</th>
+                    <th>Asset</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Cost</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let req of viewRequests" [class.row-selected]="req.selected" class="clickable-row"
+                    (click)="openDetail(req)">
+                    <td class="col-check" (click)="$event.stopPropagation()">
+                        <input type="checkbox" [checked]="req.selected" (change)="req.selected = !req.selected" />
+                    </td>
+                    <td class="cell-id">{{ req.maintenanceNumber }}</td>
+                    <td>
+                        <div class="asset-info">
+                            <div class="asset-name">{{ req.assetName }}</div>
+                            <div class="asset-id-sub">{{ req.assetId }}</div>
+                        </div>
+                    </td>
+                    <td><span class="category-tag">{{ req.category }}</span></td>
+                    <td>{{ req.type }}</td>
+                    <td>
+                        <span class="status-badge" [ngClass]="getStatusClass(req.status)">
+                            {{ req.status }}
+                        </span>
+                    </td>
+                    <td>{{ formatDate(req.maintenanceDate) }}</td>
+                    <td>${{ req.cost }}</td>
+                    <td class="col-actions" (click)="$event.stopPropagation()">
+                        <div class="action-btns" *ngIf="req.status === 'Pending'">
+                            <button class="action-btn start" title="Start Repair"
+                                (click)="openAction('start', req, $event)">
+                                <mat-icon>build</mat-icon>
+                            </button>
+                            <button class="action-btn forward" title="Forward"
+                                (click)="openAction('forward', req, $event)">
+                                <mat-icon>send</mat-icon>
+                            </button>
+                            <button class="action-btn reject" title="Reject"
+                                (click)="openAction('reject', req, $event)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                        <div class="action-btns" *ngIf="req.status === 'In Progress'">
+                            <button class="action-btn complete" title="Complete"
+                                (click)="openAction('complete', req, $event)">
+                                <mat-icon>check_circle</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr *ngIf="viewRequests.length === 0 && !loading">
+                    <td colspan="9" class="empty-state">No requests found</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <app-pagination *ngIf="filteredRequests.length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
+        [pageNumbers]="pages" (pageChange)="goToPage($event)">
+    </app-pagination>
+</div>
+
+<!-- Action Modal -->
+<div class="overlay" *ngIf="showActionModal" (click)="showActionModal = false">
+    <div class="action-dialog" (click)="$event.stopPropagation()">
+        <h3>Confirm Action</h3>
+        <p>Are you sure you want to change the status to "{{ actionType }}" for {{ actionRequest?.maintenanceNumber }}?
+        </p>
+        <div class="modal-actions">
+            <button class="btn outline" (click)="showActionModal = false">Cancel</button>
+            <button class="btn primary" (click)="confirmAction()" [disabled]="actionProcessing">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Drawer (Simplified) -->
+<div class="drawer-overlay" *ngIf="showDetail" (click)="showDetail = false">
+    <aside class="detail-drawer" (click)="$event.stopPropagation()">
+        <header class="drawer-header">
+            <h3>Details: {{ detailRequest?.maintenanceNumber }}</h3>
+            <button (click)="showDetail = false"><mat-icon>close</mat-icon></button>
+        </header>
+        <div class="drawer-body" *ngIf="detailRequest">
+            <p><strong>Asset:</strong> {{ detailRequest.assetName }}</p>
+            <p><strong>Description:</strong> {{ detailRequest.description }}</p>
+            <p><strong>Type:</strong> {{ detailRequest.type }}</p>
+            <p><strong>Status:</strong> {{ detailRequest.status }}</p>
+            <p><strong>Cost:</strong> ${{ detailRequest.cost }}</p>
+        </div>
+    </aside>
+</div>

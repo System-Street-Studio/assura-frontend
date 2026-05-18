@@ -1,0 +1,322 @@
+.page-container {
+    padding: 2rem;
+    background-color: #f5fafd;
+    min-height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.page-title {
+    font-family: 'Jost', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 2rem;
+    margin-left: 2rem;
+}
+
+.form-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 3rem;
+    width: 90%;
+    max-width: 900px;
+    margin: 0 auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.form-title {
+    font-family: 'Jost', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.arrival-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.form-group label {
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"] {
+    flex: 1;
+    padding: 0.8rem 1.2rem;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    background-color: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #004777;
+}
+
+/* Width Helpers */
+.small-width input {
+    max-width: 100px;
+}
+
+/* Row for Date and Department */
+.row {
+    display: flex;
+    gap: 2rem;
+}
+
+.half-width {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+/* Warranty Logic */
+.warranty-input-group {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    flex: 1;
+}
+
+.warranty-input-group input {
+    max-width: 100px;
+}
+
+.checkbox-group {
+    display: flex;
+    gap: 3rem;
+}
+
+/* Custom Checkbox */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    font-size: 1rem;
+    user-select: none;
+    width: auto !important;
+    /* Override width */
+    font-weight: 400 !important;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #fff;
+    border: 1px solid #333;
+    border-radius: 4px;
+}
+
+.checkbox-container:hover input~.checkmark {
+    background-color: #eee;
+}
+
+.checkbox-container input:checked~.checkmark {
+    background-color: #fff;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked~.checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid #333;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Buttons */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15rem;
+    margin-top: 3rem;
+}
+
+.btn {
+    padding: 0.8rem 4rem;
+    border-radius: 10px;
+    font-family: 'Jost', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    color: white;
+    transition: opacity 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn-cancel,
+.btn-inform {
+    background-color: #a00000;
+}
+
+/* History Section Styling */
+.history-section {
+    width: 100%;
+    margin-top: 40px;
+}
+
+.section-title {
+    font-family: 'Jost', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 20px;
+    margin-left: 0.5rem;
+}
+
+.table-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    width: 95%;
+    margin: 0 auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table th {
+    text-align: center;
+    padding: 1.2rem 1rem;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.history-table td {
+    text-align: center;
+    padding: 1.2rem 1rem;
+    font-size: 14px;
+    color: #444;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.history-table tbody tr:hover {
+    background-color: #fcfdfe;
+}
+
+.empty-state {
+    padding: 40px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.pending {
+    background-color: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffe0b2;
+}
+
+/* Success Overlay Styling */
+.success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.blurred {
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .form-group label {
+        width: 100%;
+    }
+
+    .warranty-input-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .button-group {
+        gap: 2rem;
+    }
+}

@@ -1,0 +1,567 @@
+/* =========================================================
+   ROOT CONTAINER
+   :host styles the Angular component container itself.
+
+   If changed:
+   - display:block → layout may break
+   - background color changes overall page theme
+   - font-family changes entire page typography
+========================================================= */
+:host {
+  display: block;
+  min-height: 100%;
+  background: #f5f7f8;
+  color: #17232b;
+  font-family: 'Jost', Arial, sans-serif;
+}
+
+/* =========================================================
+   MAIN PAGE CONTAINER
+
+   min-height:
+   - controls full page height
+
+   padding:
+   - controls internal spacing
+
+   position:relative
+   - allows floating elements positioning
+========================================================= */
+.audit-page {
+  min-height: 100%;
+  padding: 16px 20px 44px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* =========================================================
+   HEADER SECTION
+
+   display:flex
+   - places title and buttons in one row
+
+   justify-content:space-between
+   - separates left and right content
+
+   gap
+   - spacing between items
+========================================================= */
+.audit-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+/* =========================================================
+   PAGE TITLE
+
+   font-size
+   - controls title size
+
+   font-weight
+   - controls boldness
+========================================================= */
+.audit-header h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   PAGE DESCRIPTION
+
+   color
+   - subtitle text color
+
+   font-size
+   - smaller text appearance
+========================================================= */
+.audit-header p {
+  margin: 4px 0 0;
+  color: #66747b;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   ACTION BUTTON CONTAINER
+
+   flex-wrap
+   - moves buttons to next line if needed
+========================================================= */
+.header-actions,
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* =========================================================
+   SEARCH BAR CONTAINER
+
+   width/height
+   - controls search box size
+
+   border-radius
+   - rounded corners
+
+   background
+   - input background color
+========================================================= */
+.search-field {
+  width: 180px;
+  height: 27px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  border: 1px solid #dfe8ec;
+  border-radius: 4px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+/* Search icon styling */
+.search-field span {
+  color: #7e8c93;
+  font-size: 12px;
+}
+
+/* =========================================================
+   SEARCH INPUT
+
+   outline:0
+   - removes browser blue border
+
+   width:100%
+   - fills available space
+========================================================= */
+.search-field input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 10px;
+}
+
+/* =========================================================
+   BUTTON STYLES
+
+   cursor:pointer
+   - shows clickable hand cursor
+
+   padding
+   - controls button internal spacing
+========================================================= */
+.primary-button,
+.secondary-button,
+.section-title button,
+.table-actions button {
+  height: 27px;
+  border-radius: 4px;
+  border: 0;
+  padding: 0 11px;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* =========================================================
+   PRIMARY BUTTON
+
+   background
+   - button main color
+
+   color
+   - text color
+========================================================= */
+.primary-button {
+  background: #0d5b88;
+  color: #ffffff;
+}
+
+/* Secondary buttons */
+.secondary-button,
+.section-title button,
+.table-actions button {
+  background: #ffffff;
+  border: 1px solid #dfe8ec;
+  color: #33454d;
+}
+
+/* =========================================================
+   STATS GRID
+
+   display:grid
+   - creates responsive card layout
+
+   repeat(4,...)
+   - creates 4 columns
+========================================================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* =========================================================
+   CARD STYLING
+
+   box-shadow
+   - adds soft shadow
+
+   border-radius
+   - rounded corners
+========================================================= */
+.stat-card,
+.timeline-card,
+.table-card {
+  background: #ffffff;
+  border: 1px solid #e2eaf0;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(20, 34, 44, 0.03);
+}
+
+/* =========================================================
+   STAT CARD
+
+   border-left-width
+   - creates colored left border
+
+   padding
+   - internal spacing
+========================================================= */
+.stat-card {
+  min-height: 70px;
+  padding: 12px 14px;
+  border-left-width: 4px;
+  box-sizing: border-box;
+}
+
+/* Stat title */
+.stat-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: #5f6f77;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* Stat value */
+.stat-card strong {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* =========================================================
+   CARD COLOR THEMES
+
+   border-left-color
+   - changes left indicator color
+========================================================= */
+.stat-card.blue {
+  border-left-color: #0d5b88;
+}
+
+.stat-card.green {
+  border-left-color: #16a676;
+}
+
+.stat-card.orange {
+  border-left-color: #f08b2f;
+}
+
+.stat-card.red {
+  border-left-color: #e21c2b;
+}
+
+/* =========================================================
+   MAIN PAGE LAYOUT
+
+   grid-template-columns
+   - left panel width + table width
+========================================================= */
+.audit-layout {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: 16px;
+}
+
+/* Card padding */
+.timeline-card,
+.table-card {
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   SECTION TITLE ROW
+========================================================= */
+.section-title {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* Section heading */
+.section-title h2 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* Small action buttons */
+.section-title button,
+.table-actions button {
+  height: 23px;
+  font-size: 9px;
+}
+
+/* =========================================================
+   TIMELINE LAYOUT
+
+   flex-direction:column
+   - vertical timeline
+========================================================= */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* =========================================================
+   TIMELINE ITEM
+
+   grid-template-columns
+   - dot + content layout
+========================================================= */
+.timeline-item {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #edf2f5;
+}
+
+/* Remove last border */
+.timeline-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Timeline dot */
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 3px;
+  border-radius: 50%;
+  background: #0d5b88;
+}
+
+/* Timeline state colors */
+.timeline-item.warning .timeline-dot {
+  background: #f08b2f;
+}
+
+.timeline-item.failed .timeline-dot {
+  background: #e21c2b;
+}
+
+.timeline-item.success .timeline-dot {
+  background: #16a676;
+}
+
+/* Timeline title */
+.timeline-item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+/* Timeline description */
+.timeline-item p {
+  margin: 0 0 4px;
+  color: #5f6f77;
+  font-size: 9px;
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+/* Timeline timestamp */
+.timeline-item small {
+  color: #83919a;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   TABLE CONTAINER
+
+   overflow-x:auto
+   - adds horizontal scrolling if table overflows
+========================================================= */
+.audit-table {
+  overflow-x: auto;
+}
+
+/* =========================================================
+   TABLE HEAD & ROWS
+
+   grid-template-columns
+   - controls column widths
+
+   If changed:
+   - columns alignment breaks
+========================================================= */
+.table-head,
+.table-row {
+  min-width: 850px;
+  display: grid;
+  grid-template-columns: 100px 130px 130px 160px 90px 110px 82px;
+  align-items: center;
+  column-gap: 12px;
+  box-sizing: border-box;
+}
+
+/* Table header */
+.table-head {
+  min-height: 34px;
+  padding: 0 10px;
+  border-bottom: 1px solid #e7edf1;
+  color: #50616a;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* Table rows */
+.table-row {
+  min-height: 58px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e7edf1;
+  color: #24333b;
+  font-size: 10px;
+}
+
+/* Remove last row border */
+.table-row:last-child {
+  border-bottom: 0;
+}
+
+/* Column layout */
+.table-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Main text */
+.table-row strong {
+  font-size: 10px;
+}
+
+/* Secondary text */
+.table-row small {
+  color: #6d7b83;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   STATUS PILL
+
+   border-radius
+   - creates pill shape
+========================================================= */
+.status-pill {
+  width: max-content;
+  min-width: 54px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+/* Success pill */
+.status-pill.success {
+  background: #e9f8f1;
+  color: #15724a;
+}
+
+/* Warning pill */
+.status-pill.warning {
+  background: #fff5e9;
+  color: #b76513;
+}
+
+/* Failed pill */
+.status-pill.failed {
+  background: #ffecee;
+  color: #c91f2e;
+}
+
+/* =========================================================
+   FLOATING HELP BUTTON
+
+   position:fixed
+   - keeps button fixed while scrolling
+========================================================= */
+.help-button {
+  position: fixed;
+  right: 22px;
+  bottom: 20px;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: #08aeb0;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba(8, 174, 176, 0.25);
+  cursor: pointer;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN
+
+   max-width:980px
+   - tablet layout changes
+
+   max-width:560px
+   - mobile layout changes
+========================================================= */
+@media (max-width: 980px) {
+
+  .audit-header {
+    flex-direction: column;
+  }
+
+  .header-actions {
+    justify-content: flex-start;
+  }
+
+  .stats-grid,
+  .audit-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+
+  .search-field {
+    width: 100%;
+  }
+}

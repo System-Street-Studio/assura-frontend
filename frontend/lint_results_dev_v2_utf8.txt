@@ -1,0 +1,37 @@
+﻿
+> frontend@0.0.0 lint
+> ng lint
+
+
+Linting "frontend"...
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\core\guards\role.guard.ts
+  1:10  error  'inject' is defined but never used       @typescript-eslint/no-unused-vars
+  2:25  error  'Router' is defined but never used       @typescript-eslint/no-unused-vars
+  3:10  error  'AuthService' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\core\services\api.service.ts
+  16:17  error  Unexpected empty constructor  @typescript-eslint/no-empty-function
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\features\shell\components\sidebar\sidebar.html
+   3:11  error  Use built-in control flow instead of directive ngIf     @angular-eslint/template/prefer-control-flow
+   4:12  error  Use built-in control flow instead of directive ngIf     @angular-eslint/template/prefer-control-flow
+  16:42  error  Use built-in control flow instead of directive ngForOf  @angular-eslint/template/prefer-control-flow
+  19:32  error  Use built-in control flow instead of directive ngIf     @angular-eslint/template/prefer-control-flow
+
+Γ£û 8 problems (8 errors, 0 warnings)
+
+node.exe : [1m[31mLint errors 
+found in the listed files.
+At C:\Program 
+Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : No 
+   tSpecified: ([1m[31mLint e  
+  ...e listed files.:String) [   
+ ], RemoteException
+    + FullyQualifiedErrorId : Na 
+   tiveCommandError
+ 
+[39m[22m

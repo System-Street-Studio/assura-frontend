@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="content-padding">
+
+    <h1 class="section-label">Requests</h1>
+    <a routerLink="/employee/requests-main" class="back-link">←</a>
+    <h2 class="page-title">Maintenance Requests</h2>
+
+    <div class="form-card">
+      <header>
+        <h3>Asset Maintenance Details</h3>
+        <p>Please provide details about the asset and the issue you are experiencing</p>
+      </header>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label>Asset</label>
+          <select [ngModel]="asset()" (ngModelChange)="asset.set($event)" name="asset" required>
+            <option value="" disabled selected>Select an asset</option>
+            @for (a of assignedAssets(); track a.id) {
+            <option [value]="a.productName + ' (' + a.assetCode + ')'">
+              {{a.productName}} ({{a.assetCode}})
+            </option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Issue Type</label>
+          <select [ngModel]="issueType()" (ngModelChange)="issueType.set($event)" name="issueType">
+            <option value="Damaged">Damaged</option>
+            <option value="Software">Software Malfunction</option>
+            <option value="Connectivity">Connectivity Issues</option>
+            <option value="Power">Power Problems</option>
+            <option value="Performance">Performance Slowness</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <textarea [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"
+            placeholder="Describe the issue in detail...">
+          </textarea>
+        </div>
+
+        <div class="field">
+          <label>Attachment (Optional)</label>
+          <div class="upload-box">
+            <mat-icon class="upload-icon">cloud_upload</mat-icon>
+            <p>Drag files here or <span class="browse">click to browse</span></p>
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <span>Instead, If you need a temporary asset</span>
+          <input type="checkbox" [ngModel]="needsTempAsset()" (ngModelChange)="needsTempAsset.set($event)" name="temp">
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+          <button type="submit" class="btn-primary">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

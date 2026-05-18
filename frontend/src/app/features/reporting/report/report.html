@@ -1,0 +1,227 @@
+<section class="report-page">
+
+  <!-- =========================================================
+       PAGE HEADER
+       Displays page title, subtitle, search bar,
+       schedule button, and new report button.
+  ========================================================== -->
+  <header class="report-header">
+
+    <!-- Page title and description -->
+    <div>
+      <h1>Reports</h1>
+      <p>Generate, review, and export asset audit reports.</p>
+    </div>
+
+    <!-- Header action buttons and search -->
+    <div class="header-actions">
+
+      <!-- Search field used to search reports -->
+      <label class="search-field">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" placeholder="Search reports..." (input)="searchReports($any($event.target).value)" />
+      </label>
+
+      <!-- Schedule report generation button -->
+      <button class="secondary-button" type="button" (click)="scheduleReport()">
+        Schedule
+      </button>
+
+      <!-- Create new report button -->
+      <button class="primary-button" type="button" (click)="createReport()">
+        <span aria-hidden="true">+</span>
+        New Report
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       SUMMARY CARDS SECTION
+       Displays key report statistics and overview values.
+  ========================================================== -->
+  <div class="summary-grid">
+
+    <!-- Loop through summary cards dynamically -->
+      <article *ngFor="let summary of summaries" class="summary-card" [class]="summary.tone">
+
+        <!-- Summary title -->
+        <span>{{ summary.label }}</span>
+
+        <!-- Summary value -->
+        <strong>{{ summary.value }}</strong>
+      </article>
+  </div>
+
+  <!-- =========================================================
+       MAIN REPORT LAYOUT
+       Contains report table and insight side panel.
+  ========================================================== -->
+  <div class="report-layout">
+
+    <!-- =========================================================
+         REPORT LIBRARY SECTION
+         Shows all generated reports in a table format.
+    ========================================================== -->
+    <section class="report-list">
+
+      <!-- Section heading and filter buttons -->
+      <div class="section-title">
+
+        <!-- Section title -->
+        <h2>Report Library</h2>
+
+        <!-- Table filter and action buttons -->
+        <div class="table-actions">
+
+          <!-- Filter reports by type -->
+          <button type="button" (click)="openReportFilter('Type')">Type</button>
+
+          <!-- Filter reports by date -->
+          <button type="button" (click)="openReportFilter('Date')">Date</button>
+
+          <!-- Export reports -->
+          <button type="button" (click)="exportReportLibrary()">Export</button>
+        </div>
+      </div>
+
+      <!-- =========================================================
+           REPORT TABLE CARD
+           Displays report information in rows and columns.
+      ========================================================== -->
+      <div class="table-card">
+
+        <!-- Table header row -->
+        <div class="table-head">
+
+          <!-- Report table column titles -->
+          <span>Report ID</span>
+          <span>Title</span>
+          <span>Owner</span>
+          <span>Type</span>
+          <span>Period</span>
+          <span>Generated</span>
+          <span>Status</span>
+          <span>Size</span>
+        </div>
+
+        <!-- Loop through all report items -->
+          <div *ngFor="let report of filteredReportItems" class="table-row">
+
+            <!-- Report ID -->
+            <strong>{{ report.id }}</strong>
+
+            <!-- Report title -->
+            <span>{{ report.title }}</span>
+
+            <!-- Report owner -->
+            <span>{{ report.owner }}</span>
+
+            <!-- Report category/type -->
+            <span>{{ report.type }}</span>
+
+            <!-- Report time period -->
+            <span>{{ report.period }}</span>
+
+            <!-- Generated date -->
+            <span>{{ report.generated }}</span>
+
+            <!-- Report generation/export status -->
+            <span
+              class="status-pill"
+              [class]="report.status.toLowerCase()"
+            >
+              {{ report.status }}
+            </span>
+
+            <!-- File size -->
+            <span>{{ report.size }}</span>
+          </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         REPORT INSIGHT PANEL
+         Displays analytics, alerts, and export tools.
+    ========================================================== -->
+    <aside class="insight-panel">
+
+      <!-- Insight panel heading -->
+      <div class="section-title">
+        <h2>Report Insights</h2>
+      </div>
+
+      <!-- Loop through report insights -->
+        <article *ngFor="let insight of insights" class="insight-card" [class]="insight.tone">
+
+          <!-- Decorative/icon element -->
+          <span aria-hidden="true"></span>
+
+          <!-- Insight details -->
+          <div>
+
+            <!-- Insight title -->
+            <strong>{{ insight.title }}</strong>
+
+            <!-- Insight description -->
+            <p>{{ insight.detail }}</p>
+          </div>
+        </article>
+
+      <!-- =========================================================
+           QUICK EXPORT PANEL
+           Allows users to quickly export reports.
+      ========================================================== -->
+      <div class="export-card">
+
+        <!-- Export section title -->
+        <h3>Quick Export</h3>
+
+        <!-- Export format selector -->
+        <label>
+
+          <!-- Label title -->
+          Format
+
+          <!-- Export format dropdown -->
+          <select (change)="changeQuickExportFormat($any($event.target).value)">
+            <option value="PDF">PDF</option>
+            <option value="Excel">Excel</option>
+            <option value="CSV">CSV</option>
+          </select>
+        </label>
+
+        <!-- Date range selector -->
+        <label>
+
+          <!-- Label title -->
+          Date Range
+
+          <!-- Date range dropdown -->
+          <select (change)="changeQuickExportRange($any($event.target).value)">
+            <option value="This month">This month</option>
+            <option value="Last quarter">Last quarter</option>
+            <option value="This year">This year</option>
+          </select>
+        </label>
+
+        <!-- Download/export button -->
+        <button type="button" (click)="downloadQuickExport()">
+          Download
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- =========================================================
+       HELP BUTTON
+       Floating support/help access button.
+  ========================================================== -->
+  <button
+    class="help-button"
+    type="button"
+    aria-label="Open help"
+    (click)="openHelp()"
+  >
+    <span aria-hidden="true">?</span>
+  </button>
+</section>

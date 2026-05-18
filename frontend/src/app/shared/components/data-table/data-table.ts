@@ -5,7 +5,7 @@ import { StatusBadgeComponent } from '../status-badge/status-badge';
 export interface ColumnDef {
   key: string;
   label: string;
-  type?: 'text' | 'status';
+  type?: 'text' | 'status' | 'link';
 }
 
 @Component({
@@ -17,9 +17,12 @@ export interface ColumnDef {
 })
 export class DataTableComponent {
   @Input() columns: ColumnDef[] = [];
-  @Input() data: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  @Input() data: Record<string, any>[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Output() rowClick = new EventEmitter<any>();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onRowClick(row: any): void {
     this.rowClick.emit(row);
   }
