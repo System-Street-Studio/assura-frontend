@@ -229,4 +229,75 @@ export class ReportingReportComponent {
       tone: 'info',
     },
   ];
+
+  selectedExportFormat = 'PDF';
+  selectedExportRange = 'This month';
+  searchQuery = '';
+  selectedReportType = 'All Types';
+  selectedReportDate = 'All Dates';
+
+  get uniqueReportTypes(): string[] {
+    const types = new Set(this.reportItems.map((r) => r.type));
+    return ['All Types', ...Array.from(types).sort()];
+  }
+
+  get filteredReportItems(): ReportItem[] {
+    const query = this.searchQuery.trim().toLowerCase();
+    if (!query) {
+      return this.reportItems;
+    }
+
+    return this.reportItems.filter((report) =>
+      [report.id, report.title, report.owner, report.type, report.period, report.generated, report.status, report.size]
+        .some((value) => value.toLowerCase().includes(query)),
+    );
+  }
+
+  searchReports(query: string): void {
+    this.searchQuery = query;
+  }
+
+  changeReportTypeFilter(type: string): void {
+    this.selectedReportType = type;
+  }
+
+  changeDateFilter(date: string): void {
+    this.selectedReportDate = date;
+  }
+
+  scheduleReport(): void {
+    alert('Schedule report dialog would open.');
+  }
+
+  createReport(): void {
+    alert('Create new report flow started.');
+  }
+
+  openReportFilter(type: string): void {
+    if (type === 'Type') {
+      this.selectedReportType = this.selectedReportType === 'All Types' ? 'Asset' : 'All Types';
+    } else if (type === 'Date') {
+      this.selectedReportDate = this.selectedReportDate === 'All Dates' ? 'This month' : 'All Dates';
+    }
+  }
+
+  exportReportLibrary(): void {
+    alert('Exporting report library.');
+  }
+
+  changeQuickExportFormat(format: string): void {
+    this.selectedExportFormat = format;
+  }
+
+  changeQuickExportRange(range: string): void {
+    this.selectedExportRange = range;
+  }
+
+  downloadQuickExport(): void {
+    alert(`Downloading ${this.selectedExportFormat} report for ${this.selectedExportRange}.`);
+  }
+
+  openHelp(): void {
+    alert('Opening report help guide.');
+  }
 }

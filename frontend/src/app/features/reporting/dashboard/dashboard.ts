@@ -371,8 +371,8 @@ export class ReportingDashboardComponent {
     alert('Viewing all alerts');
   }
 
-  viewAlertDetails(alert: AlertItem): void {
-    alert(`Viewing alert: ${alert.title}`);
+  viewAlertDetails(alertItem: AlertItem): void {
+    alert(`Viewing alert: ${alertItem.title}`);
   }
 
   viewComplianceReport(): void {

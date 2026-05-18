@@ -407,6 +407,35 @@ export class ReportingAssetComponent {
      Initially selected asset in details panel.
   ========================================================= */
   selectedAsset: ReportingAsset = this.assets[0];
+  searchQuery = '';
+  selectedStatus = 'All Status';
+  selectedCategory = 'All Categories';
+  selectedDepartment = 'All Departments';
+  selectedAuditor = 'All Auditors';
+
+  /* =========================================================
+     UNIQUE FILTER VALUES
+     Computed from asset data.
+  ========================================================= */
+  get uniqueStatuses(): string[] {
+    const statuses = new Set(this.assets.map((a) => a.status));
+    return ['All Status', ...Array.from(statuses).sort()];
+  }
+
+  get uniqueCategories(): string[] {
+    const categories = new Set(this.assets.map((a) => a.category));
+    return ['All Categories', ...Array.from(categories).sort()];
+  }
+
+  get uniqueDepartments(): string[] {
+    const departments = new Set(this.assets.map((a) => a.location));
+    return ['All Departments', ...Array.from(departments).sort()];
+  }
+
+  get uniqueAuditors(): string[] {
+    const auditors = new Set(this.assets.map((a) => a.checkedBy).filter((a) => a));
+    return ['All Auditors', ...Array.from(auditors).sort()];
+  }
 
   /* =========================================================
      SELECTED COUNT GETTER
@@ -417,6 +446,41 @@ export class ReportingAssetComponent {
     return this.assets.filter((asset) => asset.selected).length;
   }
 
+  get filteredAssets(): ReportingAsset[] {
+    let result = this.assets;
+
+    // Filter by search query
+    const query = this.searchQuery.trim().toLowerCase();
+    if (query) {
+      result = result.filter((asset) =>
+        [asset.id, asset.product, asset.category, asset.status, asset.health, asset.checkedBy, asset.checkedRole, asset.assuraName, asset.serial, asset.location, asset.warranty, asset.codeNumber]
+          .some((value) => value.toLowerCase().includes(query)),
+      );
+    }
+
+    // Filter by status
+    if (this.selectedStatus !== 'All Status') {
+      result = result.filter((asset) => asset.status === this.selectedStatus);
+    }
+
+    // Filter by category
+    if (this.selectedCategory !== 'All Categories') {
+      result = result.filter((asset) => asset.category === this.selectedCategory);
+    }
+
+    // Filter by department/location
+    if (this.selectedDepartment !== 'All Departments') {
+      result = result.filter((asset) => asset.location === this.selectedDepartment);
+    }
+
+    // Filter by auditor
+    if (this.selectedAuditor !== 'All Auditors') {
+      result = result.filter((asset) => asset.checkedBy === this.selectedAuditor);
+    }
+
+    return result;
+  }
+
   /* =========================================================
      SELECT ASSET METHOD
      Updates selected asset details panel.
@@ -424,5 +488,77 @@ export class ReportingAssetComponent {
   selectAsset(asset: ReportingAsset): void {
 
     this.selectedAsset = asset;
+  }
+
+  toggleQuickFilters(): void {
+    alert('Opening asset quick filters.');
+  }
+
+  scanQRCode(): void {
+    alert('Scanning QR code for asset lookup.');
+  }
+
+  exportAssetList(): void {
+    alert('Exporting the current asset list.');
+  }
+
+  addNewAsset(): void {
+    alert('Navigating to add new asset workflow.');
+  }
+
+  searchAssets(query: string): void {
+    this.searchQuery = query;
+  }
+
+  toggleAssetSelection(asset: ReportingAsset, isSelected: boolean): void {
+    asset.selected = isSelected;
+  }
+
+  toggleSelectAll(isChecked: boolean): void {
+    this.filteredAssets.forEach((asset) => (asset.selected = isChecked));
+  }
+
+  changeStatusFilter(status: string): void {
+    this.selectedStatus = status;
+  }
+
+  changeCategoryFilter(category: string): void {
+    this.selectedCategory = category;
+  }
+
+  changeDepartmentFilter(department: string): void {
+    this.selectedDepartment = department;
+  }
+
+  changeAuditorFilter(auditor: string): void {
+    this.selectedAuditor = auditor;
+  }
+
+  assignSelectedAssets(): void {
+    const count = this.selectedCount;
+    alert(`Assigning ${count} selected asset(s).`);
+  }
+
+  verifySelectedAssets(): void {
+    const count = this.selectedCount;
+    alert(`Verifying ${count} selected asset(s).`);
+  }
+
+  exportSelectedAssets(): void {
+    const count = this.selectedCount;
+    alert(`Exporting ${count} selected asset(s).`);
+  }
+
+  viewFullDetails(): void {
+    alert(`Viewing full details for ${this.selectedAsset.product}.`);
+  }
+
+  closeDetails(): void {
+    this.selectedAsset = this.assets[0];
+    alert('Closed details panel.');
+  }
+
+  openHelp(): void {
+    alert('Opening asset help guide.');
   }
 }

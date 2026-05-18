@@ -38,8 +38,7 @@
   <!-- METRIC CARDS SECTION
        These cards show the most important auditor dashboard values. -->
   <div class="metrics-grid" aria-label="Reporting overview metrics">
-    @for (metric of metrics; track metric.label) {
-      <article class="metric-card" (click)="viewMetricDetails(metric)">
+      <article *ngFor="let metric of metrics" class="metric-card" (click)="viewMetricDetails(metric)">
         <span class="metric-icon metric-{{ metric.tone }}">
           <span class="mini-icon icon-{{ metric.icon }}" aria-hidden="true"></span>
         </span>
@@ -48,16 +47,13 @@
           <span class="metric-label">
             {{ metric.label }}
 
-            @if (metric.info) {
-              <i aria-hidden="true" title="More information">i</i>
-            }
+            <i *ngIf="metric.info" aria-hidden="true" title="More information">i</i>
           </span>
 
           <strong>{{ metric.value }}</strong>
           <small class="trend trend-{{ metric.tone }}">{{ metric.trend }}</small>
         </div>
       </article>
-    }
   </div>
 
   <!-- MAIN DASHBOARD GRID
@@ -77,13 +73,11 @@
           <div class="donut-chart" aria-label="Assets by category donut chart"></div>
 
           <div class="legend-list">
-            @for (item of categoryLegend; track item.label) {
-              <div (click)="filterByCategory(item.label)">
+              <div *ngFor="let item of categoryLegend" (click)="filterByCategory(item.label)">
                 <span class="legend-dot" [style.background]="item.color"></span>
                 <span>{{ item.label }}</span>
                 <strong>{{ item.value }}</strong>
               </div>
-            }
           </div>
         </div>
       </section>
@@ -94,13 +88,11 @@
         <h2 id="status-title">Assets by Status</h2>
 
         <div class="bar-chart status-chart">
-          @for (bar of statusBars; track bar.label) {
-            <div class="bar-item" (click)="filterByStatus(bar.label)">
+            <div *ngFor="let bar of statusBars" class="bar-item" (click)="filterByStatus(bar.label)">
               <strong>{{ bar.display }}</strong>
               <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
               <small>{{ bar.label }}</small>
             </div>
-          }
         </div>
       </section>
 
@@ -110,12 +102,10 @@
         <h2 id="department-title">Assets by Department</h2>
 
         <div class="bar-chart department-chart">
-          @for (bar of departmentBars; track bar.label) {
-            <div class="bar-item" (click)="filterByDepartment(bar.label)">
+            <div *ngFor="let bar of departmentBars" class="bar-item" (click)="filterByDepartment(bar.label)">
               <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
               <small>{{ bar.label }}</small>
             </div>
-          }
         </div>
       </section>
 
@@ -125,12 +115,10 @@
         <h2 id="value-title">Asset Value by Category</h2>
 
         <div class="bar-chart value-chart">
-          @for (bar of valueBars; track bar.label) {
-            <div class="bar-item" (click)="viewValueCategory(bar.label)">
+            <div *ngFor="let bar of valueBars" class="bar-item" (click)="viewValueCategory(bar.label)">
               <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
               <small>{{ bar.label }}</small>
             </div>
-          }
         </div>
       </section>
 
@@ -170,7 +158,7 @@
           </svg>
 
           <div class="chart-points">
-            @for (finding of monthlyFindings; track finding.month; let index = $index) {
+            <ng-container *ngFor="let finding of monthlyFindings; let index = index">
               <span
                 class="chart-point red"
                 [ngStyle]="getPointStyle(index, finding.missing)"
@@ -188,13 +176,11 @@
                 [ngStyle]="getPointStyle(index, finding.maintenance)"
                 (click)="viewMonthlyFinding(finding.month, 'Maintenance Issues')"
               ></span>
-            }
+            </ng-container>
           </div>
 
           <div class="month-axis">
-            @for (finding of monthlyFindings; track finding.month) {
-              <span>{{ finding.month }}</span>
-            }
+              <span *ngFor="let finding of monthlyFindings">{{ finding.month }}</span>
           </div>
         </div>
       </section>
@@ -205,8 +191,7 @@
         <h2 id="progress-title">Asset Verification Progress by Department</h2>
 
         <div class="progress-list">
-          @for (item of progressItems; track item.department) {
-            <div class="progress-row" (click)="viewDepartmentProgress(item.department)">
+            <div *ngFor="let item of progressItems" class="progress-row" (click)="viewDepartmentProgress(item.department)">
               <span>{{ item.department }}</span>
 
               <div class="progress-track">
@@ -215,7 +200,6 @@
 
               <strong>{{ item.value }}%</strong>
             </div>
-          }
         </div>
       </section>
 
@@ -236,8 +220,7 @@
             <span>Performed By</span>
           </div>
 
-          @for (activity of auditActivities; track activity.date + activity.assetId) {
-            <div class="activity-row" (click)="viewActivityDetails(activity)">
+            <div *ngFor="let activity of auditActivities" class="activity-row" (click)="viewActivityDetails(activity)">
               <span>{{ activity.date }}</span>
               <strong class="activity-name activity-{{ activity.tone }}">
                 {{ activity.activity }}
@@ -246,7 +229,6 @@
               <span>{{ activity.department }}</span>
               <span>{{ activity.performedBy }}</span>
             </div>
-          }
         </div>
       </section>
     </main>
@@ -263,8 +245,7 @@
         </div>
 
         <div class="alert-list">
-          @for (alert of alerts; track alert.title) {
-            <article class="alert-item" (click)="viewAlertDetails(alert)">
+            <article *ngFor="let alert of alerts" class="alert-item" (click)="viewAlertDetails(alert)">
               <span class="alert-icon alert-{{ alert.tone }}">{{ alert.icon }}</span>
 
               <div>
@@ -278,7 +259,6 @@
 
               <time>{{ alert.time }}</time>
             </article>
-          }
         </div>
 
         <button class="wide-outline" type="button" (click)="viewAllAlerts()">
@@ -337,8 +317,7 @@
             <span>Open Issues</span>
           </div>
 
-          @for (risk of riskDepartments; track risk.department) {
-            <div class="risk-row" (click)="viewRiskDepartment(risk)">
+            <div *ngFor="let risk of riskDepartments" class="risk-row" (click)="viewRiskDepartment(risk)">
               <span>{{ risk.department }}</span>
 
               <strong class="risk-level risk-{{ risk.riskLevel.toLowerCase() }}">
@@ -348,7 +327,6 @@
               <span>{{ risk.riskScore }}</span>
               <b>{{ risk.openIssues }}</b>
             </div>
-          }
         </div>
       </section>
     </aside>

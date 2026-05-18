@@ -218,4 +218,68 @@ export class ReportingAuditlogComponent {
         'Recurring monthly warranty report scheduled.',
     },
   ];
+
+  searchQuery = '';
+  selectedDateRange = 'All Dates';
+  selectedModule = 'All Modules';
+
+  get uniqueModules(): string[] {
+    const modules = new Set(this.logs.map((l) => l.module));
+    return ['All Modules', ...Array.from(modules).sort()];
+  }
+
+  get uniqueDateRanges(): string[] {
+    return ['All Dates', 'Today', 'This Week', 'This Month', 'Last 3 Months'];
+  }
+
+  get filteredLogs(): AuditLogEntry[] {
+    const query = this.searchQuery.trim().toLowerCase();
+    if (!query) {
+      return this.logs;
+    }
+
+    return this.logs.filter((log) =>
+      [log.time, log.date, log.actor, log.role, log.action, log.asset, log.module, log.ip, log.status, log.detail]
+        .some((value) => value.toLowerCase().includes(query)),
+    );
+  }
+
+  searchLogs(query: string): void {
+    this.searchQuery = query;
+    console.log('Searching audit logs for', query);
+  }
+
+  changeDateRange(): void {
+    const nextIndex = (this.uniqueDateRanges.indexOf(this.selectedDateRange) + 1) % this.uniqueDateRanges.length;
+    this.selectedDateRange = this.uniqueDateRanges[nextIndex];
+  }
+
+  changeModuleFilter(): void {
+    const nextIndex = (this.uniqueModules.indexOf(this.selectedModule) + 1) % this.uniqueModules.length;
+    this.selectedModule = this.uniqueModules[nextIndex];
+  }
+
+  exportLogs(): void {
+    alert('Exporting audit log data.');
+  }
+
+  refreshTimeline(): void {
+    alert('Refreshing recent activity timeline.');
+  }
+
+  filterStatus(): void {
+    alert('Filtering audit logs by status.');
+  }
+
+  filterActor(): void {
+    alert('Filtering audit logs by actor.');
+  }
+
+  downloadLogs(): void {
+    alert('Downloading the current audit log export.');
+  }
+
+  openHelp(): void {
+    alert('Opening audit log help guide.');
+  }
 }

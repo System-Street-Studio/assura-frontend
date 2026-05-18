@@ -19,16 +19,16 @@
       <!-- Search field used to search reports -->
       <label class="search-field">
         <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Search reports..." />
+        <input type="search" placeholder="Search reports..." (input)="searchReports($any($event.target).value)" />
       </label>
 
       <!-- Schedule report generation button -->
-      <button class="secondary-button" type="button">
+      <button class="secondary-button" type="button" (click)="scheduleReport()">
         Schedule
       </button>
 
       <!-- Create new report button -->
-      <button class="primary-button" type="button">
+      <button class="primary-button" type="button" (click)="createReport()">
         <span aria-hidden="true">+</span>
         New Report
       </button>
@@ -42,10 +42,7 @@
   <div class="summary-grid">
 
     <!-- Loop through summary cards dynamically -->
-    @for (summary of summaries; track summary.label) {
-
-      <!-- Individual summary card -->
-      <article class="summary-card" [class]="summary.tone">
+      <article *ngFor="let summary of summaries" class="summary-card" [class]="summary.tone">
 
         <!-- Summary title -->
         <span>{{ summary.label }}</span>
@@ -53,7 +50,6 @@
         <!-- Summary value -->
         <strong>{{ summary.value }}</strong>
       </article>
-    }
   </div>
 
   <!-- =========================================================
@@ -78,13 +74,13 @@
         <div class="table-actions">
 
           <!-- Filter reports by type -->
-          <button type="button">Type</button>
+          <button type="button" (click)="openReportFilter('Type')">Type</button>
 
           <!-- Filter reports by date -->
-          <button type="button">Date</button>
+          <button type="button" (click)="openReportFilter('Date')">Date</button>
 
           <!-- Export reports -->
-          <button type="button">Export</button>
+          <button type="button" (click)="exportReportLibrary()">Export</button>
         </div>
       </div>
 
@@ -109,10 +105,7 @@
         </div>
 
         <!-- Loop through all report items -->
-        @for (report of reportItems; track report.id) {
-
-          <!-- Single report row -->
-          <div class="table-row">
+          <div *ngFor="let report of filteredReportItems" class="table-row">
 
             <!-- Report ID -->
             <strong>{{ report.id }}</strong>
@@ -143,7 +136,6 @@
             <!-- File size -->
             <span>{{ report.size }}</span>
           </div>
-        }
       </div>
     </section>
 
@@ -159,10 +151,7 @@
       </div>
 
       <!-- Loop through report insights -->
-      @for (insight of insights; track insight.title) {
-
-        <!-- Individual insight card -->
-        <article class="insight-card" [class]="insight.tone">
+        <article *ngFor="let insight of insights" class="insight-card" [class]="insight.tone">
 
           <!-- Decorative/icon element -->
           <span aria-hidden="true"></span>
@@ -177,7 +166,6 @@
             <p>{{ insight.detail }}</p>
           </div>
         </article>
-      }
 
       <!-- =========================================================
            QUICK EXPORT PANEL
@@ -195,10 +183,10 @@
           Format
 
           <!-- Export format dropdown -->
-          <select>
-            <option>PDF</option>
-            <option>Excel</option>
-            <option>CSV</option>
+          <select (change)="changeQuickExportFormat($any($event.target).value)">
+            <option value="PDF">PDF</option>
+            <option value="Excel">Excel</option>
+            <option value="CSV">CSV</option>
           </select>
         </label>
 
@@ -209,15 +197,15 @@
           Date Range
 
           <!-- Date range dropdown -->
-          <select>
-            <option>This month</option>
-            <option>Last quarter</option>
-            <option>This year</option>
+          <select (change)="changeQuickExportRange($any($event.target).value)">
+            <option value="This month">This month</option>
+            <option value="Last quarter">Last quarter</option>
+            <option value="This year">This year</option>
           </select>
         </label>
 
         <!-- Download/export button -->
-        <button type="button">
+        <button type="button" (click)="downloadQuickExport()">
           Download
         </button>
       </div>
@@ -232,6 +220,7 @@
     class="help-button"
     type="button"
     aria-label="Open help"
+    (click)="openHelp()"
   >
     <span aria-hidden="true">?</span>
   </button>

@@ -36,14 +36,14 @@
         <span aria-hidden="true">⌕</span>
 
         <!-- Search input -->
-        <input type="search" placeholder="Search audit log..." />
+        <input type="search" placeholder="Search audit log..." (input)="searchLogs($any($event.target).value)" />
       </label>
 
       <!-- =========================================================
            DATE RANGE FILTER BUTTON
            Filters logs based on selected date range.
       ========================================================== -->
-      <button class="secondary-button" type="button">
+      <button class="secondary-button" type="button" (click)="changeDateRange()">
         Date Range
       </button>
 
@@ -51,7 +51,7 @@
            MODULE FILTER BUTTON
            Filters logs based on selected module.
       ========================================================== -->
-      <button class="secondary-button" type="button">
+      <button class="secondary-button" type="button" (click)="changeModuleFilter()">
         Module
       </button>
 
@@ -59,7 +59,7 @@
            EXPORT LOG BUTTON
            Downloads or exports audit logs.
       ========================================================== -->
-      <button class="primary-button" type="button">
+      <button class="primary-button" type="button" (click)="exportLogs()">
         Export Log
       </button>
     </div>
@@ -72,10 +72,7 @@
   <div class="stats-grid">
 
     <!-- Loop through stat cards dynamically -->
-    @for (stat of stats; track stat.label) {
-
-      <!-- Individual stat card -->
-      <article class="stat-card" [class]="stat.tone">
+      <article *ngFor="let stat of stats" class="stat-card" [class]="stat.tone">
 
         <!-- Stat title -->
         <span>{{ stat.label }}</span>
@@ -83,7 +80,6 @@
         <!-- Stat value -->
         <strong>{{ stat.value }}</strong>
       </article>
-    }
   </div>
 
   <!-- =========================================================
@@ -105,7 +101,7 @@
         <h2>Recent Activity</h2>
 
         <!-- Refresh timeline button -->
-        <button type="button">
+        <button type="button" (click)="refreshTimeline()">
           Refresh
         </button>
       </div>
@@ -117,13 +113,7 @@
       <div class="timeline">
 
         <!-- Loop through first 4 recent logs -->
-        @for (log of logs.slice(0, 4); track log.time + log.action) {
-
-          <!-- Timeline activity item -->
-          <article
-            class="timeline-item"
-            [class]="log.status.toLowerCase()"
-          >
+          <article *ngFor="let log of filteredLogs.slice(0, 4)" class="timeline-item" [class]="log.status.toLowerCase()">
 
             <!-- Timeline colored dot -->
             <span class="timeline-dot" aria-hidden="true"></span>
@@ -143,7 +133,6 @@
               </small>
             </div>
           </article>
-        }
       </div>
     </section>
 
@@ -166,17 +155,17 @@
         <div class="table-actions">
 
           <!-- Status filter -->
-          <button type="button">
+          <button type="button" (click)="filterStatus()">
             Status
           </button>
 
           <!-- Actor filter -->
-          <button type="button">
+          <button type="button" (click)="filterActor()">
             Actor
           </button>
 
           <!-- Download logs -->
-          <button type="button">
+          <button type="button" (click)="downloadLogs()">
             Download
           </button>
         </div>
@@ -220,10 +209,7 @@
              TABLE ROWS
              Loop through all audit log records.
         ========================================================== -->
-        @for (log of logs; track log.date + log.time + log.action) {
-
-          <!-- Single audit row -->
-          <div class="table-row">
+          <div *ngFor="let log of filteredLogs" class="table-row">
 
             <!-- =========================================================
                  TIME COLUMN
@@ -282,7 +268,6 @@
               {{ log.status }}
             </span>
           </div>
-        }
       </div>
     </section>
   </div>
@@ -295,6 +280,7 @@
     class="help-button"
     type="button"
     aria-label="Open help"
+    (click)="openHelp()"
   >
 
     <!-- Help icon -->
