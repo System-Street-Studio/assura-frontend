@@ -1,0 +1,151 @@
+<div class="page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Assets</h1>
+      <span class="asset-count">{{ filteredAssets.length }} of {{ allAssets.length }} items</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn outline" title="Export to CSV">
+        <mat-icon class="btn-icon">file_download</mat-icon>
+        Export
+      </button>
+      <button class="btn primary" (click)="onNewAsset()">
+        <mat-icon class="btn-icon">add</mat-icon>
+        New Asset
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <section class="stats-strip">
+    <div class="stat-card" (click)="filterStatus = ''; applyFilters();" [class.active]="!filterStatus">
+      <div class="stat-icon-wrap all"><mat-icon>inventory_2</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ allAssets.length }}</div>
+        <div class="stat-label">All Assets</div>
+      </div>
+    </div>
+    <div class="stat-card" (click)="onStatusCardClick('InUse')" [class.active]="filterStatus === 'InUse'">
+      <div class="stat-icon-wrap deployed"><mat-icon>check_circle</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ statusCounts['InUse'] }}</div>
+        <div class="stat-label">In Use</div>
+      </div>
+    </div>
+    <div class="stat-card" (click)="onStatusCardClick('InStore')" [class.active]="filterStatus === 'InStore'">
+      <div class="stat-icon-wrap available"><mat-icon>shelves</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ statusCounts['InStore'] }}</div>
+        <div class="stat-label">In Store</div>
+      </div>
+    </div>
+    <div class="stat-card" (click)="onStatusCardClick('UnderMaintenance')"
+      [class.active]="filterStatus === 'UnderMaintenance'">
+      <div class="stat-icon-wrap repair"><mat-icon>build</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ statusCounts['UnderMaintenance'] }}</div>
+        <div class="stat-label">Maintenance</div>
+      </div>
+    </div>
+    <div class="stat-card" (click)="onStatusCardClick('Discarded')" [class.active]="filterStatus === 'Discarded'">
+      <div class="stat-icon-wrap retired"><mat-icon>cancel</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ statusCounts['Discarded'] }}</div>
+        <div class="stat-label">Discarded</div>
+      </div>
+    </div>
+    <div class="stat-card value-card">
+      <div class="stat-icon-wrap value"><mat-icon>attach_money</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ formatCurrency(totalValue) }}</div>
+        <div class="stat-label">Total Value</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input class="search-input" placeholder="Search by name, code, serial, category..." [(ngModel)]="search"
+          (input)="applyFilters()" />
+        <button class="search-clear" *ngIf="search" (click)="search = ''; applyFilters()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <select class="filter-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
+        <option value="">All Status</option>
+        <option value="InUse">In Use</option>
+        <option value="InStore">In Store</option>
+        <option value="UnderMaintenance">Under Maintenance</option>
+        <option value="Discarded">Discarded</option>
+        <option value="Transferred">Transferred</option>
+        <option value="Lost">Lost</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="filterCategory" (change)="applyFilters()">
+        <option value="">All Categories</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+
+      <button class="btn-text" *ngIf="search || filterStatus || filterCategory" (click)="clearFilters()">
+        <mat-icon>filter_list_off</mat-icon> Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table class="assets-table">
+      <thead>
+        <tr>
+          <th class="col-check">
+            <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll($event)" />
+          </th>
+          <th>Asset Code</th>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Assigned To</th>
+          <th>Division</th>
+          <th>Serial</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let asset of viewAssets" [class.row-selected]="asset.selected" class="clickable-row"
+          (click)="onRowClick(asset)">
+          <td class="col-check" (click)="$event.stopPropagation()">
+            <input type="checkbox" [checked]="asset.selected" (change)="onRowSelect(asset, $event)" />
+          </td>
+          <td class="cell-id">{{ asset.assetCode }}</td>
+          <td>{{ asset.productName }}</td>
+          <td>{{ asset.categoryName }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="(asset.status?.toString() || '').toLowerCase()">
+              {{ getStatusLabel(asset.status) }}
+            </span>
+          </td>
+          <td>{{ asset.assignedUserName || '—' }}</td>
+          <td>{{ asset.divisionName }}</td>
+          <td>{{ asset.serialNumber || '—' }}</td>
+          <td>{{ formatCurrency(asset.purchaseValue) }}</td>
+        </tr>
+        <tr *ngIf="viewAssets.length === 0 && !loading">
+          <td colspan="9" class="empty-state">
+            <mat-icon class="empty-icon">inventory_2</mat-icon>
+            <div class="empty-text">No assets match your filters</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <app-pagination *ngIf="filteredAssets.length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
+    [pageNumbers]="pageNumbers" (pageChange)="setPage($event)">
+  </app-pagination>
+</div>

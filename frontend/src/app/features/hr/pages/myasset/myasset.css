@@ -1,0 +1,193 @@
+/* Page-local styles for the HR audit activity screen. */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f4f6fb;
+  color: #2c2c2c;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Shared sidebar plus content area matches the other HR pages. */
+.hr-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  background: #f4f6fb;
+}
+
+.main-area {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.audit-page {
+  min-height: 100%;
+  padding: 12px 14px 40px;
+  box-sizing: border-box;
+}
+
+.audit-shell {
+  width: min(100%, 980px);
+}
+
+.page-title {
+  margin: 0 0 18px;
+  font-size: 24px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: #2f2f2f;
+}
+
+/* Toolbar controls search plus the department/role filtering mode. */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.search-field {
+  display: block;
+  width: 216px;
+}
+
+.filter-field {
+  display: grid;
+  gap: 5px;
+  width: 156px;
+  color: #36454f;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.search-field input,
+.filter-field select {
+  width: 100%;
+  height: 30px;
+  border: 1px solid #d8dce5;
+  border-radius: 2px;
+  background: #ffffff;
+  padding: 0 10px;
+  box-sizing: border-box;
+  color: #333333;
+  font: inherit;
+  font-size: 10px;
+  outline: none;
+}
+
+.search-field input::placeholder {
+  color: #8b909b;
+}
+
+.filter-field select {
+  cursor: pointer;
+}
+
+.search-field input:focus,
+.filter-field select:focus {
+  border-color: #004777;
+  box-shadow: 0 0 0 2px rgba(0, 71, 119, 0.12);
+}
+
+/* The table card contains the audit log and handles overflow for many columns. */
+.table-card {
+  width: min(100%, 940px);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 890px;
+  border-collapse: collapse;
+  background: #ffffff;
+  table-layout: fixed;
+}
+
+thead {
+  background: #004777;
+  color: #ffffff;
+}
+
+th,
+td {
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+th {
+  font-weight: 700;
+}
+
+tbody tr {
+  background: #ffffff;
+}
+
+tbody tr:nth-child(even) {
+  background: #fbfbfb;
+}
+
+td:first-child {
+  display: grid;
+  gap: 2px;
+}
+
+/* Result badges map audit outcomes to clear colors in the final column. */
+.result-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  height: 18px;
+  border-radius: 2px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.success {
+  background: #d7f0dc;
+  color: #15752e;
+}
+
+.rejected {
+  background: #f5cdd0;
+  color: #a4262c;
+}
+
+.pending {
+  background: #ffe789;
+  color: #7a5d00;
+}
+
+.empty-state {
+  height: 80px;
+  text-align: center;
+  color: #777777;
+}
+
+/* Mobile spacing keeps filters and the audit table usable on small screens. */
+@media (max-width: 720px) {
+  .hr-layout {
+    grid-template-columns: 88px 1fr;
+  }
+
+  .audit-page {
+    padding: 12px 10px 32px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .toolbar,
+  .search-field,
+  .filter-field {
+    width: min(100%, 260px);
+  }
+}

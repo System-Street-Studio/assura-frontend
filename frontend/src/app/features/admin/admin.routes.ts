@@ -1,0 +1,22 @@
+import { Routes } from '@angular/router';
+
+export const adminRoutes: Routes = [
+    {
+        path: 'overview',
+        loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
+    },
+    {
+        path: 'my-assets',
+        loadComponent: () => import('./pages/my-assets/my-assets').then(m => m.MyAssetsComponent)
+    },
+    {
+        path: 'track-assets',
+        loadComponent: () => import('./pages/track-assets/track-assets').then(m => m.TrackAssetsComponent),
+        pathMatch: 'full'
+    },
+    {
+        path: 'track-assets/:id',
+        loadComponent: () => import('./pages/asset-details/asset-details').then(m => m.AssetDetailsComponent)
+    },
+    { path: '', redirectTo: 'overview', pathMatch: 'full' }
+];

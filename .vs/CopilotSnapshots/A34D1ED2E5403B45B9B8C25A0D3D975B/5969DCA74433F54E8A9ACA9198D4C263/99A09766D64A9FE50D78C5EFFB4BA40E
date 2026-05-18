@@ -1,0 +1,60 @@
+﻿<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <div class="brand">
+      <img
+        *ngIf="!isCollapsed"
+        src="assets/images/LOGO2.png"
+        alt="Assura Logo"
+        class="sidebar-logo"
+      />
+      <span *ngIf="!isCollapsed" class="sidebar-title">Assura</span>
+    </div>
+    <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a
+      class="nav-item"
+      *ngFor="let item of menuItems"
+      [routerLink]="item.link"
+      routerLinkActive="active"
+      [title]="item.label"
+    >
+      <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+      <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <a
+      class="nav-item"
+      *ngFor="let link of bottomLinks"
+      [routerLink]="link.link"
+      routerLinkActive="active"
+      [title]="link.label"
+    >
+      <mat-icon class="nav-icon">{{ link.icon }}</mat-icon>
+      <span class="nav-label" *ngIf="!isCollapsed">{{ link.label }}</span>
+    </a>
+
+    <div class="sidebar-footer" *ngIf="!isCollapsed">
+      <small>&copy; 2025 AssetFlow. All rights reserved.</small>
+    </div>
+  </div>
+</aside>

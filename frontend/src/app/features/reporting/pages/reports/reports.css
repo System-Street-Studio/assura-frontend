@@ -1,0 +1,145 @@
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.summary-card {
+  padding: 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(33, 45, 68, 0.08);
+}
+
+.summary-card span {
+  display: block;
+  margin-bottom: 10px;
+  color: #6b7280;
+}
+
+.summary-card strong {
+  font-size: 1.9rem;
+}
+
+.summary-card.success {
+  background: rgba(15, 118, 110, 0.12);
+}
+
+.summary-card.warning {
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.summary-card.danger {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.report-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) 340px;
+  gap: 18px;
+}
+
+.report-list .table-card {
+  padding: 18px 22px;
+  margin-top: 18px;
+  overflow-x: auto;
+}
+
+.report-list .table-head,
+.report-list .table-row {
+  display: grid;
+  grid-template-columns: 100px minmax(220px, 2fr) 120px 90px 110px 120px 100px 80px;
+  gap: 16px;
+  align-items: center;
+  min-width: 980px;
+}
+
+.report-list .table-head {
+  padding-bottom: 12px;
+  color: #6b7280;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.report-list .table-row {
+  padding: 16px 0;
+  border-top: 1px solid rgba(33, 45, 68, 0.08);
+}
+
+.insight-panel {
+  padding: 22px;
+}
+
+.insight-card {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: 14px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(33, 45, 68, 0.08);
+}
+
+.insight-card:first-of-type {
+  border-top: none;
+}
+
+.insight-card > span {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin-top: 6px;
+  border-radius: 50%;
+}
+
+.insight-card.success > span {
+  background: #0f766e;
+}
+
+.insight-card.warning > span {
+  background: #f59e0b;
+}
+
+.insight-card.danger > span {
+  background: #dc2626;
+}
+
+.export-card {
+  margin-top: 18px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.export-card label {
+  display: grid;
+  gap: 8px;
+  color: #4b5563;
+  font-size: 0.92rem;
+}
+
+.export-card select {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(33, 45, 68, 0.1);
+  background: #fff;
+}
+
+@media (max-width: 1200px) {
+  .report-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

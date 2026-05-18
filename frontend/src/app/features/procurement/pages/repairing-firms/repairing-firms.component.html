@@ -1,0 +1,54 @@
+<div class="firms-container">
+    <div class="header-section">
+        <button class="back-btn" (click)="goBack()">
+            <span class="material-icons">arrow_back</span> Back
+        </button>
+        <h1 class="page-title">Repairing Firms</h1>
+        <button class="add-btn" (click)="navigateToCreate()">
+            <span class="material-icons">add</span> Add New Firm
+        </button>
+    </div>
+
+    <div class="controls-section">
+        <app-search-bar (queryChange)="onSearch($event)" placeholder="Search Firms..."></app-search-bar>
+        <div style="font-size: 10px; color: gray;">[DEBUG] isLoading: {{ isLoading }}, pagedFirms.length: {{
+            pagedFirms.length }}</div>
+    </div>
+
+    <div class="table-card">
+        <table class="firms-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact Person</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngIf="isLoading">
+                    <td colspan="5" class="empty-state">
+                        <div>Loading firms...</div>
+                    </td>
+                </tr>
+                <tr *ngIf="!isLoading && pagedFirms.length === 0">
+                    <td colspan="5" class="empty-state">
+                        <div>No repairing firms found.</div>
+                    </td>
+                </tr>
+                <tr *ngFor="let firm of pagedFirms">
+                    <td class="firm-name">{{ firm.name }}</td>
+                    <td>{{ firm.contactPerson || '-' }}</td>
+                    <td>{{ firm.email || '-' }}</td>
+                    <td>{{ firm.phone || '-' }}</td>
+                    <td>{{ firm.address || '-' }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pageNumbers"
+            (pageChange)="goToPage($event)">
+        </app-pagination>
+    </div>
+</div>

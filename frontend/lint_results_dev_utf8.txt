@@ -1,0 +1,87 @@
+﻿
+> frontend@0.0.0 lint
+> ng lint
+
+
+Linting "frontend"...
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\core\auth\auth.service.ts
+  23:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\core\guards\role.guard.ts
+   3:10  error  'AuthService' is defined but never used      @typescript-eslint/no-unused-vars
+   9:42  error  'route' is defined but never used            @typescript-eslint/no-unused-vars
+  10:9   error  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\core\services\api.service.ts
+  15:15  error  Prefer using the inject() function over constructor parameter injection. Use Angular's migration schematic to automatically refactor: ng generate @angular/core:inject  @angular-eslint/prefer-inject
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\features\shell\components\sidebar\sidebar.html
+   3:11  error  Use built-in control flow instead of directive ngIf     @angular-eslint/template/prefer-control-flow
+   4:12  error  Use built-in control flow instead of directive ngIf     @angular-eslint/template/prefer-control-flow
+  16:42  error  Use built-in control flow instead of directive ngForOf  @angular-eslint/template/prefer-control-flow
+  19:32  error  Use built-in control flow instead of directive ngIf     @angular-eslint/template/prefer-control-flow
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\features\shell\pages\overview\overview.ts
+  154:17  error  'groups' is defined but never used                   @typescript-eslint/no-unused-vars
+  198:19  error  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+   44:16  error  Use built-in control flow instead of directive ngIf  @angular-eslint/template/prefer-control-flow
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\features\shell\shell.routes.ts
+  2:10  error  'OverviewComponent' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\shared\components\action-button\action-button.html
+  2:14  error  Use built-in control flow instead of directive ngIf  @angular-eslint/template/prefer-control-flow
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\shared\components\confirmation-modal\confirmation-modal.ts
+  28:5  error  Prefer using the inject() function over constructor parameter injection. Use Angular's migration schematic to automatically refactor: ng generate @angular/core:inject  @angular-eslint/prefer-inject
+  29:5  error  Prefer using the inject() function over constructor parameter injection. Use Angular's migration schematic to automatically refactor: ng generate @angular/core:inject  @angular-eslint/prefer-inject
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\shared\components\data-table\data-table.html
+   5:29  error  Use built-in control flow instead of directive ngForOf   @angular-eslint/template/prefer-control-flow
+   9:27  error  Use built-in control flow instead of directive ngForOf   @angular-eslint/template/prefer-control-flow
+  10:29  error  Use built-in control flow instead of directive ngForOf   @angular-eslint/template/prefer-control-flow
+  11:25  error  Use built-in control flow instead of directive ngSwitch  @angular-eslint/template/prefer-control-flow
+  17:12  error  Use built-in control flow instead of directive ngIf      @angular-eslint/template/prefer-control-flow
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\shared\components\data-table\data-table.ts
+  20:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  21:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  23:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\shared\components\filter-dropdown\filter-dropdown.html
+  2:26  error  Use built-in control flow instead of directive ngForOf  @angular-eslint/template/prefer-control-flow
+  5:14  error  Use built-in control flow instead of directive ngIf     @angular-eslint/template/prefer-control-flow
+  8:33  error  Use built-in control flow instead of directive ngForOf  @angular-eslint/template/prefer-control-flow
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\shared\components\search-bar\search-bar.ts
+  16:13  error  Output bindings, including aliases, should not be named as standard DOM events  @angular-eslint/no-output-native
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\shared\directives\has-role.directive.ts
+  12:9   error  Prefer using the inject() function over constructor parameter injection. Use Angular's migration schematic to automatically refactor: ng generate @angular/core:inject  @angular-eslint/prefer-inject
+  12:42  error  Unexpected any. Specify a different type                                                                                                                                @typescript-eslint/no-explicit-any
+  13:9   error  Prefer using the inject() function over constructor parameter injection. Use Angular's migration schematic to automatically refactor: ng generate @angular/core:inject  @angular-eslint/prefer-inject
+  14:9   error  Prefer using the inject() function over constructor parameter injection. Use Angular's migration schematic to automatically refactor: ng generate @angular/core:inject  @angular-eslint/prefer-inject
+
+C:\Users\kanuj\Desktop\System Street\FAMS\Assura\assura-frontend\frontend\src\app\shared\pipes\truncate.pipe.ts
+  9:49  error  Type number trivially inferred from a number literal, remove type annotation  @typescript-eslint/no-inferrable-types
+  9:69  error  Type string trivially inferred from a string literal, remove type annotation  @typescript-eslint/no-inferrable-types
+
+Γ£û 35 problems (35 errors, 0 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+
+node.exe : [1m[31mLint errors 
+found in the listed files.
+At C:\Program 
+Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : No 
+   tSpecified: ([1m[31mLint e  
+  ...e listed files.:String) [   
+ ], RemoteException
+    + FullyQualifiedErrorId : Na 
+   tiveCommandError
+ 
+[39m[22m

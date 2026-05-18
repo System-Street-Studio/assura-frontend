@@ -1,0 +1,224 @@
+<div class="hr-layout">
+  <!-- Shared shell keeps this standalone HR page visually aligned with the rest of the app. -->
+  <app-shared-sidebar></app-shared-sidebar>
+
+  <div class="main-area">
+    <app-shared-navbar title="Human Resource"></app-shared-navbar>
+
+    <section class="assigned-page" aria-labelledby="assigned-title">
+      <div class="content-shell">
+        <!-- Header gives users page context and the main action for creating another assignment. -->
+        <div class="page-header">
+          <div>
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+              <span>Home</span>
+              <span aria-hidden="true">/</span>
+              <span>Human Resource</span>
+              <span aria-hidden="true">/</span>
+              <span>Assigned Roles</span>
+            </nav>
+            <h1 id="assigned-title">Assigned Roles</h1>
+            <p>View and manage roles that have been assigned to employees.</p>
+          </div>
+
+          <div class="header-actions">
+            <button type="button" class="outline-button">Export</button>
+            <a class="primary-link" routerLink="/hr-assign-role">Assign New Role</a>
+          </div>
+        </div>
+
+        <!-- Summary cards reuse component getters so the counts stay tied to the table data. -->
+        <div class="stats-grid" aria-label="Assigned role overview">
+          <article class="stat-card blue">
+            <span class="stat-icon">AR</span>
+            <div>
+              <span>Total Assigned Roles</span>
+              <strong>{{ assignedRoleRows.length }}</strong>
+              <small>12% from last month</small>
+            </div>
+          </article>
+
+          <article class="stat-card green">
+            <span class="stat-icon">AE</span>
+            <div>
+              <span>Active Employees</span>
+              <strong>{{ activeCount }}</strong>
+              <small>8% from last month</small>
+            </div>
+          </article>
+
+          <article class="stat-card orange">
+            <span class="stat-icon">EX</span>
+            <div>
+              <span>Expired Assignments</span>
+              <strong>{{ expiredCount }}</strong>
+              <small class="danger">2% from last month</small>
+            </div>
+          </article>
+
+          <article class="stat-card purple">
+            <span class="stat-icon">PR</span>
+            <div>
+              <span>Pending Renewal</span>
+              <strong>11</strong>
+              <small>5% from last month</small>
+            </div>
+          </article>
+        </div>
+
+        <!-- Filters update component state, then filteredAssignedUsers recalculates the table rows. -->
+        <section class="filter-panel" aria-label="Assigned role filters">
+          <label class="search-field">
+            <span>Search</span>
+            <input
+              type="search"
+              placeholder="Search by Employee ID or Name..."
+              [value]="searchTerm"
+              (input)="updateSearch($event)"
+            />
+          </label>
+
+          <label>
+            <span>Division</span>
+            <select [value]="selectedDivision" (change)="updateDivision($event)">
+              <option value="">All Divisions</option>
+              @for (division of divisions; track division) {
+                <option [value]="division">{{ division }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Role</span>
+            <select [value]="selectedRole" (change)="updateRole($event)">
+              <option value="">All Roles</option>
+              @for (role of roles; track role) {
+                <option [value]="role">{{ role }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Status</span>
+            <select [value]="selectedStatus" (change)="updateStatus($event)">
+              <option value="">All Status</option>
+              @for (status of statuses; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Date Range</span>
+            <input type="date" [value]="selectedDate" (input)="updateDate($event)" />
+          </label>
+
+          <button class="clear-button" type="button" (click)="clearFilters()">Clear Filters</button>
+        </section>
+
+        <!-- The table shows the filtered role assignments and falls back to an empty state. -->
+        <section class="table-card" aria-label="Assigned roles table">
+          <div class="table-toolbar">
+            <p>
+              Showing {{ filteredAssignedUsers.length }} of {{ assignedRoleRows.length }} entries
+            </p>
+            <div class="table-actions">
+              <button type="button">Bulk Actions</button>
+              <button type="button" class="icon-tool" aria-label="Table settings">Settings</button>
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Role</th>
+                  <th>Division</th>
+                  <th>Access Level</th>
+                  <th>Status</th>
+                  <th>Assigned Date</th>
+                  <th>Expiry Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (user of filteredAssignedUsers; track user.userId) {
+                  <tr>
+                    <td>
+                      <span class="employee-cell">
+                        <span class="avatar">{{ user.name.charAt(0) }}</span>
+                        <span>
+                          <strong>{{ user.userId }}</strong>
+                          <small>{{ user.name }}</small>
+                        </span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge role-badge">{{ user.role }}</span>
+                    </td>
+                    <td>{{ user.division }}</td>
+                    <td>
+                      <span
+                        class="badge access"
+                        [class.readonly]="user.accessLevel === 'Read Only'"
+                        [class.edit]="user.accessLevel === 'Edit Access'"
+                      >
+                        {{ user.accessLevel }}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        class="badge status"
+                        [class.temporary]="user.status === 'Temporary'"
+                        [class.review]="user.status === 'Under Review'"
+                        [class.expired]="user.status === 'Expired'"
+                      >
+                        {{ user.status }}
+                      </span>
+                    </td>
+                    <td>{{ user.joinedDate }}</td>
+                    <td [class.expiry-danger]="user.status === 'Expired'">{{ user.expiryDate }}</td>
+                    <td>
+                      <div class="action-group">
+                        <button type="button" aria-label="View role">View</button>
+                        <button type="button" aria-label="Edit role">Edit</button>
+                        <button type="button" aria-label="More options">More</button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td class="empty-state" colspan="8">No assigned roles found</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination-row">
+            <!-- Pagination is visual for now; it reserves space for the real paging behavior later. -->
+            <label>
+              <span>Rows per page:</span>
+              <select>
+                <option>10</option>
+                <option>20</option>
+              </select>
+            </label>
+
+            <div class="pagination">
+              <button type="button" disabled>Previous</button>
+              <button type="button" class="active">1</button>
+              <button type="button">2</button>
+              <button type="button">3</button>
+              <button type="button">4</button>
+              <button type="button">5</button>
+              <button type="button">Next</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+</div>

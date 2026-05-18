@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\frontend",
+    "\\frontend\\src",
+    "\\frontend\\src\\app",
+    "\\frontend\\src\\app\\features",
+    "\\frontend\\src\\app\\features\\inventory",
+    "\\frontend\\src\\app\\features\\inventory\\pages",
+    "\\frontend\\src\\app\\features\\inventory\\pages\\assets",
+    "\\frontend\\src\\assets",
+    "\\frontend\\src\\assets\\images"
+  ],
+  "SelectedNode": "\\frontend\\src\\assets\\images\\LOGO2.png",
+  "PreviewInSolutionExplorer": false
+}

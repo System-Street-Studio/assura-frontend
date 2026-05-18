@@ -1,0 +1,38 @@
+<div class="hr-layout">
+  <!-- Shared navigation wraps the dashboard so HR users keep the same app frame. -->
+  <app-shared-sidebar></app-shared-sidebar>
+
+  <div class="main-area">
+    <app-shared-navbar title="Human Resource"></app-shared-navbar>
+
+    <section class="overview-page" aria-labelledby="statistics-title">
+      <div class="overview-container">
+        <h1 id="statistics-title" class="page-title">Statistics</h1>
+
+        <!-- Stats are rendered from data so more cards can be added without changing markup. -->
+        <div class="stats-grid" aria-label="Role assignment statistics">
+          @for (stat of stats; track stat.label) {
+            <article class="stat-card">
+              <span class="stat-label">{{ stat.label }}</span>
+              <strong class="stat-value">{{ stat.value }}</strong>
+            </article>
+          }
+        </div>
+
+        <!-- Division counts give HR a quick workforce distribution snapshot. -->
+        <section class="division-panel" aria-labelledby="division-title">
+          <h2 id="division-title" class="panel-title">Users by Division</h2>
+
+          <div class="division-list">
+            @for (item of usersByDivision; track item.division) {
+              <div class="division-row">
+                <span>{{ item.division }}</span>
+                <span class="division-count">{{ item.users }}</span>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+</div>

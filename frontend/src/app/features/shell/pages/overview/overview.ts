@@ -1,20 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge';
+// import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge';
 import { DataTableComponent, ColumnDef } from '../../../../shared/components/data-table/data-table';
 import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
 import { ActionButtonComponent } from '../../../../shared/components/action-button/action-button';
-import {
-  FilterDropdownComponent,
-  FilterGroup,
-} from '../../../../shared/components/filter-dropdown/filter-dropdown';
+import { FilterDropdownComponent, FilterGroup, } from '../../../../shared/components/filter-dropdown/filter-dropdown';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
   imports: [
     CommonModule,
-    StatusBadgeComponent,
     DataTableComponent,
     SearchBarComponent,
     ActionButtonComponent,
@@ -28,7 +26,7 @@ import {
         <div class="toolbar-left">
           <app-search-bar
             placeholder="Search Assets..."
-            (search)="onSearch($event)"
+            (queryChange)="onSearch($event)"
           ></app-search-bar>
           <app-action-button label="Check in" icon="check_circle_outline"></app-action-button>
           <app-action-button label="Check out" icon="exit_to_app"></app-action-button>
@@ -40,12 +38,13 @@ import {
               icon="filter_alt"
               (clicked)="toggleFilter()"
             ></app-action-button>
+            @if (showFilter) {
             <app-filter-dropdown
-              *ngIf="showFilter"
               [groups]="filterGroups"
               (closed)="onFilterClose($event)"
             >
             </app-filter-dropdown>
+            }
           </div>
           <app-action-button label="New" icon="add"></app-action-button>
         </div>
@@ -89,8 +88,19 @@ import {
     `,
   ],
 })
-export class OverviewComponent {
+export class OverviewComponent implements OnInit {
+  private router = inject(Router);
+  private authService = inject(AuthService);
+
+  ngOnInit(): void {
+    const dashboardUrl = this.authService.getDashboardUrl();
+    if (dashboardUrl !== '/overview') {
+      this.router.navigate([dashboardUrl]);
+    }
+  }
+
   showFilter = false;
+  // ...
 
   columns: ColumnDef[] = [
     { key: 'id', label: 'ID' },
@@ -152,6 +162,7 @@ export class OverviewComponent {
   }
 
   onFilterClose(groups: FilterGroup[]): void {
+    console.log('Filters closed', groups);
     this.showFilter = false;
     this.applyFilters();
   }
@@ -195,7 +206,7 @@ export class OverviewComponent {
     this.tableData = filtered;
   }
 
-  onRowClick(row: any): void {
+  onRowClick(row: unknown): void {
     console.log('Row clicked:', row);
   }
 }

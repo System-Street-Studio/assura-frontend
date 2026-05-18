@@ -1,0 +1,120 @@
+﻿import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { AssetService } from '../../services/asset.service';
+import { AssetDetail } from '../../models/asset.model';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
+import QRCode from 'qrcode';
+
+@Component({
+  selector: 'app-asset-details',
+  standalone: true,
+  imports: [CommonModule, MatIconModule, ResultOverlayComponent],
+  templateUrl: './asset-details.html',
+  styleUrls: ['./asset-details.css'],
+})
+export class AssetDetailsComponent implements OnInit {
+  private assetService = inject(AssetService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private location = inject(Location);
+  private toast = inject(ToastService);
+
+  asset!: AssetDetail;
+  activeTab = 'about';
+  showDeleteConfirm = false;
+  deleting = false;
+  qrDataUrl = '';
+
+  showResult = false;
+  resultType: 'success' | 'error' = 'success';
+  resultTitle = '';
+  resultMessage = '';
+
+  tabs = [
+    { id: 'about', label: 'About' },
+    { id: 'checkout-log', label: 'Checkout Log' },
+    { id: 'change-log', label: 'Change Log' },
+    { id: 'components', label: 'Components (1)' },
+    { id: 'licenses', label: 'Licenses (1)' },
+    { id: 'audits', label: 'Audits (2)' },
+    { id: 'maintenances', label: 'Maintenances (1)' },
+  ];
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id') || '100000';
+    this.assetService.getAssetById(id).subscribe((a: AssetDetail) => {
+      this.asset = a;
+      this.generateQr(a.assetId);
+    });
+  }
+
+  private async generateQr(value: string): Promise<void> {
+    try {
+      this.qrDataUrl = await QRCode.toDataURL(value, {
+        width: 120,
+        margin: 1,
+        color: { dark: '#0b6c78', light: '#ffffff' },
+      });
+    } catch {
+      this.qrDataUrl = '';
+    }
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+
+  setTab(tabId: string): void {
+    this.activeTab = tabId;
+  }
+
+  getStatusClass(): string {
+    if (!this.asset) return '';
+    return this.asset.status.toLowerCase().replace(' ', '-');
+  }
+
+  onPrint(): void {
+    window.print();
+  }
+
+  onCheckin(): void {
+    // placeholder
+  }
+
+  onClone(): void {
+    this.router.navigate(['/inventory/assets', this.asset.id, 'clone']);
+  }
+
+  onEdit(): void {
+    this.router.navigate(['/inventory/assets', this.asset.id, 'edit']);
+  }
+
+  onDelete(): void {
+    this.showDeleteConfirm = true;
+  }
+
+  confirmDelete(): void {
+    this.deleting = true;
+    this.assetService.deleteAsset(this.asset.id).subscribe(() => {
+      this.showDeleteConfirm = false;
+      this.deleting = false;
+      this.resultType = 'success';
+      this.resultTitle = 'Deleted!';
+      this.resultMessage = `"${this.asset.name}" has been permanently removed.`;
+      this.showResult = true;
+      setTimeout(() => this.onResultClosed(), 2000);
+    });
+  }
+
+  cancelDelete(): void {
+    this.showDeleteConfirm = false;
+  }
+
+  onResultClosed(): void {
+    this.showResult = false;
+    this.router.navigate(['/inventory/assets']);
+  }
+}

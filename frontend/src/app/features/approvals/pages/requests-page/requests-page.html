@@ -1,0 +1,180 @@
+<div class="container">
+  <header>
+    <h1>Requests</h1>
+    <div class="overview-section">
+      <h3>Overview</h3>
+      <p>Manage and track all incoming and outgoing asset requests across employees and divisions</p>
+    </div>
+  </header>
+
+  <div class="request-tabs">
+    <button class="tab-btn" [class.active]="activeTab() === 'new'" (click)="setTab('new')">New Asset Requests</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'transfer'" (click)="setTab('transfer')">Transfer
+      Requests</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'maintenance'"
+      (click)="setTab('maintenance')">Maintenance</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'discard'" (click)="setTab('discard')">Discard
+      Requests</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="card blue-border" [class.highlight]="activeTab() === 'new'">
+      <div class="card-content">
+        <div>
+          <p class="card-title">New Asset Request</p>
+          <div class="icon-circle blue-bg"><mat-icon>content_copy</mat-icon></div>
+          <h2 class="card-number">{{ newAssetCount() }}</h2>
+          <span class="card-sub">Pending</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card green-border" [class.highlight]="activeTab() === 'transfer'">
+      <div class="card-content">
+        <div>
+          <p class="card-title">Transfer Requests</p>
+          <div class="icon-box green-text"><mat-icon>swap_horiz</mat-icon></div>
+          <h2 class="card-number">{{ transferCount() }}</h2>
+          <span class="card-sub">Pending</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card orange-border" [class.highlight]="activeTab() === 'maintenance'">
+      <div class="card-content">
+        <div>
+          <p class="card-title">Maintenance Requests</p>
+          <div class="icon-box orange-text"><mat-icon>build</mat-icon></div>
+          <h2 class="card-number">{{ maintenanceCount() }}</h2>
+          <span class="card-sub">Pending</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card red-border" [class.highlight]="activeTab() === 'discard'">
+      <div class="card-content">
+        <div>
+          <p class="card-title">Discard Requests</p>
+          <div class="icon-box red-text"><mat-icon>delete</mat-icon></div>
+          <h2 class="card-number">{{ discardCount() }}</h2>
+          <span class="card-sub">Pending</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="table-container">
+    <div class="table-header">
+      <h2 class="table-title">
+        All {{ activeTab() | titlecase }} Requests ({{ filteredResults().length }})
+      </h2>
+
+      <div class="table-actions">
+        <div class="action-group">
+          <label class="group-label">Search Requests</label>
+          <div class="input-wrapper">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+              placeholder="Search by Employee / Asset..." class="search-bar">
+          </div>
+        </div>
+
+        <div class="action-group">
+          <label class="group-label">Refine By</label>
+          <button class="filter-btn" [matMenuTriggerFor]="filterMenu">
+            <mat-icon>tune</mat-icon>
+            <span>Filter Options</span>
+            <span class="filter-badge" *ngIf="filterCount() > 0">{{ filterCount() }}</span>
+            <mat-icon class="arrow">expand_more</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <mat-menu #filterMenu="matMenu" class="modern-dropdown-menu">
+        <div class="filter-container" (click)="$event.stopPropagation()">
+          <div class="filter-header">
+            <h4>Filter Requests</h4>
+            <button (click)="resetFilters()" class="reset-btn">Clear All</button>
+          </div>
+          <div class="filter-body">
+            <div *ngFor="let group of filterConfig" class="filter-section">
+              <span class="section-title">{{ group.label }}</span>
+              <div class="chips-grid">
+                <div *ngFor="let opt of group.options" class="filter-chip"
+                  [class.active]="selectedFilters()[group.key].includes(opt)" (click)="toggleFilter(group.key, opt)">
+                  <mat-icon *ngIf="selectedFilters()[group.key].includes(opt)">check</mat-icon>
+                  {{ opt }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-menu>
+    </div>
+
+    <div *ngIf="isLoading()" class="loading-container">
+      <p>Loading your requests...</p>
+    </div>
+
+    <table *ngIf="!isLoading()">
+      <thead>
+        <tr>
+          @if (activeTab() === 'new') {
+          <th>Employee Name</th>
+          <th>Status</th>
+          <th>Requested Asset</th>
+          <th>Request Date</th>
+          <th>Priority</th>
+          } @else {
+          <th>Submit Date</th>
+          <th>Asset / Category</th>
+          <th>Employee Name</th>
+          <th>Status</th>
+          <th>Priority</th>
+          }
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredResults(); track item.id) {
+        <tr>
+          @if (activeTab() === 'new') {
+          <td class="bold-text">{{ item.name }}</td>
+          <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
+          <td>{{ item.assetName }}</td>
+          <td>{{ item.date|date }}</td>
+          <td class="priority-cell" [attr.data-priority]="item.priority">{{ item.priority }}</td>
+          } @else {
+          <td>{{ item.date |date }}</td>
+          <td>
+            <div class="asset-info">
+              <span class="asset-name">{{ item.assetName }}</span>
+              @if (item.division) { <span class="asset-cat">({{ item.division }})</span> }
+            </div>
+          </td>
+          <td class="emp-name">{{ item.name }}</td>
+          <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
+          <td class="priority-cell" [attr.data-priority]="item.priority">{{ item.priority || 'Normal' }}</td>
+          }
+          <td>
+            @if (item.status === 'Pending') {
+
+            <button class="btn-view" (click)="viewDetails(item)"> <mat-icon>visibility</mat-icon> View Details</button>
+
+            } @else {
+            <button class="btn-check">Check</button>
+            }
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 60px; color: #94a3b8;">
+            <mat-icon style="font-size: 48px; width: 48px; height: 48px;">search_off</mat-icon>
+            <p>No requests found matching your filters.</p>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

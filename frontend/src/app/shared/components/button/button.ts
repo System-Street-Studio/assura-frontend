@@ -6,7 +6,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <button class="btn" [ngStyle]="btnStyle" (click)="clicked.emit()">
+    <button class="btn" [ngStyle]="btnStyle" [disabled]="isDisabled" (click)="!isDisabled && clicked.emit()">
+      <ng-content></ng-content>
       {{ label }}
     </button>
   `,
@@ -15,6 +16,7 @@ import { CommonModule } from '@angular/common';
 export class ButtonComponent {
   @Input() label = '';
   @Input() color: 'teal' | 'red' | 'black' = 'teal';
+  @Input() isDisabled = false;
   @Output() clicked = new EventEmitter<void>();
 
   private colorMap: Record<string, string> = {
@@ -24,6 +26,13 @@ export class ButtonComponent {
   };
 
   get btnStyle(): Record<string, string> {
+    if (this.isDisabled) {
+      return {
+        'background-color': '#ccc',
+        'cursor': 'not-allowed',
+        'opacity': '0.7'
+      };
+    }
     return { 'background-color': this.colorMap[this.color] || '#00AFB5' };
   }
 }

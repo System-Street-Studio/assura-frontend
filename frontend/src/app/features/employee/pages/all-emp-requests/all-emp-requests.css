@@ -1,0 +1,228 @@
+
+:host {
+  display: block;
+  font-family: 'jost', sans-serif;
+  
+}
+
+.container {
+  padding: 20px;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+
+.back-link {
+  text-decoration: none;
+  font-size: 24px;
+  color: #151515;
+  display: block;
+  margin-bottom: 10px;
+  margin-top: 30px;
+}
+.tabs {
+  display: flex;
+  gap: 20px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.page-title {
+  font-size: 20px;
+  font-weight: 650;
+  margin-left: 20px;
+  margin-bottom: 50px;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 30px;
+}
+
+/* Search box */
+.search-container {
+  position: relative;
+  width: 320px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 8px 12px 8px 40px;
+  border-radius: 12px;
+  border: 1px solid #c4c1c1;
+  outline: none;
+  font-size: 14px;
+  font-family: 'jost';
+  background-color: #f3f3f3;
+  transition: 0.3s ease;
+}
+
+.search-container input:focus {
+  border: 2px solid #00477775;
+  background-color: #ffffff;
+  
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #b0aeae;
+  pointer-events: none;
+}
+
+.results {
+  margin-top: 15px;
+}
+
+
+/* ---  filter --- */
+.filter-btn {
+  padding: 8px 16px;
+  border: 1px solid #c6c4c4;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'jost';
+}
+.filter-container {
+  position: relative; /* Essential for absolute positioning of the menu */
+}
+
+.filter-options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 100;
+  min-width: 120px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.option {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 0.9rem;
+}
+
+.option:hover {
+  background: #f0f0f0;
+  color: #2fcf54;
+}
+
+/* Optional: style for the active filter */
+.option.active {
+  background: #e0f7fa;
+  font-weight: bold;
+}
+
+/* Table Styles */
+.requests-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px; /* Gap between rows */
+}
+
+.requests-table th {
+  text-align: center;
+  padding: 10px 10px;
+  color: #272727;
+  font-size: 0.9rem;
+  font-weight: 600;
+  gap:100px;
+}
+
+.requests-table tbody tr {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-radius: 10px
+}
+
+.requests-table td {
+  padding: 15px 10px 15px 50px;
+  font-weight: 450;
+ 
+}
+
+/* Priority & Status Labels */
+.priority-label { font-weight: 500px; }
+.priority-high, .priority-urgent { color: #fa1b0b; }
+.priority-medium { color: #3904c1; }
+
+.status-badge {
+  padding: 1px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-pending { background: #fce4f9; color: #da05bd; border: 1px solid #f870d9; }
+.status-approved { background: #dffee1; color: #05a50d; border: 1px solid #48fb51; }
+.status-in-progress { background: #c4e3fc; color: #0783ff; border: 1px solid #188eef; }
+.status-rejected { background: #fedadf; color: #f60101; border: 1px solid #f95f5f; }
+.status-cancelled { background: #e0e0e0; color: #606060; border: 1px solid #bdbdbd; }
+
+/* Buttons */
+.actions { display: flex; gap: 20px;}
+
+/* Target the icon inside the button */
+mat-icon {
+  font-size: 18px;      /* Default is usually 24px */
+  width: 18px;         /* Match width to font-size */
+  height: 18px;        /* Match height to font-size */
+  line-height: 18px;   /* Ensures vertical centering */
+  display: flex;       /* Helps with alignment */
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-view, .btn-cancel {
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 2px solid #00afb575;
+  background: white;
+  color: #00afb5;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'jost';
+  font-weight: 550;
+  display:flex;
+  align-items: center;
+  gap: 10px;
+ 
+}
+
+.btn-cancel {
+  font-family: 'jost';
+  border-color: #f5a8a2;
+  color: #d93025;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+}
+
+.page-num.active {
+  background: #eee;
+  padding: 2px 8px;
+  border-radius: 4px;
+}

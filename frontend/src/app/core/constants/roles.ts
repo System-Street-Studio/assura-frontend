@@ -1,13 +1,13 @@
 export const ROLES = {
   STOREKEEPER: 'Storekeeper',
-  HUMAN_RESOURCE: 'Human Resource',
+  HUMAN_RESOURCE: 'HR',
   AUDITOR: 'Auditor',
   PROCUREMENT: 'Procurement',
   ADMIN: 'Admin',
   SUPERINTENDENT: 'Superintendent',
   ACCOUNTANT: 'Accountant',
   EMPLOYEE: 'Employee',
-  DIVISION_HEAD: 'Division Head',
+  DIVISION_HEAD: 'DivisionHead',
 } as const;
 
 export type RoleKey = keyof typeof ROLES;

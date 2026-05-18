@@ -1,0 +1,429 @@
+<div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-left">
+            <h1 class="page-title">Checkout</h1>
+            <span class="item-count" *ngIf="!loading">{{ filteredRecords.length }} records</span>
+            <span class="item-count" *ngIf="loading">Loading records...</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn outline" title="Export to CSV">
+                <mat-icon class="btn-icon">file_download</mat-icon>
+                Export
+            </button>
+            <button class="btn primary" (click)="openCheckoutModal()">
+                <mat-icon class="btn-icon">exit_to_app</mat-icon>
+                New Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Strip -->
+    <section class="stats-strip" *ngIf="!loading">
+        <div class="stat-card" [class.active]="!filterStatus" (click)="filterStatus = ''; applyFilters()">
+            <div class="stat-icon-wrap all"><mat-icon>assignment</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ totalCount }}</div>
+                <div class="stat-label">Total Records</div>
+            </div>
+        </div>
+        <div class="stat-card" [class.active]="filterStatus === 'Checked Out'"
+            (click)="filterStatus = 'Checked Out'; activeView = 'active'; applyFilters()">
+            <div class="stat-icon-wrap checked-out"><mat-icon>exit_to_app</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ activeCount }}</div>
+                <div class="stat-label">Checked Out</div>
+            </div>
+        </div>
+        <div class="stat-card" [class.active]="filterStatus === 'Overdue'" [class.pulse]="overdueCount > 0"
+            (click)="filterStatus = 'Overdue'; activeView = 'active'; applyFilters()">
+            <div class="stat-icon-wrap overdue"><mat-icon>schedule</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ overdueCount }}</div>
+                <div class="stat-label">Overdue</div>
+            </div>
+        </div>
+        <div class="stat-card info-only">
+            <div class="stat-icon-wrap due-soon"><mat-icon>notification_important</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ dueSoonCount }}</div>
+                <div class="stat-label">Due Soon</div>
+            </div>
+        </div>
+        <div class="stat-card" [class.active]="filterStatus === 'Returned'"
+            (click)="filterStatus = 'Returned'; activeView = 'history'; applyFilters()">
+            <div class="stat-icon-wrap returned"><mat-icon>login</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ returnedCount }}</div>
+                <div class="stat-label">Returned</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- View Toggle + Toolbar -->
+    <div class="view-toggle-bar">
+        <div class="view-toggle">
+            <button class="toggle-btn" [class.active]="activeView === 'active'" (click)="setView('active')">
+                <mat-icon>exit_to_app</mat-icon> Active Checkouts
+            </button>
+            <button class="toggle-btn" [class.active]="activeView === 'history'" (click)="setView('history')">
+                <mat-icon>history</mat-icon> History
+            </button>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <div class="search-box">
+                <mat-icon class="search-icon">search</mat-icon>
+                <input class="search-input" type="text" placeholder="Search by name, asset, serial, division…"
+                    [(ngModel)]="searchTerm" (keyup)="applyFilters()" />
+                <button class="search-clear" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <select class="filter-select" [(ngModel)]="filterDivision" (change)="applyFilters()">
+                <option value="">All Divisions</option>
+                <option *ngFor="let d of divisions" [value]="d">{{ d }}</option>
+            </select>
+            <button class="btn-text" *ngIf="hasActiveFilters" (click)="clearFilters()">
+                <mat-icon>filter_list_off</mat-icon> Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- Selection banner -->
+    <div class="selection-banner" *ngIf="selectedCount > 0">
+        <mat-icon class="banner-icon">check_circle</mat-icon>
+        {{ selectedCount }} record{{ selectedCount > 1 ? 's' : '' }} selected
+        <button class="banner-clear" (click)="clearSelection()">Clear</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        <div class="empty-state" *ngIf="!loading && loadError">
+            <mat-icon class="empty-icon">cloud_off</mat-icon>
+            <div class="empty-text">Unable to load checkout records right now.</div>
+            <button class="btn sm" (click)="retryLoad()">Retry</button>
+        </div>
+
+        <table class="checkout-table" *ngIf="!loading">
+            <thead>
+                <tr>
+                    <th class="col-check">
+                        <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll()" />
+                    </th>
+                    <th>Checkout ID</th>
+                    <th>Asset</th>
+                    <th>Checked Out To</th>
+                    <th>Checkout Date</th>
+                    <th>Due Date</th>
+                    <th *ngIf="activeView === 'history'">Return Date</th>
+                    <th *ngIf="activeView === 'history'">Condition</th>
+                    <th>Status</th>
+                    <th *ngIf="activeView === 'active'" class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Empty state -->
+                <tr *ngIf="viewRecords.length === 0">
+                    <td [attr.colspan]="activeView === 'active' ? 9 : 10" class="empty-state">
+                        <mat-icon class="empty-icon">{{ activeView === 'active' ? 'exit_to_app' : 'history'
+                            }}</mat-icon>
+                        <div class="empty-text">
+                            {{ hasActiveFilters ? 'No records match your filters' : (activeView === 'active' ? 'No
+                            active checkouts' : 'No checkout history yet') }}
+                        </div>
+                        <button class="btn sm" *ngIf="hasActiveFilters" (click)="clearFilters()">
+                            Clear Filters
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Data rows -->
+                <tr *ngFor="let rec of viewRecords" [class.row-selected]="rec.selected"
+                    [class.row-overdue]="isOverdue(rec)" class="clickable-row" (click)="openDetail(rec)">
+                    <td class="col-check" (click)="$event.stopPropagation()">
+                        <input type="checkbox" [(ngModel)]="rec.selected" />
+                    </td>
+                    <td>
+                        <span class="cell-id">{{ rec.id }}</span>
+                    </td>
+                    <td>
+                        <div class="asset-cell">
+                            <div class="asset-thumb"
+                                [ngClass]="rec.category === 'Mobile Devices' ? 'phone' : rec.category === 'Tablets' ? 'tablet' : 'laptop'">
+                                <mat-icon class="thumb-icon">{{ rec.category === 'Mobile Devices' ? 'smartphone' :
+                                    rec.category === 'Tablets' ? 'tablet' : 'laptop' }}</mat-icon>
+                            </div>
+                            <div>
+                                <div class="asset-name">{{ rec.assetName }}</div>
+                                <div class="asset-sub">{{ rec.assetId }} · {{ rec.serial }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="person-cell">
+                            <div class="avatar" [ngClass]="getAvatarClass(rec.id)">
+                                {{ getInitials(rec.checkedOutTo) }}
+                            </div>
+                            <div>
+                                <div class="person-name">{{ rec.checkedOutTo }}</div>
+                                <div class="person-sub">{{ rec.division }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="date-cell">
+                            <span class="date-main">{{ formatDate(rec.checkoutDate) }}</span>
+                            <span class="date-ago">{{ getTimeAgo(rec.checkoutDate) }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="due-cell">
+                            <span class="date-main">{{ formatDate(rec.dueDate) }}</span>
+                            <span class="days-info" *ngIf="rec.status !== 'Returned'" [class.overdue]="isOverdue(rec)"
+                                [class.due-soon]="isDueSoon(rec)">
+                                {{ getDaysInfo(rec) }}
+                            </span>
+                        </div>
+                    </td>
+                    <td *ngIf="activeView === 'history'">
+                        <span class="date-main" *ngIf="rec.returnDate">{{ formatDate(rec.returnDate) }}</span>
+                        <span class="text-muted" *ngIf="!rec.returnDate">—</span>
+                    </td>
+                    <td *ngIf="activeView === 'history'">
+                        <span class="condition-badge" *ngIf="rec.condition"
+                            [ngClass]="getConditionClass(rec.condition)">
+                            <mat-icon class="condition-icon">{{ getConditionIcon(rec.condition) }}</mat-icon>
+                            {{ rec.condition }}
+                        </span>
+                        <span class="text-muted" *ngIf="!rec.condition">—</span>
+                    </td>
+                    <td>
+                        <span class="status-badge" [ngClass]="getStatusClass(rec.status)">
+                            <span class="status-dot"></span>
+                            {{ rec.status }}
+                        </span>
+                    </td>
+                    <td class="col-actions" *ngIf="activeView === 'active'" (click)="$event.stopPropagation()">
+                        <button class="action-btn checkin-action" title="Check In" (click)="onCheckin(rec)">
+                            <mat-icon>login</mat-icon>
+                            <span>Check In</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Skeleton loading -->
+        <table class="checkout-table" *ngIf="loading">
+            <tbody>
+                <tr *ngFor="let row of [1,2,3,4,5,6,7,8]" class="skeleton-row">
+                    <td colspan="9">
+                        <div class="skeleton-table-row">
+                            <div class="skel-check"></div>
+                            <div class="skel-line short"></div>
+                            <div class="skel-thumb"></div>
+                            <div class="skel-line medium"></div>
+                            <div class="skel-avatar"></div>
+                            <div class="skel-line medium"></div>
+                            <div class="skel-line short"></div>
+                            <div class="skel-line pill"></div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <app-pagination *ngIf="!loading && filteredRecords.length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
+        [pageNumbers]="pages" (pageChange)="goToPage($event)">
+    </app-pagination>
+
+    <!-- ═══ NEW CHECKOUT MODAL ═══ -->
+    <div class="overlay" *ngIf="showCheckoutModal" (click)="cancelCheckout()">
+        <div class="checkout-dialog" (click)="$event.stopPropagation()">
+            <div class="modal-icon-wrap checkout-icon-bg">
+                <mat-icon class="modal-icon">exit_to_app</mat-icon>
+            </div>
+            <h3>New Checkout</h3>
+            <p class="modal-subtitle">Assign an available asset to an employee.</p>
+
+            <div class="modal-form">
+                <div class="modal-field" [class.has-error]="submitted && !checkoutForm.assetId">
+                    <label>Asset *</label>
+                    <select [(ngModel)]="checkoutForm.assetId">
+                        <option value="">Select an available asset</option>
+                        <option *ngFor="let a of availableAssets" [value]="a.id">
+                            {{ a.name }} ({{ a.serial }}) - {{ a.category }}
+                        </option>
+                    </select>
+                    <span class="error-text" *ngIf="submitted && !checkoutForm.assetId">Asset is required</span>
+                </div>
+
+                <div class="modal-field" [class.has-error]="submitted && !checkoutForm.checkedOutToUserId">
+                    <label>Employee *</label>
+                    <select [(ngModel)]="checkoutForm.checkedOutToUserId" (ngModelChange)="onEmployeeChange()">
+                        <option value="">Select employee</option>
+                        <option *ngFor="let e of employees" [value]="e.id">
+                            {{ e.name }} — {{ e.division }}
+                        </option>
+                    </select>
+                    <span class="error-text" *ngIf="submitted && !checkoutForm.checkedOutToUserId">Employee is
+                        required</span>
+                </div>
+
+                <div class="modal-row">
+                    <div class="modal-field">
+                        <label>Division</label>
+                        <input type="text" [value]="checkoutForm.division" disabled placeholder="Auto-filled" />
+                    </div>
+                    <div class="modal-field">
+                        <label>Email</label>
+                        <input type="text" [value]="checkoutForm.email" disabled placeholder="Auto-filled" />
+                    </div>
+                </div>
+
+                <div class="modal-field" [class.has-error]="submitted && !checkoutForm.dueDate">
+                    <label>Due Date *</label>
+                    <input type="date" [(ngModel)]="checkoutForm.dueDate" [min]="getMinDate()" />
+                    <span class="error-text" *ngIf="submitted && !checkoutForm.dueDate">Due date is required</span>
+                </div>
+
+                <div class="modal-field">
+                    <label>Notes <span class="optional">(optional)</span></label>
+                    <textarea rows="3" placeholder="Reason for checkout, special instructions…"
+                        [(ngModel)]="checkoutForm.notes"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn outline" (click)="cancelCheckout()" [disabled]="checkoutProcessing">Cancel</button>
+                <button class="btn primary" (click)="confirmCheckout()" [disabled]="checkoutProcessing">
+                    <mat-icon class="btn-icon" *ngIf="!checkoutProcessing">exit_to_app</mat-icon>
+                    <mat-icon class="btn-icon spin" *ngIf="checkoutProcessing">sync</mat-icon>
+                    {{ checkoutProcessing ? 'Processing...' : 'Confirm Checkout' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ DETAIL DRAWER ═══ -->
+    <div class="overlay" *ngIf="showDetail" (click)="closeDetail()">
+        <aside class="detail-drawer" (click)="$event.stopPropagation()" *ngIf="detailRecord">
+            <div class="drawer-header">
+                <h3>{{ detailRecord.id }}</h3>
+                <button class="drawer-close" (click)="closeDetail()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <div class="drawer-body">
+                <!-- Status -->
+                <div class="drawer-row">
+                    <span class="status-badge lg" [ngClass]="getStatusClass(detailRecord.status)">
+                        <span class="status-dot"></span>
+                        {{ detailRecord.status }}
+                    </span>
+                    <span class="condition-badge" *ngIf="detailRecord.condition"
+                        [ngClass]="getConditionClass(detailRecord.condition)">
+                        <mat-icon class="condition-icon">{{ getConditionIcon(detailRecord.condition) }}</mat-icon>
+                        {{ detailRecord.condition }}
+                    </span>
+                </div>
+
+                <hr class="drawer-divider" />
+
+                <!-- Asset Info -->
+                <h4 class="drawer-section-title">Asset Information</h4>
+                <div class="drawer-field">
+                    <span class="drawer-label">Asset</span>
+                    <span class="drawer-value">{{ detailRecord.assetName }}</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Asset ID</span>
+                    <span class="drawer-value mono">{{ detailRecord.assetId }}</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Serial</span>
+                    <span class="drawer-value mono">{{ detailRecord.serial }}</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Category</span>
+                    <span class="drawer-value">{{ detailRecord.category }}</span>
+                </div>
+
+                <hr class="drawer-divider" />
+
+                <!-- Person Info -->
+                <h4 class="drawer-section-title">Assignee</h4>
+                <div class="drawer-person">
+                    <div class="avatar lg" [ngClass]="getAvatarClass(detailRecord.id)">
+                        {{ getInitials(detailRecord.checkedOutTo) }}
+                    </div>
+                    <div>
+                        <div class="drawer-name">{{ detailRecord.checkedOutTo }}</div>
+                        <div class="drawer-sub">{{ detailRecord.division }} · {{ detailRecord.email }}</div>
+                    </div>
+                </div>
+
+                <hr class="drawer-divider" />
+
+                <!-- Timeline -->
+                <h4 class="drawer-section-title">Timeline</h4>
+                <div class="drawer-field">
+                    <span class="drawer-label">Checked Out</span>
+                    <span class="drawer-value">{{ formatDate(detailRecord.checkoutDate) }}</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Due Date</span>
+                    <span class="drawer-value" [class.text-overdue]="isOverdue(detailRecord)">
+                        {{ formatDate(detailRecord.dueDate) }}
+                        <span class="days-badge" *ngIf="detailRecord.status !== 'Returned'"
+                            [class.overdue]="isOverdue(detailRecord)">
+                            {{ getDaysInfo(detailRecord) }}
+                        </span>
+                    </span>
+                </div>
+                <div class="drawer-field" *ngIf="detailRecord.returnDate">
+                    <span class="drawer-label">Returned</span>
+                    <span class="drawer-value">{{ formatDate(detailRecord.returnDate) }}</span>
+                </div>
+                <div class="drawer-field">
+                    <span class="drawer-label">Checked Out By</span>
+                    <span class="drawer-value">{{ detailRecord.checkedOutBy }}</span>
+                </div>
+                <div class="drawer-field" *ngIf="detailRecord.checkedInBy">
+                    <span class="drawer-label">Checked In By</span>
+                    <span class="drawer-value">{{ detailRecord.checkedInBy }}</span>
+                </div>
+
+                <!-- Notes -->
+                <div *ngIf="detailRecord.checkoutNotes">
+                    <hr class="drawer-divider" />
+                    <h4 class="drawer-section-title">Checkout Notes</h4>
+                    <p class="drawer-notes">{{ detailRecord.checkoutNotes }}</p>
+                </div>
+                <div *ngIf="detailRecord.checkinNotes">
+                    <hr class="drawer-divider" />
+                    <h4 class="drawer-section-title">Check-In Notes</h4>
+                    <p class="drawer-notes">{{ detailRecord.checkinNotes }}</p>
+                </div>
+            </div>
+
+            <!-- Drawer actions -->
+            <div class="drawer-actions" *ngIf="detailRecord.status !== 'Returned'">
+                <button class="btn primary full" (click)="onCheckin(detailRecord); closeDetail()">
+                    <mat-icon class="btn-icon">login</mat-icon> Check In Asset
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Result Overlay -->
+    <app-result-overlay *ngIf="showResult" [type]="resultType" [title]="resultTitle" [message]="resultMessage"
+        (closed)="onResultClosed()"></app-result-overlay>
+</div>

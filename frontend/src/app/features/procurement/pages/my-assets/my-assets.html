@@ -1,0 +1,10 @@
+<div class="my-assets-container">
+    <div class="header-section">
+        <h1 class="page-title">My Assets</h1>
+    </div>
+
+    <div class="table-card">
+        <app-data-table [columns]="columns" [data]="assets" (rowClick)="onAssetClick($event)">
+        </app-data-table>
+    </div>
+</div>

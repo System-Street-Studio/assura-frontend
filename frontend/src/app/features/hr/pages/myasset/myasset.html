@@ -1,0 +1,92 @@
+<div class="hr-layout">
+  <!-- Shared shell keeps the audit screen aligned with the rest of the HR feature. -->
+  <app-shared-sidebar></app-shared-sidebar>
+
+  <div class="main-area">
+    <app-shared-navbar title="Human Resource"></app-shared-navbar>
+
+    <section class="audit-page" aria-labelledby="audit-title">
+      <div class="audit-shell">
+        <h1 id="audit-title" class="page-title">HR My Assets</h1>
+
+        <!-- Toolbar controls search plus the department/role grouping used by filterOptions. -->
+        <div class="toolbar" aria-label="Audit log filters">
+          <label class="search-field" aria-label="Search audit logs">
+            <input
+              type="search"
+              placeholder="Search by HR Officer, Employee, or Status"
+              [value]="searchTerm"
+              (input)="updateSearch($event)"
+            />
+          </label>
+
+          <label class="filter-field">
+            <span>View by</span>
+            <select [value]="filterMode" (change)="updateFilterMode($event)">
+              <option value="department">Department wise</option>
+              <option value="role">Role wise</option>
+            </select>
+          </label>
+
+          <label class="filter-field">
+            <span>{{ filterMode === 'department' ? 'Department' : 'Role' }}</span>
+            <select [value]="selectedFilter" (change)="updateSelectedFilter($event)">
+              <option value="">
+                All {{ filterMode === 'department' ? 'departments' : 'roles' }}
+              </option>
+              @for (option of filterOptions; track option) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <!-- The table reads filteredAuditLogs so search and dropdown choices update together. -->
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Date &amp; Time</th>
+                <th>HR Officer</th>
+                <th>Action</th>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>IP / Device</th>
+                <th>Notes</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (entry of filteredAuditLogs; track entry.date + entry.time + entry.employee) {
+                <tr>
+                  <td>
+                    <span>{{ entry.date }}</span>
+                    <span>{{ entry.time }}</span>
+                  </td>
+                  <td>{{ entry.officer }}</td>
+                  <td>{{ entry.action }}</td>
+                  <td>{{ entry.employee }}</td>
+                  <td>{{ entry.department }}</td>
+                  <td>{{ entry.role }}</td>
+                  <td>{{ entry.device }}</td>
+                  <td>{{ entry.notes }}</td>
+                  <td>
+                    <span class="result-badge" [class]="entry.result.toLowerCase()">
+                      {{ entry.result }}
+                    </span>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td class="empty-state" colspan="9">No audit records found</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

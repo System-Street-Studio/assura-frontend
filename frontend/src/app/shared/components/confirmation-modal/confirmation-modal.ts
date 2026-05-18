@@ -1,18 +1,18 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
 export interface ConfirmationDialogData {
-    title: string;
-    message: string;
+  title: string;
+  message: string;
 }
 
 @Component({
-    selector: 'app-confirmation-modal',
-    standalone: true,
-    imports: [MatDialogModule, MatButtonModule],
-    template: `
+  selector: 'app-confirmation-modal',
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule],
+  template: `
     <h2 mat-dialog-title>{{ data.title }}</h2>
     <mat-dialog-content>
       <p>{{ data.message }}</p>
@@ -24,8 +24,6 @@ export interface ConfirmationDialogData {
   `
 })
 export class ConfirmationModalComponent {
-    constructor(
-        public dialogRef: MatDialogRef<ConfirmationModalComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogData
-    ) { }
+  readonly dialogRef = inject(MatDialogRef<ConfirmationModalComponent>);
+  readonly data = inject<ConfirmationDialogData>(MAT_DIALOG_DATA);
 }
