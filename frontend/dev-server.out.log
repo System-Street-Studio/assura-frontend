@@ -983,3 +983,11 @@ No output file changes.
 Application bundle generation complete. [2.017 seconds] - 2026-05-18T07:21:27.488Z
 
 Component update sent to client(s).
+[33m>[39m Changes detected. Rebuilding...
+[32m√[39m Changes detected. Rebuilding...
+
+No output file changes.
+
+Application bundle generation complete. [2.081 seconds] - 2026-05-18T07:21:42.044Z
+
+Component update sent to client(s).
