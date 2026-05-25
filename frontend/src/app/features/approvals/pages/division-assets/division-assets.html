@@ -18,7 +18,7 @@
           <div class="card-panel main-info">
             <h3>General Information</h3>
             <div class="asset-identity">
-              <img [src]="asset.image" alt="Asset" class="detail-img">
+              <!--<img [src]="asset.image" alt="Asset" class="detail-img">-->
               <div class="identity-text">
                 <p class="name-bold">{{ asset.name }}</p>
                 <p class="id-sub">ID: {{ asset.id }}</p>
@@ -200,10 +200,10 @@
       <!--assets grid-->
         <div class="asset-grid">
           <div class="asset-card" *ngFor="let asset of filteredAssets()">
-         
+         <!--
             <div class="img-container">
               <img [src]="asset.image" [alt]="asset.name">
-            </div>
+            </div> -->
             
             <div class="card-body">
               <h4 class="asset-name">{{ asset.name }}</h4>

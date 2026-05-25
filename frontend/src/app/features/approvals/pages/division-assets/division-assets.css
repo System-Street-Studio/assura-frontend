@@ -9,12 +9,27 @@
   font-family: 'jost', sans-serif;
 }
 
-.content-padding { padding: 20px; }
-.page-title { font-weight: 800; margin-bottom: 20px; font-size: 30px; }
-.section-label { font-size: 20px; font-weight: 700; margin-bottom: 15px; }
+.content-padding { 
+  padding: 20px; 
+}
+.page-title { 
+  font-weight: 800; 
+  margin-bottom: 20px; 
+  font-size: 30px;
+ }
+.section-label { 
+  font-size: 20px; 
+  font-weight: 700; 
+  margin-bottom: 15px; 
+}
 
-/* ================== STATS CARDS ================== */
-.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+/* STATS CARDS  */
+.stat-grid { 
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 20px; 
+  margin-bottom: 40px; 
+}
 
 .stat-card {
   background: white;
@@ -30,10 +45,25 @@
    transform: translateY(-1px);
 }
 
-.stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-.stat-header mat-icon { font-size: 20px; color: #333; }
-.stat-title { font-weight: 700; font-size: 14px; }
-.stat-value { font-size: 28px; font-weight: 800; text-align: center; }
+.stat-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 15px; 
+}
+.stat-header mat-icon { 
+  font-size: 20px; 
+  color: #333; 
+}
+.stat-title { 
+  font-weight: 700; 
+  font-size: 14px; 
+}
+.stat-value { 
+  font-size: 28px; 
+  font-weight: 800; 
+  text-align: center; 
+}
 
 .color-blue { color: #3498db; }
 .color-yellow { color: #f1c40f; }
@@ -136,9 +166,8 @@
   gap: 6px;
 }
 
-/* ================== FILTER BAR ================== */
-/* Filter Bar */
- /* --- Filter Bar --- */
+/* FILTER BAR  */
+
 
 .filter-bar {
   display: flex;
@@ -247,7 +276,7 @@
   height: 20px;
 }
 
-/* 3. Dropdown Menu එක */
+/* 3. Dropdown Menu  */
 .filter-menu-card {
   position: absolute;
   top: 100%; 
@@ -324,7 +353,7 @@
   font-weight: 700;
 }
 
-/* ================== ASSET GRID ================== */
+/* ASSET GRID */
 .asset-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -358,9 +387,21 @@
   object-fit: contain;
 }
 
-.card-body { padding: 15px; flex-grow: 1; }
-.asset-name { font-weight: 700; margin-bottom: 5px; font-size: 15px; }
-.asset-id { font-size: 11px;  font-weight: 600;color: #888; margin-bottom: 12px; }
+.card-body { 
+  padding: 15px; 
+  flex-grow: 1; 
+}
+.asset-name { 
+  font-weight: 700; 
+  margin-bottom: 5px; 
+  font-size: 18px; 
+}
+.asset-id { 
+  font-size: 11px;  
+  font-weight: 600;
+  color: #888; 
+  margin-bottom: 12px; 
+}
 
 .status-badge {
   padding: 1px 4px;

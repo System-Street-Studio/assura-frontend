@@ -2,7 +2,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { RequestItem } from '../models/request.model';
-import { Observable, forkJoin, throwError, of, timeout } from 'rxjs';
+import { Observable} from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
@@ -33,7 +33,8 @@ export class RequestService {
         description: item.description,
         reason: item.reason,
         specs: item.description,
-        justification: item.reason
+        justification: item.reason,
+        
       } as RequestItem)))
     );
   }
@@ -57,7 +58,8 @@ export class RequestService {
         description: apiData.description,
         reason: apiData.reason,
         specs: apiData.description,
-        justification: apiData.reason
+        justification: apiData.reason,
+     
       } as RequestItem))
     );
   }

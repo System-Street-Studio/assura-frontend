@@ -15,7 +15,7 @@ interface Asset {
   assignedUserName: string;
   assetTag: string;
   specs: string;
-  image: string;
+  //image: string;
   assignedUserId?: string;
   divisionId?: string;
 }
@@ -94,7 +94,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
           assignedUserId: a.assignedUserId?.toString(),
           
           specs: a.notes || 'No details available', 
-          image: 'assets/images/placeholder-asset.png' 
+          //image: 'assets/images/placeholder-asset.png' 
         }));
 
         this.assets.set(mappedAssets);

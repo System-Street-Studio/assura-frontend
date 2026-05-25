@@ -17,7 +17,7 @@
         
         <!-- Asset Category -->
         <div class="form-group">
-          <label>Asset Category <span class="required" style="color: red">*</span></label>
+          <label>Asset Category <span class="required" >*</span></label>
           <select [(ngModel)]="requestData.assetCategory" name="assetCategory" class="form-control" required #assetCategory="ngModel">
             <option value="" disabled selected>Select an asset category</option>
             @for (cat of categories(); track cat.id) {
@@ -29,7 +29,7 @@
 
         <!-- Asset Name -->
         <div class="form-group">
-          <label>Asset Name <span class="required" style="color: red">*</span></label>
+          <label>Asset Name <span class="required" >*</span></label>
           <input [(ngModel)]="requestData.assetName" name="assetName" required placeholder="e.g., Dell XPS 15" class="form-control" #assetName="ngModel">
           <div class="error-message" *ngIf="assetName.invalid && assetName.touched">Asset name is required.</div>
         </div>
@@ -42,14 +42,14 @@
 
         <!-- Quantity -->
         <div class="form-group">
-          <label>Quantity <span class="required" style="color: red">*</span></label>
+          <label>Quantity <span class="required" >*</span></label>
           <input [(ngModel)]="requestData.quantity" name="quantity" class="form-control" required type="number" min="1" #quantity="ngModel">
           <div class="error-message" *ngIf="quantity.invalid && quantity.touched">Quantity is required (min 1).</div>
         </div>
 
         <!-- Priority -->
         <div class="form-group">
-          <label>Priority <span class="required" style="color: red">*</span></label>
+          <label>Priority <span class="required" >*</span></label>
           <select [(ngModel)]="requestData.priority" name="priority" class="form-control" required #priority="ngModel">
             <option value="Normal">Normal</option>
             <option value="High">High</option>
@@ -60,7 +60,7 @@
 
         <!-- Reason -->
         <div class="form-group">
-          <label>Reason/ Justification <span class="required" style="color: red">*</span></label>
+          <label>Reason/ Justification <span class="required" >*</span></label>
           <textarea [(ngModel)]="requestData.reason" name="reason" required placeholder="Why is this needed?" class="form-control" rows="3" #reason="ngModel"></textarea>
           <div class="error-message" *ngIf="reason.invalid && reason.touched">Reason is required.</div>
         </div>
@@ -76,13 +76,13 @@
           }
           
           @if (selectedFiles().length > 0) {
-            <div class="selected-files" (click)="browseFiles()">
+            <div class="selected-files" >
               <p class="files-label">Selected Files: {{ selectedFiles().length }}</p>
               @for (file of selectedFiles(); track file.name; let i = $index) {
                 <div class="file-item">
                   <mat-icon class="file-icon">attach_file</mat-icon>
                   <span class="file-name">{{ file.name }}</span>
-                  <button type="button" class="remove-btn" (click)="removeFile(i)">
+                  <button type="button" class="remove-btn" (click)="removeFile(i); $event.stopPropagation()">
                     <mat-icon>close</mat-icon>
                   </button>
                 </div>

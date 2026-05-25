@@ -172,10 +172,10 @@ private transferService = inject(TransferService);
     return results;
   });
 
-  incomingCount = computed(() => {
-    
-    return this.allTransfers().length; 
-  })
+  incomingCount = computed(() => {return this.allTransfers().length; })
+  pendingCount = computed(() => {return this.allTransfers().length; })
+  activeCount = computed(() => {return this.allTransfers().length; })
+  completedCount = computed(() => {return this.allTransfers().length; })
 
   // Search and filter methods
   onSearchChange(event: Event): void {

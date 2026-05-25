@@ -69,4 +69,38 @@ export class ReqMoreDetail implements OnInit {
     // Extract asset name without brackets from format "ProductName (AssetCode)"
     return assetName.replace(/\s*\([^)]*\)$/, '').trim();
   }
+
+  formatFileSize(bytes?: number): string {
+    if (!bytes) return '0 KB';
+    const kb = bytes / 1024;
+    if (kb < 1024) return `${kb.toFixed(2)} KB`;
+    return `${(kb / 1024).toFixed(2)} MB`;
+  }
+
+  downloadFile(attachment: any): void {
+    if (attachment.fileUrl) {
+      const link = document.createElement('a');
+      link.href = attachment.fileUrl;
+      link.download = attachment.fileName;
+      link.click();
+    }
+  }
+
+  getFileIcon(fileName: string): string {
+    const ext = fileName.split('.').pop()?.toLowerCase() || '';
+    
+    const iconMap: { [key: string]: string } = {
+      'pdf': 'picture_as_pdf',
+      'doc': 'description',
+      'docx': 'description',
+      'xls': 'table_chart',
+      'xlsx': 'table_chart',
+      'jpg': 'image',
+      'jpeg': 'image',
+      'png': 'image',
+      'gif': 'image'
+    };
+    
+    return iconMap[ext] || 'attach_file';
+  }
 }

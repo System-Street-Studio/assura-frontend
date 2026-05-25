@@ -254,11 +254,11 @@
 
 /* Target the icon inside the button */
 mat-icon {
-  font-size: 18px;      /* Default is usually 24px */
-  width: 18px;         /* Match width to font-size */
-  height: 18px;        /* Match height to font-size */
-  line-height: 18px;   /* Ensures vertical centering */
-  display: flex;       /* Helps with alignment */
+  font-size: 18px;      
+  width: 18px;        
+  height: 18px;        
+  line-height: 18px;   
+  display: flex;       
   align-items: center;
   justify-content: center;
 }

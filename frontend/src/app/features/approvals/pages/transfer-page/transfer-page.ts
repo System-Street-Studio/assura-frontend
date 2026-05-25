@@ -22,7 +22,6 @@ interface TransferData {
   transferPeriod?: string;
   status: string;
   timeAgo: string;
-  image?: string;
   type?: 'IncomingActive' | 'OutgoingActive';
   daysLeft?: string;
 }

@@ -13,7 +13,7 @@
 
       <form (ngSubmit)="onSubmit()">
         <div class="field">
-          <label>Asset <span style="color: red">*</span></label>
+          <label>Asset <span class="required" >*</span></label>
           <select [ngModel]="asset()" (ngModelChange)="asset.set($event)" name="asset" required>
             <option value="" disabled selected>Select an asset</option>
             @for (a of assignedAssets(); track a.id) {
@@ -25,7 +25,7 @@
         </div>
 
         <div class="field">
-          <label>Issue Type <span style="color: red">*</span></label>
+          <label>Issue Type <span class="required">*</span></label>
           <select [ngModel]="issueType()" (ngModelChange)="issueType.set($event)" name="issueType">
             <option value="Damaged">Damaged</option>
             <option value="Software">Software Malfunction</option>
@@ -44,7 +44,7 @@
         </div>
 
         <div class="field">
-          <label>Priority <span style="color: red">*</span></label>
+          <label>Priority <span class="required" >*</span></label>
           <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority">
             <option value="Normal">Normal</option>
             <option value="High">High</option>

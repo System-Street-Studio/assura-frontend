@@ -1,6 +1,6 @@
 <div class="detail-container">
   <div class="detail-header">
-    <a routerLink="/employee/all-emp-requests" class="back-link">
+    <a routerLink="/employee/requests-main" class="back-link">
       <mat-icon>arrow_back</mat-icon> Back to Requests
     </a>
     <h1 class="page-title">Request Details</h1>
@@ -98,18 +98,6 @@
                 <span class="text-block">{{ request()!.description }}</span>
               </div>
             }
-            <!-- <div class="detail-row">
-              <label>Attachments:</label>
-              <span class="text-block">
-                @if (request()!.attachments && request()!.attachments.length > 0) {
-                  @for (file of request()!.attachments; track file.name) {
-                    <a [href]="file.url" target="_blank">{{ file.name }}</a><br />
-                  }
-                } @else {
-                  No attachments
-                }
-              </span>
-            </div>-->
           </div>
         </ng-container>
 
@@ -169,6 +157,43 @@
           </div>
         </ng-container>
       </ng-container>
+
+      <!-- Attachments Section -->
+      @if (request()!.attachments && (request()!.attachments?.length ?? 0) > 0) {
+        <div class="card full-width attachments-section">
+          <h3 class="section-title">
+            <mat-icon>attach_file</mat-icon>
+            Attached Files ({{ request()!.attachments?.length ?? 0 }})
+          </h3>
+          <div class="attachments-list">
+            @for (attachment of request()!.attachments; track attachment.id) {
+              <div class="attachment-item">
+                <div class="attachment-info">
+                  <mat-icon class="file-type-icon">{{ getFileIcon(attachment.fileName) }}</mat-icon>
+                  <div class="file-details">
+                    <p class="file-name">{{ attachment.fileName }}</p>
+                    <div class="file-meta">
+                      <span class="file-size">{{ formatFileSize(attachment.fileSize) }}</span>
+                      @if (attachment.uploadedDate) {
+                        <span class="file-date">
+                          {{ attachment.uploadedDate | date:'short' }}
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  class="download-btn" 
+                  (click)="downloadFile(attachment)"
+                  title="Download file"
+                >
+                  <mat-icon>download</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
 
       <!-- Action Buttons -->
       <div class="action-buttons">

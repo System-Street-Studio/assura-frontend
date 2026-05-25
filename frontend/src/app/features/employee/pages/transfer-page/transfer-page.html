@@ -21,8 +21,7 @@
       <div class="card-content">
         <div>
           <p class="card-title">Incoming Requests</p>
-          <span class="badge red-bg">{{ incomingCount() }}</span>
-          <h2 class="card-number">5</h2>
+          <h2 class="card-number">7</h2>
         </div>
       </div>
     </div>
@@ -32,7 +31,7 @@
         <div>
           <p class="card-title">Pending Approval</p>
           
-          <h2 class="card-number">3</h2>
+          <h2 class="card-number">0</h2>
         </div>
       </div>
     </div>
@@ -41,7 +40,6 @@
       <div class="card-content">
         <div>
           <p class="card-title">Active Transfers</p>
-          <span class="badge green-bg">{{ incomingCount() }}</span>
           <h2 class="card-number">2</h2>
         </div>
       </div>
@@ -51,34 +49,14 @@
       <div class="card-content">
         <div>
           <p class="card-title">Completed Transfers</p>
-          <h2 class="card-number">5</h2>
+          <h2 class="card-number">0</h2>
         </div>
       </div>
     </div>
   </div>
 
 
-  <!-- Quick Actions -->
-  <section class="quick-actions-section">
-    <h3>Quick Actions</h3>
-    <div class="action-buttons">
-    <button class="btn-cyan">
-      <mat-icon>add_circle_outline</mat-icon>
-      <span>Request Transfer</span>
-    </button>
-    
-    <button class="btn-cyan">
-      <mat-icon>assignment_return</mat-icon>
-      <span>Return Asset</span>
-    </button>
-    
-    <button class="btn-cyan">
-      <mat-icon>history</mat-icon>
-      <span>Transfer History</span>
-    </button>
-  </div>
-  </section>
-
+  
 
   <!-- Content  -->
   <section class="content-container">
@@ -127,9 +105,9 @@
         <!-- Incoming Requests, Pending Approval -->
         @if (activeTab() === 'incoming' || activeTab() === 'pending') {
           <div class="asset-item-card">
-                <div class="asset-img-container">
-              <img [src]="item.image || 'assets/placeholder.png'" class="asset-image">
-            </div>
+                <!-- <div class="asset-img-container">
+             <img [src]="item.image || 'assets/placeholder.png'" class="asset-image">
+            </div>-->
 
             <div class="asset-info-box">
               <span class="time-stamp">{{ item.timeAgo }}</span>
@@ -162,9 +140,9 @@
         <!-- Active Transfers, Completed Transfers -->
         @if (activeTab() === 'active' || activeTab() === 'completed') {
           <div class="asset-item-card horizontal">
-            <div class="asset-img-container">
-              <img [src]="item.image || 'assets/placeholder.png'" class="asset-image">
-            </div>
+            <!--<div class="asset-img-container">
+               <img [src]="item.image || 'assets/placeholder.png'" class="asset-image"> 
+            </div>-->
 
             <div class="asset-info-box">
               <div class="info-header">

@@ -25,7 +25,7 @@ export class DivisionHeadOverviewComponent implements OnInit {
   private dashboardService = inject(DivisionHeadDashboardService);
   private requestService = inject(RequestService);
 
-  // Metrics signals - Backend එකෙන් එන දත්ත වලට ගැලපෙන සේ
+  // Metrics signals 
   totalAssetsCount = signal<number>(0);
   totalAssetValue = signal<number>(0);
   activeRequestsCount = signal<number>(0);
@@ -50,7 +50,6 @@ export class DivisionHeadOverviewComponent implements OnInit {
     this.profileService.getProfile().subscribe({
       next: (profile) => {
         if (!profile.divisionId) {
-          this.errorMessage.set('පරිශීලක අංශය හඳුනාගත නොහැක.');
           this.isLoading.set(false);
           return;
         }
@@ -63,21 +62,19 @@ export class DivisionHeadOverviewComponent implements OnInit {
             this.activeRequestsCount.set(summary.pendingRequestsCount);
             this.transferredAssetsCount.set(summary.transferredAssetsCount);
             
-            // Service එකේ ඇති signal එකත් update කිරීම (අවශ්‍ය නම් පමණක්)
+            // Service 
             this.dashboardService.updateAssetCount(summary.assetsCount);
             
             this.isLoading.set(false);
           },
           error: (error) => {
             console.error('Metrics loading error:', error);
-            this.errorMessage.set('දත්ත පූරණය කිරීම අසාර්ථකයි.');
             this.isLoading.set(false);
           }
         });
       },
       error: (error) => {
         console.error('Profile loading error:', error);
-        this.errorMessage.set('පරිශීලක තොරතුරු ලබාගත නොහැක.');
         this.isLoading.set(false);
       }
     });

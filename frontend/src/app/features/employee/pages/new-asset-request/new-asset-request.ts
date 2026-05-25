@@ -43,6 +43,7 @@ export class NewAssetRequestComponent implements OnInit {
 
   constructor(private router: Router, private assetService: AssetService) { }
 
+  // Load categories on init
   ngOnInit(): void {
     this.categoryService.getAll().subscribe({
       next: (cats) => this.categories.set(cats),
@@ -50,26 +51,43 @@ export class NewAssetRequestComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    this.isSubmitting.set(true);
-    this.assetService.createRequest(this.requestData).subscribe({
-      next: (res: any) => {
-        this.isSubmitting.set(false);
-        alert(res.message || 'Request submitted successfully!');
-        this.location.back();
-      },
-      error: (err: any) => {
-        this.isSubmitting.set(false);
-        console.error('Save failed', err);
-        alert('Error submitting request. Please try again.');
-      }
-    });
-  }
+  // Handle form submission
+ onSubmit() {
+  this.isSubmitting.set(true);
 
+  const requestPayload = {
+    employeeId: this.requestData.employeeId,
+    assetCategory: this.requestData.assetCategory,
+    assetName: this.requestData.assetName,
+    description: this.requestData.description,
+    quantity: this.requestData.quantity,
+    priority: this.requestData.priority,
+    reason: this.requestData.reason,
+    requestType: this.requestData.requestType,
+    submittedBy: this.requestData.submittedBy,
+    submittedDate: this.requestData.submittedDate
+  };
+
+  this.assetService.createRequest(requestPayload, this.selectedFiles()).subscribe({
+    next: (res: any) => {
+      this.isSubmitting.set(false);
+      alert(res.message || 'Request submitted successfully!');
+      this.location.back();
+    },
+    error: (err: any) => {
+      this.isSubmitting.set(false);
+      console.error('Save failed', err);
+      alert('Error submitting request. Please try again.');
+    }
+  });
+}
+
+  // Handle cancel action
   onCancel() {
     this.location.back();
   }
 
+  // Handle file selection
   onFileSelected(event: any): void {
     const files = event.target.files;
     if (files) {
@@ -80,6 +98,7 @@ export class NewAssetRequestComponent implements OnInit {
     }
   }
 
+  // Remove file from selection
   removeFile(index: number): void {
     this.selectedFiles.update(files => {
       const updated = [...files];
@@ -88,6 +107,7 @@ export class NewAssetRequestComponent implements OnInit {
     });
   }
 
+  // Trigger file input click
   browseFiles(): void {
     const input = document.createElement('input');
     input.type = 'file';
