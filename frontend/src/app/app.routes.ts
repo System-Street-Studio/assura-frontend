@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { ShellComponent } from './features/shell/shell';
-import { shellRoutes } from './features/shell/shell.routes';
+import { SuperintendentComponent } from './features/superintendent/superintendent';
+import { superintendentRoutes } from './features/superintendent/superintendent.routes';
 import { AccShellComponent } from './features/accountant/acc-shell/acc-shell';
 import { accShellRoutes } from './features/accountant/acc-shell/acc-shell.routes';
 
@@ -11,8 +11,8 @@ export const routes: Routes = [
     },
     {
         path: 'superintendent',
-        component: ShellComponent,
-        children: shellRoutes
+        component: SuperintendentComponent,
+        children: superintendentRoutes
     },
     {
         path: 'accountant',

@@ -384,3 +384,37 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Form Styles for Add Asset Modal */
+.form-group {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+    background-color: #fafafa;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #00b2b2;
+    background-color: white;
+    box-shadow: 0 0 0 2px rgba(0, 178, 178, 0.15);
+}

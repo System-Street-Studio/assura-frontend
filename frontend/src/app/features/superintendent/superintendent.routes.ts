@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const shellRoutes: Routes = [
+export const superintendentRoutes: Routes = [
     {
         path: 'overview',
         loadComponent: () => import('../overview/overview').then(m => m.OverviewComponent)

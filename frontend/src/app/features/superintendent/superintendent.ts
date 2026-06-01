@@ -4,7 +4,7 @@ import { NavbarComponent } from "./components/navbar/navbar";
 import { SidebarComponent } from "./components/sidebar/sidebar";
 
 @Component({
-    selector: 'app-shell',
+    selector: 'app-superintendent',
     standalone: true,
     imports: [RouterOutlet, NavbarComponent, SidebarComponent],
     template: `
@@ -18,6 +18,6 @@ import { SidebarComponent } from "./components/sidebar/sidebar";
       </div>
     </div>
     `,
-    styleUrls: ['./shell.css']
+    styleUrls: ['./superintendent.css']
 })
-export class ShellComponent { }
+export class SuperintendentComponent { }
