@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { QueueItemsService, QueueItem } from '../../services/queue-items.service';
 
 @Component({
@@ -39,6 +40,7 @@ export class OverviewComponent implements OnInit {
 
   constructor(
     private queueItemsService: QueueItemsService,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -47,7 +49,22 @@ export class OverviewComponent implements OnInit {
       next: (data) => {
         this.queue = data;
         this.filteredQueue = [...this.queue];
-        this.selectedItem = this.filteredQueue[0] || null;
+
+        this.route.queryParams.subscribe(params => {
+          const selectId = params['selectId'];
+          if (selectId) {
+            const found = this.queue.find(item => item.id === selectId);
+            if (found) {
+              this.activeFilter = found.status;
+              this.filteredQueue = this.queue.filter(i => i.status === found.status);
+              this.selectedItem = found;
+            }
+          } else if (this.filteredQueue.length > 0) {
+            this.selectedItem = this.filteredQueue[0];
+          }
+          this.cdr.markForCheck();
+        });
+
         this.isLoading = false;
         this.cdr.markForCheck();
       },

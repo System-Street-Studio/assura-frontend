@@ -18,6 +18,7 @@ export class MyAssetsComponent implements OnInit {
   selectedAsset: Asset | null = null;
   isLoading = true;
   isAddAssetModalOpen = false;
+  isEditAssetModalOpen = false;
   newAsset: Partial<Asset> = {
     name: '',
     type: 'Laptop',
@@ -25,6 +26,7 @@ export class MyAssetsComponent implements OnInit {
     division: '',
     status: 'Active'
   };
+  editingAsset: Asset | null = null;
 
   constructor(
     private assetsService: AssetsService,
@@ -104,6 +106,42 @@ export class MyAssetsComponent implements OnInit {
       error: (err) => {
         console.error('Failed to create asset:', err);
         alert('Failed to add asset. Please try again.');
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  openEditAssetModal(asset: Asset) {
+    this.editingAsset = { ...asset };
+    this.isEditAssetModalOpen = true;
+    this.selectedAsset = null; // Close detail modal
+  }
+
+  closeEditAssetModal() {
+    this.isEditAssetModalOpen = false;
+    this.editingAsset = null;
+  }
+
+  submitEditAsset() {
+    if (!this.editingAsset || !this.editingAsset.name || !this.editingAsset.serialNumber) {
+      alert('Please fill in the required fields (Name & Serial Number).');
+      return;
+    }
+
+    this.assetsService.update(this.editingAsset.id, this.editingAsset).subscribe({
+      next: () => {
+        this.assetsService.getAll().subscribe({
+          next: (data) => {
+            this.assets = data;
+            this.onSearch();
+            this.closeEditAssetModal();
+            this.cdr.markForCheck();
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Failed to update asset:', err);
+        alert('Failed to update asset. Please try again.');
         this.cdr.markForCheck();
       }
     });

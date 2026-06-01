@@ -9,6 +9,7 @@ export interface Receipt {
   date: string;
   amount: string;
   status: string;
+  fileUrl?: string;
 }
 
 export interface CreateReceipt {
@@ -31,4 +32,11 @@ export class ReceiptsService {
   create(receipt: CreateReceipt): Observable<Receipt> {
     return this.http.post<Receipt>(this.apiUrl, receipt);
   }
+
+  uploadFile(id: string, file: File): Observable<Receipt> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<Receipt>(`${this.apiUrl}/${id}/upload`, formData);
+  }
 }
+

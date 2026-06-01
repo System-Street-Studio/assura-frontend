@@ -16,6 +16,10 @@ export class AccReceiptComponent implements OnInit {
     searchTerm = '';
     showAddModal = false;
     isLoading = true;
+    selectedFile: File | null = null;
+    selectedFileName = '';
+    createdReceiptId: string | null = null;
+    uploadError = '';
 
     newReceipt = {
         assetName: '',
@@ -65,31 +69,88 @@ export class AccReceiptComponent implements OnInit {
 
     openAddReceipt() {
         this.showAddModal = true;
+        this.selectedFile = null;
+        this.selectedFileName = '';
+        this.createdReceiptId = null;
+        this.uploadError = '';
     }
 
     closeAddReceipt() {
         this.showAddModal = false;
         this.newReceipt = { assetName: '', division: '', date: '', amount: '' };
+        this.selectedFile = null;
+        this.selectedFileName = '';
+        this.createdReceiptId = null;
+        this.uploadError = '';
     }
 
-    submitReceipt() {
-        if (this.newReceipt.assetName && this.newReceipt.division) {
-            this.receiptsService.create(this.newReceipt).subscribe({
-                next: (created) => {
-                    this.receipts.unshift(created);
-                    this.filterReceipts();
-                    this.closeAddReceipt();
-                },
-                error: (err) => console.error('Failed to create receipt:', err)
-            });
+    onFileSelected(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            this.selectedFile = input.files[0];
+            this.selectedFileName = input.files[0].name;
         }
     }
 
+    submitReceipt() {
+        if (!this.newReceipt.assetName || !this.newReceipt.division) return;
+
+        this.receiptsService.create(this.newReceipt).subscribe({
+            next: (created) => {
+                if (this.selectedFile) {
+                    // Upload the file right after creation
+                    this.receiptsService.uploadFile(created.id, this.selectedFile).subscribe({
+                        next: (updated) => {
+                            this.receipts.unshift(updated);
+                            this.filterReceipts();
+                            this.closeAddReceipt();
+                        },
+                        error: (err) => {
+                            // Still add the receipt even if upload fails
+                            this.receipts.unshift(created);
+                            this.filterReceipts();
+                            this.uploadError = 'Receipt created but file upload failed.';
+                            this.cdr.markForCheck();
+                        }
+                    });
+                } else {
+                    this.receipts.unshift(created);
+                    this.filterReceipts();
+                    this.closeAddReceipt();
+                }
+            },
+            error: (err) => console.error('Failed to create receipt:', err)
+        });
+    }
+
     viewReceipt(item: Receipt) {
-        console.log('Viewing receipt:', item.assetName);
+        if (item.fileUrl) {
+            window.open(item.fileUrl, '_blank');
+        } else {
+            alert(`No file attached to receipt for "${item.assetName}".`);
+        }
     }
 
     downloadReceipt(item: Receipt) {
-        console.log('Downloading receipt:', item.assetName);
+        if (!item.fileUrl) {
+            alert(`No file attached to receipt for "${item.assetName}".`);
+            return;
+        }
+
+        // Fetch as blob so the browser downloads instead of navigating
+        fetch(item.fileUrl)
+            .then(res => res.blob())
+            .then(blob => {
+                const ext = item.fileUrl!.split('.').pop() || 'pdf';
+                const fileName = `receipt_${item.assetName.replace(/\s+/g, '_')}.${ext}`;
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+            })
+            .catch(() => alert('Failed to download file.'));
     }
 }
+

@@ -16,4 +16,16 @@ export class AssetsService {
   create(asset: Partial<Asset>): Observable<any> {
     return this.http.post(this.apiUrl, asset);
   }
+
+  update(id: string, asset: Partial<Asset>): Observable<any> {
+    const numericId = parseInt(id, 10);
+    return this.http.put(`${this.apiUrl}/${numericId}`, {
+      id: numericId,
+      name: asset.name,
+      type: asset.type,
+      serialNumber: asset.serialNumber,
+      division: asset.division,
+      status: asset.status
+    });
+  }
 }

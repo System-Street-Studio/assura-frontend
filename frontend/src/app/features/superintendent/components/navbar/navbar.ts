@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, OnDestroy, Output, EventEmitter, ChangeDetectorRef, HostListener } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, NavigationEnd } from "@angular/router";
 import { filter } from "rxjs/operators";
-import { QueueItemsService } from "../../../../services/queue-items.service";
+import { QueueItemsService, QueueItem } from "../../../../services/queue-items.service";
 
 @Component({
     selector: 'app-navbar',
@@ -14,13 +14,10 @@ import { QueueItemsService } from "../../../../services/queue-items.service";
 export class NavbarComponent implements OnInit, OnDestroy {
     title: string = 'Discarded Notes';
 
-    // Live clock
-    currentTime: string = '';
-    currentDate: string = '';
-    private clockInterval: any;
-
-    // Pending notification count
+    // Pending notification count & items
     pendingCount: number = 0;
+    pendingItems: QueueItem[] = [];
+    showNotifications = false;
 
     // Sidebar toggle
     @Output() menuToggled = new EventEmitter<void>();
@@ -41,47 +38,44 @@ export class NavbarComponent implements OnInit, OnDestroy {
             this.cdr.markForCheck();
         });
 
-        // Start live clock
-        this.updateClock();
-        this.clockInterval = setInterval(() => this.updateClock(), 1000);
-
-        // Load pending count
+        // Load pending count & items
         this.loadPendingCount();
     }
 
     ngOnDestroy() {
-        if (this.clockInterval) {
-            clearInterval(this.clockInterval);
-        }
-    }
-
-    private updateClock() {
-        const now = new Date();
-        this.currentTime = now.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        });
-        this.currentDate = now.toLocaleDateString('en-US', {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric'
-        });
-        this.cdr.markForCheck();
     }
 
     private loadPendingCount() {
         this.queueItemsService.getAll().subscribe({
             next: (items) => {
-                this.pendingCount = items.filter(i => i.status === 'Pending').length;
+                this.pendingItems = items.filter(i => i.status === 'Pending');
+                this.pendingCount = this.pendingItems.length;
                 this.cdr.markForCheck();
             },
             error: () => { 
+                this.pendingItems = [];
                 this.pendingCount = 0; 
                 this.cdr.markForCheck();
             }
         });
+    }
+
+    toggleNotifications(event: MouseEvent) {
+        event.stopPropagation();
+        this.showNotifications = !this.showNotifications;
+        if (this.showNotifications) {
+            this.loadPendingCount();
+        }
+    }
+
+    selectRequest(id: string) {
+        this.showNotifications = false;
+        this.router.navigate(['/superintendent/overview'], { queryParams: { selectId: id } });
+    }
+
+    @HostListener('document:click')
+    closeDropdown() {
+        this.showNotifications = false;
     }
 
     private updateTitle(url: string) {

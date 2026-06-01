@@ -142,7 +142,7 @@
 
                 <div class="detail-actions">
                     <button class="close-detail-btn" (click)="closeDetail()">Close</button>
-                    <button class="edit-asset-btn">Edit Asset</button>
+                    <button class="edit-asset-btn" (click)="openEditAssetModal(selectedAsset)">Edit Asset</button>
                 </div>
             </div>
         </div>
@@ -185,6 +185,57 @@
                 <div class="detail-actions" style="margin-top: 24px;">
                     <button class="close-detail-btn" (click)="closeAddAssetModal()">Cancel</button>
                     <button class="edit-asset-btn" (click)="submitAddAsset()">Add Asset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Asset Modal -->
+    <div class="detail-overlay" *ngIf="isEditAssetModalOpen && editingAsset" (click)="closeEditAssetModal()">
+        <div class="detail-card" (click)="$event.stopPropagation()">
+            <div class="detail-header">
+                <button class="detail-close-x" (click)="closeEditAssetModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+                <h2>Edit Asset</h2>
+            </div>
+            <div class="detail-body">
+                <div class="form-group">
+                    <label>Asset Name</label>
+                    <input type="text" name="editAssetName" [ngModel]="editingAsset.name" (ngModelChange)="editingAsset.name = $event" placeholder="e.g. Dell Latitude 7420">
+                </div>
+                <div class="form-group">
+                    <label>Serial Number</label>
+                    <input type="text" name="editSerialNumber" [ngModel]="editingAsset.serialNumber" (ngModelChange)="editingAsset.serialNumber = $event" placeholder="e.g. S/N 12345XYZ">
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select name="editAssetType" [ngModel]="editingAsset.type" (ngModelChange)="editingAsset.type = $event">
+                        <option value="Laptop">Laptop</option>
+                        <option value="Monitor">Monitor</option>
+                        <option value="Peripheral">Peripheral</option>
+                        <option value="Networking">Networking</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Division</label>
+                    <input type="text" name="editDivision" [ngModel]="editingAsset.division" (ngModelChange)="editingAsset.division = $event" placeholder="e.g. IT Department">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="editAssetStatus" [ngModel]="editingAsset.status" (ngModelChange)="editingAsset.status = $event">
+                        <option value="Active">Active</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Assigned">Assigned</option>
+                    </select>
+                </div>
+                <div class="detail-actions" style="margin-top: 24px;">
+                    <button class="close-detail-btn" (click)="closeEditAssetModal()">Cancel</button>
+                    <button class="edit-asset-btn" (click)="submitEditAsset()">Save Changes</button>
                 </div>
             </div>
         </div>
