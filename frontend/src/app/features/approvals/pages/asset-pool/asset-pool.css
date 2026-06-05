@@ -725,7 +725,7 @@ tbody tr:hover {
   display: flex;
   align-items: center;
   gap: 10px;
-  background-color: #fff3cd; /* ලා කහ පැහැයක් */
+  background-color: #fff3cd; 
   color: #856404;
   padding: 12px;
   border-radius: 8px;
