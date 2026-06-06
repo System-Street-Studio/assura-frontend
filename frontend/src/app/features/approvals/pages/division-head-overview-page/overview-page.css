@@ -198,20 +198,116 @@
   padding: 4px 12px;
 }
 
-.status-pill.approved { 
-  color: #22c55e; 
-  border: 1px solid #68d447;
-  background-color: #e1f7d2;
+/* Table Styles */
+.white-panel {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6);
+  margin-top: 20px;
 }
 
-.status-pill.pending { 
-  color: #d946ef;
-  border: 1px solid #d946ef;
-  background-color: #edd6ff;
+.activity-panel,
+.pending-requests-panel {
+  width: 100%;
 }
 
-.status-pill.transferred { 
-  color: #004777;
-  border: 1px solid #004777;
-  background-color: #d6ecff;
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 15px;
 }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.data-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.data-table td {
+  padding: 12px 16px;
+  color: #333;
+}
+
+.table-row {
+  cursor: pointer;
+}
+
+
+/* Details Section */
+.details-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 25px;
+  margin-top: 30px;
+  
+}
+
+.white-panel {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e0e6ed;
+  box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6); 
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th { text-align: left; color: #888; font-size: 13px; padding-bottom: 10px; }
+td { padding: 12px 0; border-top: 1px solid #f0f0f0; }
+
+.status-pill {
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 2px 10px;
+}
+
+.status-pill.pending { color: #d946ef;border: 1px solid #d946ef;background-color: #edd6ff;}
+.status-pill.approved { color: #22c55e; border: 1px solid #68d447;background-color: #e1f7d2;}
+.status-pill.rejected { color: #ef4444;border: 1px solid #ab3324;background-color: #fad3ce; }
+.status-pill.cancelled { color: #64748b; border: 1px solid #5970f3;background-color: #ceb7fe;}
+
+
+.high { color: #d00; font-weight: 600; }
+.medium { color: var(--navy); }
+.low { color: orange; }
+
+.activity-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.act-desc { margin: 0; font-size: 13.5px; line-height: 1.4; }
+.act-time { font-size: 12px; color: #999; }
+
+
+
+
+

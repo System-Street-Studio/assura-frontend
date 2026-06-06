@@ -4,13 +4,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { RequestService } from '../../services/requests.service';
 import { TransferService } from '../../services/transfer.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 // Data structure interface
 interface TransferData {
+<<<<<<< HEAD
   id: string; // This is the record ID for operations
   dbId?: number;
   transferNumber: string;
   assetId: string;
+=======
+  id: string;
+>>>>>>> feature/division-head-part
   assetTag: string;
   assetCode: string;
   productName: string;
@@ -20,22 +25,33 @@ interface TransferData {
   requestedBy: string;
   assetNeedTo: string;
   assetNeedToId?: string;
+<<<<<<< HEAD
   assetOwner?: string;
   assetOwnerId?: string;
   fromDivisionId: string;
   fromDivisionName: string;
   toDivisionId: string;
   toDivisionName: string;
+=======
+  assetOwner: string;
+  toDivisionName: string;
+  fromDivisionId: number;
+  toDivisionId: number;
+>>>>>>> feature/division-head-part
   requestedByName: string;
-  requestedById: string;
   reason: string;
   transferPeriod?: string;
   status: string;
   timeAgo: string;
+<<<<<<< HEAD
   image?: string;
   type?: 'Incoming' | 'Outgoing' | 'IncomingActive' | 'OutgoingActive';
   daysLeft?: string;
   acceptedBy?: string;
+=======
+  type?: 'IncomingActive' | 'OutgoingActive';
+  daysLeft?: string;
+>>>>>>> feature/division-head-part
 }
 
 @Component({
@@ -51,15 +67,20 @@ export class TransferPageComponent implements OnInit, OnDestroy {
 
   // Component signals
   isLoading = signal(false);
+<<<<<<< HEAD
   errorMessage = signal('');
+=======
+>>>>>>> feature/division-head-part
   activeTab = signal<'outgoing' | 'incoming' | 'pending' | 'active' | 'completed'>('outgoing');
   filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
   searchQuery = signal<string>('');
-  showMenu = false;
+  showMenu = signal(false);
 
-  // Auto-refresh interval
+
+  private allData = signal<TransferData[]>([]);
   private refreshInterval: any;
 
+<<<<<<< HEAD
   // Real data store signal
   private allData = signal<TransferData[]>([]);
 
@@ -150,6 +171,104 @@ export class TransferPageComponent implements OnInit, OnDestroy {
       image: this.getDefaultImage(t.assetCategory || '')
     };
   }
+=======
+  constructor(
+    private transferService: TransferService,
+    private authService: AuthService 
+  ) {}
+
+  ngOnInit(): void {
+    this.loadTransfers();
+    
+    this.refreshInterval = setInterval(() => this.loadTransfers(), 30000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshInterval) clearInterval(this.refreshInterval);
+  }
+
+ loadTransfers() {
+    this.isLoading.set(true);
+    const userDivisionId = this.authService.getDivisionId();
+
+    this.transferService.getDivisionHeadTransfers(this.activeTab()).subscribe({
+      next: (data) => {
+        const mapped = data.map(item => ({
+          ...item,
+          id: item.id.toString(),
+          timeAgo: 'Just now', 
+         
+          type: (this.activeTab() === 'active' || this.activeTab() === 'completed') 
+                ? (item.toDivisionId === userDivisionId ? 'IncomingActive' : 'OutgoingActive') 
+                : undefined
+        }));
+        this.allData.set(mapped);
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false)
+    });
+  }
+
+  setTab(tab: 'outgoing' | 'incoming' | 'pending' | 'active' | 'completed') {
+    this.activeTab.set(tab);
+    this.filterType.set('all'); 
+    this.loadTransfers();
+  }
+
+  approveTransfer(id: string) {
+    this.transferService.approveByHead(Number(id)).subscribe(() => this.loadTransfers());
+  }
+
+  confirmTransfer(id: string) {
+    this.transferService.confirmByHead(Number(id)).subscribe(() => this.loadTransfers());
+  }
+
+  rejectTransfer(id: string, reason?: string) {
+    this.transferService.rejectByHead(Number(id), reason || 'No reason provided').subscribe(() => this.loadTransfers());
+  }
+
+  setFilterType(type: 'all' | 'IncomingActive' | 'OutgoingActive') {
+    this.filterType.set(type);
+    this.showMenu.set(false);
+  }
+
+  onSearchChange(event: Event) {
+    this.searchQuery.set((event.target as HTMLInputElement).value);
+  }
+
+  // Computed properties for filtered results and counts
+  filteredResults = computed(() => {
+    let results = this.allData();
+    
+    // Apply active tab filter for incoming/active transfers
+    if ((this.activeTab() === 'active' || this.activeTab() === 'completed') && this.filterType() !== 'all') {
+      results = results.filter(t => t.type === this.filterType());
+    }
+    
+    // Apply search query filter
+    const query = this.searchQuery().toLowerCase();
+    if (query) {
+      results = results.filter(t =>
+        t.assetTag.toLowerCase().includes(query) ||
+        t.assetCode.toLowerCase().includes(query) ||
+        t.productName.toLowerCase().includes(query) ||
+        t.requestedByName.toLowerCase().includes(query)
+      );
+    }
+    
+    return results;
+  });
+
+  incomingCount = computed(() => {
+    // Count for incoming approvals tab
+    if (this.activeTab() === 'incoming') {
+      return this.allData().length;
+    }
+    return 0;
+  });
+ 
+  outgoingCount = computed(() => this.allData().length);
+>>>>>>> feature/division-head-part
 
   private mapBackendStatus(backendStatus: string): string {
     const statusMap: { [key: string]: string } = {
@@ -191,6 +310,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     return diffDays < 0 ? 'Overdue' : `${diffDays} days`;
   }
 
+<<<<<<< HEAD
   private extractTransferPeriod(reason: string): string {
     if (!reason) return '';
     const patterns = [/\(Transfer periods?:\s*([^)]+)\)/i, /Transfer periods?:\s*(.+?)(?:\n|$)/i];
@@ -270,4 +390,8 @@ export class TransferPageComponent implements OnInit, OnDestroy {
       }
     });
   }
+=======
+  
+
+>>>>>>> feature/division-head-part
 }

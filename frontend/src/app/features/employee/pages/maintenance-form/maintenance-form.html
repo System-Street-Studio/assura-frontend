@@ -13,10 +13,15 @@
 
       <form (ngSubmit)="onSubmit()">
         <div class="field">
+<<<<<<< HEAD
           <label>Asset</label>
           <select [ngModel]="selectedAssetId()"
             (ngModelChange)="selectedAssetId.set($event ? +$event : null); asset.set(assignedAssets().find(a => a.id == $event)?.productName + ' (' + assignedAssets().find(a => a.id == $event)?.assetCode + ')')"
             name="asset" required>
+=======
+          <label>Asset <span class="required" >*</span></label>
+          <select [ngModel]="asset()" (ngModelChange)="asset.set($event)" name="asset" required>
+>>>>>>> feature/division-head-part
             <option value="" disabled selected>Select an asset</option>
             @for (a of assignedAssets(); track a.id) {
             <option [value]="a.id">
@@ -27,7 +32,7 @@
         </div>
 
         <div class="field">
-          <label>Issue Type</label>
+          <label>Issue Type <span class="required">*</span></label>
           <select [ngModel]="issueType()" (ngModelChange)="issueType.set($event)" name="issueType">
             <option value="Damaged">Damaged</option>
             <option value="Software">Software Malfunction</option>
@@ -46,7 +51,7 @@
         </div>
 
         <div class="field">
-          <label>Priority</label>
+          <label>Priority <span class="required" >*</span></label>
           <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority">
             <option value="Normal">Normal</option>
             <option value="High">High</option>

@@ -3,35 +3,24 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError, forkJoin, of, timeout } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { AuthService } from '../../../core/auth/auth.service';
+
 
 @Injectable({ providedIn: 'root' })
 export class TransferService {
   private http = inject(HttpClient);
-  private authService = inject(AuthService);
   private baseUrl = environment.apiUrl;
 
+
   // Create transfer record in the database
-createTransferRecord(transferRequest: { assetId: number, assetRequestId: number }): Observable<any> {
+  createTransferRecord(transferRequest: { assetId: number, assetRequestId: number, userId: number }): Observable<any> {
    
-    console.log(' Asset ID received:', transferRequest.assetId);
-    console.log('Asset Request ID received:', transferRequest.assetRequestId);
     console.log(' Complete transfer request object:', transferRequest);
-    
-    // Get current user ID from AuthService
-    const currentUserId = this.authService.getUserId();
-    console.log(' Current user ID from AuthService:', currentUserId);
-    
-    if (!currentUserId) {
-      console.error(' No user ID found - user may not be authenticated');
-      return throwError(() => new Error('User not authenticated - no user ID available'));
-    }
-    
+     
     // Create payload with user ID included
     const payload = {
       assetId: transferRequest.assetId,
       assetRequestId: transferRequest.assetRequestId,
-      userId: parseInt(currentUserId, 10) // Convert string ID to number
+      userId: transferRequest.userId
     };
     
     console.log(' Final payload to backend:', JSON.stringify(payload, null, 2));
@@ -46,11 +35,11 @@ createTransferRecord(transferRequest: { assetId: number, assetRequestId: number 
       catchError((error) => {
         // Comprehensive error handling
         console.error(' Error creating transfer record:', error);
-        // ... detailed error analysis
         return throwError(() => error);
       })
     );
   }
+<<<<<<< HEAD
 
   // Get incoming transfers for the current user
   getIncomingTransfers(userId: number | null = null): Observable<any> {
@@ -133,138 +122,30 @@ createTransferRecord(transferRequest: { assetId: number, assetRequestId: number 
         return of([]);
       })
     );
+=======
+ 
+
+  
+  getDivisionHeadTransfers(tab: string): Observable<any[]> {
+    const params = new HttpParams().set('tab', tab);
+    return this.http.get<any[]>(`${this.baseUrl}/transfers/division-head`, { params });
+>>>>>>> feature/division-head-part
   }
 
-  // Get incoming transfers where status=PendingOwnerDivisionHeadApproval & current user=currentHolder division head
-  getIncomingTransfersForDivisionHeadApproval(): Observable<any> {
-    console.log('=== GETTING INCOMING TRANSFERS FOR DIVISION HEAD APPROVAL ===');
-    console.log('Fetching transfers where status=PendingOwnerDivisionHeadApproval AND current user=currentHolder division head');
-    
-    // Get current user ID from AuthService
-    const currentUserId = this.authService.getUserId();
-    console.log('Current user ID from AuthService:', currentUserId);
-    
-    if (!currentUserId) {
-      console.error('No user ID found - user may not be authenticated');
-      return of([]);
-    }
-    
-    let params = new HttpParams()
-      .set('status', 'PendingOwnerDivisionHeadApproval')
-      .set('divisionHeadId', currentUserId);
-    
-    console.log('API call: GET', `${this.baseUrl}/transfers/approvals/incoming-division-head`);
-    console.log('Query parameters:', { status: 'PendingOwnerDivisionHeadApproval', divisionHeadId: currentUserId });
-    
-    return this.http.get(`${this.baseUrl}/transfers/approvals/incoming-division-head`, { params }).pipe(
-      map((response: any) => {
-        console.log('=== INCOMING DIVISION HEAD TRANSFERS RESPONSE ===');
-        
-        if (response.success && response.data) {
-          console.log(`SUCCESS: Found ${response.data.length} incoming transfers for division head approval`);
-          response.data.forEach((transfer: any, index: number) => {
-            console.log(`  ${index + 1}. ID:${transfer.id} | Asset:${transfer.assetId} | From:${transfer.fromDivisionName} | To:${transfer.toDivisionName} | Status:${transfer.status} | CurrentHolder:${transfer.currentHolderName}`);
-          });
-          return response.data;
-        } else {
-          console.log('No incoming transfers found for division head approval or API error');
-          return [];
-        }
-      }),
-      catchError((error: any) => {
-        console.log('=== INCOMING DIVISION HEAD TRANSFERS API ERROR ===');
-        console.log('Failed to load incoming division head transfers:', error);
-        return of([]);
-      })
-    );
+  approveByHead(transferId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/approve-head`, {});
   }
 
-  // Get active transfers for incoming division head (status=Active & current user=toDivision division head)
-  getActiveIncomingTransfersForDivisionHead(): Observable<any> {
-    console.log('=== GETTING ACTIVE INCOMING TRANSFERS FOR DIVISION HEAD ===');
-    console.log('Fetching transfers where status=Active AND current user=toDivision division head');
-    
-    // Get current user ID from AuthService
-    const currentUserId = this.authService.getUserId();
-    console.log('Current user ID from AuthService:', currentUserId);
-    
-    if (!currentUserId) {
-      console.error('No user ID found - user may not be authenticated');
-      return of([]);
-    }
-    
-    let params = new HttpParams()
-      .set('status', 'Active')
-      .set('divisionHeadId', currentUserId);
-    
-    console.log('API call: GET', `${this.baseUrl}/transfers/active/incoming-division-head`);
-    console.log('Query parameters:', { status: 'Active', divisionHeadId: currentUserId });
-    
-    return this.http.get(`${this.baseUrl}/transfers/active/incoming-division-head`, { params }).pipe(
-      map((response: any) => {
-        console.log('=== ACTIVE INCOMING DIVISION HEAD TRANSFERS RESPONSE ===');
-        
-        if (response.success && response.data) {
-          console.log(`SUCCESS: Found ${response.data.length} active incoming transfers for division head`);
-          response.data.forEach((transfer: any, index: number) => {
-            console.log(`  ${index + 1}. ID:${transfer.id} | Asset:${transfer.assetId} | From:${transfer.fromDivisionName} | To:${transfer.toDivisionName} | Status:${transfer.status}`);
-          });
-          return response.data;
-        } else {
-          console.log('No active incoming transfers found for division head or API error');
-          return [];
-        }
-      }),
-      catchError((error: any) => {
-        console.log('=== ACTIVE INCOMING DIVISION HEAD TRANSFERS API ERROR ===');
-        console.log('Failed to load active incoming division head transfers:', error);
-        return of([]);
-      })
-    );
+
+  confirmByHead(transferId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/confirm-head`, {});
   }
 
-  // Get active transfers for outgoing division head (status=Active & current user=fromDivision division head)
-  getActiveOutgoingTransfersForDivisionHead(): Observable<any> {
-    console.log('=== GETTING ACTIVE OUTGOING TRANSFERS FOR DIVISION HEAD ===');
-    console.log('Fetching transfers where status=Active AND current user=fromDivision division head');
-    
-    // Get current user ID from AuthService
-    const currentUserId = this.authService.getUserId();
-    console.log('Current user ID from AuthService:', currentUserId);
-    
-    if (!currentUserId) {
-      console.error('No user ID found - user may not be authenticated');
-      return of([]);
-    }
-    
-    let params = new HttpParams()
-      .set('status', 'Active')
-      .set('divisionHeadId', currentUserId);
-    
-    console.log('API call: GET', `${this.baseUrl}/transfers/active/outgoing-division-head`);
-    console.log('Query parameters:', { status: 'Active', divisionHeadId: currentUserId });
-    
-    return this.http.get(`${this.baseUrl}/transfers/active/outgoing-division-head`, { params }).pipe(
-      map((response: any) => {
-        console.log('=== ACTIVE OUTGOING DIVISION HEAD TRANSFERS RESPONSE ===');
-        
-        if (response.success && response.data) {
-          console.log(`SUCCESS: Found ${response.data.length} active outgoing transfers for division head`);
-          response.data.forEach((transfer: any, index: number) => {
-            console.log(`  ${index + 1}. ID:${transfer.id} | Asset:${transfer.assetId} | From:${transfer.fromDivisionName} | To:${transfer.toDivisionName} | Status:${transfer.status}`);
-          });
-          return response.data;
-        } else {
-          console.log('No active outgoing transfers found for division head or API error');
-          return [];
-        }
-      }),
-      catchError((error: any) => {
-        console.log('=== ACTIVE OUTGOING DIVISION HEAD TRANSFERS API ERROR ===');
-        console.log('Failed to load active outgoing division head transfers:', error);
-        return of([]);
-      })
-    );
+
+  rejectByHead(transferId: number, reason: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject-head`, { reason });
   }
+
+ 
 
 }

@@ -1,81 +1,72 @@
 <div class="main-content">
   <!-- Back link and page header -->
   <div class="content-padding">
-    <h1 class="section-label">Requests </h1>
+    <h1 class="section-label">Requests</h1>
     <a (click)="onCancel()" class="back-link">←</a>
     <h2 class="page-title">New Asset Requests</h2>
 
-    <!--form card-->
+    <!-- Form card -->
     <div class="form-card">
       <div class="form-header">
         <h3>Asset Request Details</h3>
         <p>Please fill out the form below to submit your asset request.</p>
       </div>
 
-      <!--select asset category-->
-      <form (ngSubmit)="onSubmit()" class="asset-form">
+      <!-- Single Form Start -->
+      <form #assetForm="ngForm" (ngSubmit)="onSubmit()" class="asset-form" novalidate>
+        
+        <!-- Asset Category -->
         <div class="form-group">
-          <label>Asset Category</label>
-          <select [(ngModel)]="requestData.assetCategory" name="assetCategory" class="form-control" required>
+          <label>Asset Category <span class="required" >*</span></label>
+          <select [(ngModel)]="requestData.assetCategory" name="assetCategory" class="form-control" required #assetCategory="ngModel">
             <option value="" disabled selected>Select an asset category</option>
             @for (cat of categories(); track cat.id) {
-            <option [value]="cat.name">{{cat.name}}</option>
+              <option [value]="cat.name">{{cat.name}}</option>
             }
           </select>
+          <div class="error-message" *ngIf="assetCategory.invalid && assetCategory.touched">Asset category is required.</div>
         </div>
 
-        <!--asset name-->
+        <!-- Asset Name -->
         <div class="form-group">
-
-          <label>Asset Name</label>
-          <input [(ngModel)]="requestData.assetName" name="assetName" required placeholder="e.g., Dell XPS 15"
-            class="form-control">
-
+          <label>Asset Name <span class="required" >*</span></label>
+          <input [(ngModel)]="requestData.assetName" name="assetName" required placeholder="e.g., Dell XPS 15" class="form-control" #assetName="ngModel">
+          <div class="error-message" *ngIf="assetName.invalid && assetName.touched">Asset name is required.</div>
         </div>
 
-        <!--description-->
+        <!-- Description -->
         <div class="form-group">
-
           <label>Description</label>
-          <textarea [(ngModel)]="requestData.description" name="description"
-            placeholder="Clearly state what the specifications of asset you request." class="form-control"
-            rows="3"></textarea>
-
+          <textarea [(ngModel)]="requestData.description" name="description" placeholder="Clearly state specs..." class="form-control" rows="3"></textarea>
         </div>
 
-        <!--quantity-->
+        <!-- Quantity -->
         <div class="form-group">
-
-          <label>Quantity</label>
-          <input [(ngModel)]="requestData.quantity" name="quantity" class="form-control">
-
+          <label>Quantity <span class="required" >*</span></label>
+          <input [(ngModel)]="requestData.quantity" name="quantity" class="form-control" required type="number" min="1" #quantity="ngModel">
+          <div class="error-message" *ngIf="quantity.invalid && quantity.touched">Quantity is required (min 1).</div>
         </div>
 
-        <!--priority-->
+        <!-- Priority -->
         <div class="form-group">
-
-          <label>Priority</label>
-          <select [(ngModel)]="requestData.priority" name="priority" class="form-control">
+          <label>Priority <span class="required" >*</span></label>
+          <select [(ngModel)]="requestData.priority" name="priority" class="form-control" required #priority="ngModel">
             <option value="Normal">Normal</option>
             <option value="High">High</option>
             <option value="Critical">Critical</option>
           </select>
-
+          <div class="error-message" *ngIf="priority.invalid && priority.touched">Priority is required.</div>
         </div>
 
-        <!--reason/justification-->
+        <!-- Reason -->
         <div class="form-group">
-
-          <label>Reason/ Justification</label>
-          <textarea [(ngModel)]="requestData.reason" name="reason"
-            placeholder="Clearly state why this asset is needed for your work." class="form-control"
-            rows="3"></textarea>
-
+          <label>Reason/ Justification <span class="required" >*</span></label>
+          <textarea [(ngModel)]="requestData.reason" name="reason" required placeholder="Why is this needed?" class="form-control" rows="3" #reason="ngModel"></textarea>
+          <div class="error-message" *ngIf="reason.invalid && reason.touched">Reason is required.</div>
         </div>
 
-        <!--attachment-->
+        <!-- Attachment -->
         <div class="form-group">
-
           <label>Attachment (Optional)</label>
           @if (selectedFiles().length === 0) {
             <div class="upload-area" (click)="browseFiles()">
@@ -83,40 +74,39 @@
               <p>Drag files here or <span class="browse">click to browse</span></p>
             </div>
           }
-
-          <!-- Display selected files -->
+          
           @if (selectedFiles().length > 0) {
-            <div class="selected-files" (click)="browseFiles()">
+            <div class="selected-files" >
               <p class="files-label">Selected Files: {{ selectedFiles().length }}</p>
               @for (file of selectedFiles(); track file.name; let i = $index) {
                 <div class="file-item">
                   <mat-icon class="file-icon">attach_file</mat-icon>
                   <span class="file-name">{{ file.name }}</span>
-                  <span class="file-size">({{ (file.size / 1024).toFixed(2) }} KB)</span>
                   <button type="button" class="remove-btn" (click)="removeFile(i); $event.stopPropagation()">
                     <mat-icon>close</mat-icon>
                   </button>
                 </div>
               }
-              <button type="button" class="add-files-btn" (click)="browseFiles(); $event.stopPropagation()">
-                <mat-icon>add_circle_outline</mat-icon>
-                Add More Files
+              <button type="button" class="add-files-btn" (click)="browseFiles()">
+                <mat-icon>add_circle_outline</mat-icon> Add More Files
               </button>
             </div>
           }
-
         </div>
 
-        <!--submit button-->
-        <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
-          @if (isSubmitting()) {
-            <mat-icon class="spinner">schedule</mat-icon>
-            Submitting...
-          } @else {
-            Submit Request
-          }
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button type="submit" class="submit-btn" [disabled]="assetForm.invalid || isSubmitting()">
+            @if (isSubmitting()) {
+              <mat-icon class="spinner">schedule</mat-icon> Submitting...
+            } @else {
+              Submit Request
+            }
+          </button>
+          
+        </div>
+
+      </form> <!-- Form End -->
+    </div> <!-- Form Card End -->
+  </div> <!-- Content Padding End -->
+</div> <!-- Main Content End -->

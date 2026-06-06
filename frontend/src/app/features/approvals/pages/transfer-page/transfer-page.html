@@ -24,7 +24,7 @@
         <div>
           <p class="card-title">Outgoing Requests</p>
           <span class="badge blue-bg">{{ outgoingCount() }}</span>
-          <h2 class="card-number">{{ outgoingCount() }}</h2>
+          <h2 class="card-number">5</h2>
         </div>
       </div>
     </div>
@@ -34,7 +34,7 @@
         <div>
           <p class="card-title">Incoming Approvals</p>
           <span class="badge red-bg">{{ incomingCount() }}</span>
-          <h2 class="card-number">{{ incomingCount() }}</h2>
+          <h2 class="card-number">0</h2>
         </div>
       </div>
     </div>
@@ -62,12 +62,17 @@
       <div class="card-content">
         <div>
           <p class="card-title">Completed Transfers</p>
+<<<<<<< HEAD
           <h2 class="card-number">{{ completedCount() }}</h2>
+=======
+          <h2 class="card-number">0</h2>
+>>>>>>> feature/division-head-part
         </div>
       </div>
     </div>
   </div>
 
+<<<<<<< HEAD
   <!-- Quick Actions -->
   <section class="quick-actions-section">
     <h3>Quick Actions</h3>
@@ -82,16 +87,20 @@
       </button>
     </div>
   </section>
+=======
+
+
+>>>>>>> feature/division-head-part
 
   <!-- Content  -->
   <section class="content-container">
     <h2 class="section-main-title">{{ 
+          activeTab() === 'outgoing' ? 'Outgoing Requests' :
         activeTab() === 'incoming' ? 'Incoming Approvals' : 
          activeTab() === 'pending' ? 'Pending Confirmations' : 
          activeTab() === 'active' ? 'Active Transfers' : 
-         activeTab() === 'completed' ? 'Completed Transfers' : 
-         activeTab() === 'outgoing' ? 'Outgoing Requests' : 'Unknown' }}
-    </h2>
+         'Completed Transfers' 
+    }}</h2>
 
     <!--Search and Filter -->
     @if (activeTab() === 'active' || activeTab() === 'completed') {
@@ -102,11 +111,38 @@
         </div>
 
         <div class="action-group">
+<<<<<<< HEAD
           <div class="filter-dropdown">
             <button class="filter-btn" (click)="showMenu = !showMenu">
               <div class="filter-icon">
                 <mat-icon>tune</mat-icon>
                 <span>{{ filterType() === 'all' ? 'All Types' : filterType() }}</span>
+=======
+            
+              <div class="filter-dropdown">
+                <button class="filter-btn" (click)="showMenu.set(!showMenu())">
+                  <div class="filter-icon">
+                  <mat-icon>tune</mat-icon>
+                  <span>{{ filterType() === 'all' ? 'All Types' : filterType() }}</span>
+                  </div>
+                  <mat-icon class="arrow">expand_more</mat-icon>
+
+                </button>
+
+                @if (showMenu()) {
+                  <div class="filter-menu-card">
+                    <div class="filter-option" (click)="setFilterType('all')" [class.active]="filterType() === 'all'">
+                      All Transfers
+                    </div>
+                    <div class="filter-option" (click)="setFilterType('IncomingActive')" [class.active]="filterType() === 'IncomingActive'">
+                      Incoming
+                    </div>
+                    <div class="filter-option" (click)="setFilterType('OutgoingActive')" [class.active]="filterType() === 'OutgoingActive'">
+                      Outgoing
+                    </div>
+                  </div>
+                }
+>>>>>>> feature/division-head-part
               </div>
               <mat-icon class="arrow">expand_more</mat-icon>
             </button>
@@ -135,6 +171,7 @@
         <!-- Incoming Requests, Pending Approval -->
         @if (activeTab() === 'incoming' || activeTab() === 'pending' ) {
           <div class="asset-item-card">
+<<<<<<< HEAD
             <div class="asset-img-container">
               @if (item.image) {
                 <img [src]="item.image" [alt]="item.assetName" class="asset-image">
@@ -142,6 +179,15 @@
                 <div class="asset-img-placeholder"></div>
               }
             </div>
+=======
+             <!-- <div class="asset-img-container">
+                  @if (item.image) {
+                    <img [src]="item.image" [alt]="item.assetTag" class="asset-image">
+                  } @else {
+                    <div class="asset-img-placeholder"></div>
+                  }
+                </div>-->
+>>>>>>> feature/division-head-part
 
             <div class="asset-info-box">
               <span class="time-stamp">{{ item.timeAgo }}</span>
@@ -153,16 +199,44 @@
                 <p><span>Requested by:</span> {{ item.requestedBy }}</p>
                 <p><span>Asset need to:</span> {{ item.assetNeedTo }}</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
+<<<<<<< HEAD
                 <div class ="AcceptedBy"><p><span >Accepted By:</span> {{ item.acceptedBy || 'Pending' }}</p> </div>
+=======
+                <p><span>Transfer period:</span> {{ item.transferPeriod }}</p>
+                <div class ="AcceptedBy"><p><span >Accepted By:</span> {{ item.assetOwner}}</p> </div>
+>>>>>>> feature/division-head-part
               </div>
             </div>
             
             <div class="action-buttons-cell">
               @if (activeTab() === 'incoming') {
+<<<<<<< HEAD
                 <button class="btn-accept" (click)="onAccept(item.id)">Approve</button>
                 <button class="btn-reject" (click)="onReject(item.id)">Reject</button>
               } @else {
                 <span class="status-badge-outline" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span>
+=======
+                <button class="btn-accept" (click)="approveTransfer(item.id)">Approve</button>
+                <button class="btn-reject" (click)="rejectTransfer(item.id)">Reject</button>
+              } @else {
+                @if (activeTab() === 'pending') {
+                <span class="status-badge-outline pending" (click)="confirmTransfer(item.id) ">Pending Confirmation</span>
+                }
+                @if (item.status === 'Confirmed') {
+                    <span class="status-badge-outline confirmed">Confirmed</span>
+                }
+                 @if (item.status === 'Approved') {
+                    <span class="status-badge-outline confirm">Confirm</span>
+                    <span class="status-badge-outline rejected">Reject</span>
+                }
+                 @if (item.status === 'Transfer') {
+                    <span class="status-badge-outline transfer">Transfer</span>
+                }
+                @if (item.status === 'Transfered') {
+                    <span class="status-badge-outline transfered">Transfered</span>
+                }
+
+>>>>>>> feature/division-head-part
               }
             </div>
           </div>
@@ -171,6 +245,7 @@
         <!-- Active Transfers, Completed Transfers -->
         @if (activeTab() === 'active' || activeTab() === 'completed') {
           <div class="asset-item-card horizontal">
+<<<<<<< HEAD
             <div class="asset-img-container">
               @if (item.image) {
                 <img [src]="item.image" [alt]="item.assetName" class="asset-image">
@@ -178,6 +253,15 @@
                 <div class="asset-img-placeholder"></div>
               }
             </div>
+=======
+            <!-- <div class="asset-img-container">
+                  @if (item.image) {
+                    <img [src]="item.image" [alt]="item.assetTag" class="asset-image">
+                  } @else {
+                    <div class="asset-img-placeholder"></div>
+                  }
+                </div> -->  
+>>>>>>> feature/division-head-part
             <div class="asset-info-box">
               <div class="info-header">
                 <span class="asset-name-id">{{ item.assetName }}</span>   
@@ -209,13 +293,13 @@
         <!-- Outgoing Requests -->
         @if (activeTab() === 'outgoing') {
           <div class="asset-item-card">
-            <div class="asset-img-container">
+            <!-- <div class="asset-img-container">
               @if (item.image) {
                 <img [src]="item.image" [alt]="item.assetName" class="asset-image">
               } @else {
                 <div class="asset-img-placeholder"></div>
               }
-            </div>
+            </div>-->
 
             <div class="asset-info-box">
               <span class="time-stamp">{{ item.timeAgo || 'Just now' }}</span>
@@ -223,10 +307,21 @@
                 <span class="asset-name-id">{{ item.assetName }} ({{ item.id }})</span>
               </div>
               <div class="info-grid-details">
+<<<<<<< HEAD
                 <p><span>Division:</span> {{ item.division }}</p>
                 <p><span>Requested by:</span> {{ item.requestedBy }}</p>
                 <p><span>Asset need to:</span> {{ item.assetNeedTo }}</p>
                 <p><span>Reason:</span> {{ item.reason }}</p>
+=======
+                <p><span>Division:</span> {{ item.toDivisionName }}</p>
+                <p><span>Requested by:</span> {{ item.requestedByName}}</p>
+                <p><span>Asset need to:</span> {{ item.assetNeedTo }}{{ item.assetNeedToId ? ' (ID: ' + item.assetNeedToId + ')' : '' }}</p>
+                <p><span>Reason:</span> {{ item.reason }}</p>
+                <div class="status-info">
+                  
+                  
+                </div>
+>>>>>>> feature/division-head-part
               </div>
             </div>
             

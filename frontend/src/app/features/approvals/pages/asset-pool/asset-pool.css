@@ -1,3 +1,4 @@
+/* Layout & Container */
 .pool-container {
   padding: 40px;
   background-color: #f5f6f8;
@@ -14,6 +15,7 @@
   padding: 20px;
   border-radius: 10px;
 }
+
 
 .back-btn {
   border: none;
@@ -36,7 +38,7 @@
   font-weight: 600;
 }
 
-/* Loading State */
+/*loading State */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -53,7 +55,7 @@
   width: 50px;
   height: 50px;
   border: 4px solid #f0f0f0;
-  border-top: 4px solid #0b6c78;
+  border-top: 4px solid #0b785b;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
@@ -63,6 +65,8 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
 
 /* Transfer Request Section */
 .transfer-request-section {
@@ -83,7 +87,7 @@
 .transfer-request-dropdown label {
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #333333;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -91,7 +95,6 @@
 }
 
 .transfer-request-dropdown label::before {
-  content: '📋';
   font-size: 18px;
   margin-right: 5px;
 }
@@ -111,15 +114,15 @@
 }
 
 .transfer-request-dropdown select:hover {
-  border-color: #0066cc;
-  box-shadow: 0 4px 16px rgba(0,102,204,0.15);
+  border-color: #00cc63;
+  box-shadow: 0 4px 16px rgba(0, 204, 139, 0.15);
   transform: translateY(-1px);
 }
 
 .transfer-request-dropdown select:focus {
   outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+  border-color: #00cc70;
+  box-shadow: 0 0 0 3px rgba(0, 204, 163, 0.2);
 }
 
 .transfer-request-dropdown option {
@@ -129,9 +132,11 @@
 }
 
 .transfer-request-dropdown option:hover {
-  background: #f0f8ff;
+  background: #e4fdf6;
 }
 
+
+/* Info Banners */
 .no-requests-info {
   background: #fff3cd;
   border: 1px solid #ffeaa7;
@@ -155,15 +160,17 @@
 }
 
 .selected-request-info small {
-  color: #2e7d32;
+  color: #048b0b;
   font-size: 13px;
   line-height: 1.6;
 }
 
 .selected-request-info small strong {
-  color: #1b5e20;
+  color: #0ca216;
   font-weight: 600;
 }
+
+
 
 /* Search Section */
 .search-section {
@@ -184,8 +191,8 @@
 }
 
 .search-input:hover {
-  border-color: #0066cc;
-  box-shadow: 0 4px 12px rgba(0,102,204,0.15);
+  border-color: #00cc18;
+  box-shadow: 0 4px 12px rgba(0, 204, 146, 0.15);
 }
 
 .search-input mat-icon {
@@ -210,6 +217,8 @@
   color: #999;
   font-style: italic;
 }
+
+
 
 /* Filter Section */
 .filter-section {
@@ -262,15 +271,15 @@
 }
 
 .filter-group select:hover {
-  border-color: #0066cc;
-  box-shadow: 0 4px 12px rgba(0,102,204,0.15);
+  border-color: #06cf7e;
+  box-shadow: 0 4px 12px rgba(0, 204, 177, 0.15);
   transform: translateY(-1px);
 }
 
 .filter-group select:focus {
   outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+  border-color: #06cf7e;
+  box-shadow: 0 0 0 3px rgba(0, 204, 177, 0.15);
 }
 
 .filter-group input {
@@ -286,14 +295,14 @@
 }
 
 .filter-group input:hover {
-  border-color: #0066cc;
-  box-shadow: 0 4px 12px rgba(0,102,204,0.15);
+  border-color: #06cf7e;
+  box-shadow: 0 4px 12px rgba(0, 204, 177, 0.15);
 }
 
 .filter-group input:focus {
   outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+  border-color: #06cf7e;
+  box-shadow: 0 0 0 3px rgba(0, 204, 177, 0.15);
 }
 
 /* Specifications Section */
@@ -345,9 +354,13 @@
 .spec-field select:focus,
 .spec-field input:focus {
   outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+  border-color: #06cf7e;
+  box-shadow: 0 0 0 2px rgba(0, 204, 177, 0.1);
 }
+
+
+
+
 
 /* Results Section */
 .results-container {
@@ -568,6 +581,7 @@ tbody tr:hover {
   font-style: italic;
 }
 
+
 /* Pagination Controls */
 .pagination-controls {
   display: flex;
@@ -705,6 +719,23 @@ tbody tr:hover {
 .search-hints strong {
   color: #333;
   font-weight: 600;
+}
+
+.alert-info-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #fff3cd; 
+  color: #856404;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border-left: 5px solid #ffeeba;
+  font-size: 14px;
+}
+
+.alert-info-banner mat-icon {
+  color: #856404;
 }
 
 /* Responsive */

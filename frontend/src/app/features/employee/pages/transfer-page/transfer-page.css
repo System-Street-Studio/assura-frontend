@@ -63,7 +63,7 @@ header h1 {
   cursor: pointer;
   position: relative;
   transition: all 0.3s ease;
-  flex: 1; /* Tabs සමානව බෙදී යයි */
+  flex: 1; 
   text-align: center;
 }
 
@@ -506,9 +506,15 @@ header h1 {
   text-align: center;
 }
 
-.status-badge-outline.pending { border: 1px solid var(--status-pending-text); color: var(--status-pending-text); }
-.status-badge-outline.approved { border: 1px solid var(--status-approved-text); color: var(--status-approved-text);padding: 4px 12px;
-  border-radius: 13px; background-color: #defbe9;}
+.status-badge-outline.pending { 
+  border: 1px solid var(--status-pending-text); 
+  color: var(--status-pending-text);
+ }
+.status-badge-outline.approved { 
+  border: 1px solid var(--status-approved-text); 
+  color: var(--status-approved-text);padding: 4px 12px;
+  border-radius: 13px; background-color: #defbe9;
+}
 
 /* Active/Completed Specific Styles */
 .badge-type { 
@@ -519,11 +525,19 @@ header h1 {
   letter-spacing: 0.5px;
   position: absolute; 
   top: 24px; 
-  right: 650px;
+  left: 250px;
 }
 
-.badge-type.inc { background: var(--status-inc-bg); color: var(--status-inc-text);border: 1px solid #dbeafe; }
-.badge-type.out { background: var(--status-out-bg); color: var(--status-out-text);border: 1px solid #ffe4e6; }
+.badge-type.inc {
+   background: var(--status-inc-bg); 
+   color: var(--status-inc-text);
+   border: 1px solid #dbeafe; 
+  }
+.badge-type.out { 
+  background: var(--status-out-bg); 
+  color: var(--status-out-text);
+  border: 1px solid #ffe4e6;
+ }
 
 .status-pill.completed {
   margin-left: 10px;

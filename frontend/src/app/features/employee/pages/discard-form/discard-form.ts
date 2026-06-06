@@ -50,7 +50,13 @@ export class DiscardFormComponent implements OnInit {
 
   // Submit logic
   onSubmit() {
+    // Validate required fields
+    if (!this.asset()) {
+      alert('Failed to create discard request. Please fill all required fields.');
+      return;
+    }
     this.isSubmitting.set(true);
+<<<<<<< HEAD
 
     const payload = {
       type: 5,   // RequestType.Disposal
@@ -59,6 +65,22 @@ export class DiscardFormComponent implements OnInit {
     };
 
     this.assetRequestService.createUnifiedRequest(payload).subscribe({
+=======
+    const requestPayload = {
+      employeeId: this.authService.getUserId() || '',
+      submittedBy: this.authService.getUserName() || 'Employee',
+      assetCategory: 'N/A',
+      assetName: this.asset(),
+      description: 'Discard Request',
+      reason: this.reason(),
+      quantity: 1,
+      priority: 'Normal',
+      requestType: 'Discard',
+      submittedDate: new Date().toISOString()
+    };
+
+    this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
+>>>>>>> feature/division-head-part
       next: () => {
         this.isSubmitting.set(false);
         alert('Discard Request Submitted Successfully!');

@@ -37,11 +37,8 @@ export class RequestsPageComponent implements OnInit {
 
   // --- DATA SIGNALS ---
   requests = signal<RequestItem[]>([]);
-
   transferRequests = signal<RequestItem[]>([]);
-
   maintenanceRequests = signal<RequestItem[]>([]);
-
   discardRequests = signal<RequestItem[]>([]);
 
   // Summary Counts
@@ -90,6 +87,7 @@ ngOnInit() {
   loadData() {
     this.isLoading.set(true);
 
+<<<<<<< HEAD
 
     this.requestService.getAllRequests().subscribe({
       next: (allData: any[]) => {
@@ -122,6 +120,29 @@ ngOnInit() {
         this.maintenanceRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'maintenance'));
         this.discardRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'discard'));
 
+=======
+   this.requestService.getAllRequests(isDivisionHead).subscribe({
+      next: (allData: any[]) => { 
+      
+      // Use the data directly from service since it's already mapped correctly
+      const mappedData: RequestItem[] = allData;
+
+      
+      
+      const newAssetFiltered = mappedData.filter(r => r.type?.toLowerCase().replace(/\s/g, '') === 'newasset');
+      const transferFiltered = mappedData.filter(r => r.type?.toLowerCase() === 'transfer');
+      const maintenanceFiltered = mappedData.filter(r => r.type?.toLowerCase() === 'maintenance');
+      const discardFiltered = mappedData.filter(r => r.type?.toLowerCase() === 'discard');
+      
+      
+      
+      this.requests.set(newAssetFiltered);
+      this.transferRequests.set(transferFiltered);
+      this.maintenanceRequests.set(maintenanceFiltered);
+      this.discardRequests.set(discardFiltered);
+
+      
+>>>>>>> feature/division-head-part
 
         this.newAssetCount.set(this.requests().length);
         this.transferCount.set(this.transferRequests().length);
@@ -201,10 +222,16 @@ ngOnInit() {
   }
 
   viewDetails(item: RequestItem) {
+<<<<<<< HEAD
     this.requestService.selectedRequest = item;
     console.log("sending data:", item);
     const tab = this.activeTab();
     let routePath = '';
+=======
+  this.requestService.selectedRequest = item;
+  const tab = this.activeTab();
+  let routePath = '';
+>>>>>>> feature/division-head-part
 
 
     switch (tab) {
@@ -234,9 +261,24 @@ ngOnInit() {
       case 'discard': routePath = '/approvals/discard-req'; break;
     }
 
+<<<<<<< HEAD
     this.router.navigate([routePath, item.id], { 
       queryParams: { tab: tab, readOnly: true } 
     });
+=======
+
+checkDetails(item: RequestItem) {
+  this.requestService.selectedRequest = item;
+  
+  const tab = this.activeTab();
+  let routePath = '';
+
+  switch (tab) {
+    case 'new': routePath = '/approvals/new-asset-req'; break;
+    case 'transfer': routePath = '/approvals/transfer-req'; break;
+    case 'maintenance': routePath = '/approvals/maintenance-req'; break;
+    case 'discard': routePath = '/approvals/discard-req'; break;
+>>>>>>> feature/division-head-part
   }
 
 }

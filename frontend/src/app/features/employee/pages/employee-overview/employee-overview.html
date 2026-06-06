@@ -43,6 +43,7 @@
       </div>
     </section>
 
+<<<<<<< HEAD
     <!--Pending requests -->
     <div class="details-layout">
       <div class="white-panel">
@@ -71,6 +72,35 @@
 
         <!--recent activities table-->
         <div class="white-panel">
+=======
+<!--Pending requests -->
+<div class="details-layout">
+  <div class="white-panel">
+    <h3>Pending Requests</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Request Date</th>
+          <th>Status</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (req of pendingRequests(); track $index) {
+          <tr>
+            <td>{{ req.item }}</td>
+            <td>{{ req.date |  date:'medium'  }}</td>
+            <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
+            <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
+          </tr>
+        } </tbody>
+    </table>
+  </div>
+
+<!--recent activities table-->
+    <!-- <div class="white-panel">
+>>>>>>> feature/division-head-part
           <h3>Recent Activities</h3>
           <div class="activity-feed">
             @for (act of recentActivities(); track act.description) {
@@ -80,7 +110,14 @@
             </div>
             }
           </div>
+<<<<<<< HEAD
         </div>
     </div>
   </div>
+=======
+        </div>--> 
+      </div>
+    
+  
+>>>>>>> feature/division-head-part
 </div>

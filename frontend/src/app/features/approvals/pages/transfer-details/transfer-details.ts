@@ -16,13 +16,13 @@ import { AuthService } from '../../../../core/auth/auth.service';
 })
 export class TransferDetailsComponent implements OnInit {
   private router = inject(Router);
-  private route = inject(ActivatedRoute); // මේ line එක අනිවාර්යයෙන් එක් කරන්න
+  private route = inject(ActivatedRoute); 
   //private location = inject(Location);
   private requestService = inject(RequestService);
   private authService = inject(AuthService);
 
 
-  // Navigation state එකෙන් එන දත්ත ලබා ගැනීම
+ 
   request = signal<any>({});
   isLoading = signal<boolean>(true);
   error = signal<string>('');
@@ -271,12 +271,17 @@ export class TransferDetailsComponent implements OnInit {
 
   getCleanReason() {
     const reason = this.request().justification || this.request().reason || '';
+<<<<<<< HEAD
 
     // Remove transfer period information in all possible formats:
     // (Transfer periods: date to date)
     // [Transfer periods: date to date]
     // Transfer periods: date to date
     // Including multi-line and case-insensitive
+=======
+    
+    
+>>>>>>> feature/division-head-part
     let cleanedReason = reason
       .replace(/\s*[\(\[]*Transfer periods?:\s*[^\)]*[\)\]]*\s*/gi, '')
       .replace(/\s*\(Transfer periods?.*?\)\s*/gi, '')
