@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable,map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 
@@ -26,12 +26,8 @@ export interface AssetRequest {
   description?: string;
   status: string;
   submittedDate: string;
-<<<<<<< HEAD
   requestType: string;
-=======
-  requestType: string;  
-  attachments?: AttachmentFile[];     
->>>>>>> feature/division-head-part
+  attachments?: AttachmentFile[];
 }
 
 
@@ -48,10 +44,10 @@ export class AssetService {
     return this.http.post<AssetRequest>(this.apiUrl, data);
   }*/
 
-    //create request with file attachments
-    createRequest(data: any, files?: File[]): Observable<AssetRequest> {
+  //create request with file attachments
+  createRequest(data: any, files?: File[]): Observable<AssetRequest> {
     const formData = new FormData();
-    
+
     Object.keys(data).forEach(key => {
       const value = data[key];
       if (value !== null && value !== undefined) {
@@ -62,31 +58,26 @@ export class AssetService {
         }
       }
     });
-    
+
     if (files && files.length > 0) {
       files.forEach((file) => {
         formData.append('files', file, file.name);
       });
     }
-    
+
     // Debug: Log FormData contents
     console.log('FormData contents:');
     (formData as any).forEach((value: any, key: string) => {
       console.log(`${key}:`, value instanceof File ? `${value.name} (${value.size} bytes)` : value);
     });
-    
+
     return this.http.post<AssetRequest>(this.apiUrl, formData);
   }
 
-<<<<<<< HEAD
   /** Posts to the unified /api/requests endpoint which Division Heads can see and approve */
   createUnifiedRequest(payload: { type: number; priority: number; description?: string; assetId?: number }): Observable<number> {
     return this.http.post<number>(this.unifiedApiUrl, payload);
   }
-=======
-
-
->>>>>>> feature/division-head-part
 
   getEmployeeRequests(empId: string): Observable<AssetRequest[]> {
     return this.http.get<any[]>(`${this.apiUrl}/employee/${empId}`).pipe(

@@ -60,7 +60,6 @@ export class MaintenanceFormComponent implements OnInit {
     }
     this.isSubmitting.set(true);
 
-<<<<<<< HEAD
     // Map priority string to PriorityType enum value
     const priorityMap: Record<string, number> = { Low: 1, Normal: 2, Medium: 3, High: 4, Urgent: 5 };
 
@@ -72,22 +71,6 @@ export class MaintenanceFormComponent implements OnInit {
     };
 
     this.assetRequestService.createUnifiedRequest(payload).subscribe({
-=======
-    const requestPayload = {
-      employeeId: this.authService.getUserId() || '',
-      submittedBy: this.authService.getUserName() || 'Employee',
-      assetCategory: 'N/A',
-      assetName: this.asset(),
-      description: this.description(),
-      reason: `Issue: ${this.issueType()}`,
-      quantity: 1,
-      priority: this.priority(),
-      requestType: 'Maintenance',
-      submittedDate: new Date().toISOString()
-    };
-
-    this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
->>>>>>> feature/division-head-part
       next: () => {
         this.isSubmitting.set(false);
         alert('Maintenance Request Submitted Successfully!');

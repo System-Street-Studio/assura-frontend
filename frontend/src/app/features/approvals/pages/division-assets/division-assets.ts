@@ -36,7 +36,7 @@ interface Asset {
 export class DivisionAssetsComponent implements OnInit, OnDestroy {
   private assetService = inject(AssetService);
   private dashboardService = inject(DivisionHeadDashboardService);
-  
+
 
   // Asset signals
   assets = signal<Asset[]>([]);
@@ -50,10 +50,10 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   searchQuery = signal<string>('');
   showCategoryMenu = signal<boolean>(false);
   showStatusMenu = signal<boolean>(false);
-  
+
   // Real categories from backend data
   availableCategories = signal<string[]>([]);
-  
+
   // Asset counts for real data
   totalAssets = computed(() => this.assets().length);
   inUseAssets = computed(() => this.assets().filter(asset => asset.status === 'In Use').length);
@@ -61,7 +61,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   transferredAssets = computed(() => this.assets().filter(asset => asset.status === 'Transferred').length);
 
   ngOnInit(): void {
-  
+
     this.loadDivisionAssets();
   }
 
@@ -72,7 +72,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
 
   private handleGlobalClick(event: MouseEvent): void {
     const target = event.target as Element;
-    
+
     // Check if click is outside filter dropdowns
     if (!target.closest('.styled-select')) {
       if (this.showCategoryMenu()) {
@@ -84,12 +84,12 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     }
   }
 
- loadDivisionAssets(): void {
+  loadDivisionAssets(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
     this.assetService.getAll().subscribe({
       next: (data) => {
-        const mappedAssets: Asset[] = data.map(a => ({
+        const mappedAssets: Asset[] = data.map((a: any) => ({
           id: a.id?.toString() || a.assetId?.toString() || '',
           name: a.productName || a.assetName || a.name || 'N/A',
           type: a.category || a.assetType || a.type,
@@ -119,7 +119,6 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
       }
     });
   }
-<<<<<<< HEAD
   private mapAssetStatus(backendStatus: any): Asset['status'] {
     if (backendStatus === null || backendStatus === undefined) return 'In Use';
     const s = String(backendStatus).trim();
@@ -128,6 +127,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
         case 1: return 'In Use';
         case 2: return 'Maintenance';
         case 3: return 'Transferred';
+        case 4: return 'Disposed';
         default: return 'In Use';
       }
     }
@@ -142,19 +142,6 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     if (category.toLowerCase().includes('device')) return 'https://tse4.mm.bing.net/th/id/OIP.sJPzc8VZD1qRzKUvudISdwHaFj?pid=Api&P=0&h=220';
     return 'https://tse3.mm.bing.net/th/id/OIP.n1PgBAsks9Nsp78Q3NvXngHaHa?pid=Api&P=0&h=220';
   }
-=======
- 
-  private mapAssetStatus(backendStatus: any): Asset['status'] {
-    const statusStr = backendStatus.toString();
-    
-    if (statusStr === 'Maintenance' || statusStr === '2') return 'Maintenance';
-    if (statusStr === 'Transferred' || statusStr === '3') return 'Transferred';
-    
-    
-    return 'In Use';
-  }
-  
->>>>>>> feature/division-head-part
 
   selectAsset(asset: Asset): void {
     console.log('Selected asset:', asset);
@@ -165,7 +152,6 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     this.selectedAsset.set(asset);
   }
 
-<<<<<<< HEAD
   // Filtered assets computed
   filteredAssets = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
@@ -187,6 +173,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   getAssetStatusClass(status: string): string {
     return (status || '').toLowerCase().replace(' ', '-');
   }
+
   toggleCategoryMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.showCategoryMenu.set(!this.showCategoryMenu());
@@ -215,29 +202,6 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   }
 
   onSearchChange(event: any): void {
-    this.searchQuery.set(event.target.value);
+    this.searchQuery.set((event.target as HTMLInputElement).value || '');
   }
-
-<<<<<<< HEAD
-  filteredAssets = computed(() => {
-    const query = this.searchQuery().toLowerCase();
-    const cat = this.selectedCategory();
-    const stat = this.selectedStatus();
-
-    return this.assets().filter(asset => {
-      const categoryMatch = cat === 'all' || asset.category === cat;
-      const statusMatch = stat === 'all' || asset.status === stat;
-      const searchMatch = !query || 
-                          asset.name.toLowerCase().includes(query) || 
-                          asset.id.toLowerCase().includes(query);
-      
-      return categoryMatch && statusMatch && searchMatch;
-    });
-  });
-
-  getAssetStatusClass(status: string): string {
-    return status.toLowerCase().replace(' ', '-');
-  }
-=======
->>>>>>> feature/division-head-part
 }

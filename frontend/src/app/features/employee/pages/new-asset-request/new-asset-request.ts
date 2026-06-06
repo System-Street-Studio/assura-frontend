@@ -51,64 +51,55 @@ export class NewAssetRequestComponent implements OnInit {
     });
   }
 
-<<<<<<< HEAD
-  onSubmit() {
+  onSubmit(): void {
     this.isSubmitting.set(true);
 
-    // Map priority string to PriorityType enum value
     const priorityMap: Record<string, number> = { Low: 1, Normal: 2, Medium: 3, High: 4, Urgent: 5 };
 
-    const payload = {
-      type: 1,  // RequestType.Asset
+    const requestPayload = {
+      employeeId: this.requestData.employeeId,
+      assetCategory: this.requestData.assetCategory,
+      assetName: this.requestData.assetName,
+      description: this.requestData.description,
+      quantity: this.requestData.quantity,
       priority: priorityMap[this.requestData.priority] ?? 2,
-      description: `New Asset Request - ${this.requestData.assetName} (${this.requestData.assetCategory}). ${this.requestData.description}`.trim(),
+      reason: this.requestData.reason,
+      requestType: this.requestData.requestType,
+      submittedBy: this.requestData.submittedBy,
+      submittedDate: this.requestData.submittedDate
     };
 
-    this.assetService.createUnifiedRequest(payload).subscribe({
-      next: (res: any) => {
-        this.isSubmitting.set(false);
-        alert('Request submitted successfully!');
-        this.location.back();
-      },
-      error: (err: any) => {
-        this.isSubmitting.set(false);
-        console.error('Save failed', err);
-        alert('Error submitting request. Please try again.');
-      }
-    });
-  }
-=======
-  // Handle form submission
- onSubmit() {
-  this.isSubmitting.set(true);
->>>>>>> feature/division-head-part
+    // Prefer unified endpoint if available, otherwise fallback to createRequest with files
+    const hasUnified = typeof (this.assetService as any).createUnifiedRequest === 'function';
 
-  const requestPayload = {
-    employeeId: this.requestData.employeeId,
-    assetCategory: this.requestData.assetCategory,
-    assetName: this.requestData.assetName,
-    description: this.requestData.description,
-    quantity: this.requestData.quantity,
-    priority: this.requestData.priority,
-    reason: this.requestData.reason,
-    requestType: this.requestData.requestType,
-    submittedBy: this.requestData.submittedBy,
-    submittedDate: this.requestData.submittedDate
-  };
-
-  this.assetService.createRequest(requestPayload, this.selectedFiles()).subscribe({
-    next: (res: any) => {
-      this.isSubmitting.set(false);
-      alert(res.message || 'Request submitted successfully!');
-      this.location.back();
-    },
-    error: (err: any) => {
-      this.isSubmitting.set(false);
-      console.error('Save failed', err);
-      alert('Error submitting request. Please try again.');
+    if (hasUnified) {
+      (this.assetService as any).createUnifiedRequest(requestPayload).subscribe({
+        next: () => {
+          this.isSubmitting.set(false);
+          alert('Request submitted successfully!');
+          this.location.back();
+        },
+        error: (err: any) => {
+          this.isSubmitting.set(false);
+          console.error('Save failed', err);
+          alert('Error submitting request. Please try again.');
+        }
+      });
+    } else {
+      this.assetService.createRequest(requestPayload, this.selectedFiles()).subscribe({
+        next: (res: any) => {
+          this.isSubmitting.set(false);
+          alert(res?.message || 'Request submitted successfully!');
+          this.location.back();
+        },
+        error: (err: any) => {
+          this.isSubmitting.set(false);
+          console.error('Save failed', err);
+          alert('Error submitting request. Please try again.');
+        }
+      });
     }
-  });
-}
+  }
 
   // Handle cancel action
   onCancel() {

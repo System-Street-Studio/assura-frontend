@@ -271,17 +271,11 @@ export class TransferDetailsComponent implements OnInit {
 
   getCleanReason() {
     const reason = this.request().justification || this.request().reason || '';
-<<<<<<< HEAD
-
     // Remove transfer period information in all possible formats:
     // (Transfer periods: date to date)
     // [Transfer periods: date to date]
     // Transfer periods: date to date
     // Including multi-line and case-insensitive
-=======
-    
-    
->>>>>>> feature/division-head-part
     let cleanedReason = reason
       .replace(/\s*[\(\[]*Transfer periods?:\s*[^\)]*[\)\]]*\s*/gi, '')
       .replace(/\s*\(Transfer periods?.*?\)\s*/gi, '')

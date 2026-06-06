@@ -6,7 +6,6 @@ import { Observable} from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
-<<<<<<< HEAD
 export interface SuggestedAsset {
   id: number;
   assetCode: string;
@@ -15,8 +14,7 @@ export interface SuggestedAsset {
   serialNumber?: string;
   score: number;
 }
-=======
->>>>>>> feature/division-head-part
+
 
 @Injectable({ providedIn: 'root' })
 export class RequestService {
@@ -69,23 +67,22 @@ export class RequestService {
         description: apiData.description,
         reason: apiData.description,
         specs: apiData.description,
-<<<<<<< HEAD
-        justification: apiData.description
-=======
-        justification: apiData.reason,
-     
->>>>>>> feature/division-head-part
+        justification: apiData.reason || apiData.description
       } as RequestItem))
     );
   }
 
-<<<<<<< HEAD
-  approveRequest(id: number): Observable<void> {
-    return this.divisionHeadReview(id, true);
+  approveRequest(id: number): Observable<boolean> {
+    return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/approve`, {}).pipe(
+      map(result => {
+        console.log(' New asset request approved successfully');
+        return result;
+      })
+    );
   }
 
-  rejectRequest(id: number, remarks: string = ''): Observable<void> {
-    return this.divisionHeadReview(id, false, remarks);
+  rejectRequest(id: number, remarks: string = ''): Observable<boolean> {
+    return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, {});
   }
 
   divisionHeadReview(id: number, approve: boolean, remarks: string = ''): Observable<void> {
@@ -114,26 +111,8 @@ export class RequestService {
       id,
       remarks,
     });
-=======
-  //approve request
-  approveRequest(id: number): Observable<boolean> {
-    return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/approve`, {}).pipe(
-      map(result => {
-        console.log(' New asset request approved successfully');
-        return result;
-      })
-    );
   }
 
-  //reject request
-  rejectRequest(id: number): Observable<boolean> {
-    return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, {});
->>>>>>> feature/division-head-part
-  }
-
-   
-
-<<<<<<< HEAD
   getApprovedTransferRequestsForDropdown(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/assetrequests`).pipe(
       map((requests: any[]) => {
@@ -170,7 +149,7 @@ export class RequestService {
   getAllAssetRequests(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/assetrequests`);
   }
-=======
+
   //get approved transfer requests
  getApprovedTransferRequests(headId?: number): Observable<any[]> {
     let url = `${this.baseUrl}/assetrequests/approved-transfers`;
@@ -185,5 +164,4 @@ export class RequestService {
   getPendingRequests(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/assetrequests/pending`);
   }
->>>>>>> feature/division-head-part
 }

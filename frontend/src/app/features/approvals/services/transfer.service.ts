@@ -3,11 +3,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError, forkJoin, of, timeout } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../core/auth/auth.service';
 
 
 @Injectable({ providedIn: 'root' })
 export class TransferService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private baseUrl = environment.apiUrl;
 
 
@@ -39,7 +41,6 @@ export class TransferService {
       })
     );
   }
-<<<<<<< HEAD
 
   // Get incoming transfers for the current user
   getIncomingTransfers(userId: number | null = null): Observable<any> {
@@ -96,7 +97,7 @@ export class TransferService {
     
     let params = new HttpParams()
       .set('status', 'PendingOwnerApproval')
-      .set('transferredBy', currentUserId);
+      .set('transferredBy', currentUserId.toString());
     
     console.log('API call: GET', `${this.baseUrl}/transfers/approvals/outgoing`);
     console.log('Query parameters:', { status: 'PendingOwnerApproval', transferredBy: currentUserId });
@@ -122,14 +123,11 @@ export class TransferService {
         return of([]);
       })
     );
-=======
- 
+  }
 
-  
   getDivisionHeadTransfers(tab: string): Observable<any[]> {
     const params = new HttpParams().set('tab', tab);
     return this.http.get<any[]>(`${this.baseUrl}/transfers/division-head`, { params });
->>>>>>> feature/division-head-part
   }
 
   approveByHead(transferId: number): Observable<any> {
@@ -145,7 +143,5 @@ export class TransferService {
   rejectByHead(transferId: number, reason: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject-head`, { reason });
   }
-
- 
 
 }

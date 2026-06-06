@@ -11,41 +11,18 @@
     </div>
 
     @if (selectedAsset(); as asset) {
-<<<<<<< HEAD
     <div class="details-view-container">
       <h3 class="section-label">Asset Details: {{ asset.name }}</h3>
-=======
-      <div class="details-view-container">
-        <h3 class="section-label">Asset Details: {{ asset.name }}</h3>
-        
-        <div class="details-layout">
-          <div class="card-panel main-info">
-            <h3>General Information</h3>
-            <div class="asset-identity">
-              <!--<img [src]="asset.image" alt="Asset" class="detail-img">-->
-              <div class="identity-text">
-                <p class="name-bold">{{ asset.name }}</p>
-                <p class="id-sub">ID: {{ asset.id }}</p>
-                <p class="type-sub">{{ asset.category }}</p>
-              </div>
-            </div>
-            <hr class="divider">
-            
-            <div class="detail-row">
-              <span class="label">Asset Information :</span>
-              <span class="value">{{ asset.specs }}</span>
-            </div>
->>>>>>> feature/division-head-part
 
       <div class="details-layout">
         <div class="card-panel main-info">
           <h3>General Information</h3>
           <div class="asset-identity">
-            <img [src]="asset.image" alt="Asset" class="detail-img">
+            <img [src]="asset.image || 'assets/placeholder.png'" alt="Asset" class="detail-img">
             <div class="identity-text">
               <p class="name-bold">{{ asset.name }}</p>
               <p class="id-sub">ID: {{ asset.id }}</p>
-              <p class="type-sub">{{ asset.type }}</p>
+              <p class="type-sub">{{ asset.type || asset.category }}</p>
             </div>
           </div>
           <hr class="divider">
@@ -53,106 +30,15 @@
           <div class="detail-info-grid">
             <div class="detail-row">
               <span class="label">Assigned Employee :</span>
-              <span class="value">{{ asset.assignedUserName  }}</span>
+              <span class="value">{{ asset.assignedUserName || asset.assignedTo }}</span>
             </div>
 
             @if (asset.assignedUserId) {
-              <div class="detail-row">
-                <span class="label">Assigned User ID :</span>
-                <span class="value">{{ asset.assignedUserId }}</span>
-              </div>
+            <div class="detail-row">
+              <span class="label">Assigned User ID :</span>
+              <span class="value">{{ asset.assignedUserId }}</span>
+            </div>
             }
-
-            <div class="detail-row">
-              <span class="label">Asset Category :</span>
-              <span class="value">{{ asset.category }}</span>
-            </div>
-
-            <div class="detail-row">
-              <span class="label">Owned Division :</span>
-              <span class="value">{{ asset.division }}</span>
-            </div>
-
-            <div class="detail-row">
-              <span class="label">Status :</span>
-              <span class="status-badge" [ngClass]="getAssetStatusClass(asset.status)">
-                {{ asset.status }}
-              </span>
-            </div>
-
-<<<<<<< HEAD
-            <div class="detail-row">
-              <span class="label">Specifications :</span>
-              <span class="value">{{ asset.specs || 'No specifications provided' }}</span>
-=======
-           
-          </div>
-
-          <div class="side-column">
-            <div class="card-panel">
-              <h3>Asset Lifecycle</h3>
-              <div class="timeline">
-
-                <div class="timeline-item">
-                  <span class="date">2022-01-10</span>
-                  <p class="event">Purchased: Acquired new device</p>
-                </div>
-
-                <div class="timeline-item">
-                  <span class="date">2022-01-20</span>
-                  <p class="event">Assigned: Given to {{ asset.assignedUserName }}</p>
-                </div>
-
-              </div>
->>>>>>> feature/division-head-part
-            </div>
-
-            <button class="transfer-btn">Transfer</button>
-          </div>
-        </div>
-
-<<<<<<< HEAD
-        <div class="side-column">
-          <div class="card-panel">
-            <h3>Asset Lifecycle</h3>
-            <div class="timeline">
-              <div class="timeline-item">
-                <span class="date">N/A</span>
-                <p class="event">Lifecycle data not yet available for this asset</p>
-=======
-              
-
-              <div class="detail-row">
-                <span class="label">Purchased Date:</span>
-                @if (selectedAsset(); as asset) {
-                <div class="details-view-container">
-                  <h3 class="section-label">Asset Details: {{ asset.name }}</h3>
-
-                  <div class="details-layout">
-                    <div class="card-panel main-info">
-                      <h3>General Information</h3>
-                      <div class="asset-identity">
-                        <img [src]="asset.image" alt="Asset" class="detail-img">
-                        <div class="identity-text">
-                          <p class="name-bold">{{ asset.name }}</p>
-                          <p class="id-sub">ID: {{ asset.id }}</p>
-                          <p class="type-sub">{{ asset.type || asset.category }}</p>
-                        </div>
-                      </div>
-                      <hr class="divider">
-
-                      <div class="detail-info-grid">
-                        <div class="detail-row">
-                          <span class="label">Assigned Employee :</span>
-                          <span class="value">{{ asset.assignedUserName || asset.assignedTo }}</span>
-                        </div>
-
-                        @if (asset.assignedUserId) {
-                          <div class="detail-row">
-                            <span class="label">Assigned User ID :</span>
-                            <span class="value">{{ asset.assignedUserId }}</span>
-                          </div>
-                        }
 
                         <div class="detail-row">
                           <span class="label">Asset Category :</span>
@@ -176,69 +62,162 @@
                           <span class="value">{{ asset.specs || 'No specifications provided' }}</span>
                         </div>
                       </div>
+                    </div>
 
-                      <div class="side-column">
-                        <div class="card-panel">
-                          <h3>Asset Lifecycle</h3>
-                          <div class="timeline">
-                            <div class="timeline-item">
-                              <span class="date">2022-01-10</span>
-                              <p class="event">Purchased: Acquired new device</p>
-                            </div>
-                            <div class="timeline-item">
-                              <span class="date">2022-01-20</span>
-                              <p class="event">Assigned: Given to {{ asset.assignedUserName }}</p>
-                            </div>
+                    <div class="side-column">
+                      <div class="card-panel">
+                        <h3>Asset Lifecycle</h3>
+                        <div class="timeline">
+                          <div class="timeline-item">
+                            <span class="date">2022-01-10</span>
+                            <p class="event">Purchased: Acquired new device</p>
                           </div>
-
-                          <div class="detail-row">
-                            <span class="label">Purchased Date:</span>
-                            <span class="value">{{ asset.purchasedDate || 'N/A' }}</span>
-                          </div>
-
-                          <div class="detail-row">
-                            <span class="label">Last Inspected:</span>
-                            <span class="value">{{ asset.lastInspected || 'N/A' }}</span>
+                          <div class="timeline-item">
+                            <span class="date">2022-01-20</span>
+                            <p class="event">Assigned: Given to {{ asset.assignedUserName }}</p>
                           </div>
                         </div>
 
-                        <div class="card-panel mt-20">
-                          <h3>Condition Monitor</h3>
-                          <div class="detail-row">
-                            <span class="label">Health Indicator:</span>
-                            <span class="health-pill">{{ asset.condition }}</span>
-                          </div>
+                        <div class="detail-row">
+                          <span class="label">Purchased Date:</span>
+                          <span class="value">{{ asset.purchasedDate || 'N/A' }}</span>
                         </div>
 
-                        <button class="transfer-btn">Transfer</button>
+                        <div class="detail-row">
+                          <span class="label">Last Inspected:</span>
+                          <span class="value">{{ asset.lastInspected || 'N/A' }}</span>
+                        </div>
                       </div>
+
+                      <div class="card-panel mt-20">
+                        <h3>Condition Monitor</h3>
+                        <div class="detail-row">
+                          <span class="label">Health Indicator:</span>
+                          <span class="health-pill">{{ asset.condition }}</span>
+                        </div>
+                      </div>
+
+                      <button class="transfer-btn">Transfer</button>
                     </div>
                   </div>
                 </div>
                 } @else {
-              
-              <p class="assigned-text">Assigned to {{ asset.assignedUserName }}</p>
+                <section class="overview-section">
+                  <h3 class="section-label">Overview</h3>
+                  <div class="stat-grid">
+                    <div class="stat-card border-blue">
+                      <div class="stat-header">
+                        <span class="stat-title color-blue">Total Assets</span>
+                        <mat-icon>content_copy</mat-icon>
+                      </div>
+                      <div class="stat-value">{{ totalAssets() }}</div>
+                    </div>
+                    <div class="stat-card border-yellow">
+                      <div class="stat-header">
+                        <span class="stat-title color-yellow">In Use</span>
+                        <mat-icon>check_circle_outline</mat-icon>
+                      </div>
+                      <div class="stat-value">{{ inUseAssets() }}</div>
+                    </div>
+                    <div class="stat-card border-red">
+                      <div class="stat-header">
+                        <span class="stat-title color-red">Under maintenance</span>
+                        <mat-icon>build</mat-icon>
+                      </div>
+                      <div class="stat-value">{{ maintenanceAssets() }}</div>
+                    </div>
+                    <div class="stat-card border-green">
+                      <div class="stat-header">
+                        <span class="stat-title color-green">Transferred</span>
+                        <mat-icon>swap_horiz</mat-icon>
+                      </div>
+                      <div class="stat-value">{{ transferredAssets() }}</div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="assets-list-section">
+                  <h3 class="section-label">Division Assets</h3>
+
+                  <div class="filter-bar">
+                    <div class="search-box">
+                      <label>Search Assets</label>
+                      <div class="input-wrapper">
+                        <input type="text" placeholder="Search by name or Asset_ID" [value]="searchQuery()"
+                          (input)="onSearchChange($event)">
+                        <mat-icon>search</mat-icon>
+                      </div>
+                    </div>
+
+                    <div class="selected-filters">
+                      <div class="styled-select" data-filter="category">
+                        <button class="filter-btn" (click)="toggleCategoryMenu($event)">
+                          <div class="filter-icon">
+                            <mat-icon>tune</mat-icon>
+                            <span>{{ selectedCategory() === 'all' ? 'All Categories' : selectedCategory() }}</span>
+                          </div>
+                          <mat-icon class="arrow">expand_more</mat-icon>
+                        </button>
+
+                        @if (showCategoryMenu()) {
+                        <div class="filter-menu-card">
+                          <div class="filter-option" (click)="setFilterCategory('all')"
+                            [class.active]="selectedCategory() === 'all'">All Categories</div>
+                          @for (category of availableCategories(); track category) {
+                          <div class="filter-option" (click)="setFilterCategory(category)"
+                            [class.active]="selectedCategory() === category">{{ category }}</div>
+                          }
+                        </div>
+                        }
+                      </div>
+
+                      <div class="styled-select" data-filter="status">
+                        <button class="filter-btn" (click)="toggleStatusMenu($event)">
+                          <div class="filter-icon">
+                            <mat-icon>filter_list</mat-icon>
+                            <span>{{ selectedStatus() === 'all' ? 'All Status' : selectedStatus() }}</span>
+                          </div>
+                          <mat-icon class="arrow">expand_more</mat-icon>
+                        </button>
+
+                        @if (showStatusMenu()) {
+                        <div class="filter-menu-card">
+                          <div class="filter-option" (click)="setFilterStatus('all')"
+                            [class.active]="selectedStatus() === 'all'">All Status</div>
+                          <div class="filter-option" (click)="setFilterStatus('In Use')"
+                            [class.active]="selectedStatus() === 'In Use'">In Use</div>
+                          <div class="filter-option" (click)="setFilterStatus('Transferred')"
+                            [class.active]="selectedStatus() === 'Transferred'">Transferred</div>
+                          <div class="filter-option" (click)="setFilterStatus('Maintenance')"
+                            [class.active]="selectedStatus() === 'Maintenance'">Maintenance</div>
+                        </div>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="view-toggle">
+                      <mat-icon>reorder</mat-icon>
+                      <mat-icon class="active">grid_view</mat-icon>
+                    </div>
+                  </div>
+
+                  <div class="asset-grid">
+                    <div class="asset-card" *ngFor="let asset of filteredAssets()">
+                      <div class="card-body">
+                        <h4 class="asset-name">{{ asset.name }}</h4>
+                        <p class="asset-id">ID: {{ asset.id }} · {{ asset.type || asset.category }}</p>
+
+                        <div class="status-badge" [ngClass]="getAssetStatusClass(asset.status)">
+                          {{ asset.status }}
+                        </div>
+
+                        <p class="assigned-text">Assigned to {{ asset.assignedUserName || asset.assignedTo }}</p>
+                      </div>
+
+                      <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
+                    </div>
+                  </div>
+                </section>
+                }
+              </div>
             </div>
-            
-            <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
->>>>>>> feature/division-head-part
-          </div>
-          
-          <div class="card-body">
-            <h4 class="asset-name">{{ asset.name }}</h4>
-            <p class="asset-id">ID: {{ asset.id }} · {{ asset.type }}</p>
-            
-            <div class="status-badge" [ngClass]="getAssetStatusClass(asset.status)">
-              {{ asset.status }}
-            </div>
-            
-            <p class="assigned-text">Assigned to {{ asset.assignedUserName || asset.assignedTo }}</p>
-          </div>
-          
-          <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
-        </div>
-      </div>
-    </section>
-    }
-  </div>
-</div>

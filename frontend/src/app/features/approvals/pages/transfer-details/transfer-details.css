@@ -468,12 +468,7 @@ label {
 }
 
 .btn-done {
-<<<<<<< HEAD
   background: #00afb5;
-  /* මුලින් තද කළු පැහැය - Premium look */
-=======
-  background: #00afb5; 
->>>>>>> feature/division-head-part
   color: #ffffff;
   border: none;
   padding: 12px 28px;
@@ -490,15 +485,8 @@ label {
 }
 
 .btn-done:hover {
-<<<<<<< HEAD
   background: #0b6c78;
-  /* Hover කළාම ඔයාගේ Teal පාටට මාරු වේ */
   transform: translateY(-2px) scale(1.02);
-  /* පොඩ්ඩක් ඉහළට එසවෙන effect එක */
-=======
- background: #0b6c78; 
-  transform: translateY(-2px) scale(1.02); 
->>>>>>> feature/division-head-part
   box-shadow: 0 10px 20px rgba(0, 169, 181, 0.25);
 }
 
@@ -534,12 +522,7 @@ label {
 }
 
 .btn-done:hover svg {
-<<<<<<< HEAD
   transform: translateX(4px);
-  /* Hover කළාම arrow එකක් වගේ දෙයක් තිබුණොත් දකුණට චලනය වේ */
-=======
-  transform: translateX(4px); 
->>>>>>> feature/division-head-part
 }
 
 /* Progress Bar at the bottom */
