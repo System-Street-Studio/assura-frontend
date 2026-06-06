@@ -1,20 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../../../core/services/api.service';
-
-interface DiscardNote {
-    id: string;
-    assetName: string;
-    division: string;
-    date: string;
-    note: string;
-    status: string;
-    assetType: string;
-    currentUser: string;
-    time: string;
-    valueAtPurchasing: string;
-    currentValue: string;
-}
+import { AccDiscardNotesService, AccDiscardNote } from '../../../services/acc-discard-notes.service';
 
 @Component({
     selector: 'app-acc-discard-note',
@@ -24,18 +10,31 @@ interface DiscardNote {
     styleUrls: ['./acc-discard-note.css']
 })
 export class AccDiscardNoteComponent implements OnInit {
-    api = inject(ApiService);
-    notes: DiscardNote[] = [];
-    selectedNote: DiscardNote | null = null;
+    notes: AccDiscardNote[] = [];
+    selectedNote: AccDiscardNote | null = null;
+    isLoading = true;
+
+    constructor(
+        private accDiscardNotesService: AccDiscardNotesService,
+        private cdr: ChangeDetectorRef
+    ) {}
 
     ngOnInit() {
-        this.api.get<DiscardNote[]>('AccDiscardNotes').subscribe({
-            next: (data) => this.notes = data,
-            error: (err) => console.error(err)
+        this.accDiscardNotesService.getAll().subscribe({
+            next: (data) => {
+                this.notes = data;
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            },
+            error: (err) => {
+                console.error('Failed to load discard notes:', err);
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            }
         });
     }
 
-    viewNote(note: DiscardNote) {
+    viewNote(note: AccDiscardNote) {
         this.selectedNote = note;
     }
 

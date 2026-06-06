@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DiscardedNote } from './models/discarded-note.model';
-import { ApiService } from '../../core/services/api.service';
+import { DiscardedNotesService } from '../../services/discarded-notes.service';
 
 @Component({
     selector: 'app-discarded-notes',
@@ -12,21 +12,31 @@ import { ApiService } from '../../core/services/api.service';
     styleUrls: ['./discarded-notes.css']
 })
 export class DiscardedNotesComponent implements OnInit {
-    api = inject(ApiService);
     notes: DiscardedNote[] = [];
-
     filteredNotes: DiscardedNote[] = [];
-    searchQuery = '';
+    searchQuery: string = '';
     selectedNote: DiscardedNote | null = null;
-    showFilter = false;
+    showFilter: boolean = false;
+    isLoading = true;
+
+    constructor(
+        private discardedNotesService: DiscardedNotesService,
+        private cdr: ChangeDetectorRef
+    ) {}
 
     ngOnInit() {
-        this.api.get<DiscardedNote[]>('DiscardedNotes').subscribe({
+        this.discardedNotesService.getAll().subscribe({
             next: (data) => {
                 this.notes = data;
                 this.filteredNotes = [...this.notes];
+                this.isLoading = false;
+                this.cdr.markForCheck();
             },
-            error: (err) => console.error(err)
+            error: (err) => {
+                console.error('Failed to load discarded notes:', err);
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            }
         });
     }
 

@@ -1,0 +1,29 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface QueueItem {
+  id: string;
+  name: string;
+  division: string;
+  date: string;
+  status: string;
+  time: string;
+  assetType: string;
+  specialNote: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class QueueItemsService {
+  private apiUrl = '/api/QueueItems';
+
+  constructor(private http: HttpClient) {}
+
+  getAll(): Observable<QueueItem[]> {
+    return this.http.get<QueueItem[]>(this.apiUrl);
+  }
+
+  updateStatus(id: string, status: string, reviewNote?: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/status`, { id: +id, status, reviewNote });
+  }
+}

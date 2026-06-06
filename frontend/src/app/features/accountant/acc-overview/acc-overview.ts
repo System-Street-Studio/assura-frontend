@@ -1,6 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../../../core/services/api.service';
+import { ActivatedRoute } from '@angular/router';
+import { AccPendingItemsService, AccPendingItem } from '../../../services/acc-pending-items.service';
+import { ReceiptsService } from '../../../services/receipts.service';
 
 interface PendingItem {
     id: string;
@@ -26,34 +28,69 @@ interface PendingItem {
     styleUrls: ['./acc-overview.css']
 })
 export class AccOverviewComponent implements OnInit {
-    approvedCount = 4;
-    toBeApprovedCount = 5;
-    pendingCount = 7;
-    rejectCount = 2;
+    approvedCount = 0;
+    toBeApprovedCount = 0;
+    pendingCount = 0;
+    rejectCount = 0;
 
-    activeFilter = 'all';
+    activeFilter: string = 'all';
 
-    api = inject(ApiService);
     allItems: PendingItem[] = [];
-
     filteredItems: PendingItem[] = [];
     selectedItem: PendingItem | null = null;
     currentPage = 1;
     totalPages = 3;
     showConfirmModal = false;
     showSuccessCard = false;
+    isLoading = true;
+    selectedFile: File | null = null;
+    selectedFileName = '';
+
+    constructor(
+        private accPendingItemsService: AccPendingItemsService,
+        private receiptsService: ReceiptsService,
+        private route: ActivatedRoute,
+        private cdr: ChangeDetectorRef
+    ) {}
 
     ngOnInit() {
-        this.api.get<PendingItem[]>('AccPendingItems').subscribe({
-            next: (items) => {
-                this.allItems = items;
+        this.accPendingItemsService.getAll().subscribe({
+            next: (data) => {
+                this.allItems = data;
                 this.filteredItems = [...this.allItems];
-                if (this.filteredItems.length > 0) {
-                    this.selectedItem = this.filteredItems[0];
-                }
+
+                this.route.queryParams.subscribe(params => {
+                    const selectId = params['selectId'];
+                    if (selectId) {
+                        const found = this.allItems.find(item => item.id === selectId);
+                        if (found) {
+                            this.activeFilter = found.category;
+                            this.filterByCategory(found.category);
+                            this.selectedItem = found;
+                        }
+                    } else if (this.filteredItems.length > 0) {
+                        this.selectedItem = this.filteredItems[0];
+                    }
+                    this.cdr.markForCheck();
+                });
+
+                this.updateCounts();
+                this.isLoading = false;
+                this.cdr.markForCheck();
             },
-            error: (err) => console.error(err)
+            error: (err) => {
+                console.error('Failed to load pending items:', err);
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            }
         });
+    }
+
+    private updateCounts() {
+        this.approvedCount = this.allItems.filter(i => i.category === 'approved').length;
+        this.toBeApprovedCount = this.allItems.filter(i => i.category === 'to-be-approved').length;
+        this.pendingCount = this.allItems.filter(i => i.category === 'pending').length;
+        this.rejectCount = this.allItems.filter(i => i.category === 'reject').length;
     }
 
     filterByCategory(category: string) {
@@ -78,22 +115,76 @@ export class AccOverviewComponent implements OnInit {
 
     closeConfirmModal() {
         this.showConfirmModal = false;
+        this.selectedFile = null;
+        this.selectedFileName = '';
+    }
+
+    onFileSelected(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            this.selectedFile = input.files[0];
+            this.selectedFileName = input.files[0].name;
+            this.cdr.markForCheck();
+        }
     }
 
     saveAsDiscarded() {
         if (!this.selectedItem) return;
-        this.api.post(`AccPendingItems/${this.selectedItem.id}/discard`, {}).subscribe({
-            next: () => {
-                this.allItems = this.allItems.filter(item => item.id !== this.selectedItem!.id);
-                this.filterByCategory(this.activeFilter);
-                this.showConfirmModal = false;
-                this.showSuccessCard = true;
-                setTimeout(() => {
-                    this.showSuccessCard = false;
-                }, 3000);
-            },
-            error: (err) => console.error(err)
-        });
+
+        const performDiscard = () => {
+            this.accPendingItemsService.confirmDiscard(this.selectedItem!.id).subscribe({
+                next: () => {
+                    this.allItems = this.allItems.filter(item => item.id !== this.selectedItem!.id);
+                    this.updateCounts();
+                    this.filterByCategory(this.activeFilter);
+                    this.showConfirmModal = false;
+                    this.selectedFile = null;
+                    this.selectedFileName = '';
+                    this.showSuccessCard = true;
+                    setTimeout(() => {
+                        this.showSuccessCard = false;
+                    }, 3000);
+                    this.cdr.markForCheck();
+                },
+                error: (err) => {
+                    console.error('Failed to discard item:', err);
+                    this.showConfirmModal = false;
+                    this.selectedFile = null;
+                    this.selectedFileName = '';
+                    this.cdr.markForCheck();
+                }
+            });
+        };
+
+        if (this.selectedFile) {
+            const newReceipt = {
+                assetName: this.selectedItem.name,
+                division: this.selectedItem.division,
+                date: this.selectedItem.date,
+                amount: this.selectedItem.currentValue
+            };
+
+            this.receiptsService.create(newReceipt).subscribe({
+                next: (created) => {
+                    this.receiptsService.uploadFile(created.id, this.selectedFile!).subscribe({
+                        next: () => {
+                            performDiscard();
+                        },
+                        error: (err) => {
+                            console.error('Failed to upload receipt file:', err);
+                            // Proceed with discard even if upload fails
+                            performDiscard();
+                        }
+                    });
+                },
+                error: (err) => {
+                    console.error('Failed to create receipt:', err);
+                    performDiscard();
+                }
+            });
+        } else {
+            performDiscard();
+        }
     }
 
     closeSuccess() {

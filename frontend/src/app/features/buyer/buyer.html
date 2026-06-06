@@ -100,45 +100,36 @@
             <button class="detail-close-x" (click)="closeAddModal()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
+                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
             </button>
             <div class="detail-body">
-                <div class="detail-name-row" style="margin-bottom: 20px;">
-                    <h2>Add New Buyer</h2>
-                </div>
-
-                <div class="detail-info-grid" style="grid-template-columns: 1fr; gap: 15px;">
+                <h2 class="modal-title">Add New Buyer</h2>
+                <div class="detail-info-grid">
                     <div class="detail-info-item">
-                        <label>Company Name</label>
-                        <input type="text" [(ngModel)]="newBuyer.name" placeholder="Enter company name"
-                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
+                        <label>Company / Buyer Name *</label>
+                        <input class="modal-input" type="text" placeholder="e.g. Techno Supplies Ltd" [value]="newBuyer.name" (input)="newBuyer.name = $any($event.target).value" />
                     </div>
                     <div class="detail-info-item">
-                        <label>Contact Person</label>
-                        <input type="text" [(ngModel)]="newBuyer.contact" placeholder="Enter contact person"
-                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Category</label>
-                        <input type="text" [(ngModel)]="newBuyer.category" placeholder="Enter category"
-                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
+                        <label>Contact Person *</label>
+                        <input class="modal-input" type="text" placeholder="e.g. John Perera" [value]="newBuyer.contact" (input)="newBuyer.contact = $any($event.target).value" />
                     </div>
                     <div class="detail-info-item">
                         <label>Email</label>
-                        <input type="email" [(ngModel)]="newBuyer.email" placeholder="Enter email"
-                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
+                        <input class="modal-input" type="email" placeholder="e.g. info@techno.lk" [value]="newBuyer.email" (input)="newBuyer.email = $any($event.target).value" />
                     </div>
                     <div class="detail-info-item">
                         <label>Phone</label>
-                        <input type="text" [(ngModel)]="newBuyer.phone" placeholder="Enter phone"
-                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
+                        <input class="modal-input" type="text" placeholder="e.g. 071-234-5678" [value]="newBuyer.phone" (input)="newBuyer.phone = $any($event.target).value" />
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Category</label>
+                        <input class="modal-input" type="text" placeholder="e.g. Electronics, Furniture" [value]="newBuyer.category" (input)="newBuyer.category = $any($event.target).value" />
                     </div>
                 </div>
-                <div class="detail-actions" style="margin-top: 25px;">
+                <div class="detail-actions">
                     <button class="close-detail-btn" (click)="closeAddModal()">Cancel</button>
-                    <button class="contact-btn" (click)="submitBuyer()">Create Buyer</button>
+                    <button class="contact-btn" (click)="submitAddBuyer()" [disabled]="isSubmitting">{{ isSubmitting ? 'Saving...' : 'Add Buyer' }}</button>
                 </div>
             </div>
         </div>

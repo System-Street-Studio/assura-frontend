@@ -338,3 +338,37 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Add Buyer Modal inputs */
+.modal-title {
+    font-family: 'Jost', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 24px 0;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    background: #fafafa;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: #00b2b2;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(0, 178, 178, 0.08);
+}
+
+.contact-btn:disabled {
+    background-color: #b0d8d8;
+    cursor: not-allowed;
+}

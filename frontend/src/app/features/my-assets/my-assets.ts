@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Asset } from './models/asset.model';
+import { AssetsService } from '../../services/assets.service';
 
 @Component({
   selector: 'app-my-assets',
@@ -11,24 +12,41 @@ import { Asset } from './models/asset.model';
   styleUrls: ['./my-assets.css']
 })
 export class MyAssetsComponent implements OnInit {
-  assets: Asset[] = [
-    { id: '1', name: 'Dell XPS 15 9520', type: 'Laptop', serialNumber: 'DXP-9520-2023', division: 'Information Technology', status: 'Active' },
-    { id: '2', name: 'Logitech MX Master 3S', type: 'Peripheral', serialNumber: 'LOGI-MX3-112', division: 'Information Technology', status: 'Active' },
-    { id: '3', name: 'LG UltraFine 4K Display', type: 'Monitor', serialNumber: 'LG-4K-9901', division: 'Astronomy', status: 'Maintenance' },
-    { id: '4', name: 'Cisco Integrated Router', type: 'Networking', serialNumber: 'CISCO-ISR-4431', division: 'Information Technology', status: 'Assigned' },
-    { id: '5', name: 'iPad Pro 12.9"', type: 'Peripheral', serialNumber: 'IPAD-129-2024', division: 'Design', status: 'Active' },
-    { id: '6', name: 'Sony WH-1000XM5', type: 'Peripheral', serialNumber: 'SONY-WH5-556', division: 'Sales', status: 'Active' },
-    { id: '7', name: 'Lenovo ThinkPad X1', type: 'Laptop', serialNumber: 'LEN-X1-4478', division: 'Human Resources', status: 'Active' },
-    { id: '8', name: 'Dell UltraSharp 27"', type: 'Monitor', serialNumber: 'DELL-U27-009', division: 'Marketing', status: 'Active' },
-    { id: '9', name: 'Ubiquiti Dream Machine', type: 'Networking', serialNumber: 'UBIQ-UDM-882', division: 'Security', status: 'Active' }
-  ];
-
+  assets: Asset[] = [];
   filteredAssets: Asset[] = [];
-  searchQuery = '';
+  searchQuery: string = '';
   selectedAsset: Asset | null = null;
+  isLoading = true;
+  isAddAssetModalOpen = false;
+  isEditAssetModalOpen = false;
+  newAsset: Partial<Asset> = {
+    name: '',
+    type: 'Laptop',
+    serialNumber: '',
+    division: '',
+    status: 'Active'
+  };
+  editingAsset: Asset | null = null;
+
+  constructor(
+    private assetsService: AssetsService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.filteredAssets = [...this.assets];
+    this.assetsService.getAll().subscribe({
+      next: (data) => {
+        this.assets = data;
+        this.filteredAssets = [...this.assets];
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Failed to load assets:', err);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   onSearch() {
@@ -48,5 +66,84 @@ export class MyAssetsComponent implements OnInit {
 
   getStatusClass(status: string): string {
     return status.toLowerCase();
+  }
+
+  openAddAssetModal() {
+    this.isAddAssetModalOpen = true;
+  }
+
+  closeAddAssetModal() {
+    this.isAddAssetModalOpen = false;
+    this.newAsset = {
+      name: '',
+      type: 'Laptop',
+      serialNumber: '',
+      division: '',
+      status: 'Active'
+    };
+  }
+
+  submitAddAsset() {
+    console.log("Submitting new asset:", this.newAsset);
+    
+    if (!this.newAsset.name || !this.newAsset.serialNumber) {
+      alert('Please fill in the required fields (Name & Serial Number).');
+      return;
+    }
+
+    this.assetsService.create(this.newAsset).subscribe({
+      next: (id) => {
+        // Fetch fresh list from backend
+        this.assetsService.getAll().subscribe({
+          next: (data) => {
+            this.assets = data;
+            this.onSearch(); // Refresh the list with filters
+            this.closeAddAssetModal();
+            this.cdr.markForCheck();
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Failed to create asset:', err);
+        alert('Failed to add asset. Please try again.');
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  openEditAssetModal(asset: Asset) {
+    this.editingAsset = { ...asset };
+    this.isEditAssetModalOpen = true;
+    this.selectedAsset = null; // Close detail modal
+  }
+
+  closeEditAssetModal() {
+    this.isEditAssetModalOpen = false;
+    this.editingAsset = null;
+  }
+
+  submitEditAsset() {
+    if (!this.editingAsset || !this.editingAsset.name || !this.editingAsset.serialNumber) {
+      alert('Please fill in the required fields (Name & Serial Number).');
+      return;
+    }
+
+    this.assetsService.update(this.editingAsset.id, this.editingAsset).subscribe({
+      next: () => {
+        this.assetsService.getAll().subscribe({
+          next: (data) => {
+            this.assets = data;
+            this.onSearch();
+            this.closeEditAssetModal();
+            this.cdr.markForCheck();
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Failed to update asset:', err);
+        alert('Failed to update asset. Please try again.');
+        this.cdr.markForCheck();
+      }
+    });
   }
 }

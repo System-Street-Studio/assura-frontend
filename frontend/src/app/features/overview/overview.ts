@@ -1,19 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiService } from '../../core/services/api.service';
-
-export interface QueueItem {
-  id: string;
-  name: string;
-  division: string;
-  timeAgo: string;
-  date: string;
-  status: string;
-  time: string;
-  assetType: string;
-  specialNote: string;
-}
+import { ActivatedRoute } from '@angular/router';
+import { QueueItemsService, QueueItem } from '../../services/queue-items.service';
 
 @Component({
   selector: 'app-overview',
@@ -23,40 +12,67 @@ export interface QueueItem {
   styleUrls: ['./overview.css']
 })
 export class OverviewComponent implements OnInit {
-  activeFilter = '';
-
-  api = inject(ApiService);
+  activeFilter: string = '';
   queue: QueueItem[] = [];
-
   filteredQueue: QueueItem[] = [];
   selectedItem: QueueItem | null = null;
+  isLoading = true;
 
   get pendingCount() { return this.queue.filter(i => i.status === 'Pending').length; }
   get discardedCount() { return this.queue.filter(i => i.status === 'Discarded').length; }
   get unreadCount() { return this.queue.filter(i => i.status === 'Unread').length; }
   get rejectedCount() { return this.queue.filter(i => i.status === 'Rejected').length; }
-  get approvedCount() { return this.queue.filter(i => i.status === 'Approved' || i.status === 'Completed').length; }
+  get approvedCount() { return this.queue.filter(i => i.status === 'Approved').length; }
+  get totalCount() { return this.queue.length; }
+  get todayCount() {
+    const today = new Date().toISOString().slice(0, 10); // e.g. "2026-05-11"
+    return this.queue.filter(i => i.date && i.date.startsWith(today)).length;
+  }
 
   // Review flow state
   reviewStep: 'idle' | 'choose' | 'notes' = 'idle';
   reviewAction: 'done' | 'reject' | '' = '';
-  reviewNote = '';
+  reviewNote: string = '';
 
   // Feedback cards
   showSuccessCard = false;
   showRejectCard = false;
 
+  constructor(
+    private queueItemsService: QueueItemsService,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
+  ) {}
+
   ngOnInit() {
-    this.api.get<QueueItem[]>('DiscardedNotes').subscribe({
-      next: (items) => {
-        this.queue = items;
+    this.queueItemsService.getAll().subscribe({
+      next: (data) => {
+        this.queue = data;
         this.filteredQueue = [...this.queue];
-        if (this.activeFilter) {
-          this.filteredQueue = this.queue.filter(i => i.status === this.activeFilter);
-        }
-        this.selectedItem = this.filteredQueue[0] || null;
+
+        this.route.queryParams.subscribe(params => {
+          const selectId = params['selectId'];
+          if (selectId) {
+            const found = this.queue.find(item => item.id === selectId);
+            if (found) {
+              this.activeFilter = found.status;
+              this.filteredQueue = this.queue.filter(i => i.status === found.status);
+              this.selectedItem = found;
+            }
+          } else if (this.filteredQueue.length > 0) {
+            this.selectedItem = this.filteredQueue[0];
+          }
+          this.cdr.markForCheck();
+        });
+
+        this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error('Failed to load queue items:', err);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -81,34 +97,28 @@ export class OverviewComponent implements OnInit {
     return status.toLowerCase();
   }
 
-  // Step 1: Click Review → show Mark as Done / Reject
   startReview() {
     this.reviewStep = 'choose';
   }
 
-  // Step 2: Click Mark as Done or Reject → show notes input
   chooseAction(action: 'done' | 'reject') {
     this.reviewAction = action;
     this.reviewStep = 'notes';
     this.reviewNote = '';
   }
 
-  // Step 3: Submit the note
   submitReview() {
     if (!this.selectedItem) return;
 
     const action = this.reviewAction;
+    const newStatus = action === 'done' ? 'Approved' : 'Rejected';
 
-    const backendStatus = action === 'done' ? 'Completed' : 'Rejected';
-    const frontendStatusLabel = action === 'done' ? 'Approved' : 'Rejected';
-
-    this.api.put(`DiscardedNotes/${this.selectedItem.id}/status`, { status: backendStatus, note: this.reviewNote }).subscribe({
+    this.queueItemsService.updateStatus(this.selectedItem.id, newStatus, this.reviewNote).subscribe({
       next: () => {
         if (this.selectedItem) {
-          this.selectedItem.status = frontendStatusLabel;
+          this.selectedItem.status = newStatus;
         }
 
-        // Re-filter if a filter is active
         if (this.activeFilter) {
           this.filteredQueue = this.queue.filter(i => i.status === this.activeFilter);
         } else {
@@ -118,18 +128,18 @@ export class OverviewComponent implements OnInit {
         this.resetReview();
         this.selectedItem = this.filteredQueue[0] || null;
 
-        // Show feedback card
         if (action === 'done') {
           this.showSuccessCard = true;
-          setTimeout(() => { this.showSuccessCard = false; }, 3000);
+          setTimeout(() => { this.showSuccessCard = false; this.cdr.markForCheck(); }, 3000);
         } else {
           this.showRejectCard = true;
-          setTimeout(() => { this.showRejectCard = false; }, 3000);
+          setTimeout(() => { this.showRejectCard = false; this.cdr.markForCheck(); }, 3000);
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
-        console.error(err);
-        this.resetReview();
+        console.error('Failed to update status:', err);
+        this.cdr.markForCheck();
       }
     });
   }

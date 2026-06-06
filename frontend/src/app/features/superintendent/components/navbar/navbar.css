@@ -1,91 +1,138 @@
+:host {
+    display: block;
+}
+
 .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 62px;
-    background: rgb(0, 71, 119);
-    padding: 0 24px;
-    box-sizing: border-box;
+    background-color: #004777;
+    padding: 0 16px;
+    height: 52px;
 }
 
-.role-label {
+/* ── LEFT ── */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 200px;
+}
+
+.navbar-title {
     font-family: 'Jost', sans-serif;
-    font-size: 0.88rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.8);
+    color: #ffffff;
 }
 
+
+
+
+/* ── CENTER: Clock ── */
+.navbar-center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Jost', sans-serif;
+}
+
+.clock-date {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
+}
+
+.clock-divider {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.9rem;
+}
+
+.clock-time {
+    font-size: 0.92rem;
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── RIGHT ── */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 200px;
+    justify-content: flex-end;
+}
+
+/* Notification Bell */
+.notif-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background-color: #ff4757;
+    color: #fbf9f9;
+    font-size: 0.65rem;
+    font-weight: 700;
+    font-family: 'Jost', sans-serif;
+    border-radius: 50%;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    border: 1.5px solid #004777;
+}
+
+/* Divider */
 .navbar-divider {
     width: 1px;
     height: 24px;
     background-color: rgba(255, 255, 255, 0.25);
 }
 
-.navbar-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+/* Role label */
+.role-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
 }
 
-.profile-icon {
-    width: 50px;
-    height: 50px;
+/* Profile button */
+.profile-btn {
+    background: none;
+    border: 2px solid #ffffff;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
+    width: 34px;
+    height: 34px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    cursor: pointer;
     transition: background 0.2s;
 }
 
-.profile-icon:hover {
-    background: rgba(255, 255, 255, 0.25);
+.profile-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .notification-container {
     position: relative;
 }
 
-.notification-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    cursor: pointer;
-    position: relative;
-    transition: background 0.2s;
-}
-
-.notification-icon:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-
-.notification-icon .badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgb(229, 57, 53);
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 10px;
-    line-height: 1;
-    min-width: 10px;
-    text-align: center;
-    border: 2px solid rgb(0, 71, 119);
-}
-
 /* Dropdown popover */
 .notifications-dropdown {
     position: absolute;
-    top: 58px;
+    top: 38px;
     right: 0;
     width: 320px;
     background: white;
@@ -123,6 +170,7 @@
     font-size: 15px;
     font-weight: 600;
     color: #1e293b;
+    text-align: left;
 }
 
 .dropdown-header .count-tag {
@@ -148,6 +196,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    text-align: left;
 }
 
 .dropdown-item:hover {
@@ -185,10 +234,6 @@
 
 .status-dot.pending {
     background: rgb(255, 119, 0);
-}
-
-.status-dot.to-be-approved {
-    background: rgb(0, 71, 119);
 }
 
 .item-meta {

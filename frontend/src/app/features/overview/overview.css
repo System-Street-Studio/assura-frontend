@@ -47,6 +47,14 @@
     border: 2px solid #10b981;
 }
 
+.summary-card.total {
+    border: 2px solid #6366f1;
+}
+
+.summary-card.today {
+    border: 2px solid #a855f7;
+}
+
 /* Active card state */
 .summary-card.card-active {
     transform: translateY(-3px);
@@ -76,6 +84,16 @@
 .summary-card.card-active.approved {
     background: #ecfdf5;
     box-shadow: 0 8px 30px rgba(16, 185, 129, 0.15);
+}
+
+.summary-card.card-active.total {
+    background: #eef2ff;
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15);
+}
+
+.summary-card.card-active.today {
+    background: #faf5ff;
+    box-shadow: 0 8px 30px rgba(168, 85, 247, 0.15);
 }
 
 .card-header {
@@ -517,7 +535,12 @@
     background: #b91c1c;
 }
 
-/* ============ Feedback Cards ============ */
+.feedback-icon-section svg {
+    /* Set stroke-dasharray and dashoffset for draw animation */
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+}
+
 .feedback-overlay {
     position: fixed;
     inset: 0;
@@ -526,16 +549,36 @@
     align-items: center;
     justify-content: center;
     z-index: 200;
-    animation: feedbackFadeIn 0.2s ease;
+    animation: feedbackFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    backdrop-filter: blur(2px);
 }
 
 .feedback-card {
     display: flex;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-    min-width: 340px;
-    animation: feedbackSlideUp 0.3s ease;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    min-width: 360px;
+    animation: feedbackSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    transform-origin: center center;
+}
+
+/* Success Card Variations */
+.feedback-overlay:has(.success-bg) .feedback-card {
+    box-shadow: 0 15px 40px rgba(5, 150, 105, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+.success-bg svg path,
+.success-bg svg polyline {
+    animation: drawIcon 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.15s forwards;
+}
+
+/* Reject Card Variations */
+.feedback-overlay:has(.reject-bg) .feedback-card {
+    box-shadow: 0 15px 40px rgba(220, 38, 38, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+.reject-bg svg circle,
+.reject-bg svg line {
+    animation: drawIcon 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.15s forwards;
 }
 
 .feedback-icon-section {
@@ -543,14 +586,26 @@
     align-items: center;
     justify-content: center;
     padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle background pulse for the icon section */
+.feedback-icon-section::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+    opacity: 0;
+    animation: pulseBg 1.5s ease-out 0.2s forwards;
 }
 
 .feedback-icon-section.success-bg {
-    background: #059669;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
 }
 
 .feedback-icon-section.reject-bg {
-    background: #dc2626;
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
 }
 
 .feedback-text-section {
@@ -560,34 +615,64 @@
     justify-content: center;
     padding: 28px 40px;
     flex: 1;
+    position: relative;
+}
+
+/* A subtle loading bar at the bottom to indicate auto-close */
+.feedback-text-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: #00000010;
+    animation: shrinkBar 2.5s linear forwards;
 }
 
 .feedback-text {
     font-family: 'Jost', sans-serif;
-    font-size: 18px;
-    font-weight: 500;
-    color: rgb(0, 0, 0);
+    font-size: 19px;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: -0.2px;
+}
+
+@keyframes drawIcon {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes shrinkBar {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+@keyframes pulseBg {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
 }
 
 @keyframes feedbackFadeIn {
     from {
         opacity: 0;
+        backdrop-filter: blur(0px);
     }
-
     to {
         opacity: 1;
+        backdrop-filter: blur(2px);
     }
 }
 
 @keyframes feedbackSlideUp {
     from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: scale(0.85) translateY(20px);
     }
-
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateY(0);
     }
 }
 
