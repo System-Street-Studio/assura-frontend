@@ -354,11 +354,119 @@
 }
 
 /* ASSET GRID */
+
 .asset-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
+  width: 100%;
+  transition: all 0.3s ease;
 }
+
+.asset-grid.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Grid Card Styles */
+.asset-grid.grid .asset-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.asset-grid.grid .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.asset-grid.grid .view-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.asset-grid.grid .view-btn:hover{
+  background-color: #008296;
+} 
+
+.asset-grid.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.asset-grid.list .asset-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  padding: 16px 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.asset-grid.list .card-body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+
+.asset-grid.list .asset-name { 
+  margin: 0; 
+  flex: 2; 
+  min-width: 180px; 
+}
+.asset-grid.list .asset-id { 
+  margin: 0; 
+  flex: 1.5; 
+  min-width: 140px; 
+}
+.asset-id-only {
+  flex: 1; 
+}
+
+.asset-cat-only {
+  flex: 1;
+  color: #888; 
+}
+
+.asset-grid.list .status-badge { 
+  margin: 0; 
+  flex: 1; 
+  max-width: 100px; 
+  text-align: center;
+ }
+.asset-grid.list .assigned-text { 
+  margin: 0; 
+  flex: 2; 
+  min-width: 180px; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+.asset-grid.list .view-btn { 
+  margin: 0; 
+  padding: 10px 20px; 
+  flex: 1; 
+  max-width: 160px; 
+  min-width: 140px; 
+  width: auto; 
+}
+.asset-grid.list .view-btn:hover {
+  background-color: #008296;
+}
+
 
 .asset-card {
   background: white;

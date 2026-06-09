@@ -46,12 +46,19 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   
   // Real categories from backend data
   availableCategories = signal<string[]>([]);
+  viewMode = signal<'grid' | 'list'>('grid');
+
+
   
   // Asset counts for real data
   totalAssets = computed(() => this.assets().length);
   inUseAssets = computed(() => this.assets().filter(asset => asset.status === 'In Use').length);
   maintenanceAssets = computed(() => this.assets().filter(asset => asset.status === 'Maintenance').length);
   transferredAssets = computed(() => this.assets().filter(asset => asset.status === 'Transferred'));
+
+  setViewMode(mode: 'grid' | 'list') {
+  this.viewMode.set(mode);
+  }
 
   ngOnInit(): void {
   

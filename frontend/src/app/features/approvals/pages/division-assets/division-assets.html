@@ -189,17 +189,20 @@
   </div>
 
         <div class="view-toggle">
-          <mat-icon>reorder</mat-icon>
-          <mat-icon class="active">grid_view</mat-icon>
-        </div>
+        <mat-icon [class.active]="viewMode() === 'list'" (click)="setViewMode('list')">reorder</mat-icon>
+        <mat-icon [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')">grid_view</mat-icon>
+      </div>
+
+
         </div>
      
         
 
 
       <!--assets grid-->
-        <div class="asset-grid">
-          <div class="asset-card" *ngFor="let asset of filteredAssets()">
+        <div class="asset-grid" [ngClass]="viewMode()">
+        @for (asset of filteredAssets(); track asset.id) {
+          <div class="asset-card">
          <!--
             <div class="img-container">
               <img [src]="asset.image" [alt]="asset.name">
@@ -207,17 +210,19 @@
             
             <div class="card-body">
               <h4 class="asset-name">{{ asset.name }}</h4>
-              <p class="asset-id">ID: {{ asset.id }} · {{ asset.category }}</p>
+              <span class="asset-id-only">ID: {{ asset.id }}</span>
+              <span class="asset-cat-only">{{ asset.category }}</span>
               
               <div class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
                 {{ asset.status }}
               </div>
               
               <p class="assigned-text">Assigned to {{ asset.assignedUserName }}</p>
-            </div>
-            
+             
             <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
+            </div>
           </div>
+        }
         </div>
 
       </section>
