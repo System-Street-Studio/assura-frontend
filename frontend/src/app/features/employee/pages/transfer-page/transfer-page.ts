@@ -77,9 +77,11 @@ export class TransferPageComponent implements OnInit {
     loadTransfers() {
         this.isLoading.set(true);
         const currentUserId = this.authService.getUserId?.() || null;
-        this.transferService.getTransfers(this.activeTab()).subscribe({
+        const employeeId = currentUserId ? Number(currentUserId) : null;
+        
+        this.transferService.getTransfers(this.activeTab(), this.filterType(), employeeId).subscribe({
             next: (data: TransferData[]) => {
-                const mapped = data.map(d => this.mapToLocal(d, Number(currentUserId)));
+                const mapped = data.map(d => this.mapToLocal(d, employeeId));
                 this.allTransfers.set(mapped);
                 this.isLoading.set(false);
             },
