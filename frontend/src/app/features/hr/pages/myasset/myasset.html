@@ -25,7 +25,7 @@
           </thead>
 
           <tbody>
-            @for (entry of filteredAuditLogs(); track entry.date + entry.time + entry.employee) {
+            @for (entry of filteredAuditLogs(); track $index) {
             <tr>
               <td>
                 <span>{{ entry.date }}</span>

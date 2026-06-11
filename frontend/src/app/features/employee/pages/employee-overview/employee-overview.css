@@ -30,31 +30,38 @@ h3 {
 
 .content-padding {
   padding: 15px 20px;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  padding: 20px 20px;
+  gap: 25px;
+  margin-bottom: 20px;
   font-weight: 600;
-
 }
 
 /* Action Buttons */
 .action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background: var(--teal);
   color: white;
   border: none;
-  padding: 15px 15px;
+  padding: 15px;
   border-radius: 8px;
   font-weight: 550;
   cursor: pointer;
   transition: opacity 0.2s;
   font-size: 14px;
   box-shadow: 2px 5px 16px 2px rgba(134, 134, 135, 0.6);
-
+  text-align: center;
 }
 
 .action-btn:hover {
@@ -69,51 +76,42 @@ h3 {
   text-align: center;
 }
 
-
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 25px;
 }
 
 .stat-card.border-blue {
   box-shadow: 0 4px 8px rgba(48, 86, 174, 0.4);
-
 }
 
 .stat-card.border-green {
   box-shadow: 0 4px 8px rgba(32, 183, 83, 0.4);
-
 }
 
 .stat-card.border-yellow {
   box-shadow: 0 4px 8px rgba(223, 171, 38, 0.4);
-
 }
 
 .stat-card.border-red {
   box-shadow: 0 4px 8px rgba(233, 153, 113, 0.4);
-
 }
 
 .stat-card.border-blue:hover {
   box-shadow: 2px 5px 16px 2px rgba(157, 157, 237, 0.6);
-
 }
 
 .stat-card.border-green:hover {
   box-shadow: 2px 5px 16px 2px rgba(140, 227, 169, 0.6);
-
 }
 
 .stat-card.border-yellow:hover {
   box-shadow: 2px 5px 16px 2px rgba(239, 210, 123, 0.6);
-
 }
 
 .stat-card.border-red:hover {
   box-shadow: 2px 5px 16px 2px rgba(250, 162, 118, 0.6);
-
 }
 
 .stat-top {
@@ -138,8 +136,7 @@ h3 {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   gap: 25px;
-  margin-top: 30px;
-
+  margin-top: 10px;
 }
 
 .white-panel {
@@ -159,11 +156,12 @@ th {
   text-align: left;
   color: #888;
   font-size: 13px;
-  padding-bottom: 10px;
+  padding: 10px;
+  padding-top: 0;
 }
 
 td {
-  padding: 12px 0;
+  padding: 12px 10px;
   border-top: 1px solid #f0f0f0;
 }
 
