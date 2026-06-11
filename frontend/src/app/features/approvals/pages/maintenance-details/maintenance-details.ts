@@ -73,7 +73,7 @@ export class MaintenanceDetailsComponent implements OnInit {
 
   closePopup() {
     this.showPopup.set(false);
-    this.router.navigate(['approvals/requests']);
+    this.router.navigate(['approvals/requests']); // navigate to the requests page
   }
 
   close() {
