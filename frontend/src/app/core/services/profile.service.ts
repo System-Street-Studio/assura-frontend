@@ -9,7 +9,7 @@ import { UserProfile, UpdateProfileRequest } from '../../features/profile/models
 })
 export class ProfileService {
     private http = inject(HttpClient);
-    private apiUrl = `${environment.apiUrl}/users/profile`;
+    private apiUrl = `${environment.apiUrl}/user/profile`;
 
     // Cache using signals
     private _profile = signal<UserProfile | null>(null);

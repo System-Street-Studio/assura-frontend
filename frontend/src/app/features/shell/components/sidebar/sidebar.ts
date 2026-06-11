@@ -48,7 +48,7 @@ export class SidebarComponent {
 
     // HR section
     { label: 'Overview', icon: 'home', link: '/hr/overview', roles: ['HR', 'Admin'] },
-    { label: 'My Assets', icon: 'inventory_2', link: '/hr/my-assets', roles: ['HR', 'Admin'] },
+    { label: 'Activity Logs', icon: 'history', link: '/hr/activity-logs', roles: ['HR', 'Admin'] },
     { label: 'Pending', icon: 'pending_actions', link: '/hr/pending', roles: ['HR', 'Admin'] },
     { label: 'Assigned', icon: 'group', link: '/hr/assigned', roles: ['HR', 'Admin'] },
 

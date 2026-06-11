@@ -37,11 +37,19 @@ export interface RoleAssignmentPayload {
   notes?: string;
 }
 
+export interface HrOverviewStat {
+  label: string;
+  value: number;
+}
+
+export interface HrDivisionCount {
+  division: string;
+  users: number;
+}
+
 export interface HrOverview {
-  totalEmployees: number;
-  pendingRequests: number;
-  activeRoles: number;
-  newJoiners: number;
+  stats: HrOverviewStat[];
+  usersByDivision: HrDivisionCount[];
 }
 
 const SELECTED_PENDING_USER_ID_KEY = 'hrSelectedPendingUserId_dbId';

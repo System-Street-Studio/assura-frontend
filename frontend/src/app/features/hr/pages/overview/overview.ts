@@ -26,13 +26,13 @@ export class HrOverviewComponent implements OnInit {
 
   readonly stats = computed<OverviewStat[]>(() => {
     const data = this.overview();
-    if (!data) return [];
-    return [
-      { label: 'Total Employees', value: data.totalEmployees },
-      { label: 'Pending Requests', value: data.pendingRequests },
-      { label: 'Active Roles', value: data.activeRoles },
-      { label: 'New Joiners', value: data.newJoiners },
-    ];
+    if (!data || !data.stats) return [];
+    
+    // Map backend stats array directly to component's expected format
+    return data.stats.map(s => ({
+      label: s.label,
+      value: s.value
+    }));
   });
 
   readonly usersByDivision = computed<DivisionUserCount[]>(() => {
