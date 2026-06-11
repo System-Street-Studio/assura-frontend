@@ -74,7 +74,7 @@
               <tr>
                 <th>Item</th>
                 <th>Request Date</th>
-                <th>Status</th>
+                <th>Request Type</th>
                 <th>Priority</th>
               </tr>
             </thead>
@@ -84,8 +84,8 @@
                   <td>{{ req.item }}</td>
                   <td>{{ formatDate(req.date) }}</td>
                   <td>
-                    <span class="status-pill" [ngClass]="(req.status || '').toLowerCase()">
-                      {{ req.status }}
+                    <span class="req-type" [ngClass]="(req.type || '').toLowerCase()">
+                      {{ req.type }}
                     </span>
                   </td>
                   <td [ngClass]="'priority-' + (req.priority || '').toLowerCase()">
