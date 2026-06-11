@@ -33,6 +33,11 @@
             </div>
 
             <div class="detail-row">
+              <span class="label">Serial Number :</span>
+              <span class="value">{{ asset.serialNumber }}</span>
+            </div>
+
+            <div class="detail-row">
               <span class="label">Assigned Employee :</span>
               <span class="value">{{ asset.assignedUserName  }}</span>
             </div>
@@ -131,7 +136,7 @@
             <span class="stat-title color-green">Transferred</span>
             <mat-icon>swap_horiz</mat-icon>
           </div>
-          <div class="stat-value">{{ transferredAssets().length }}</div>
+          <div class="stat-value">{{ transferredAssets() }}</div>
         </div>
       </div>
     </section>

@@ -18,6 +18,7 @@ interface Asset {
   //image: string;
   assignedUserId?: string;
   divisionId?: string;
+  serialNumber?: string;
 }
 
 @Component({
@@ -54,7 +55,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   totalAssets = computed(() => this.assets().length);
   inUseAssets = computed(() => this.assets().filter(asset => asset.status === 'In Use').length);
   maintenanceAssets = computed(() => this.assets().filter(asset => asset.status === 'Maintenance').length);
-  transferredAssets = computed(() => this.assets().filter(asset => asset.status === 'Transferred'));
+  transferredAssets = computed(() => this.assets().filter(asset => asset.status === 'Transferred').length);
 
   setViewMode(mode: 'grid' | 'list') {
   this.viewMode.set(mode);
@@ -99,7 +100,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
           assetTag: a.assetTag || 'NO-TAG',
           assignedUserName: a.assignedUserName || 'Not Assigned',
           assignedUserId: a.assignedUserId?.toString(),
-          
+          serialNumber: a.serialNumber || 'N/A',
           specs: a.notes || 'No details available', 
           //image: 'assets/images/placeholder-asset.png' 
         }));
