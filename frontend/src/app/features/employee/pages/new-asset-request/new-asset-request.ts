@@ -69,36 +69,18 @@ export class NewAssetRequestComponent implements OnInit {
       submittedDate: this.requestData.submittedDate
     };
 
-    // Prefer unified endpoint if available, otherwise fallback to createRequest with files
-    const hasUnified = typeof (this.assetService as any).createUnifiedRequest === 'function';
-
-    if (hasUnified) {
-      (this.assetService as any).createUnifiedRequest(requestPayload).subscribe({
-        next: () => {
-          this.isSubmitting.set(false);
-          alert('Request submitted successfully!');
-          this.location.back();
-        },
-        error: (err: any) => {
-          this.isSubmitting.set(false);
-          console.error('Save failed', err);
-          alert('Error submitting request. Please try again.');
-        }
-      });
-    } else {
-      this.assetService.createRequest(requestPayload, this.selectedFiles()).subscribe({
-        next: (res: any) => {
-          this.isSubmitting.set(false);
-          alert(res?.message || 'Request submitted successfully!');
-          this.location.back();
-        },
-        error: (err: any) => {
-          this.isSubmitting.set(false);
-          console.error('Save failed', err);
-          alert('Error submitting request. Please try again.');
-        }
-      });
-    }
+    this.assetService.createRequest(requestPayload, this.selectedFiles()).subscribe({
+      next: (res: any) => {
+        this.isSubmitting.set(false);
+        alert(res?.message || 'Request submitted successfully!');
+        this.location.back();
+      },
+      error: (err: any) => {
+        this.isSubmitting.set(false);
+        console.error('Save failed', err);
+        alert('Error submitting request. Please try again.');
+      }
+    });
   }
 
   // Handle cancel action
