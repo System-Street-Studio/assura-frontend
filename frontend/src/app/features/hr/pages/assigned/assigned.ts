@@ -21,7 +21,7 @@ export class HrAssignedComponent implements OnInit {
 
   openEditForm(id: number): void {
     this.hrAssignmentService.selectPendingUser(id);
-    this.router.navigate(['/hr/assign']);
+    this.router.navigate(['/hr/assign-role']);
   }
 }
 
