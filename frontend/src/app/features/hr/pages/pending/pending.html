@@ -39,7 +39,7 @@
                       </span>
                       <span>
                         <b>Division</b>
-                        {{ user.division }}
+                        {{ user.department }}
                       </span>
                       <span>
                         <b>Requested Role</b>
@@ -58,6 +58,12 @@
                 </span>
               </td>
               <td>{{ user.joinedDate }}</td>
+            </tr>
+            } @empty {
+            <tr>
+              <td class="empty-state" colspan="3" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                No pending users found
+              </td>
             </tr>
             }
           </tbody>

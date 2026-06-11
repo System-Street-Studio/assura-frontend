@@ -9,7 +9,7 @@ export interface PendingRoleUser {
   name: string;
   joinedDate: string;
   email: string;
-  division: string;
+  department: string;
   requestedRole: string;
   phone: string;
   status: string;
