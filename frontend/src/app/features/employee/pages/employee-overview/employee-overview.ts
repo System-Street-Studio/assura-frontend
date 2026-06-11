@@ -46,7 +46,12 @@ export class EmployeeOverviewComponent implements OnInit {
 
     // Fetch Requests
     this.assetService.getEmployeeRequests(userId).subscribe({
-      next: (data: AssetRequest[]) => {
+      next: (data: any) => {
+        console.log("getEmployeeRequests returned:", data);
+        if (!Array.isArray(data)) {
+            console.error("Data is not an array!", data);
+            return;
+        }
         const pending = data
           .filter(r => r.status === 'Pending')
           .slice(0, 5)
@@ -63,16 +68,21 @@ export class EmployeeOverviewComponent implements OnInit {
     // Fetch Dashboard Activity
     this.dashboardService.getDashboardData().subscribe({
       next: (data: DashboardData) => {
-        const activities = data.recentActivity.map(a => ({
-          description: `${a.assetName} (${a.assetCode}) - ${a.action}`,
-          timestamp: this.formatTimeAgo(new Date(a.timestamp))
-        }));
-        this.recentActivities.set(activities);
+        console.log("getDashboardData returned:", data);
+        if (data && Array.isArray(data.recentActivity)) {
+            const activities = data.recentActivity.map(a => ({
+              description: `${a.assetName} (${a.assetCode}) - ${a.action}`,
+              timestamp: this.formatTimeAgo(new Date(a.timestamp))
+            }));
+            this.recentActivities.set(activities);
+        } else {
+            console.error("data.recentActivity is not an array!", data.recentActivity);
+        }
 
-        this.assignedAssetsCount.set(data.kpis.totalAssets || 0);
-        this.pendingRequestsCount.set(data.kpis.pendingRequests || 0);
-        this.temporaryTransfersCount.set(data.kpis.temporaryAssignedAssets || 0);
-        this.maintenanceCount.set(data.kpis.maintenanceDue || 0);
+        this.assignedAssetsCount.set(data.kpis?.totalAssets || 0);
+        this.pendingRequestsCount.set(data.kpis?.pendingRequests || 0);
+        this.temporaryTransfersCount.set(data.kpis?.temporaryAssignedAssets || 0);
+        this.maintenanceCount.set(data.kpis?.maintenanceDue || 0);
 
         this.loading.set(false);
       },
