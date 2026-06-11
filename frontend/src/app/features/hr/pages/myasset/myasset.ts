@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { HrAssignmentService } from '../../services/hr-assignment.service';
 
 export type AuditResult = 'Success' | 'Rejected' | 'Pending';
 
@@ -22,80 +23,21 @@ export interface AuditLogEntry {
   templateUrl: './myasset.html',
   styleUrls: ['./myasset.css'],
 })
-export class HrMyAssetComponent {
-  searchTerm = '';
+export class HrMyAssetComponent implements OnInit {
+  private hrService = inject(HrAssignmentService);
 
-  readonly auditLogs: AuditLogEntry[] = [
-    {
-      date: '2026-02-13',
-      time: '10:15 AM',
-      officer: 'HR Manager',
-      action: 'Approved Registration',
-      employee: 'Amanda Lee',
-      department: 'HR',
-      role: 'HR Assistant',
-      device: '192.168.1.6 Chrome',
-      notes: 'All documents verified',
-      result: 'Success',
-    },
-    {
-      date: '2026-02-03',
-      time: '11:30 AM',
-      officer: 'HR Manager',
-      action: 'Assigned Role',
-      employee: 'John Pereira',
-      department: 'Finance',
-      role: 'Accountant',
-      device: '192.168.1.5 Chrome',
-      notes: 'Role assigned after approval',
-      result: 'Success',
-    },
-    {
-      date: '2026-02-25',
-      time: '09:45 AM',
-      officer: 'HR Manager',
-      action: 'Rejected Registration',
-      employee: 'Unknown User',
-      department: 'IT',
-      role: '-',
-      device: '192.168.1.8 Chrome',
-      notes: 'Incomplete documentation',
-      result: 'Rejected',
-    },
-    {
-      date: '2026-02-20',
-      time: 'PM',
-      officer: 'Officer Jane',
-      action: 'Updated Employee Details',
-      employee: 'David Fernando',
-      department: 'IT',
-      role: 'Network Technician',
-      device: '192.168.1.20 Firefox',
-      notes: 'Updated phone number and address',
-      result: 'Success',
-    },
-    {
-      date: '2026-02-05',
-      time: '09:00 AM',
-      officer: 'HR Manager',
-      action: 'Pending Approval',
-      employee: 'Lisa Perera',
-      department: 'Operations',
-      role: 'Intern',
-      device: '192.168.1.5 Chrome',
-      notes: 'Awaiting verification',
-      result: 'Pending',
-    },
-  ];
+  searchTerm = signal('');
+  readonly auditLogs = signal<AuditLogEntry[]>([]);
 
-  get filteredAuditLogs(): AuditLogEntry[] {
-    const term = this.searchTerm.trim().toLowerCase();
+  readonly filteredAuditLogs = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const logs = this.auditLogs();
 
     if (!term) {
-      return this.auditLogs;
+      return logs;
     }
 
-    return this.auditLogs.filter((entry) =>
+    return logs.filter((entry) =>
       [
         entry.date,
         entry.time,
@@ -112,10 +54,16 @@ export class HrMyAssetComponent {
         .toLowerCase()
         .includes(term),
     );
+  });
+
+  ngOnInit(): void {
+    this.hrService.getActivityLogs().subscribe(logs => {
+      this.auditLogs.set(logs as AuditLogEntry[]);
+    });
   }
 
   updateSearch(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.searchTerm = input.value;
+    this.searchTerm.set(input.value);
   }
 }
