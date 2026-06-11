@@ -22,22 +22,22 @@
       <div class="grid-4">
         <div class="stat-card border-blue">
           <div class="stat-top">My Assigned Assets </div>
-          <div class="stat-val">12</div>
+          <div class="stat-val">{{ assignedAssetsCount() | number:'2.0-0' }}</div>
           <div class="stat-sub">All assets assigned to me</div>
         </div>
         <div class="stat-card border-green">
           <div class="stat-top">Pending Requests </div>
-          <div class="stat-val">03</div>
+          <div class="stat-val">{{ pendingRequestsCount() | number:'2.0-0' }}</div>
           <div class="stat-sub">Waiting for approval</div>
         </div>
         <div class="stat-card border-yellow">
           <div class="stat-top">Temporary transfers </div>
-          <div class="stat-val">01</div>
+          <div class="stat-val">{{ temporaryTransfersCount() | number:'2.0-0' }}</div>
           <div class="stat-sub">All temporary transfers your assets</div>
         </div>
         <div class="stat-card border-red">
           <div class="stat-top">Assets in maintenance </div>
-          <div class="stat-val">02</div>
+          <div class="stat-val">{{ maintenanceCount() | number:'2.0-0' }}</div>
           <div class="stat-sub">Awaiting repair or service</div>
         </div>
       </div>

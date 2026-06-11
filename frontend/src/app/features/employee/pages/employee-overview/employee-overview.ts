@@ -35,6 +35,11 @@ export class EmployeeOverviewComponent implements OnInit {
   pendingRequests = signal<RequestItem[]>([]);
   recentActivities = signal<Activity[]>([]);
 
+  assignedAssetsCount = signal<number>(0);
+  pendingRequestsCount = signal<number>(0);
+  temporaryTransfersCount = signal<number>(0);
+  maintenanceCount = signal<number>(0);
+
   ngOnInit() {
     const userId = this.authService.getUserId();
     if (!userId) return;
@@ -63,6 +68,12 @@ export class EmployeeOverviewComponent implements OnInit {
           timestamp: this.formatTimeAgo(new Date(a.timestamp))
         }));
         this.recentActivities.set(activities);
+
+        this.assignedAssetsCount.set(data.kpis.totalAssets || 0);
+        this.pendingRequestsCount.set(data.kpis.pendingRequests || 0);
+        this.temporaryTransfersCount.set(data.kpis.temporaryAssignedAssets || 0);
+        this.maintenanceCount.set(data.kpis.maintenanceDue || 0);
+
         this.loading.set(false);
       },
       error: () => this.loading.set(false)
