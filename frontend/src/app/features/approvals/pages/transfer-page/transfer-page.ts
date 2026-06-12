@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy ,HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
@@ -11,18 +11,22 @@ interface TransferData {
   assetTag: string;
   assetCode: string;
   productName: string;
-  assetNeedTo: string;
-  assetNeedToId?: string;
-  assetOwner: string;
+  targetUserName: string;
+  targetUserId?: number;
+  currentHolderName: string;
+  currentHolderId?: number;
+  fromDivisionName: string;
   toDivisionName: string;
   fromDivisionId: number;
   toDivisionId: number;
-  requestedByName: string;
+  transferByName: string;
+  transferById?: number;
   reason: string;
   transferPeriod?: string;
   status: string;
   timeAgo: string;
-  type?: 'IncomingActive' | 'OutgoingActive';
+  createdDate?: string;
+  type?: 'Incoming Active' | 'Outgoing Active';
   daysLeft?: string;
 }
 
@@ -37,7 +41,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   // Component signals
   isLoading = signal(false);
   activeTab = signal<'outgoing' | 'incoming' | 'pending' | 'active' | 'completed'>('outgoing');
-  filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
+  filterType = signal<'all' | 'Incoming Active' | 'Outgoing Active'>('all');
   searchQuery = signal<string>('');
   showMenu = signal(false);
 
@@ -47,7 +51,8 @@ export class TransferPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private transferService: TransferService,
-    private authService: AuthService 
+    private authService: AuthService,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
@@ -61,31 +66,61 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   }
 
  loadTransfers() {
-    this.isLoading.set(true);
-    const userDivisionId = this.authService.getDivisionId();
+  this.isLoading.set(true);
+  const userDivisionId = Number(this.authService.getDivisionId());
 
-    this.transferService.getDivisionHeadTransfers(this.activeTab()).subscribe({
-      next: (data) => {
-        const mapped = data.map(item => ({
+  this.transferService.getDivisionHeadTransfers(this.activeTab()).subscribe({
+    next: (data) => {
+      const mapped = data.map(item => {
+       
+        let assignedType: 'Incoming Active' | 'Outgoing Active' = 'Outgoing Active';
+        
+        if (Number(item.toDivisionId) === userDivisionId) {
+          assignedType = 'Incoming Active';
+        } else if (Number(item.fromDivisionId) === userDivisionId) {
+          assignedType = 'Outgoing Active';
+        } else {
+         
+          assignedType = item.toDivisionName?.toLowerCase().includes('it') || item.targetUserName?.toLowerCase().includes('it')
+            ? 'Incoming Active' 
+            : 'Outgoing Active';
+        }
+
+        const hasEndDate = item.transferPeriod && item.transferPeriod.includes(' to ');
+        const endDateString = hasEndDate ? item.transferPeriod!.split(' to ')[1] : '';
+        
+        
+        const daysLeftText = endDateString ? this.calculateDaysRemaining(endDateString) : 'No Date';
+
+        return {
           ...item,
           id: item.id.toString(),
-          timeAgo: 'Just now', 
-         
-          type: (this.activeTab() === 'active' || this.activeTab() === 'completed') 
-                ? (item.toDivisionId === userDivisionId ? 'IncomingActive' : 'OutgoingActive') 
-                : undefined
-        }));
-        this.allData.set(mapped);
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false)
-    });
-  }
-
+          timeAgo: this.getTimeAgo(item.createdAt || item.requestDate), 
+          type: assignedType,
+          daysLeft: daysLeftText
+        };
+      });
+      this.allData.set(mapped);
+      this.isLoading.set(false);
+    },
+    error: () => this.isLoading.set(false)
+  });
+}
   setTab(tab: 'outgoing' | 'incoming' | 'pending' | 'active' | 'completed') {
     this.activeTab.set(tab);
-    this.filterType.set('all'); 
+    this.filterType.set('all');
+    this.allData.set([]); 
     this.loadTransfers();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+   
+    const clickedInside = this.elementRef.nativeElement.querySelector('.filter-dropdown')?.contains(event.target);
+    
+    if (!clickedInside && this.showMenu()) {
+      this.showMenu.set(false);
+    }
   }
 
   approveTransfer(id: string) {
@@ -100,7 +135,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     this.transferService.rejectByHead(Number(id), reason || 'No reason provided').subscribe(() => this.loadTransfers());
   }
 
-  setFilterType(type: 'all' | 'IncomingActive' | 'OutgoingActive') {
+  setFilterType(type: 'all' | 'Incoming Active' | 'Outgoing Active') {
     this.filterType.set(type);
     this.showMenu.set(false);
   }
@@ -125,7 +160,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
         t.assetTag.toLowerCase().includes(query) ||
         t.assetCode.toLowerCase().includes(query) ||
         t.productName.toLowerCase().includes(query) ||
-        t.requestedByName.toLowerCase().includes(query)
+        t.transferByName.toLowerCase().includes(query)
       );
     }
     
@@ -145,30 +180,69 @@ export class TransferPageComponent implements OnInit, OnDestroy {
  
 
   private getTimeAgo(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  if (!dateString) return 'Just now';
 
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return `${Math.floor(diffDays / 30)} months ago`;
+  const date = new Date(dateString);
+  const now = new Date();
+  
+ 
+  const diffMs = now.getTime() - date.getTime();
+  
+  // 
+  if (diffMs < 0) return 'Just now'; 
+
+  
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  const diffWeeks = Math.floor(diffDays / 7);
+  const diffMonths = Math.floor(diffDays / 30);
+
+  
+  if (diffSeconds < 60) {
+    return 'Just now';
   }
-
-  private calculateDaysLeft(transferDate: string): string {
-    const date = new Date(transferDate);
-    const now = new Date();
-    const diffTime = date.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) return 'Overdue';
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Tomorrow';
-    return `${diffDays} days`;
+ 
+  if (diffMinutes < 60) {
+    return diffMinutes === 1 ? '1 min ago' : `${diffMinutes} mins ago`;
   }
+ 
+  if (diffHours < 24) {
+    return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+  }
+  if (diffDays === 1) {
+    return 'Yesterday';
+  }
+  if (diffDays < 7) {
+    return `${diffDays} days ago`;
+  }
+  
+  if (diffWeeks < 4) {
+    return diffWeeks === 1 ? '1 week ago' : `${diffWeeks} weeks ago`;
+  }
+  
+  return diffMonths === 1 ? '1 month ago' : `${diffMonths} months ago`;
+}
 
+
+private calculateDaysRemaining(transferDate: string): string {
+  if (!transferDate) return 'No Date';
+
+  const date = new Date(transferDate);
+  const now = new Date();
+   
+  const diffTime = date.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    return diffDays === -1 ? 'Overdue by 1 day' : `Overdue by ${Math.abs(diffDays)} days`;
+  }
+  if (diffDays === 0) return 'Expires Today';
+  if (diffDays === 1) return 'Tomorrow';
+  
+  return `${diffDays} days left`;
+}
   
 
 }
