@@ -54,15 +54,13 @@ export class NewAssetRequestComponent implements OnInit {
   onSubmit(): void {
     this.isSubmitting.set(true);
 
-    const priorityMap: Record<string, number> = { Low: 1, Normal: 2, Medium: 3, High: 4, Urgent: 5 };
-
     const requestPayload = {
       employeeId: this.requestData.employeeId,
       assetCategory: this.requestData.assetCategory,
       assetName: this.requestData.assetName,
       description: this.requestData.description,
       quantity: this.requestData.quantity,
-      priority: priorityMap[this.requestData.priority] ?? 2,
+      priority: this.requestData.priority,
       reason: this.requestData.reason,
       requestType: this.requestData.requestType,
       submittedBy: this.requestData.submittedBy,
