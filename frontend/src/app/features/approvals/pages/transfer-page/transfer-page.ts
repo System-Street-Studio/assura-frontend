@@ -137,9 +137,24 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   // Computed properties for filtered results and counts
   filteredResults = computed(() => {
     let results = this.allData();
+    const myDivisionId = this.authService.getDivisionId();
+    const tab = this.activeTab();
     
+    // Filter list based on the active tab
+    if (tab === 'outgoing') {
+       results = results.filter(t => t.fromDivisionId === myDivisionId && (t.status === 'PendingOwnerApproval' || t.status === 'PendingOwnerDivisionHeadApproval'));
+    } else if (tab === 'incoming') {
+       results = results.filter(t => t.toDivisionId === myDivisionId && (t.status === 'PendingOwnerApproval' || t.status === 'PendingOwnerDivisionHeadApproval'));
+    } else if (tab === 'pending') {
+       results = results.filter(t => t.status === 'WaitingForFinalConfirmation' || t.status === 'ReadyForHandover');
+    } else if (tab === 'active') {
+       results = results.filter(t => t.status === 'Active');
+    } else if (tab === 'completed') {
+       results = results.filter(t => t.status === 'Completed');
+    }
+
     // Apply active tab filter for incoming/active transfers
-    if ((this.activeTab() === 'active' || this.activeTab() === 'completed') && this.filterType() !== 'all') {
+    if ((tab === 'active' || tab === 'completed') && this.filterType() !== 'all') {
       results = results.filter(t => t.type === this.filterType());
     }
     
@@ -158,14 +173,18 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   });
 
   incomingCount = computed(() => {
-    if (this.activeTab() === 'incoming') return this.allData().length;
-    return 0;
+    const myDiv = this.authService.getDivisionId();
+    return this.allData().filter(t => t.toDivisionId === myDiv && (t.status === 'PendingOwnerApproval' || t.status === 'PendingOwnerDivisionHeadApproval')).length;
   });
  
-  outgoingCount = computed(() => this.allData().length);
-  pendingCount = computed(() => this.activeTab() === 'pending' ? this.allData().length : 0);
-  activeCount = computed(() => this.activeTab() === 'active' ? this.allData().length : 0);
-  completedCount = computed(() => this.activeTab() === 'completed' ? this.allData().length : 0);
+  outgoingCount = computed(() => {
+    const myDiv = this.authService.getDivisionId();
+    return this.allData().filter(t => t.fromDivisionId === myDiv && (t.status === 'PendingOwnerApproval' || t.status === 'PendingOwnerDivisionHeadApproval')).length;
+  });
+  
+  pendingCount = computed(() => this.allData().filter(t => t.status === 'WaitingForFinalConfirmation' || t.status === 'ReadyForHandover').length);
+  activeCount = computed(() => this.allData().filter(t => t.status === 'Active').length);
+  completedCount = computed(() => this.allData().filter(t => t.status === 'Completed').length);
 
   onAccept(id: string) {
     this.approveTransfer(id);

@@ -260,10 +260,9 @@
 /* Details Section */
 .details-layout {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1fr;
   gap: 25px;
   margin-top: 30px;
-  
 }
 
 .white-panel {
