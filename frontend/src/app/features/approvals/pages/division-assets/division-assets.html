@@ -18,7 +18,13 @@
         <div class="card-panel main-info">
           <h3>General Information</h3>
           <div class="asset-identity">
-            <img [src]="asset.image || 'assets/placeholder.png'" alt="Asset" class="detail-img">
+            @if (asset.image) {
+              <img [src]="asset.image" alt="Asset" class="detail-img">
+            } @else {
+              <div class="detail-img" style="display: flex; align-items: center; justify-content: center; background: #f5f6fa; border-radius: 12px; border: 1px dashed #dcdde1; width: 80px; height: 80px;">
+                <mat-icon style="color: #a4b0be; font-size: 32px; width: 32px; height: 32px;">image</mat-icon>
+              </div>
+            }
             <div class="identity-text">
               <p class="name-bold">{{ asset.name }}</p>
               <p class="id-sub">ID: {{ asset.id }}</p>
