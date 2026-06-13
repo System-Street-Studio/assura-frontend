@@ -127,7 +127,7 @@
       } 
       @else {
 
-      @for (item of filteredResults(); track item.id) {
+      @for (item of paginatedRequests(); track item.id) {
         
         <!-- Incoming Requests, Pending Approval -->
         @if (activeTab() === 'incoming' || activeTab() === 'pending' ) {
@@ -193,7 +193,7 @@
 
         <!-- Active Transfers, Completed Transfers -->
         @if (activeTab() === 'active' || activeTab() === 'completed') {
-          <div class="asset-item-card"> 
+          <div class="asset-item-card" [class.expanded]="expandedItemId() === item.id"> 
             <div class="card-badge-row">
               @if (activeTab() === 'active' ) {
                 <div class="days-left-tag absolute-top-right">
@@ -228,14 +228,46 @@
                   <p><span>Division(Transfer from):</span> {{ item.fromDivisionName }}</p>  
                 }
                 <p><span>Asset Transfer From:</span> {{ item.currentHolderName }}</p>
-                <p><span>Asset Transfer To:</span> {{ item.targetUserName }}</p>
                 <p><span>Transfer Period:</span> {{ item.transferPeriod }}</p>
+                <p><span>Asset Transfer To:</span> {{ item.targetUserName }}</p>
+                
               </div>
             </div>
 
             <div class="action-buttons-cell">
-                <button class="btn-view-outline"><mat-icon>visibility</mat-icon>View Details</button>
-            </div>
+              <button class="btn-view-outline" (click)="toggleDetails(item.id)">
+                <mat-icon>{{ expandedItemId() === item.id ? 'expand_less' : 'visibility' }}</mat-icon>
+                {{ expandedItemId() === item.id ? 'Hide Details' : 'View Details' }}
+              </button>
+          </div>
+
+               @if (expandedItemId() === item.id) {
+                <div class="more-details-panel">
+                  <h4><mat-icon>info</mat-icon> Detailed Transfer Information</h4>
+                  <div class="details-extended-grid">
+                    <p><span>Transfer ID:</span> #{{ item.id }}</p>
+                    <p><span>Asset Tag Code:</span> {{ item.assetTag }}</p>
+                    <p><span>Current Status:</span> <span class="status-badge-inline transfer">{{ item.status }}</span></p>
+                    <p><span>Transfer By:</span> {{ item.transferByName || 'N/A' }}</p>
+                    <p><span>Transfer Date:</span> {{ (item.transferDate | date: 'yyyy-MM-dd')}}</p>
+
+                    @if(activeTab() === 'completed') {
+                      <p><span>Return Date:</span> {{(item.returnDate | date: 'yyyy-MM-dd') ?? 'N/A'}}</p>
+                    }
+                    
+                    <p class="full-width"><span>Reason for Transfer:</span> {{ item.reason || 'No specific reason provided.' }}</p>
+                  </div>
+
+                  @if (activeTab() === 'active' && item.type === 'Incoming Active') {
+                    <div class="return-action-zone">
+                      <p class="action-notice">As the receiving division head, you can return this asset back to the original owner once the usage period is completed.</p>
+                      <button class="btn-return-asset" (click)="returnAsset(item.id)">
+                        <mat-icon>keyboard_return</mat-icon> Return Asset
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
           </div>
         }
 
@@ -279,12 +311,10 @@
     }
     </div>
 
-    @if (filteredResults().length > 0) {
-        <div class="pagination-footer">
-            <button class="page-arrow"><mat-icon>chevron_left</mat-icon></button>
-            <span class="page-num">1</span>
-            <button class="page-arrow"><mat-icon>chevron_right</mat-icon></button>
-        </div>
-    }
+    <!-- Pagination -->
+  <app-pagination [currentPage]="currentPage()" [totalPages]="totalPages()" [pageNumbers]="pageNumbers()"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
+
   </section>
 </div>

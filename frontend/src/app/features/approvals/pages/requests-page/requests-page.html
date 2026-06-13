@@ -21,7 +21,7 @@
           <p class="card-title">New Asset Request</p>
           <div class="icon-circle blue-bg"><mat-icon>content_copy</mat-icon></div>
           <h2 class="card-number">{{ newAssetCount() }}</h2>
-          <span class="card-sub">Pending</span>
+          
         </div>
       </div>
     </div>
@@ -32,7 +32,7 @@
           <p class="card-title">Transfer Requests</p>
           <div class="icon-box green-text"><mat-icon>swap_horiz</mat-icon></div>
           <h2 class="card-number">{{ transferCount() }}</h2>
-          <span class="card-sub">Pending</span>
+          
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
           <p class="card-title">Maintenance Requests</p>
           <div class="icon-box orange-text"><mat-icon>build</mat-icon></div>
           <h2 class="card-number">{{ maintenanceCount() }}</h2>
-          <span class="card-sub">Pending</span>
+         
         </div>
       </div>
     </div>
@@ -54,7 +54,7 @@
           <p class="card-title">Discard Requests</p>
           <div class="icon-box red-text"><mat-icon>delete</mat-icon></div>
           <h2 class="card-number">{{ discardCount() }}</h2>
-          <span class="card-sub">Pending</span>
+          
         </div>
       </div>
     </div>
@@ -134,7 +134,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of filteredResults(); track item.id) {
+        @for (item of paginatedRequests(); track item.id) {
           <tr>
             @if (activeTab() === 'new') {
               <td class="bold-text">{{ item.name }}</td>
@@ -174,5 +174,13 @@
         }
       </tbody>
     </table>
+
+    <app-pagination 
+      [currentPage]="currentPage()" 
+      [totalPages]="totalPages()" 
+      [pageNumbers]="pageNumbers()"
+      (pageChange)="onPageChange($event)">
+    </app-pagination>
+
   </section>
 </div>

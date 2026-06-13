@@ -115,7 +115,6 @@ header h1 {
 .card-title {
   font-size: 13px;
   font-weight: 700;
- /* muted text */
   letter-spacing: 0.05em;
 }
 
@@ -124,7 +123,7 @@ header h1 {
 .card-number {
   font-size: 30px;
   font-weight: 800;
-  margin: 15px 0;
+  margin-bottom: 15px ;
   color: #333; /* main text color */
   text-align: center;
 }
@@ -447,4 +446,18 @@ tbody tr:hover {
   border-radius: 6px;
   font-weight: 600;
   color: #333;
+}
+
+/* --- Pagination Alignment --- */
+app-pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+  align-items: center;
+}
+
+.page-num.active {
+  background: #eee;
+  padding: 2px 8px;
+  border-radius: 4px;
 }

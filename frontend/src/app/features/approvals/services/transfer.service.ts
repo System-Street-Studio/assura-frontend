@@ -43,7 +43,9 @@ export class TransferService {
 
   
   getDivisionHeadTransfers(tab: string): Observable<any[]> {
-    const params = new HttpParams().set('tab', tab);
+    const cacheBuster = new Date().getTime().toString();
+    const params = new HttpParams().set('tab', tab).set('_', cacheBuster); 
+
     return this.http.get<any[]>(`${this.baseUrl}/transfers/division-head`, { params });
   }
 
@@ -61,6 +63,8 @@ export class TransferService {
     return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject-head`, { reason });
   }
 
- 
+ returnActiveTransfer(transferId: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/transfers/${transferId}/return`, {});
+  }
 
 }
