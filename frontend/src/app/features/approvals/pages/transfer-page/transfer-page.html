@@ -280,9 +280,15 @@
               </div>
             </div>
             
+            @if(item.status === 'Cancelled') {
+              <div class= "action-buttons-cell">
+                <span class="status-badge-outline cancelled" >Cancelled</span>
+              </div>
+            }@else{
             <div class="action-buttons-cell">
-              <span class="status-badge-outline pending-sent">Sent to Employee</span>
+              <button class="btn-cancel" (click)="cancelTransfer(item.id)">Cancel</button>
             </div>
+          }
           </div>
         }
 
@@ -298,9 +304,14 @@
     </div>
 
     <!-- Pagination -->
-  <app-pagination [currentPage]="currentPage()" [totalPages]="totalPages()" [pageNumbers]="pageNumbers()"
-    (pageChange)="onPageChange($event)">
-  </app-pagination>
+    @if (paginatedRequests().length > 0) {
+        <app-pagination 
+          [currentPage]="currentPage()" 
+          [totalPages]="totalPages()" 
+          [pageNumbers]="pageNumbers()"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      }
 
   </section>
 </div>

@@ -543,6 +543,15 @@ button[class^="btn-"], .btn-accept, .btn-reject {
   border: none;
 }
 
+.btn-cancel{
+  border-color: rgb(161, 160, 160);
+}
+.btn-cancel:hover{
+  border-color: rgb(161, 160, 160);
+  background-color: rgb(189, 186, 186);
+}
+
+
 .btn-accept:hover { background-color: var(--primary-green-hover); }
 
 .btn-reject {
@@ -593,7 +602,8 @@ button[class^="btn-"], .btn-accept, .btn-reject {
   font-weight: 600;
 }
 
-.status-badge-outline.pending-sent { background: #f1f5f9; color: #475569; }
+
+.status-badge-outline.cancelled { background: #f1f5f9; color: #475569; }
 .status-badge-outline.confirmed { background: #ecfdf5; color: #047857; }
 .status-badge-outline.approved { background: #f0fdf4; color: #15803d; }
 .status-badge-outline.transfer { background: #fef3c7; color: #b45309; }

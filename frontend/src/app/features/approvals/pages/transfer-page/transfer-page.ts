@@ -198,6 +198,13 @@ returnAsset(id: string) {
     });
   }
 
+  cancelTransfer(id: string) {
+    this.transferService.cancelByHead(Number(id)).subscribe(() => {
+      this.loadTransfers();
+      this.loadAllCounts(); 
+    }); 
+  }
+
   rejectTransfer(id: string) {
     const reason = prompt('Please enter a reason for rejection:');
     if (reason === null) return;

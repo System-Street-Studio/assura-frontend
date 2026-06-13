@@ -51,6 +51,10 @@ export class HeadTransferService {
     return this.http.get<any[]>(`${this.baseUrl}/transfers/division-head`, { params });
   }
 
+  cancelByHead(transferId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/cancel-head`, {});
+  }
+
   approveByHead(transferId: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/transfers/${transferId}/approve-head`, {});
   }
