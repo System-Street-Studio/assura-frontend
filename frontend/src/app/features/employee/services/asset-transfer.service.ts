@@ -8,7 +8,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 
 
 @Injectable({ providedIn: 'root' })
-export class TransferService {
+export class EmployeeTransferService {
     private http = inject(HttpClient);
      private baseUrl = environment.apiUrl;
     //private apiUrl = `${environment.apiUrl}/transfers`;

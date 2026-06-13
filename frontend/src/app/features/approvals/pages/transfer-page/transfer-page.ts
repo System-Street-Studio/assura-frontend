@@ -2,7 +2,7 @@ import { Component, signal, computed, OnInit, OnDestroy ,HostListener, ElementRe
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { TransferService } from '../../services/transfer.service';
+import { HeadTransferService } from '../../services/transfer.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
@@ -54,7 +54,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   private refreshInterval: any;
 
   constructor(
-    private transferService: TransferService,
+    private transferService: HeadTransferService,
     private authService: AuthService,
     private elementRef: ElementRef
   ) {}

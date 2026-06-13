@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { TransferService } from '../../services/asset-transfer.service';
+import { EmployeeTransferService } from '../../services/asset-transfer.service';
 
 
 
@@ -77,7 +77,7 @@ export class TransferPageComponent implements OnInit {
   filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
   searchQuery = signal<string>('');
   
-private transferService = inject(TransferService);
+private transferService = inject(EmployeeTransferService);
   private authService = inject(AuthService);
 
  

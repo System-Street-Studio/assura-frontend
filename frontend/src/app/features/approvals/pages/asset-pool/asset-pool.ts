@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { AssetPoolService, PoolAsset } from '../../services/asset-pool.service';
 import { RequestService } from '../../services/requests.service';
-import { TransferService } from '../../services/transfer.service';
+import { HeadTransferService } from '../../services/transfer.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 
 
@@ -33,7 +33,7 @@ export class AssetPoolComponent implements OnInit, OnDestroy {
   // --- Service Injections ---
   private assetPoolService = inject(AssetPoolService);
   private requestService = inject(RequestService);
-  private transferService = inject(TransferService);
+  private transferService = inject(HeadTransferService);
   private authService = inject(AuthService);
 
   private searchSubject = new Subject<string>();
