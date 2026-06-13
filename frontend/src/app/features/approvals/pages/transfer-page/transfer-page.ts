@@ -48,6 +48,13 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   searchQuery = signal<string>('');
   showMenu = signal(false);
 
+  // Summary counts
+  outgoingCount = signal(0);
+  incomingCount = signal(0);
+  pendingCount = signal(0);
+  activeCount = signal(0);
+  completedCount = signal(0);
+
   expandedItemId = signal<string | null>(null);
 
   private allData = signal<TransferData[]>([]);
@@ -61,14 +68,37 @@ export class TransferPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadTransfers();
+    this.loadAllCounts();
     
-    this.refreshInterval = setInterval(() => this.loadTransfers(), 30000);
+    //refresh data every 5 minutes
+    this.refreshInterval = setInterval(() => {
+    this.loadTransfers();
+    this.loadAllCounts();
+    }, 300000);
   }
 
   ngOnDestroy(): void {
     if (this.refreshInterval) clearInterval(this.refreshInterval);
   }
 
+  loadAllCounts() {
+    const userId = Number(this.authService.getUserId());
+    
+    this.transferService.getTransferCounts(userId).subscribe({
+      next: (counts) => {
+        if (counts) {
+          this.outgoingCount.set(counts.outgoingCount);
+          this.incomingCount.set(counts.incomingCount);
+          this.pendingCount.set(counts.pendingCount);
+          this.activeCount.set(counts.activeCount);
+          this.completedCount.set(counts.completedCount);
+        }
+      },
+      error: (err) => console.error('Error loading counts from backend:', err)
+    });
+  }
+
+  // Function to load transfers based on active tab
  loadTransfers() {
   this.isLoading.set(true);
   const userDivisionId = Number(this.authService.getDivisionId());
@@ -118,12 +148,14 @@ toggleDetails(id: string) {
     }
   }
 
+  // Function to return an active transfer (used in active transfers tab)
 returnAsset(id: string) {
     if (confirm('Are you sure you want to return this asset? This will change asset status to "In Use" and complete the transfer.')) {
       this.transferService.returnActiveTransfer(Number(id)).subscribe({
         next: () => {
          
           this.loadTransfers();
+          this.loadAllCounts();
           this.expandedItemId.set(null);
         },
         error: (err) => console.error('Error returning asset:', err)
@@ -131,6 +163,7 @@ returnAsset(id: string) {
     }
   }
 
+  // Mapping function to convert API data to local format
   setTab(tab: 'outgoing' | 'incoming' | 'pending' | 'active' | 'completed') {
     this.activeTab.set(tab);
     this.filterType.set('all');
@@ -150,18 +183,33 @@ returnAsset(id: string) {
     }
   }
 
+  // Action functions for approve, reject, confirm
   approveTransfer(id: string) {
-    this.transferService.approveByHead(Number(id)).subscribe(() => this.loadTransfers());
+    this.transferService.approveByHead(Number(id)).subscribe(() => {
+      this.loadTransfers();
+      this.loadAllCounts(); 
+    });
   }
 
   confirmTransfer(id: string) {
-    this.transferService.confirmByHead(Number(id)).subscribe(() => this.loadTransfers());
+    this.transferService.confirmByHead(Number(id)).subscribe(() => {
+      this.loadTransfers();
+      this.loadAllCounts(); 
+    });
   }
 
-  rejectTransfer(id: string, reason?: string) {
-    this.transferService.rejectByHead(Number(id), reason || 'No reason provided').subscribe(() => this.loadTransfers());
+  rejectTransfer(id: string) {
+    const reason = prompt('Please enter a reason for rejection:');
+    if (reason === null) return;
+    this.transferService.rejectByHead(Number(id), reason || 'No reason provided').subscribe(() => {
+      this.loadTransfers();
+      this.loadAllCounts(); 
+    });
   }
 
+  
+
+  // Filter and search functions
   setFilterType(type: 'all' | 'Incoming Active' | 'Outgoing Active') {
     this.filterType.set(type);
     this.showMenu.set(false);
@@ -196,18 +244,10 @@ returnAsset(id: string) {
     return results;
   });
 
-      incomingCount = computed(() => {
-        // Count for incoming approvals tab
-        if (this.activeTab() === 'incoming') {
-          return this.allData().length;
-        }
-        return 0;
-      });
-    
-      outgoingCount = computed(() => this.allData().length);
+      
 
  
-
+  //calculate days receiving transfer request
       private getTimeAgo(dateString: string): string {
       if (!dateString) return 'Just now';
 
@@ -247,7 +287,7 @@ returnAsset(id: string) {
       return diffMonths === 1 ? '1 month ago' : `${diffMonths} months ago`;
     }
 
-
+    //calculate remaining days for overdue transfer period
     private calculateDaysRemaining(transferDate: string): string {
       if (!transferDate) return 'No Date';
 

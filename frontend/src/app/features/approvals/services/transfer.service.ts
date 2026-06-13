@@ -40,7 +40,9 @@ export class HeadTransferService {
     );
   }
  
-
+  getTransferCounts(userId: number): Observable<any> {
+  return this.http.get<any>(`${this.baseUrl}/transfers/counts?userId=${userId}`);
+  }
   
   getDivisionHeadTransfers(tab: string): Observable<any[]> {
     const cacheBuster = new Date().getTime().toString();
@@ -60,7 +62,7 @@ export class HeadTransferService {
 
 
   rejectByHead(transferId: number, reason: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject-head`, { reason });
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject`, { reason });
   }
 
  returnActiveTransfer(transferId: number): Observable<any> {

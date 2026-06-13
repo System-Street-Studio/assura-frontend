@@ -3,6 +3,8 @@
 /* --- Global Variables & Theme --- */
 :host {
   --primary-green: #16a34a;
+  --primary-orange: #f57214;
+  --primary-orange-hover: #f18c10;
   --secondary-cyan: #00b5ad;
   --bg-light: #f8fafc;
   --primary-green-hover: #059669;
@@ -529,6 +531,18 @@ button[class^="btn-"], .btn-accept, .btn-reject {
   border: none;
 }
 
+.btn-confirm {
+  background-color: var(--primary-orange);
+  color: var(--white);
+  border: none;
+}
+
+.btn-confirm:hover {
+  background-color: var(--primary-orange-hover);
+  color: var(--white);
+  border: none;
+}
+
 .btn-accept:hover { background-color: var(--primary-green-hover); }
 
 .btn-reject {
@@ -551,8 +565,8 @@ button[class^="btn-"], .btn-accept, .btn-reject {
 .btn-confirm-action:hover { background-color: #1e293b; }
 
 .btn-view-outline {
-  border: 1px solid var(--border-light);
-  color: var(--text-main);
+  border: 1px solid #5094f3;
+  color: #0c5bc8;
   background: var(--white);
   display: flex;
   align-items: center;
@@ -563,11 +577,12 @@ button[class^="btn-"], .btn-accept, .btn-reject {
   font-size: 16px;
   width: 16px;
   height: 16px;
+  color: #0c5bc8;
 }
 
 .btn-view-outline:hover {
   background-color: var(--bg-main);
-  border-color: #cbd5e1;
+  border-color: #b6c6da;
 }
 
 /* Status Labels (Labels instead of simulated click buttons) */
