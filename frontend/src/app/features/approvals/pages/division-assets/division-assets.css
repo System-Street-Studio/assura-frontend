@@ -1,6 +1,7 @@
 :host {
   --teal: #00afb5;
   --bg-light: #faf8f8;
+  --text-muted: #64748b;
 }
 
 .assets-container {
@@ -700,3 +701,31 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
+/* --- Loading State --- */
+.loading-state {
+  text-align: center;
+  padding: 50px 0;
+  color: var(--text-muted);
+}
+
+.loading-state p {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin-animation {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  color: var(--text-muted);
+}
+

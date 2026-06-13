@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AssetService } from '../../../../features/inventory/services/asset.service';
 import { DivisionHeadDashboardService } from '../../services/division-head-dashboard.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 interface Asset {
   id: string;
@@ -24,7 +25,7 @@ interface Asset {
 @Component({
   selector: 'app-division-assets',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterModule, FormsModule],
+  imports: [CommonModule, MatIconModule, RouterModule, FormsModule,PaginationComponent],
   templateUrl: './division-assets.html',
   styleUrls: ['./division-assets.css']
 })
@@ -49,7 +50,9 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   availableCategories = signal<string[]>([]);
   viewMode = signal<'grid' | 'list'>('grid');
 
-
+  
+  currentPage = signal<number>(1);
+  itemsPerPage = signal<number>(12);
   
   // Asset counts for real data
   totalAssets = computed(() => this.assets().length);
@@ -64,6 +67,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
   
     this.loadDivisionAssets();
+    document.addEventListener('click', this.handleGlobalClick.bind(this));
   }
 
   ngOnDestroy(): void {
@@ -115,6 +119,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.isLoading.set(false);
+        this.errorMessage.set('Failed to load assets.');
       }
     });
   }
@@ -132,17 +137,17 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   
 
   selectAsset(asset: Asset): void {
-    console.log('Selected asset:', asset);
+    
     this.selectedAsset.set(asset);
   }
 
   goBack(): void {
     // Navigate back to previous page
-    window.history.back();
+    this.selectedAsset.set(null);
   }
 
   viewAsset(asset: Asset): void {
-    console.log('Selected asset:', asset);
+    
     this.selectedAsset.set(asset);
   }
 
@@ -158,12 +163,39 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
       const statusMatch = stat === 'all' || asset.status === stat;
       const searchMatch = !query || 
                           asset.name.toLowerCase().includes(query) || 
+                          asset.id.toLowerCase().includes(query) ||
                           asset.assetTag.toLowerCase().includes(query);
       
       return categoryMatch && statusMatch && searchMatch;
     });
   });
   
+    totalPages = computed(() => {
+    return Math.ceil(this.filteredAssets().length / this.itemsPerPage()) || 1;
+  });
+
+  pageNumbers = computed(() => {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages(); i++) {
+      pages.push(i);
+    }
+    return pages;
+  });
+
+  
+  paginatedAssets = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
+    const endIndex = startIndex + this.itemsPerPage();
+    return this.filteredAssets().slice(startIndex, endIndex);
+  });
+
+ 
+  onPageChange(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
   // Filter methods
   toggleCategoryMenu(event: MouseEvent): void {
     event.stopPropagation();
@@ -186,16 +218,20 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   // Setters for filter selections
   setFilterCategory(val: string): void {
     this.selectedCategory.set(val);
+    this.currentPage.set(1);
     this.showCategoryMenu.set(false);
   }
 
   setFilterStatus(val: string): void {
     this.selectedStatus.set(val);
+    this.currentPage.set(1);
     this.showStatusMenu.set(false);
   }
 
   onSearchChange(event: any): void {
+    const input = event.target as HTMLInputElement;
     this.searchQuery.set(event.target.value);
+    this.currentPage.set(1);
   }
 
 }

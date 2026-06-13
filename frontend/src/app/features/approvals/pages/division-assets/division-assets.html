@@ -202,16 +202,18 @@
         </div>
      
         
-
+          @if (isLoading()) {
+          <div class="loading-state">
+            <mat-icon class="spin-animation">sync</mat-icon>
+            <p>Loading division assets...</p>
+          </div>
+        } @else {
 
       <!--assets grid-->
         <div class="asset-grid" [ngClass]="viewMode()">
-        @for (asset of filteredAssets(); track asset.id) {
+        @for (asset of paginatedAssets(); track asset.id) {
           <div class="asset-card">
-         <!--
-            <div class="img-container">
-              <img [src]="asset.image" [alt]="asset.name">
-            </div> -->
+       
             
             <div class="card-body">
               <h4 class="asset-name">{{ asset.name }}</h4>
@@ -230,7 +232,24 @@
         }
         </div>
 
+        @if (paginatedAssets().length === 0 && !isLoading()) {
+        <div class="no-data-container" style="text-align: center; padding: 40px; color: #777;">
+          <mat-icon style="font-size: 48px; width: 48px; height: 48px;">inventory_2</mat-icon>
+          <p>No assets match your search or filter criteria.</p>
+        </div>
+}
+
+       @if (filteredAssets().length > 0) {
+        <app-pagination 
+          [currentPage]="currentPage()" 
+          [totalPages]="totalPages()" 
+          [pageNumbers]="pageNumbers()"
+          (pageChange)="onPageChange($any($event))"> </app-pagination>
+        }
+      }
+
       </section>
+       
     }
 
   </div>
