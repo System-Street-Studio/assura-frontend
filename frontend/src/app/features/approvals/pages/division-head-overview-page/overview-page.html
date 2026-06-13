@@ -2,8 +2,11 @@
   <div class="content-padding">
     <h1 class="page-title">Dashboard</h1>
 
-    @if (isLoading()) {
-      <div class="loading-spinner">Loading dashboard data...</div>
+   @if (isLoading()) {
+      <div class="loading-state">
+        <mat-icon class="spin-animation">sync</mat-icon>
+        <p>Loading dashboard data... Please wait.</p>
+      </div>
     } @else if (errorMessage()) {
       <div class="error-alert">{{ errorMessage() }}</div>
     } @else {
