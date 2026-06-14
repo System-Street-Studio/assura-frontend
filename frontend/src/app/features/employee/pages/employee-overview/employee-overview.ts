@@ -8,8 +8,11 @@ import { DashboardService } from '../../../../features/inventory/services/dashbo
 import { DashboardData } from '../../../../features/inventory/models/dashboard.model';
 
 interface RequestItem {
+  id: number;
   item: string;
-  date: string;
+  requestDate: string;
+  submittedBy: string;
+  requestType: string;
   status: string;
   priority: 'High' | 'Medium' | 'Low';
 }
@@ -50,8 +53,11 @@ export class EmployeeOverviewComponent implements OnInit {
           .filter(r => r.status === 'Pending')
           .slice(0, 5)
           .map(r => ({
+            id: r.id,
             item: r.assetName,
-            date: r.submittedDate,
+            requestDate: r.submittedDate,
+            submittedBy: r.submittedBy,
+            requestType: r.requestType,
             status: r.status,
             priority: (r.priority as any) || 'Medium'
           }));

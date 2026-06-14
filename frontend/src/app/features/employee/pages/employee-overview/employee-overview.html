@@ -56,19 +56,25 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>Item</th>
+                <th>Request ID</th>
                 <th>Request Date</th>
-                <th>Status</th>
+                <th>Request Type</th>
+                <th>Item</th>
                 <th>Priority</th>
               </tr>
             </thead>
             <tbody>
               @for (req of pendingRequests(); track $index) {
                 <tr>
-                  <td>{{ req.item }}</td>
-                  <td>{{ req.date | date:'medium' }}</td>
-                  <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
-                  <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
+                  <td><span class="id-badge">#{{ req.id }}</span></td>
+                  <td class="date-col">{{ req.requestDate | date: 'yyyy-MM-dd' }}</td>
+                  <td class="type-col">{{ req.requestType }}</td>
+                  <td class="item-name">{{ req.item }}</td> 
+                  <td>
+                    <span class="priority-pill" [ngClass]="req.priority.toLowerCase()">
+                      {{ req.priority }}
+                    </span>
+                  </td>
                 </tr>
               }
             </tbody>

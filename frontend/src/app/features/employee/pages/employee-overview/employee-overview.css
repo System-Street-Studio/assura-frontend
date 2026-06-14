@@ -125,10 +125,10 @@ h3{
 
 /* Details Section */
 .details-layout {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 25px;
+ width: 100%;
+ display: flex;
   margin-top: 30px;
+  margin-bottom: 30px;
   
 }
 
@@ -138,6 +138,11 @@ h3{
   border-radius: 12px;
   border: 1px solid #e0e6ed;
   box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6); 
+}
+
+.white-panel h3{
+   border-left: 4px solid #d946ef;
+    padding-left: 12px;
 }
 
 .data-table {
@@ -172,6 +177,8 @@ td { padding: 12px 0; border-top: 1px solid #f0f0f0; }
 
 .act-desc { margin: 0; font-size: 13.5px; line-height: 1.4; }
 .act-time { font-size: 12px; color: #999; }
+
+
 
 /* --- Dashboard Panel Empty State (Fixing Table Header Issue) --- */
 .dashboard-empty-state {
@@ -215,7 +222,8 @@ td { padding: 12px 0; border-top: 1px solid #f0f0f0; }
 }
 
 /* --- Loading State --- */
-/* --- Loading State Center Alignment Fix --- */
+
+
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -253,3 +261,114 @@ td { padding: 12px 0; border-top: 1px solid #f0f0f0; }
   height: 32px;
   color: #0fb3ba;
 }
+
+/* --- 🌟 COMPLETE DASHBOARD TABLE & PANEL UPGRADE 🌟 --- */
+
+/* 1. White Panel එක ඇතුළත Table එක 100% Width කරන්න */
+.white-panel {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Soft premium shadow */
+  width: 100%; /* Ensure panel expands fully */
+  box-sizing: border-box;
+}
+
+.white-panel h3 {
+  font-family: 'jost', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* 2. Full Width Table Layout & Smooth Borders */
+.data-table {
+  width: 100% !important; /* Forces the table to take 100% space */
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+/* Header UI Styles */
+.data-table th {
+  text-align: left;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+  padding: 14px 20px;
+  background-color: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Rounding the top corners of the header */
+.data-table th:first-child {
+  border-top-left-radius: 8px;
+}
+.data-table th:last-child {
+  border-top-right-radius: 8px;
+}
+
+/* Table Body Rows */
+.data-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+/* Interactive Hover Effect */
+.data-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f8fafc;
+  transform: translateY(-1px); /* Slight lift effect on hover */
+}
+
+/* 3. Typography & Badges Customization */
+.id-badge {
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12.5px;
+  border: 1px solid #e2e8f0;
+}
+
+.date-col {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.type-col {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+.priority-pill {
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 2px 10px;
+  min-width: 75px;
+  text-align: center;
+  display: inline-block;
+}
+
+.priority-pill.normal { color: #07c74d; }
+.priority-pill.low { color: #ffc107; }
+.priority-pill.high { color: #be2a2a; }
+.priority-pill.critical { color: #e50909; }
