@@ -1,9 +1,11 @@
-import { Component, signal, computed, OnInit, inject } from '@angular/core';
+import { Component, signal, computed, OnInit, inject ,OnDestroy ,HostListener, ElementRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { EmployeeTransferService } from '../../services/asset-transfer.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+
 
 
 
@@ -57,7 +59,7 @@ interface TransferDataLocal {
 @Component({
   selector: 'app-transfers',
   standalone: true,
-  imports: [CommonModule, MatIconModule, FormsModule],
+  imports: [CommonModule, MatIconModule, FormsModule,PaginationComponent],
   templateUrl: './transfer-page.html',
   styleUrl: './transfer-page.css'
 })
@@ -66,33 +68,83 @@ export class TransferPageComponent implements OnInit {
   isLoading = signal(false);
   errorMessage = signal('');
   showMenu = signal(false);
-
+  // Filter and search signals
+  filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
+  searchQuery = signal<string>('');
   // (Default: incoming)
   activeTab = signal<'incoming' | 'pending' | 'active' | 'completed'>('incoming');
 
   // Transfer data
   private allTransfers = signal<TransferDataLocal[]>([]);
-  
-  // Filter and search signals
-  filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
-  searchQuery = signal<string>('');
-  
-private transferService = inject(EmployeeTransferService);
+  expandedItemId = signal<string | null>(null);
+  private refreshInterval: any;
+  private transferService = inject(EmployeeTransferService);
   private authService = inject(AuthService);
+  private elementRef = inject(ElementRef);
 
  
 
   ngOnInit(): void {
     this.loadTransfers();
+    //this.loadAllCounts();
+    
+    //refresh data every 5 minutes
+    this.refreshInterval = setInterval(() => {
+    this.loadTransfers();
+    //this.loadAllCounts();
+    }, 300000);
   }
 
-  
+   ngOnDestroy(): void {
+    if (this.refreshInterval) clearInterval(this.refreshInterval);
+  }
+
+  toggleDetails(id: string) {
+    if (this.expandedItemId() === id) {
+      this.expandedItemId.set(null); 
+    } else {
+      this.expandedItemId.set(id);
+    }
+  }
+
+  // Function to return an active transfer (used in active transfers tab)
+returnAsset(id: string) {
+    if (confirm('Are you sure you want to return this asset? This will change asset status to "In Use" and complete the transfer.')) {
+      this.transferService.returnActiveTransfer(Number(id)).subscribe({
+        next: () => {
+         
+          this.loadTransfers();
+         // this.loadAllCounts();
+          this.expandedItemId.set(null);
+        },
+        error: (err) => console.error('Error returning asset:', err)
+      });
+    }
+  }
+
   // Tab change function
   setTab(tab: 'incoming' | 'pending' | 'active' | 'completed') {
     this.activeTab.set(tab);
     this.filterType.set('all'); 
+    this.expandedItemId.set(null);
+    this.allTransfers.set([]);
+    this.currentPage.set(1);
     this.loadTransfers();
+
   }
+
+   @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+   
+    const clickedInside = this.elementRef.nativeElement.querySelector('.filter-dropdown')?.contains(event.target);
+    
+    if (!clickedInside && this.showMenu()) {
+      this.showMenu.set(false);
+    }
+  }
+
+
+
 
   loadTransfers() {
     this.isLoading.set(true);
@@ -181,11 +233,13 @@ private transferService = inject(EmployeeTransferService);
   onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchQuery.set(input.value);
+    this.currentPage.set(1);
   }
 
   setFilterType(type: 'all' | 'IncomingActive' | 'OutgoingActive'): void {
     this.filterType.set(type);
     this.showMenu.set(false);
+    this.currentPage.set(1);
   }
 
   private calculateTimeAgo(date: string): string {
@@ -217,4 +271,21 @@ private transferService = inject(EmployeeTransferService);
       }
     });
   }
+
+      pageSize = 10;
+      currentPage = signal(1);
+
+      totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));
+
+      paginatedRequests = computed(() => {
+        const start = (this.currentPage() - 1) * this.pageSize;
+        return this.filteredResults().slice(start, start + this.pageSize);
+      });
+
+      pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+
+
+      onPageChange(page: number) {
+        this.currentPage.set(page);
+      }
 }

@@ -45,29 +45,41 @@
       </div>
 
       <div class="request-list">
-        <div *ngIf="paginatedRequests().length > 0; else emptyBlock">
-          <div *ngFor="let req of paginatedRequests(); trackBy: trackByReqId" class="request-item">
-            <div class="req-info">
-              <div class="req-header">
-                <span class="req-id">#{{ req.id }}</span>
-                <span class="req-type-badge">{{ req.requestType }}</span>
-              </div>
-              <p class="req-name">{{ req.assetName }}</p>
-              <span class="req-date">{{ req.submittedDate | date:'MMM dd, yyyy' }}</span>
-            </div>
-            <div class="req-status-area">
-              <span [class]="'priority-pill ' + req.priority.toLowerCase()">{{ req.priority }}</span>
-              <span [class]="'status-pill ' + req.status.toLowerCase()">{{ req.status }}</span>
-              <button class="btn-details" (click)="viewRequestDetails(req)"><mat-icon class="eye">visibility</mat-icon> View Details</button>
-            </div>
+        
+        @if (isLoading()) {
+          <div class="loading-state">
+            <mat-icon class="spin-animation">sync</mat-icon>
+            <p>Loading your requests... Please wait.</p>
           </div>
-        </div>
+        } @else {
 
-        <ng-template #emptyBlock>
-          <div class="request-item">
-            <p>No recent requests found.</p>
-          </div>
-        </ng-template>
+          @for (req of paginatedRequests(); track req.id) {
+            <div class="request-item">
+              <div class="req-info">
+                <div class="req-header">
+                  <span class="req-id">#{{ req.id }}</span>
+                  <span class="req-type-badge">{{ req.requestType }}</span>
+                </div>
+                <p class="req-name">{{ req.assetName }}</p>
+                <span class="req-date">{{ req.submittedDate | date:'MMM dd, yyyy' }}</span>
+              </div>
+              <div class="req-status-area">
+                <span [class]="'priority-pill ' + req.priority.toLowerCase()">{{ req.priority }}</span>
+                <span [class]="'status-pill ' + req.status.toLowerCase()">{{ req.status }}</span>
+                <button class="btn-details" (click)="viewRequestDetails(req)">
+                  <mat-icon class="eye">visibility</mat-icon> View Details
+                </button>
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <mat-icon class="empty-icon">layers_clear</mat-icon>
+              <h3>No Requests Found</h3>
+              <p>You haven't submitted any asset or maintenance requests yet.</p>
+            </div>
+          }
+
+        }
       </div>
 
       <!-- Pagination Controls -->

@@ -100,6 +100,15 @@
 
 
     <div class="list-wrapper">
+
+      @if (isLoading()) {
+        <div class="loading-state" >
+          <mat-icon class="spin-animation" >sync</mat-icon>
+          <p>Loading transfers... Please wait.</p>
+        </div>
+      } 
+      @else {
+
       @for (item of filteredResults(); track item.id) {
         
         <!-- Incoming Requests, Pending Approval -->
@@ -175,17 +184,26 @@
           </div>
         }
 
-      } @empty {
-        <div class="empty-state">No {{ activeTab() }} records found.</div>
+      }  @empty {
+          <div class="empty-state">
+            <mat-icon class="empty-icon">layers_clear</mat-icon>
+            <h3>No Records Found</h3>
+            <p>There are no transfer records matching this criteria at the moment.</p>
+          </div>
+        }
       }
     </div>
 
-    @if (filteredResults().length > 0) {
-        <div class="pagination-footer">
-            <button class="page-arrow"><mat-icon>chevron_left</mat-icon></button>
-            <span class="page-num">1</span>
-            <button class="page-arrow"><mat-icon>chevron_right</mat-icon></button>
-        </div>
-    }
+    <!-- Pagination -->
+    @if (paginatedRequests().length > 0) {
+        <app-pagination 
+          [currentPage]="currentPage()" 
+          [totalPages]="totalPages()" 
+          [pageNumbers]="pageNumbers()"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      }
+
+    
   </section>
 </div>

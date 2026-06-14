@@ -11,10 +11,9 @@ import { AuthService } from '../../../core/auth/auth.service';
 export class EmployeeTransferService {
     private http = inject(HttpClient);
      private baseUrl = environment.apiUrl;
-    //private apiUrl = `${environment.apiUrl}/transfers`;
-    // constructor(private http: HttpClient) { }
+   
   
-getTransfers(tab: string, filterType: string | null = null): Observable<any[]> {
+  getTransfers(tab: string, filterType: string | null = null): Observable<any[]> {
     let params = new HttpParams().set('tab', tab);
 
     
@@ -36,9 +35,9 @@ getTransfers(tab: string, filterType: string | null = null): Observable<any[]> {
     return this.http.get<any>(`${this.baseUrl}/transfers/${id}`);
   }
 
- 
- 
+   returnActiveTransfer(transferId: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/transfers/${transferId}/return`, {});
+  }
 
- 
   
 }

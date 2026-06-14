@@ -1,22 +1,16 @@
 <div class="container">
-  <!-- Back link and title -->
   <h1 class="section-label">Requests </h1>
   <a routerLink="/employee/requests-main" class="back-link">←</a>
   <div class="header-row">
     <h2 class="page-title">My All Requests ( {{ requests().length }} )</h2>
 
-    <!-- Search  -->
     <div class="controls">
-
       <div class="search-container">
         <mat-icon class="search-icon">search</mat-icon>
         <input type="text" placeholder="Search requests..." [ngModel]="searchQuery()"
-          (ngModelChange)="searchQuery.set($event)" class="search-bar" />
+          (ngModelChange)="onSearchChange($event)" class="search-bar" />
       </div>
 
-
-
-      <!-- Filter -->
       <div class="filter-container" data-filter="status-filter" (click)="$event.stopPropagation()">
         <button class="filter-btn" (click)="$event.stopPropagation(); toggleMenu()">
           <div class="filter-icon">
@@ -35,61 +29,73 @@
           </div>
         }
       </div>
-
     </div>
   </div>
 
-  <!-- Table -->
-  <table class="requests-table">
-    <thead>
-      <tr>
-        <th>Request ID</th>
-        <th>Type</th>
-        <th>Submitted Date</th>
-        <th>Priority</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-icon class="spin-animation">sync</mat-icon>
+      <p>Loading your requests... Please wait.</p>
+    </div>
+  } @else {
+    
+    @if (paginatedRequests().length > 0) {
+      <table class="requests-table">
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Type</th>
+            <th>Submitted Date</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (req of paginatedRequests(); track req.id) {
+            <tr>
+              <td>#{{ req.id }}</td>
+              <td>{{ req.requestType }}</td>
+              <td>{{ req.submittedDate | date:'yyyy-MM-dd' }}</td>
+              <td>
+                <span [class]="'priority-label ' + getPriorityClass(req.priority)">
+                  {{ req.priority }}
+                </span>
+              </td>
+              <td>
+                <span [class]="'status-badge ' + getStatusClass(req.status)">
+                  {{ req.status }}
+                </span>
+              </td>
+              <td class="actions">
+                <button class="btn-view" [routerLink]="['/employee/request-details', req.id]" [state]="{ request: req }">
+                  <mat-icon class="eye">visibility</mat-icon> View Details
+                </button>
 
-      <!-- requests -->
-      @for (req of paginatedRequests(); track req.id) {
-      <tr>
-        <td>{{ req.id }}</td>
-        <td>{{ req.requestType }}</td>
-        <td>{{ req.submittedDate | date:'yyyy-MM-dd' }}</td>
-        <td>
-          <span [class]="'priority-label ' + getPriorityClass(req.priority)">
-            {{ req.priority }}
-          </span>
-        </td>
-        <!-- Status with colored badge -->
-        <td>
-          <span [class]="'status-badge ' + getStatusClass(req.status)">
-            {{ req.status }}
-          </span>
-        </td>
-
-        <!-- Actions -->
-        <td class="actions">
-          <button class="btn-view" [routerLink]="['/employee/request-details', req.id]" [state]="{ request: req }">
-            <mat-icon class="eye">visibility</mat-icon> View Details
-          </button>
-
-          @if (req.status === 'Pending') {
-          <button class="btn-cancel" (click)="cancelRequest(req.id)">
-            <mat-icon class="close">close</mat-icon> Cancel
-          </button>
+                @if (req.status === 'Pending') {
+                  <button class="btn-cancel" (click)="cancelRequest(req.id)">
+                    <mat-icon class="close">close</mat-icon> Cancel
+                  </button>
+                }
+              </td>
+            </tr>
           }
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
+        </tbody>
+      </table>
 
-  <!-- Pagination -->
-  <app-pagination [currentPage]="currentPage()" [totalPages]="totalPages()" [pageNumbers]="pageNumbers()"
-    (pageChange)="onPageChange($event)">
-  </app-pagination>
+      <app-pagination 
+        [currentPage]="currentPage()" 
+        [totalPages]="totalPages()" 
+        [pageNumbers]="pageNumbers()"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
+
+    } @else {
+      <div class="empty-state">
+         <mat-icon class="empty-icon">layers_clear</mat-icon>
+        <h3>No Records Found</h3>
+        <p>There are no requests matching this criteria at the moment.</p>
+      </div>
+    }
+  }
 </div>

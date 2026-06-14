@@ -165,14 +165,24 @@
 
         <button class="view-btn" (click)="viewDetails(asset)">View Asset Details</button>
       </div>
-
+      } @empty {
+        <div class="assets-empty-state">
+          <mat-icon class="empty-icon">layers_clear</mat-icon>
+          <h3>No Assets Found</h3>
+          <p>We couldn't find any assets matching your search queries or active filters.</p>
+        </div>
       }
     </div>
 
-    <app-pagination [currentPage]="currentPage()" [totalPages]="totalPages()" [pageNumbers]="pageNumbers()"
-      (pageChange)="onPageChange($event)">
-    </app-pagination>
-    }
+        @if (!isLoading() && paginatedAssets().length > 0) {
+          <app-pagination 
+            [currentPage]="currentPage()" 
+            [totalPages]="totalPages()" 
+            [pageNumbers]="pageNumbers()"
+            (pageChange)="onPageChange($event)">
+          </app-pagination>
+        }
+     }
     } @else {
 
 

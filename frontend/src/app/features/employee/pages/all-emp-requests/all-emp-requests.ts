@@ -9,7 +9,6 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 import { AssetRequest, AssetService } from '../../services/asset-request.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 
-
 @Component({
   selector: 'app-all-requests',
   standalone: true,
@@ -19,65 +18,70 @@ import { AuthService } from '../../../../core/auth/auth.service';
 })
 export class AllRequestsComponent implements OnInit {
   searchQuery = signal('');
+  requests = signal<AssetRequest[]>([]);
+  
+  // 🌟 HTML එකට අත්‍යවශ්‍ය වන isLoading signal එක එකතු කළා
+  isLoading = signal(false);
+
+  // Pagination
+  pageSize = 10;
+  currentPage = signal(1);
+  
+  filterStatus = signal<'All Types' | 'Pending' | 'Approved' | 'Rejected'>('All Types');
+  isMenuOpen = signal(false);
+
+  private authService = inject(AuthService);
+  private assetService = inject(AssetService);
 
   onSearchChange(value: string) {
     this.searchQuery.set(value);
     this.currentPage.set(1);
   }
-
-  requests = signal<AssetRequest[]>([]);
-
-  // Pagination
-  pageSize = 10;
-  currentPage = signal(1);
-
+  
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    
-    // Check if click is inside status filter container
     const inStatusFilter = target.closest('[data-filter="status-filter"]') !== null;
-    
-    // Close status menu if clicking outside
     if (this.isMenuOpen() && !inStatusFilter) {
       this.isMenuOpen.set(false);
     }
   }
-
-  private authService = inject(AuthService);
-
-  constructor(private assetService: AssetService) { }
   
   ngOnInit() {
     const userId = this.authService.getUserId();
     if (userId) {
-      this.assetService.getEmployeeRequests(userId).subscribe((data: AssetRequest[]) => {
-        this.requests.set(data);
+      // 🌟 API Call එක පටන් ගන්න කලින් loading true කරනවා
+      this.isLoading.set(true);
+      
+      this.assetService.getEmployeeRequests(userId).subscribe({
+        next: (data: AssetRequest[]) => {
+          this.requests.set(data);
+          this.isLoading.set(false); // 🌟 දත්ත ආවට පස්සේ loading false කළා
+        },
+        error: (err) => {
+          console.error('Error fetching requests:', err);
+          this.isLoading.set(false); // 🌟 Error එකක් ආවත් loading false කළා
+        }
       });
     }
   }
 
-
-  filterStatus = signal<'All Types' | 'Pending' | 'Approved' | 'Rejected'>('All Types');
-  isMenuOpen = signal(false); // To toggle the dropdown visibility
-
-  /** Priority classes: */
   getPriorityClass(priority: string): string {
     return `priority-${priority.toLowerCase().replace(' ', '-')}`;
   }
 
-  /** Status classes:*/
   getStatusClass(status: string): string {
     return `status-${status.toLowerCase().replace(' ', '-')}`;
   }
 
-  // Update computed signal to include the status filter
   filteredRequests = computed(() => {
-    const query = this.searchQuery().toLowerCase();
+    const query = this.searchQuery().toLowerCase().trim();
     const status = this.filterStatus();
 
     return this.requests().filter(r => {
-      const matchesSearch = r.id.toString().includes(query) || r.requestType.toLowerCase().includes(query);
+      const matchesSearch = r.id.toString().includes(query) || 
+                            r.requestType.toLowerCase().includes(query) ||
+                            (r.assetName && r.assetName.toLowerCase().includes(query));
       const matchesStatus = status === 'All Types' || r.status === status;
       return matchesSearch && matchesStatus;
     });
@@ -90,7 +94,14 @@ export class AllRequestsComponent implements OnInit {
     return this.filteredRequests().slice(start, start + this.pageSize);
   });
 
-  pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+  // 🌟 Pagination Numbers array එක dynamic කලා total pages ගණනට අනුව
+  pageNumbers = computed(() => {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages(); i++) {
+      pages.push(i);
+    }
+    return pages;
+  });
 
   onPageChange(page: number) {
     this.currentPage.set(page);
@@ -100,15 +111,12 @@ export class AllRequestsComponent implements OnInit {
     this.isMenuOpen.update(v => !v);
   }
 
-
-  setStatus(status: any) {
+  setStatus(status: 'All Types' | 'Pending' | 'Approved' | 'Rejected') {
     this.filterStatus.set(status);
-    this.currentPage.set(1); // Reset to first page on filter change
-    this.isMenuOpen.set(false); // Close menu after selection
+    this.currentPage.set(1);
+    this.isMenuOpen.set(false);
   }
-
   
-  // Mock function to handle cancel action
   cancelRequest(requestId: number) {
     console.log('Cancelling request with ID:', requestId);
     this.requests.update(reqs => reqs.map(r => r.id === requestId ? { ...r, status: 'Cancelled' } : r));
