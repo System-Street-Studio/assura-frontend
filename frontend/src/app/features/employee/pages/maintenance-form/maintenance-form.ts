@@ -52,8 +52,14 @@ export class MaintenanceFormComponent implements OnInit {
 
   // Submit logic
   onSubmit() {
+    // Validate required fields
+    if (!this.asset() || !this.issueType() || !this.priority()) {
+      alert('Failed to create maintenance request. Please fill all required fields.');
+      return;
+    }
     this.isSubmitting.set(true);
-    const requestData = {
+
+    const requestPayload = {
       employeeId: this.authService.getUserId() || '',
       submittedBy: this.authService.getUserName() || 'Employee',
       assetCategory: 'N/A',
@@ -63,10 +69,10 @@ export class MaintenanceFormComponent implements OnInit {
       quantity: 1,
       priority: this.priority(),
       requestType: 'Maintenance',
-      submittedDate: new Date()
+      submittedDate: new Date().toISOString()
     };
 
-    this.assetRequestService.createRequest(requestData).subscribe({
+    this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         alert('Maintenance Request Submitted Successfully!');
@@ -75,7 +81,10 @@ export class MaintenanceFormComponent implements OnInit {
       error: (err) => {
         this.isSubmitting.set(false);
         console.error('Save failed', err);
-        alert('Error submitting request. Please try again.');
+        console.error('Error status:', err.status);
+        console.error('Error response:', err.error);
+        const errorMsg = err.error?.message || err.error?.errors || err.statusText || 'Unknown error';
+        alert(`Error submitting request:\n${JSON.stringify(errorMsg)}`);
       }
     });
   }

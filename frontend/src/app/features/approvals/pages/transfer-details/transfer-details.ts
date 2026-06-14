@@ -2,9 +2,9 @@ import { Component, inject, signal,OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule,ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { Location } from '@angular/common';
+//import { Location } from '@angular/common';
 import { RequestService } from '../../services/requests.service';
-
+//import { TransferService } from '../../../approvals/services/transfer.service';
 
 @Component({
   selector: 'app-transfer-asset-details',
@@ -15,45 +15,59 @@ import { RequestService } from '../../services/requests.service';
 })
 export class TransferDetailsComponent implements OnInit {
   private router = inject(Router);
-  private route = inject(ActivatedRoute); // මේ line එක අනිවාර්යයෙන් එක් කරන්න
-  private location = inject(Location);
+  private route = inject(ActivatedRoute); 
+  //private location = inject(Location);
   private requestService = inject(RequestService);
-  
-  // Navigation state එකෙන් එන දත්ත ලබා ගැනීම
-  request = signal<any>(history.state.data || {/*
-    asset: 'Table',
-    category: 'Furniture',
-    quantity: 1,
-    name: 'Jenny Athapaththu (ID:EST001)',
-    submittedDate: '15-08-2025',
-    timelineFrom: '15-08-2025',
-    timelineTo: '15-09-2025',
-    specs: 'Height: 28-30 inches \n Width: 40-72 inches \n Depth: 24-32 inches',
-    reason: 'my table is discarded and need another for temporary use until new table received.'*/
-  });
+  //private transferService = inject(TransferService);
+
+ 
+  request = signal<any>({});
+  isLoading = signal<boolean>(true);
+  error = signal<string>('');
+  isReadOnly = signal<boolean>(false);
 
   ngOnInit() {
-    // 1. Service එකේ ඇති දත්ත පරීක්ෂා කිරීම
+    // Check for readOnly query parameter
+    const readOnly = this.route.snapshot.queryParamMap.get('readOnly');
+    this.isReadOnly.set(readOnly === 'true');
+    console.log('Is read-only mode:', this.isReadOnly());
+
+    //  Service handling
     if (this.requestService.selectedRequest) {
+      console.log("received data from Service ");
       this.request.set(this.requestService.selectedRequest);
+      this.isLoading.set(false);
     } else {
-      // 2. Refresh වුවහොත් URL එකෙන් ID එක ගෙන API call එකක් යැවීම
+      // Refresh 
       const id = this.route.snapshot.paramMap.get('id');
+      console.log("Route ID parameter:", id);
       if (id) {
-        // ඔබේ Service එකේ getRequestById(id) එකක් තිබේ නම් එය මෙහි භාවිතා කරන්න
-       /* this.requestService.getRequestById(+id).subscribe((data) => {
-          this.request.set(data);
-        });*/
+        console.log("get request by ID:", id);
+        this.requestService.getRequestById(+id).subscribe({
+          next: (data) => {
+            console.log("Data fetched:", data);
+            this.request.set(data);
+            this.isLoading.set(false);
+          },
+          error: (err) => {
+            console.error("API error:", err);
+            this.error.set('Failed to load request details');
+            this.isLoading.set(false);
+          }
+        });
+      } else {
+        console.warn("No ID found in route");
+        this.error.set('No request ID provided');
+        this.isLoading.set(false);
       }
     }
   }
-
 
   showPopup = signal(false);
   popupMessage = signal('');
   popupType = signal<'success' | 'reject'>('success');
 
-
+  
    approveRequest() {
       const id = this.request().id;
     this.requestService.approveRequest(id).subscribe({
@@ -61,6 +75,7 @@ export class TransferDetailsComponent implements OnInit {
         this.popupMessage.set('Request Approved Successfully');
         this.popupType.set('success');
         this.showPopup.set(true);
+       
       },
       error: (err) => console.error("Approve error:", err)
     });
@@ -73,23 +88,68 @@ export class TransferDetailsComponent implements OnInit {
         this.popupMessage.set('Request Rejected Successfully!');
         this.popupType.set('reject');
         this.showPopup.set(true);
+        
       },
       error: (err) => console.error("Reject error:", err)
     });
   }
 
-
-  viewInPool() { console.log('Viewing in Pool'); }
-
-  close() {
-    const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'transfer';
-    this.router.navigate(['/approvals/requests'], { queryParams: { tab: returnTab } });
-  }
   
-   closePopup() {
+
+  getTransferDates() {
+    const reason = this.request().justification || this.request().reason || '';
+    const match = reason.match(/\(Transfer periods:([^)]*)\)/);
+    if (match) {
+      const period = match[1].trim();
+      const dateParts = period.split('to').map((d: string) => d.trim());
+      return { from: dateParts[0] || '', to: dateParts[1] || '' };
+    }
+    return { from: '', to: '' };
+  }
+
+  getCleanReason() {
+    const reason = this.request().justification || this.request().reason || '';
+    
+    
+    let cleanedReason = reason
+      .replace(/\s*[\(\[]*Transfer periods?:\s*[^\)]*[\)\]]*\s*/gi, '')
+      .replace(/\s*\(Transfer periods?.*?\)\s*/gi, '')
+      .replace(/\s*\[Transfer periods?.*?\]\s*/gi, '')
+      .trim();
+    
+    // If nothing was removed, just return original trimmed
+    if (cleanedReason === reason.trim()) {
+      return reason.trim();
+    }
+    
+    return cleanedReason || reason.trim();
+  }
+
+viewInPool() {
+  const requestId = this.request().id;
+  console.log("received requestID-" + requestId + " to pool-page");
+  console.log("Navigating to pool with request ID:", requestId);
+  
+  this.router.navigate(['/approvals/asset-pool'], {
+    state: { 
+      transferRequestId: requestId,
+      message: 'received requestID-' + requestId + ' to pool-page'
+    }
+  }).then(nav => {
+    console.log('Navigation Status:', nav);
+  }, err => {
+    console.error('Navigation Error:', err); 
+  });
+}
+
+  
+  close() {
+    this.router.navigate(['approvals/requests']); // navigate to the requests page
+  }
+
+  closePopup() {
     this.showPopup.set(false);
-    const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'transfer';
-    this.router.navigate(['approvals/requests'] , { queryParams: { tab: returnTab } });
+   this.router.navigate(['approvals/requests']);
   }
 }
 

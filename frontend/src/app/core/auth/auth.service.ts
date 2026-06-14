@@ -158,6 +158,22 @@ export class AuthService {
     }
   }
 
+  // Returns the user's division ID from the JWT token.
+  getDivisionId(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const decoded: any = jwtDecode(token);
+      const divisionId = decoded.divisionId ?? 
+                        decoded.division_id ?? 
+                        decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/divisionId'] ??
+                        null;
+      return divisionId ? Number(divisionId) : null;
+    } catch {
+      return null;
+    }
+  }
+
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
   }

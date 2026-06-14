@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, HostListener, ElementRef } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, HostListener, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private elRef = inject(ElementRef);
   private authService = inject(AuthService);
   private profileService = inject(ProfileService);
+  private cdr = inject(ChangeDetectorRef);
 
   get employeeName(): string {
     const profile = this.profileService.profile();
@@ -60,8 +61,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subs.push(
-      this.notifService.getAll().subscribe((n: AppNotification[]) => (this.notifications = n)),
-      this.notifService.getUnreadCount().subscribe((c: number) => (this.unreadCount = c))
+      this.notifService.getAll().subscribe((n: AppNotification[]) => {
+        this.notifications = n;
+        this.cdr.detectChanges();
+      }),
+      this.notifService.getUnreadCount().subscribe((c: number) => {
+        this.unreadCount = c;
+        this.cdr.detectChanges();
+      })
     );
 
     // Load profile if not already cached

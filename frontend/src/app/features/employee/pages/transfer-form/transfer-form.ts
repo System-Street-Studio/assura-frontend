@@ -29,34 +29,37 @@ import { Category } from '../../../inventory/models/category.model';
   styleUrl: './transfer-form.css',
 })
 export class TransferFormComponent implements OnInit {
+    // Signals
+    categories = signal<Category[]>([]);
+    assetName = signal('');
+    category = signal('');
+    description = signal('');
+    quantity = signal(1);
+    priority = signal('Normal');
+    reason = signal('');
+    fromDate = signal<Date | null>(null);
+    toDate = signal<Date | null>(null);
+    selectedFiles = signal<File[]>([]);
+    isSubmitting = signal(false);
+
+    ngOnInit(): void {
+      this.categoryService.getAll().subscribe({
+        next: (cats) => this.categories.set(cats),
+        error: (err) => console.error('Failed to load categories', err)
+      });
+    }
   private location = inject(Location);
   private assetRequestService = inject(AssetRequestService);
   private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
 
-  // Signals
-  categories = signal<Category[]>([]);
-  assetName = signal('');
-  category = signal('');
-  description = signal('');
-  quantity = signal(1);
-  priority = signal('Normal');
-  reason = signal('');
-  fromDate = signal<Date | null>(null);
-  toDate = signal<Date | null>(null);
-  selectedFiles = signal<File[]>([]);
-  isSubmitting = signal(false);
-
-  ngOnInit(): void {
-    this.categoryService.getAll().subscribe({
-      next: (cats) => this.categories.set(cats),
-      error: (err) => console.error('Failed to load categories', err)
-    });
-  }
-
   onSubmit() {
+    if (!this.assetName() || !this.category() || !this.reason()) {
+      alert('Failed to create transfer request. Please fill all required fields.');
+      return;
+    }
     this.isSubmitting.set(true);
-    const requestData = {
+    const requestPayload = {
       employeeId: this.authService.getUserId() || '',
       submittedBy: this.authService.getUserName() || 'Employee',
       assetCategory: this.category(),
@@ -66,10 +69,10 @@ export class TransferFormComponent implements OnInit {
       quantity: this.quantity(),
       priority: this.priority(),
       requestType: 'Transfer',
-      submittedDate: new Date()
+      submittedDate: new Date().toISOString()
     };
 
-    this.assetRequestService.createRequest(requestData).subscribe({
+    this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         alert('Transfer Request Submitted Successfully!');

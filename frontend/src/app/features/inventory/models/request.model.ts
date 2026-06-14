@@ -6,7 +6,8 @@ export interface AssetRequest {
   department: string;
   email: string;
   assetName: string;
-  category: string;
+  category?: string;
+  assetCategory?: string;
   quantity: number;
   reason: string;
   description?: string;
@@ -20,6 +21,6 @@ export interface AssetRequest {
   selected?: boolean;
 }
 
-export type RequestPriority = 'Urgent' | 'High' | 'Medium' | 'Low';
+export type RequestPriority = 'Urgent' | 'High' | 'Medium' | 'Normal' | 'Low';
 
 export type RequestStatus = 'Pending' | 'Approved' | 'Rejected' | 'Fulfilled' | 'Cancelled';

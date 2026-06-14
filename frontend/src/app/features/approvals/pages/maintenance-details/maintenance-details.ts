@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule ,ActivatedRoute} from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { RequestService } from '../../services/requests.service';
 
 @Component({
   selector: 'app-maintenance-details',
@@ -10,32 +11,73 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './maintenance-details.html',
   styleUrls: ['./maintenance-details.css']
 })
-export class MaintenanceDetailsComponent {
+export class MaintenanceDetailsComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private requestService = inject(RequestService);
 
-  request = signal<any>(history.state.data || {
-    asset: 'Table',
-    category: 'Furniture',
-    issueType: 'Damaged',
-    name: 'Jenny Athapaththu (ID:EST001)',
-    submittedDate: '15-08-2025',
-    description: 'due to loose joints and surface damage',
-    status: 'pending',
-    attachment: 'No Attachments',
-    needTemporary: 'Yes'
-  });
+  request = signal<any>({});
 
-  approveRequest() { console.log('Approved'); }
-  rejectRequest() { console.log('Rejected'); }
-  
+  ngOnInit() {
+    // Service handling
+    if (this.requestService.selectedRequest) {
+      console.log("received data from Service");
+      this.request.set(this.requestService.selectedRequest);
+    } else {
+      // Refresh
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id) {
+        console.log("get request by ID:", id);
+        this.requestService.getRequestById(+id).subscribe((data) => {
+          this.request.set(data);
+        });
+      }
+    }
+  }
+
+  showPopup = signal(false);
+  popupMessage = signal('');
+  popupType = signal<'success' | 'reject'>('success');
+
+  approveRequest() {
+    const id = this.request().id;
+    this.requestService.approveRequest(id).subscribe({
+      next: () => {
+        this.popupMessage.set('Request Approved Successfully');
+        this.popupType.set('success');
+        this.showPopup.set(true);
+        
+      },
+      error: (err) => console.error("Approve error:", err)
+    });
+  }
+
+  rejectRequest() {
+    const id = this.request().id;
+    this.requestService.rejectRequest(id).subscribe({
+      next: () => {
+        this.popupMessage.set('Request Rejected Successfully!');
+        this.popupType.set('reject');
+        this.showPopup.set(true);
+        
+      },
+      error: (err) => console.error("Reject error:", err)
+    });
+  }
+
+  extractIssueType(reason: string): string {
+    // Extract issue type from reason (format: "Issue: <type>")
+    const match = reason.match(/Issue:\s*(.+)$/);
+    return match ? match[1].trim() : reason || 'Not specified';
+  }
+
+  closePopup() {
+    this.showPopup.set(false);
+    this.router.navigate(['approvals/requests']); // navigate to the requests page
+  }
+
   close() {
     this.router.navigate(['/approvals/requests']);
-    const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'new';
     
-    //return to previous tab
-    this.router.navigate(['/approvals/requests'], { 
-      queryParams: { tab: returnTab } 
-    });
   }
 }

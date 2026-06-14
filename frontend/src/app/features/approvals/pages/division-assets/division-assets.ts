@@ -1,123 +1,160 @@
-import { Component, signal ,computed} from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy, inject, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AssetService } from '../../../../features/inventory/services/asset.service';
+import { DivisionHeadDashboardService } from '../../services/division-head-dashboard.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 interface Asset {
   id: string;
   name: string;
-  type: string;
   status: 'Maintenance' | 'In Use' | 'Transferred';
-  assignedTo: string;
-  image: string;
-  specs: string;
   category: string;
   division: string;
-  condition: string;
+  assignedUserName: string;
+  assetTag: string;
+  specs: string;
+  //image: string;
+  assignedUserId?: string;
+  divisionId?: string;
+  serialNumber?: string;
 }
 
 @Component({
   selector: 'app-division-assets',
   standalone: true,
-  imports: [CommonModule, MatIconModule,RouterModule,FormsModule],
+  imports: [CommonModule, MatIconModule, RouterModule, FormsModule,PaginationComponent],
   templateUrl: './division-assets.html',
   styleUrls: ['./division-assets.css']
 })
-export class DivisionAssetsComponent {
-  
+export class DivisionAssetsComponent implements OnInit, OnDestroy {
+  private assetService = inject(AssetService);
+  private dashboardService = inject(DivisionHeadDashboardService);
 
-  assets = signal<Asset[]>([
-    { 
-      id: 'AST001', name: 'Dell Laptop', type: 'Laptop', status: 'Maintenance', 
-      assignedTo: 'Harry Ekanayake', image: 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220' ,
-      specs: 'Intel Core i5, 16GB RAM, 512GB SSD', category: 'IT Equipment', division: 'IT', condition: 'Good'
-    },
-    { 
-      id: 'AST002', name: 'HP ProDesk Mini', type: 'Desktop PC', status: 'In Use', 
-      assignedTo: 'Jenny Athapaththu', image: 'https://tse4.mm.bing.net/th/id/OIP.sJPzc8VZD1qRzKUvudISdwHaFj?pid=Api&P=0&h=220',
-      specs: 'Intel Core i7, 32GB RAM, 1TB SSD', category: 'IT Equipment', division: 'IT', condition: 'Excellent'
-    },
-    { 
-      id: 'AST003', name: 'Epson Projector', type: 'Projector', status: 'Transferred', 
-      assignedTo: 'Harry Ekanayake', image: 'https://tse1.mm.bing.net/th/id/OIP.aW37fldWqaew_S4k9yOVzAHaE8?pid=Api&P=0&h=220',
-      specs: '3LCD, 4000 Lumens, Full HD', category: 'Electronics', division: 'Marketing', condition: 'Good'
-    },
-    { 
-      id: 'AST004', name: 'iPad Pro', type: 'Tablet', status: 'Maintenance', 
-      assignedTo: 'Sarah Kodithuwakku', image: 'https://tse3.mm.bing.net/th/id/OIP.dIez9xu3P243rJXi3FXoUgHaFj?pid=Api&P=0&h=220',
-      specs: 'Apple M2 Chip, 12.9-inch Display', category: 'Mobile', division: 'HR', condition: 'Fair'
-    },
-    { 
-    id: 'AST005', name: 'Cisco Router 2900', type: 'Router', status: 'In Use', 
-    assignedTo: 'Michael Perera', 
-    image: 'https://tse3.mm.bing.net/th/id/OIP.n1PgBAsks9Nsp78Q3NvXngHaHa?pid=Api&P=0&h=220',
-    specs: 'Gigabit Router, Dual WAN', category: 'Network', division: 'IT', condition: 'Excellent'
-  },
-  { 
-    id: 'AST006', name: 'Toyota Hilux', type: 'Vehicle', status: 'Transferred', 
-    assignedTo: 'Ruwan Silva', 
-    image: 'https://www.carscoops.com/wp-content/uploads/2023/12/Toyota-Hilux-BEV-2048x1152.jpg',
-    specs: 'Pickup Truck, Diesel Engine', category: 'Vehicles', division: 'Logistics', condition: 'Good'
-  },
-  { 
-    id: 'AST007', name: 'Lenovo ThinkPad X1', type: 'Laptop', status: 'In Use', 
-    assignedTo: 'Nimal Fernando', 
-    image: 'https://tse2.mm.bing.net/th/id/OIP.UxDK5dj-x990VmILUJQEJAHaFp?pid=Api&P=0&h=220',
-    specs: 'Intel Core i7, 16GB RAM, 1TB SSD', category: 'IT Equipment', division: 'IT', condition: 'Excellent'
-  },
-  { 
-    id: 'AST008', name: 'Samsung Galaxy Tab S8', type: 'Tablet', status: 'Maintenance', 
-    assignedTo: 'Amaya Jayasinghe', 
-    image: 'https://tse4.mm.bing.net/th/id/OIP.gmlrBa13ph_b_WslIOzMkAHaEK?pid=Api&P=0&h=220',
-    specs: 'Snapdragon 8 Gen 1, 12.4" Display', category: 'Mobile', division: 'HR', condition: 'Fair'
-  }
-  ]);
-
-
-   
+  // Asset signals
+  assets = signal<Asset[]>([]);
+  selectedAsset = signal<Asset | null>(null);
+  isLoading = signal(false);
+  errorMessage = signal('');
 
   // Dropdown selections
   selectedCategory = signal<string>('all');
   selectedStatus = signal<string>('all');
   searchQuery = signal<string>('');
+  showCategoryMenu = signal<boolean>(false);
+  showStatusMenu = signal<boolean>(false);
   
-   
+  // Real categories from backend data
+  availableCategories = signal<string[]>([]);
+  viewMode = signal<'grid' | 'list'>('grid');
 
-  viewAsset(asset: Asset) {
+  
+  currentPage = signal<number>(1);
+  itemsPerPage = signal<number>(12);
+  
+  // Asset counts for real data
+  totalAssets = computed(() => this.assets().length);
+  inUseAssets = computed(() => this.assets().filter(asset => asset.status === 'In Use').length);
+  maintenanceAssets = computed(() => this.assets().filter(asset => asset.status === 'Maintenance').length);
+  transferredAssets = computed(() => this.assets().filter(asset => asset.status === 'Transferred').length);
+
+  setViewMode(mode: 'grid' | 'list') {
+  this.viewMode.set(mode);
+  }
+
+  ngOnInit(): void {
+  
+    this.loadDivisionAssets();
+    document.addEventListener('click', this.handleGlobalClick.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    // Clean up global click listener
+    document.removeEventListener('click', this.handleGlobalClick.bind(this));
+  }
+
+  private handleGlobalClick(event: MouseEvent): void {
+    const target = event.target as Element;
+    
+    // Check if click is outside filter dropdowns
+    if (!target.closest('.styled-select')) {
+      if (this.showCategoryMenu()) {
+        this.showCategoryMenu.set(false);
+      }
+      if (this.showStatusMenu()) {
+        this.showStatusMenu.set(false);
+      }
+    }
+  }
+
+ loadDivisionAssets(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.assetService.getAll().subscribe({
+      next: (data) => {
+        const mappedAssets: Asset[] = data.map(a => ({
+          id: a.id.toString(),
+          name: a.productName || 'N/A',
+          category: a.categoryName || 'General',
+          division: a.divisionName || 'N/A',
+          status: this.mapAssetStatus(a.status), 
+          assetTag: a.assetTag || 'NO-TAG',
+          assignedUserName: a.assignedUserName || 'Not Assigned',
+          assignedUserId: a.assignedUserId?.toString(),
+          serialNumber: a.serialNumber || 'N/A',
+          specs: a.notes || 'No details available', 
+          //image: 'assets/images/placeholder-asset.png' 
+        }));
+
+        this.assets.set(mappedAssets);
+        
+       this.dashboardService.updateAssetCount(mappedAssets.length);
+        const categories = [...new Set(mappedAssets.map(a => a.category))];
+        this.availableCategories.set(categories);
+        
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errorMessage.set('Failed to load assets.');
+      }
+    });
+  }
+
+ 
+  private mapAssetStatus(backendStatus: any): Asset['status'] {
+    const statusStr = backendStatus.toString();
+    
+    if (statusStr === 'Maintenance' || statusStr === '2') return 'Maintenance';
+    if (statusStr === 'Transferred' || statusStr === '3') return 'Transferred';
+    
+    
+    return 'In Use';
+  }
+  
+
+  selectAsset(asset: Asset): void {
+    
     this.selectedAsset.set(asset);
   }
 
-  goBack() {
+  goBack(): void {
+    // Navigate back to previous page
     this.selectedAsset.set(null);
   }
-  /*
-  viewMode: 'grid' | 'list' = 'grid';
 
-toggleView(mode: 'grid' | 'list') {
-  this.viewMode = mode;
-}*/
-
-  
-
-
-// Action methods
-  setFilterCategory(val: string) {
-    this.selectedCategory.set(val);
-    this.showCategoryMenu.set(false);
+  viewAsset(asset: Asset): void {
+    
+    this.selectedAsset.set(asset);
   }
 
-  setFilterStatus(val: string) {
-    this.selectedStatus.set(val);
-    this.showStatusMenu.set(false);
-  }
 
-  onSearchChange(event: any) {
-    this.searchQuery.set(event.target.value);
-  }
-
-filteredAssets = computed(() => {
-    const query = this.searchQuery().toLowerCase();
+  // Filter methods for different asset types
+  filteredAssets = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
     const cat = this.selectedCategory();
     const stat = this.selectedStatus();
 
@@ -126,14 +163,75 @@ filteredAssets = computed(() => {
       const statusMatch = stat === 'all' || asset.status === stat;
       const searchMatch = !query || 
                           asset.name.toLowerCase().includes(query) || 
-                          asset.id.toLowerCase().includes(query);
-
+                          asset.id.toLowerCase().includes(query) ||
+                          asset.assetTag.toLowerCase().includes(query);
+      
       return categoryMatch && statusMatch && searchMatch;
     });
   });
-  // UI eken values set karanna me functions ona
- showCategoryMenu = signal<boolean>(false);
-  showStatusMenu = signal<boolean>(false);
-  selectedAsset = signal<Asset | null>(null);
+  
+    totalPages = computed(() => {
+    return Math.ceil(this.filteredAssets().length / this.itemsPerPage()) || 1;
+  });
+
+  pageNumbers = computed(() => {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages(); i++) {
+      pages.push(i);
+    }
+    return pages;
+  });
+
+  
+  paginatedAssets = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
+    const endIndex = startIndex + this.itemsPerPage();
+    return this.filteredAssets().slice(startIndex, endIndex);
+  });
+
+ 
+  onPageChange(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  // Filter methods
+  toggleCategoryMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showCategoryMenu.set(!this.showCategoryMenu());
+    // Close other menu when opening this one
+    if (this.showCategoryMenu()) {
+      this.showStatusMenu.set(false);
+    }
+  }
+
+  toggleStatusMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showStatusMenu.set(!this.showStatusMenu());
+    // Close other menu when opening this one
+    if (this.showStatusMenu()) {
+      this.showCategoryMenu.set(false);
+    }
+  }
+
+  // Setters for filter selections
+  setFilterCategory(val: string): void {
+    this.selectedCategory.set(val);
+    this.currentPage.set(1);
+    this.showCategoryMenu.set(false);
+  }
+
+  setFilterStatus(val: string): void {
+    this.selectedStatus.set(val);
+    this.currentPage.set(1);
+    this.showStatusMenu.set(false);
+  }
+
+  onSearchChange(event: any): void {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery.set(event.target.value);
+    this.currentPage.set(1);
+  }
 
 }

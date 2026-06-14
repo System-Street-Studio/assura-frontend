@@ -2,7 +2,7 @@
   <div class="content-padding">
     
     <div class="header-section">
-      <h1 class="page-title">Assets</h1>
+      <h1 class="page-title">Division Assets</h1>
       @if (selectedAsset()) {
         <div class="back-btn" (click)="goBack()">
           <mat-icon>arrow_back</mat-icon> 
@@ -18,11 +18,11 @@
           <div class="card-panel main-info">
             <h3>General Information</h3>
             <div class="asset-identity">
-              <img [src]="asset.image" alt="Asset" class="detail-img">
+              <!--<img [src]="asset.image" alt="Asset" class="detail-img">-->
               <div class="identity-text">
                 <p class="name-bold">{{ asset.name }}</p>
                 <p class="id-sub">ID: {{ asset.id }}</p>
-                <p class="type-sub">{{ asset.type }}</p>
+                <p class="type-sub">{{ asset.category }}</p>
               </div>
             </div>
             <hr class="divider">
@@ -33,9 +33,21 @@
             </div>
 
             <div class="detail-row">
-              <span class="label">Assigned Employee :</span>
-              <span class="value">{{ asset.assignedTo }} (EST001)</span>
+              <span class="label">Serial Number :</span>
+              <span class="value">{{ asset.serialNumber }}</span>
             </div>
+
+            <div class="detail-row">
+              <span class="label">Assigned Employee :</span>
+              <span class="value">{{ asset.assignedUserName  }}</span>
+            </div>
+
+            @if (asset.assignedUserId) {
+              <div class="detail-row">
+                <span class="label">Assigned User ID :</span>
+                <span class="value">{{ asset.assignedUserId }}</span>
+              </div>
+            }
 
             <div class="detail-row">
               <span class="label">Asset Category :</span>
@@ -54,7 +66,7 @@
               </span>
             </div>
 
-            <button class="transfer-btn">Transfer</button>
+           
           </div>
 
           <div class="side-column">
@@ -69,7 +81,7 @@
 
                 <div class="timeline-item">
                   <span class="date">2022-01-20</span>
-                  <p class="event">Assigned: Given to {{ asset.assignedTo }}</p>
+                  <p class="event">Assigned: Given to {{ asset.assignedUserName }}</p>
                 </div>
 
               </div>
@@ -77,11 +89,7 @@
 
             <div class="card-panel mt-20">
 
-              <h3>Condition Monitor</h3>
-              <div class="detail-row">
-                <span class="label">Health Indicator:</span>
-                <span class="health-pill">{{ asset.condition }}</span>
-              </div>
+              
 
               <div class="detail-row">
                 <span class="label">Purchased Date:</span>
@@ -107,21 +115,28 @@
             <span class="stat-title color-blue">Total Assets</span>
             <mat-icon>content_copy</mat-icon>
           </div>
-          <div class="stat-value">124</div>
+          <div class="stat-value">{{ totalAssets() }}</div>
         </div>
         <div class="stat-card border-yellow">
           <div class="stat-header">
             <span class="stat-title color-yellow">In Use</span>
             <mat-icon>check_circle_outline</mat-icon>
           </div>
-          <div class="stat-value">114</div>
+          <div class="stat-value">{{ inUseAssets() }}</div>
         </div>
         <div class="stat-card border-red">
           <div class="stat-header">
             <span class="stat-title color-red">Under maintenance</span>
             <mat-icon>build</mat-icon>
           </div>
-          <div class="stat-value">12</div>
+          <div class="stat-value">{{ maintenanceAssets() }}</div>
+        </div>
+        <div class="stat-card border-green">
+          <div class="stat-header">
+            <span class="stat-title color-green">Transferred</span>
+            <mat-icon>swap_horiz</mat-icon>
+          </div>
+          <div class="stat-value">{{ transferredAssets() }}</div>
         </div>
       </div>
     </section>
@@ -139,8 +154,8 @@
         </div>
         
         <div class="selected-filters">
-    <div class="styled-select">
-      <button class="filter-btn" (click)="showCategoryMenu.set(!showCategoryMenu())">
+    <div class="styled-select" data-filter="category">
+      <button class="filter-btn" (click)="toggleCategoryMenu($event)">
         <div class="filter-icon">
           <mat-icon>tune</mat-icon>
           <span>{{ selectedCategory() === 'all' ? 'All Categories' : selectedCategory() }}</span>
@@ -151,15 +166,15 @@
       @if (showCategoryMenu()) {
         <div class="filter-menu-card">
           <div class="filter-option" (click)="setFilterCategory('all')" [class.active]="selectedCategory() === 'all'">All Categories</div>
-          <div class="filter-option" (click)="setFilterCategory('Electronics')" [class.active]="selectedCategory() === 'Electronics'">Electronics</div>
-          <div class="filter-option" (click)="setFilterCategory('IT Equipment')" [class.active]="selectedCategory() === 'IT Equipment'">IT Equipment</div>
-          <div class="filter-option" (click)="setFilterCategory('Vehicles')" [class.active]="selectedCategory() === 'Vehicles'">Vehicles</div>
+          @for (category of availableCategories(); track category) {
+            <div class="filter-option" (click)="setFilterCategory(category)" [class.active]="selectedCategory() === category">{{ category }}</div>
+          }
         </div>
       }
     </div>
 
-    <div class="styled-select">
-      <button class="filter-btn" (click)="showStatusMenu.set(!showStatusMenu())">
+    <div class="styled-select" data-filter="status">
+      <button class="filter-btn" (click)="toggleStatusMenu($event)">
         <div class="filter-icon">
           <mat-icon>filter_list</mat-icon>
           <span>{{ selectedStatus() === 'all' ? 'All Status' : selectedStatus() }}</span>
@@ -179,39 +194,66 @@
   </div>
 
         <div class="view-toggle">
-          <mat-icon>reorder</mat-icon>
-          <mat-icon class="active">grid_view</mat-icon>
-        </div>
+        <mat-icon [class.active]="viewMode() === 'list'" (click)="setViewMode('list')">reorder</mat-icon>
+        <mat-icon [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')">grid_view</mat-icon>
+      </div>
+
+
         </div>
      
         
+          @if (isLoading()) {
+          <div class="loading-state">
+            <mat-icon class="spin-animation">sync</mat-icon>
+            <p>Loading division assets...</p>
+          </div>
+        } @else {
 
       <!--assets grid-->
-        <div class="asset-grid">
-          <div class="asset-card" *ngFor="let asset of filteredAssets()">
-         
-            <div class="img-container">
-              <img [src]="asset.image" [alt]="asset.name">
-            </div>
+        <div class="asset-grid" [ngClass]="viewMode()">
+        @for (asset of paginatedAssets(); track asset.id) {
+          <div class="asset-card">
+       
             
             <div class="card-body">
               <h4 class="asset-name">{{ asset.name }}</h4>
-              <p class="asset-id">ID: {{ asset.id }} · {{ asset.type }}</p>
+              <span class="asset-id-only">ID: {{ asset.id }}</span>
+              <span class="asset-cat-only">{{ asset.category }}</span>
               
               <div class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
                 {{ asset.status }}
               </div>
               
-              <p class="assigned-text">Assigned to {{ asset.assignedTo }}</p>
-            </div>
-            
+              <p class="assigned-text">Assigned to {{ asset.assignedUserName }}</p>
+             
             <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
+            </div>
           </div>
-        
-          </div>
+        }
+        </div>
+
+        @if (paginatedAssets().length === 0 && !isLoading()) {
+        <div class="no-data-container" style="text-align: center; padding: 40px; color: #777;">
+          <mat-icon style="font-size: 48px; width: 48px; height: 48px;">inventory_2</mat-icon>
+          <p>No assets match your search or filter criteria.</p>
+        </div>
+}
+
+       @if (filteredAssets().length > 0) {
+        <app-pagination 
+          [currentPage]="currentPage()" 
+          [totalPages]="totalPages()" 
+          [pageNumbers]="pageNumbers()"
+          (pageChange)="onPageChange($any($event))"> </app-pagination>
+        }
+      }
+
       </section>
+       
     }
 
   </div>
+
+  
  
 </div>

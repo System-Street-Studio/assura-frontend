@@ -3,7 +3,7 @@
   <div class="page-header">
     <div class="header-left">
       <h1 class="page-title">Asset Requests</h1>
-      <span class="item-count">{{ filteredRequests.length }} requests</span>
+      <span class="item-count">{{ filteredRequests().length }} requests</span>
     </div>
   </div>
 
@@ -103,7 +103,7 @@
 
   <!-- Table -->
   <div class="table-container">
-    <table class="requests-table" *ngIf="!loading">
+    <table class="requests-table" *ngIf="!loading()">
       <thead>
         <tr>
           <th class="col-check">
@@ -121,7 +121,7 @@
       </thead>
       <tbody>
         <!-- Empty state -->
-        <tr *ngIf="viewRequests.length === 0">
+        <tr *ngIf="viewRequests().length === 0">
           <td colspan="9" class="empty-state">
             <mat-icon class="empty-icon">inbox</mat-icon>
             <div class="empty-text">
@@ -134,7 +134,7 @@
         </tr>
 
         <!-- Data rows -->
-        <tr *ngFor="let r of viewRequests" [class.row-selected]="r.selected"
+        <tr *ngFor="let r of viewRequests()" [class.row-selected]="r.selected"
           [class.row-urgent]="r.priority === 'Urgent' && r.status === 'Pending'">
           <td class="col-check" (click)="$event.stopPropagation()">
             <input type="checkbox" [(ngModel)]="r.selected" />
@@ -145,17 +145,17 @@
           <td>
             <div class="requester-cell">
               <div class="avatar" [ngClass]="getAvatarClass(r.id)">
-                {{ getInitials(r.requestedBy) }}
+                {{ getInitials(r.requesterName || r.requestedBy) }}
               </div>
               <div>
-                <div class="cell-name">{{ r.requestedBy }}</div>
+                <div class="cell-name">{{ r.requesterName || r.requestedBy }}</div>
                 <div class="cell-sub">{{ r.department }}</div>
               </div>
             </div>
           </td>
           <td>
             <div class="cell-asset">{{ r.assetName }}</div>
-            <div class="cell-sub">{{ r.category }}</div>
+            <div class="cell-sub">{{ r.assetCategory || r.category }}</div>
           </td>
           <td class="col-num">
             <span class="cell-qty">{{ r.quantity }}</span>
@@ -202,7 +202,7 @@
     </table>
 
     <!-- Skeleton loading -->
-    <table class="requests-table" *ngIf="loading">
+    <table class="requests-table" *ngIf="loading()">
       <tbody>
         <tr *ngFor="let row of [1,2,3,4,5,6,7,8]" class="skeleton-row">
           <td colspan="9">
@@ -224,7 +224,7 @@
   </div>
 
   <!-- Pagination -->
-  <app-pagination *ngIf="!loading && filteredRequests.length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
+  <app-pagination *ngIf="!loading() && filteredRequests().length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
     [pageNumbers]="pages" (pageChange)="goToPage($event)">
   </app-pagination>
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject ,signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,11 +20,13 @@ export class AssetRequestsComponent implements OnInit {
   private toast = inject(ToastService);
   private authService = inject(AuthService);
 
-  allRequests: AssetRequest[] = [];
-  filteredRequests: AssetRequest[] = [];
-  viewRequests: AssetRequest[] = [];
+ allRequests = signal<AssetRequest[]>([]);
+  filteredRequests = signal<AssetRequest[]>([]);
+  viewRequests = signal<AssetRequest[]>([]);
+  
+  loading = signal(true);
 
-  loading = true;
+ 
   searchTerm = '';
   filterStatus = '';
   filterPriority = '';
@@ -55,31 +57,31 @@ export class AssetRequestsComponent implements OnInit {
 
   /* ── Stats ── */
   get totalCount(): number {
-    return this.allRequests.length;
+    return this.allRequests().length;
   }
 
   get pendingCount(): number {
-    return this.allRequests.filter((r) => r.status === 'Pending').length;
+    return this.allRequests().filter((r) => r.status === 'Pending').length;
   }
 
   get approvedCount(): number {
-    return this.allRequests.filter((r) => r.status === 'Approved').length;
+    return this.allRequests().filter((r) => r.status === 'Approved').length;
   }
 
   get rejectedCount(): number {
-    return this.allRequests.filter((r) => r.status === 'Rejected').length;
+    return this.allRequests().filter((r) => r.status === 'Rejected').length;
   }
 
   get fulfilledCount(): number {
-    return this.allRequests.filter((r) => r.status === 'Fulfilled').length;
+    return this.allRequests().filter((r) => r.status === 'Fulfilled').length;
   }
 
   get urgentCount(): number {
-    return this.allRequests.filter((r) => r.priority === 'Urgent' && r.status === 'Pending').length;
+    return this.allRequests().filter((r) => r.priority === 'Urgent' && r.status === 'Pending').length;
   }
 
   get departments(): string[] {
-    const depts = new Set(this.allRequests.map((r) => r.department));
+    const depts = new Set(this.allRequests().map((r) => r.department));
     return Array.from(depts).sort();
   }
 
@@ -92,11 +94,11 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   get priorities(): RequestPriority[] {
-    return ['Urgent', 'High', 'Medium', 'Low'];
+    return ['Urgent', 'High', 'Normal', 'Low'];
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filteredRequests.length / this.pageSize) || 1;
+    return Math.ceil(this.filteredRequests().length / this.pageSize) || 1;
   }
 
   get pages(): number[] {
@@ -104,48 +106,81 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   get showingFrom(): number {
-    return this.filteredRequests.length === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
+    return this.filteredRequests().length === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
   }
 
   get showingTo(): number {
-    return Math.min(this.currentPage * this.pageSize, this.filteredRequests.length);
+    return Math.min(this.currentPage * this.pageSize, this.filteredRequests().length);
   }
 
   get selectedCount(): number {
-    return this.viewRequests.filter((r) => r.selected).length;
+    return this.viewRequests().filter((r) => r.selected).length;
   }
 
   get allSelected(): boolean {
-    return this.viewRequests.length > 0 && this.viewRequests.every((r) => r.selected);
+    return this.viewRequests().length > 0 && this.viewRequests().every((r) => r.selected);
   }
 
   ngOnInit(): void {
+    this.loading.set(true);
+    console.log('📥 Loading inventory requests...');
+
     this.requestService.getAll().subscribe({
-      next: (data: AssetRequest[]) => {
-        this.allRequests = data;
-        this.applyFilters();
-        this.loading = false;
+      next: (existingRequests: AssetRequest[]) => {
+        const initial = existingRequests || [];
+        console.log('✅ getAll() returned:', initial.length, 'requests');
+        this.allRequests.set(initial);
+
+        this.requestService.getApprovedNewAssetRequests().subscribe({
+          next: (approvedRequests: AssetRequest[]) => {
+            console.log('✅ getApprovedNewAssetRequests() returned:', approvedRequests.length, 'requests');
+            if (approvedRequests?.length > 0) {
+              console.log('  Adding approved requests to allRequests...');
+              this.allRequests.update(current => {
+                const merged = [...current, ...approvedRequests];
+                console.log('  After merge, allRequests has:', merged.length, merged);
+                return merged.sort((a, b) => Number(b.id) - Number(a.id));
+              });
+            }
+            console.log('  Calling applyFilters()...');
+            this.applyFilters();
+            this.loading.set(false);
+          },
+          error: (err) => {
+            console.warn('⚠️ Warning:', err);
+            this.applyFilters();
+            this.loading.set(false);
+          }
+        });
       },
       error: () => {
         this.toast.show('Failed to load requests', 'error');
-        this.loading = false;
-      },
+        this.loading.set(false);
+      }
     });
   }
 
   /* ── Filtering ── */
   applyFilters(): void {
+    console.log('🔄 applyFilters() called - loading:', this.loading());
+    console.log('  allRequests:', this.allRequests().length, this.allRequests());
+    
     const term = this.searchTerm.toLowerCase().trim();
-
-    this.filteredRequests = this.allRequests.filter((r) => {
+    const results = this.allRequests().filter((r) => {
+      const name = (r.requesterName || r.requestedBy || '').toLowerCase();
+      const asset = (r.assetName || '').toLowerCase();
+      const requestedBy = (r.requestedBy || '').toLowerCase();
+      
       const matchesSearch =
         !term ||
-        r.requestedBy.toLowerCase().includes(term) ||
+        name.includes(term) ||
+        requestedBy.includes(term) ||
         String(r.id).toLowerCase().includes(term) ||
         (r.requestNumber || '').toLowerCase().includes(term) ||
         r.assetName.toLowerCase().includes(term) ||
+        asset.includes(term)||
         r.department.toLowerCase().includes(term) ||
-        r.reason.toLowerCase().includes(term);
+        (r.reason || '').toLowerCase().includes(term);
 
       const matchesStatus = !this.filterStatus || r.status === this.filterStatus;
       const matchesPriority = !this.filterPriority || r.priority === this.filterPriority;
@@ -153,9 +188,25 @@ export class AssetRequestsComponent implements OnInit {
 
       return matchesSearch && matchesStatus && matchesPriority && matchesDept;
     });
-
+    
+    // Sort by requestDate (most recent first)
+    results.sort((a, b) => {
+      const dateA = new Date(a.requestDate).getTime();
+      const dateB = new Date(b.requestDate).getTime();
+      return dateB - dateA; // Descending order (newest first)
+    });
+    
+    console.log('  filteredRequests after filter and sort:', results.length, results);
+    this.filteredRequests.set(results);
     this.currentPage = 1;
     this.updateView();
+
+    if(this.loading()) {
+      console.log('🔴 Setting loading to false...');
+      this.loading.set(false);
+    }
+    
+    console.log('🟢 applyFilters() END - loading now:', this.loading(), 'viewRequests:', this.viewRequests().length);
   }
 
   clearFilters(): void {
@@ -172,8 +223,19 @@ export class AssetRequestsComponent implements OnInit {
 
   /* ── Pagination ── */
   updateView(): void {
+    console.log('📄 updateView() START - loading:', this.loading());
     const start = (this.currentPage - 1) * this.pageSize;
-    this.viewRequests = this.filteredRequests.slice(start, start + this.pageSize);
+    const sliced = this.filteredRequests().slice(start, start + this.pageSize);
+    console.log('📄 updateView():', {
+      currentPage: this.currentPage,
+      pageSize: this.pageSize,
+      totalFiltered: this.filteredRequests().length,
+      sliced: sliced.length,
+      data: sliced,
+      loading: this.loading()
+    });
+    this.viewRequests.set(sliced);
+    console.log('📄 updateView() END - viewRequests now has:', this.viewRequests().length, this.viewRequests());
   }
 
   goToPage(page: number): void {
@@ -190,11 +252,11 @@ export class AssetRequestsComponent implements OnInit {
   /* ── Selection ── */
   toggleSelectAll(): void {
     const target = !this.allSelected;
-    this.viewRequests.forEach((r) => (r.selected = target));
+    this.viewRequests().forEach((r) => (r.selected = target));
   }
 
   clearSelection(): void {
-    this.allRequests.forEach((r) => (r.selected = false));
+    this.allRequests().forEach((r) => (r.selected = false));
   }
 
   /* ── Actions ── */
@@ -221,8 +283,14 @@ export class AssetRequestsComponent implements OnInit {
 
     obs.subscribe({
       next: (updated: AssetRequest) => {
-        const idx = this.allRequests.findIndex((r) => r.id === updated.id);
-        if (idx !== -1) this.allRequests[idx] = updated;
+        const idx = this.allRequests().findIndex((r) => r.id === updated.id);
+        if (idx !== -1) {
+          this.allRequests.update(current => {
+            const updated_arr = [...current];
+            updated_arr[idx] = updated;
+            return updated_arr;
+          });
+        }
         this.applyFilters();
 
         this.showActionModal = false;
@@ -230,11 +298,32 @@ export class AssetRequestsComponent implements OnInit {
 
         const verb = this.actionType === 'approve' ? 'approved' : 'rejected';
         this.toast.show(`Request ${updated.id} has been ${verb}`, 'success');
+        
+        // Refresh approved requests after approval/rejection - defer to next tick
+        setTimeout(() => this.refreshApprovedRequests(), 0);
       },
       error: () => {
         this.actionProcessing = false;
         this.toast.show('Action failed. Please try again.', 'error');
       },
+    });
+  }
+
+  private refreshApprovedRequests(): void {
+    this.requestService.getApprovedNewAssetRequests().subscribe({
+      next: (approvedRequests: AssetRequest[]) => {
+        if (approvedRequests && approvedRequests.length > 0) {
+          // Remove duplicates and merge with existing requests
+          this.allRequests.update(current => {
+            const existingIds = current.filter(r => r.status !== 'Approved').map(r => r.id);
+            const newApproved = approvedRequests.filter(r => !existingIds.includes(r.id));
+            const nonApproved = current.filter(r => r.status !== 'Approved');
+            return [...nonApproved, ...newApproved];
+          });
+          this.applyFilters();
+        }
+      },
+      error: (err: any) => console.warn('Could not refresh approved requests:', err)
     });
   }
 
@@ -265,6 +354,7 @@ export class AssetRequestsComponent implements OnInit {
       Urgent: 'urgent',
       High: 'high',
       Medium: 'medium',
+      Normal: 'normal',
       Low: 'low',
     };
     return map[priority] || '';
@@ -275,6 +365,7 @@ export class AssetRequestsComponent implements OnInit {
       Urgent: 'local_fire_department',
       High: 'arrow_upward',
       Medium: 'remove',
+      Normal: 'remove',
       Low: 'arrow_downward',
     };
     return map[priority] || 'remove';

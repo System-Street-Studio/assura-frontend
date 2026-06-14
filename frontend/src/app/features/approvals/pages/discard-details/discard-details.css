@@ -2,6 +2,14 @@
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Background clip compatibility */
+.background-clip-fix {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .container{
   margin: 0px;
   padding: 10px;
@@ -23,92 +31,142 @@
 }
 
 .modal-overlay {
-  padding: 10px 20px;
-  display: flex;
-  justify-content: center;
-  min-height: 60vh;
-   margin-left: 10px;
+  background-color: #efefef;
+  margin: 30px 50px;
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
 .modal-container {
-  background: white;
+  background: #ffffff;
   border-radius: 12px;
   width: 100%;
-  max-width: 800px;
-  font-family: 'jost', sans-serif;
-  padding: 30px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  animation: slideUp 0.4s ease-out;
-  margin-left: 10px;
+  max-width: 750px;
+  padding: 22px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #e5e7eb;
+  animation: slideUp 0.35s ease-out;
+  margin-left: 90px;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 15px;
+  margin-bottom: 18px;
+  padding-bottom: 20px;
+  border-bottom: #e0e1e3 solid 1px;
 }
 
 .modal-header h2 {
-  margin: 0;
   font-size: 1.4rem;
-  color: #2c3e50;
+  font-weight: 700;
+  margin: 0;
+  color: #3b3a3a;
 }
 
 .close-btn {
-  background: #f1f3f5;
+  background: #f1f5f9;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: 0.2s ease;
 }
 
 .close-btn:hover {
-  background: #e9ecef;
-  color: #e03131;
+  background: #e2e8f0;
+  color: #dc2626;
   transform: rotate(90deg);
 }
 
 .details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 20px;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
-.full-width { grid-column: span 2; }
+.full-width {
+  grid-column: span 2;
+  margin-top: 2px;
+}
 
 label {
-  color: #868e96;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666565;
   margin-bottom: 5px;
   display: block;
 }
 
 .bold-text {
   font-weight: 700;
-  color: #212529;
-  margin: 0 0 10px 10px;
+  color: #222;
+  margin-left: 50px;
 }
 
-.reason-text, .description-text {
+/* Priority Colors */
+.priority-normal {
+  color: #22863a;
+  font-weight: 700;
+}
+
+.priority-high {
+  color: #ff4444;
+  font-weight: 700;
+}
+
+.priority-low {
+  color: #ffa726;
+  font-weight: 700;
+}
+
+.priority-critical {
+  color: #d32f2f;
+  font-weight: 700;
+}
+
+.status-badge {
+  padding: 4px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.status-badge.approved {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.status-badge.rejected {
+  background: #ffcccc;
+  color: #c62828;
+}
+
+.status-badge.in {
+  background: #ffe0b2;
+  color: #e65100;
+}
+
+.info-group.full-width .bold-text {
   background: #f8f9fa;
-  padding: 12px;
+  padding: 10px;
   border-radius: 6px;
   font-size: 14px;
   line-height: 1.6;
-  color: #3e4348;
-  font-weight: 500;
+  color: #495057;
   border-left: 4px solid #00afb5;
-  margin-left: 10px;
 }
 
 .temporary-notice {
@@ -128,8 +186,7 @@ label {
   display: flex;
   gap: 15px;
   margin-top: 25px;
-  border-top:1px solid #ecebeb;
-  padding-top: 15px;
+  padding-top: 1px;
 }
 
 .btn-approve {
@@ -163,3 +220,235 @@ label {
 }
 
 .btn-approve:hover, .btn-reject:hover { opacity: 0.9; }
+
+/* Overlay Background */
+/* Overlay remains the same as per your initial request */
+.overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modern Rectangular Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  width: 480px;
+  height: 180px;
+  display: flex;
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: entry 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.28);
+}
+
+/* --- Left Icon Section --- */
+.icon-container {
+  width: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(135deg, #f0fdfa 0%, #e0f2f1 100%);
+}
+
+.main-circle {
+  width: 60px;
+  height: 60px;
+  background: #00a9b5;
+  border-radius: 50%;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8px 20px rgba(0, 169, 181, 0.3);
+}
+
+.ripple-ring {
+  position: absolute;
+  border: 2px solid #00a9b5;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.r1 { width: 80px; height: 80px; animation: ripple 2s infinite; }
+.r2 { width: 110px; height: 110px; animation: ripple 2s infinite 0.6s; }
+
+/* --- Right Content Section --- */
+.content-container {
+  flex: 1;
+  padding: 35px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #004777, #00a9b5);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.text-block p {
+  color: #666;
+  margin: 5px 0 15px 0;
+  font-size: 15px;
+  font-family: 'Jost', sans-serif;
+}
+
+.btn-done {
+  background: #00afb5; 
+  color: #ffffff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: fit-content;
+
+}
+
+.btn-done:hover {
+ background: #0b6c78; 
+  transform: translateY(-2px) scale(1.02); 
+  box-shadow: 0 10px 20px rgba(0, 169, 181, 0.25);
+}
+
+.btn-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  border: none;
+  background: #f5f5f5;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  transition: 0.2s;
+}
+
+.btn-close:hover { background: #eee; color: #333; }
+
+.btn-done:active {
+  transform: scale(0.98);
+}
+
+
+.btn-done svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-done:hover svg {
+  transform: translateX(4px);
+}
+
+/* Progress Bar at the bottom */
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: #00a9b5;
+  width: 100%;
+  transform-origin: left;
+  animation: progress 4s linear forwards;
+}
+
+/* Reject Mode Colors */
+.glass-card.reject .main-circle {
+  background: #e53935;
+  box-shadow: 0 8px 20px rgba(229, 57, 53, 0.3);
+}
+
+.glass-card.reject .icon-container {
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+}
+
+.glass-card.reject .gradient-text {
+  background: linear-gradient(90deg, #b71c1c, #e53935);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-card.reject .progress-bar {
+  background: #e53935;
+}
+
+.glass-card.reject .btn-done {
+  background: #e53935;
+}
+
+.glass-card.reject .btn-done:hover {
+  background: #b71c1c;
+  box-shadow: 0 10px 20px rgba(229, 57, 53, 0.25);
+}
+
+/* --- Animations --- */
+@keyframes ripple {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { opacity: 0.3; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+@keyframes entry {
+  from { opacity: 0; transform: scale(0.9) translateY(30px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+.checkmark-path {
+  stroke: white;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: draw 0.6s ease-out 0.4s forwards;
+}
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* Timeline Row Styles */
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.timeline-label {
+  min-width: 45px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-align: right;
+}
+
+.timeline-row .bold-text {
+  margin: 0;
+  display: inline;
+  white-space: nowrap;
+}

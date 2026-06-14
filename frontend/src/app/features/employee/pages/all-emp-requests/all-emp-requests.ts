@@ -57,15 +57,6 @@ export class AllRequestsComponent implements OnInit {
     }
   }
 
-  /*// Mock Data 
-  requests = signal<RequestItem[]>([
-    { id: 'REQ001', type: 'New Asset', date: '2025-08-15', priority: 'High', status: 'Pending' },
-    { id: 'REQ002', type: 'Transfer', date: '2025-08-15', priority: 'Medium', status: 'Approved' },
-    { id: 'REQ002', type: 'Transfer', date: '2025-08-15', priority: 'Urgent', status: 'In Progress' },
-    { id: 'REQ003', type: 'Discard', date: '2025-08-15', priority: '—', status: 'Rejected' },
-    { id: 'REQ004', type: 'Maintenance', date: '2025-08-15', priority: 'Medium', status: 'Approved' },
-    { id: 'REQ005', type: 'New Asset', date: '2025-08-15', priority: 'High', status: 'Pending' },
-  ]);*/
 
   filterStatus = signal<'All Types' | 'Pending' | 'Approved' | 'Rejected'>('All Types');
   isMenuOpen = signal(false); // To toggle the dropdown visibility
@@ -116,6 +107,7 @@ export class AllRequestsComponent implements OnInit {
     this.isMenuOpen.set(false); // Close menu after selection
   }
 
+  
   // Mock function to handle cancel action
   cancelRequest(requestId: number) {
     console.log('Cancelling request with ID:', requestId);

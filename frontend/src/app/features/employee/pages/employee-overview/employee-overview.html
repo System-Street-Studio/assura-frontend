@@ -40,44 +40,43 @@
       </section>
 
 <!--Pending requests -->
-      <div class="details-layout">
-        <div class="white-panel">
-          <h3>Pending Requests</h3>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Request Date</th>
-                <th>Status</th>
-                <th>Priority</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (req of pendingRequests(); track req.item) {
-                <tr>
-                  <td>{{ req.item }}</td>
-                  <td>{{ req.date }}</td>
-                  <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
-                  <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+<div class="details-layout">
+  <div class="white-panel">
+    <h3>Pending Requests</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Request Date</th>
+          <th>Status</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (req of pendingRequests(); track $index) {
+          <tr>
+            <td>{{ req.item }}</td>
+            <td>{{ req.date |  date:'medium'  }}</td>
+            <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
+            <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
+          </tr>
+        } </tbody>
+    </table>
+  </div>
 
 <!--recent activities table-->
-        <div class="white-panel">
+    <!-- <div class="white-panel">
           <h3>Recent Activities</h3>
           <div class="activity-feed">
-            @for (act of recentActivities(); track act.description) {
+            @for (act of recentActivities(); track $index) {
               <div class="activity-item">
                 <p class="act-desc">{{ act.description }}</p>
                 <span class="act-time">{{ act.timestamp }}</span>
               </div>
             }
           </div>
-        </div>
+        </div>--> 
       </div>
-    </div>
- 
+    
+  
 </div>
