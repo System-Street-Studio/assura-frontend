@@ -495,35 +495,39 @@ mat-icon {
 }
 
 
-/* --- Detailed View Section --- */
+
+/* ==========================================================================
+   DETAILED VIEW SECTION ONLY (When an asset is selected)
+   ========================================================================== */
 
 .details-view {
-  background: white;
-  border-radius: 20px;
-  padding: 25px 30px;
-  box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6); 
-  width: 70%;
-  margin: 30px;
-  animation: slideIn 0.4s ease forwards;
-
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slideIn 0.3s ease-out;
 }
 
+/* Back Link Button */
 .back-link {
-  background: none;
-  border: none;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #0369a1;
-  cursor: pointer;
-  margin-bottom: 1rem;
+  color: #00afb5;
+  text-decoration: none;
   font-weight: 600;
   font-size: 14px;
+  cursor: pointer;
   transition: all 0.3s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  width: fit-content;
+  font-family: 'jost', sans-serif;
+  margin-top: 20px;
 }
 
 .back-link:hover {
-  color: #0284c7;
+  color: #008a91;
   transform: translateX(-4px);
   gap: 12px;
 }
@@ -532,82 +536,145 @@ mat-icon {
   font-size: 18px;
   width: 18px;
   height: 18px;
-  color: #0284c7;
+
 }
 
-.info-header {
-  display: flex;
-  gap: 2rem;
-  border-bottom: 1px solid #c1bebe;
-  padding-bottom: 1.5rem;
-  margin-bottom: 1.5rem;
-  
+/* Container Card */
+.info-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.info-img {
-  width: 100px;
-  height: auto;
-  margin-right: 60px;
-}
-.title {
-  margin-bottom: 20px;
-}
-.info-title h2 {
-  font-size: 1.8rem;
+/* Section Title (General Information) */
+.info-card .title h2 {
+  font-size: 15px;
   font-weight: 700;
-  color: #0369a1;
-  margin-bottom: 20px;
-  
+  color: #151515;
+  margin: 0 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0f0f0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
+
+/* Premium Header Card Style (Teal Background Box) */
+.info-header {
+  background: #00afb5;
+  color: white;
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.info-title h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 6px 0;
+}
+
+.info-title p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Data Body & Grid Alignment */
 .info-body {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
 }
 
+/* Clean Borderless Layout Rows (180px fixed left column layout) */
 .info-row {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-of-type {
+  border-bottom: none;
 }
 
 .info-row .label {
-  width: 180px;
   font-weight: 600;
+  color: #474646;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
-.info-row .status-badge {
+.info-row .val {
+  color: #151515;
+  font-weight: 500;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.info-row .val p {
   margin: 0;
-  display: inline-block;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
+/* Status Badges within Detailed View */
+.info-row .status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid;
+  margin: 0;
+  width: fit-content;
+}
 
-
-/* --- Action Buttons --- */
-
+/* Action Buttons (Maintenance / Discard Request) */
 .info-actions {
   display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-  
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 25px;
+  flex-wrap: wrap;
 }
-.btn-discard, .btn-maint {
-  color: white;
-  padding: 0.8rem 2rem;
-  border-radius: 8px;
+
+.btn-maint, .btn-discard {
+  padding: 8px 16px;
   border: none;
-  flex: 1;
-  font-family: 'jost';
-  font-weight: 550;
-  box-shadow: 2px 5px 16px 2px rgba(109, 109, 110, 0.6); 
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'jost', sans-serif;
+  transition: background-color 0.2s ease;
 }
 
-.info-actions .btn-maint:hover {
-  background-color: #11a0ad;
+.btn-maint {
+  background-color: #00afb5;
+  color: white;
 }
-.info-actions .btn-discard:hover {
-  background-color: #8f0505;
+
+.btn-maint:hover {
+  background-color: #008a91;
 }
-.btn-maint {background-color:#00afb5;}
-.btn-discard {background-color: #a30000;}
 
+.btn-discard {
+  background-color: #f60101;
+  color: white;
+  border: 1px solid #d93025;
+}
 
+.btn-discard:hover {
+  background-color: #d93025;
+}
+
+/* Smooth Entrance Animation */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
