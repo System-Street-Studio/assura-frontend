@@ -31,13 +31,17 @@ export class EmployeeOverviewComponent implements OnInit {
   private assetService = inject(AssetService);
   private dashboardService = inject(DashboardService);
 
-  loading = signal(true);
+  isLoading = signal(true);
   pendingRequests = signal<RequestItem[]>([]);
   recentActivities = signal<Activity[]>([]);
 
   ngOnInit() {
+    this.isLoading.set(true);
     const userId = this.authService.getUserId();
-    if (!userId) return;
+    if (!userId) {
+      this.isLoading.set(false);
+      return;
+    }
 
     // Fetch Requests
     this.assetService.getEmployeeRequests(userId).subscribe({
@@ -52,7 +56,9 @@ export class EmployeeOverviewComponent implements OnInit {
             priority: (r.priority as any) || 'Medium'
           }));
         this.pendingRequests.set(pending);
-      }
+        this.isLoading.set(false); 
+      },
+      error: () => this.isLoading.set(false)
     });
 
     // Fetch Dashboard Activity
@@ -63,9 +69,9 @@ export class EmployeeOverviewComponent implements OnInit {
           timestamp: this.formatTimeAgo(new Date(a.timestamp))
         }));
         this.recentActivities.set(activities);
-        this.loading.set(false);
+      
       },
-      error: () => this.loading.set(false)
+      error: () => this.isLoading.set(false)
     });
   }
 

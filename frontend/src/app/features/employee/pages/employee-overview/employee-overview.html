@@ -2,6 +2,14 @@
     <div class="content-padding">
       <h1 class="page-title">Dashboard</h1>
 
+      
+    @if (isLoading()) {
+      <div class="loading-state">
+        <mat-icon class="spin-animation">sync</mat-icon>
+        <p>Loading your dashboard...</p>
+      </div>
+    } @else {
+
 <!--Quick action buttons and overview cards-->
       <section class="section">
         <h3 class="section-label">Quick Action</h3>
@@ -18,51 +26,61 @@
         <div class="grid-4">
           <div class="stat-card border-blue">
             <div class="stat-top">My Assigned Assets </div>
-            <div class="stat-val">12</div>
+            <div class="stat-val"></div>
             <div class="stat-sub">All assets assigned to me</div>
           </div>
           <div class="stat-card border-green">
             <div class="stat-top">Pending Requests </div>
-            <div class="stat-val">03</div>
+            <div class="stat-val"></div>
             <div class="stat-sub">Waiting for approval</div>
           </div>
           <div class="stat-card border-yellow">
             <div class="stat-top">Temporary transfers </div>
-            <div class="stat-val">01</div>
+            <div class="stat-val"></div>
             <div class="stat-sub">All temporary transfers your assets</div>
           </div>
           <div class="stat-card border-red">
             <div class="stat-top">Assets in maintenance </div>
-            <div class="stat-val">02</div>
+            <div class="stat-val"></div>
             <div class="stat-sub">Awaiting repair or service</div>
           </div>
         </div>
       </section>
 
-<!--Pending requests -->
-<div class="details-layout">
-  <div class="white-panel">
-    <h3>Pending Requests</h3>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Request Date</th>
-          <th>Status</th>
-          <th>Priority</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (req of pendingRequests(); track $index) {
-          <tr>
-            <td>{{ req.item }}</td>
-            <td>{{ req.date |  date:'medium'  }}</td>
-            <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
-            <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
-          </tr>
-        } </tbody>
-    </table>
-  </div>
+    <!--Pending requests -->
+    <div class="details-layout">
+    <div class="white-panel">
+        <h3>Pending Requests</h3>
+        
+        @if (pendingRequests().length > 0) {
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Priority</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (req of pendingRequests(); track $index) {
+                <tr>
+                  <td>{{ req.item }}</td>
+                  <td>{{ req.date | date:'medium' }}</td>
+                  <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
+                  <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <div class="dashboard-empty-state">
+             <mat-icon class="empty-icon">layers_clear</mat-icon>
+            <h3>No Pending Requests</h3>
+            <p>You don't have any pending asset or maintenance requests at the moment.</p>
+          </div>
+        }
+      </div>
 
 <!--recent activities table-->
     <!-- <div class="white-panel">
@@ -77,6 +95,6 @@
           </div>
         </div>--> 
       </div>
-    
+    }
   
 </div>
