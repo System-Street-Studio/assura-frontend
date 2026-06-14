@@ -9,6 +9,7 @@ import { AssetDetail } from '../../../../features/inventory/models/asset.model';
 
 interface Asset {
   assetId: string;
+  assetCode: string;
   assetName: string;
   image: string;
   conditionStatus: string;
@@ -16,6 +17,7 @@ interface Asset {
   status: string;
   category: string;
   description?: string;
+  serialNumber?: string;
   assignedEmployee: string;
 }
 
@@ -52,7 +54,7 @@ export class EmployeeAssetsComponent implements OnInit {
   }
   
   searchTerm = signal('');
-  loading = signal(true);
+  isLoading = signal(true);
   statusMenuOpen = signal(false);
   categoryMenuOpen = signal(false);
 
@@ -71,13 +73,16 @@ export class EmployeeAssetsComponent implements OnInit {
   assets = signal<Asset[]>([]);
 
   ngOnInit() {
+    this.isLoading.set(true);
     this.assetService.getAll().subscribe({
       next: (data: AssetDetail[]) => {
         const mapped = data.map(a => ({
-          assetId: a.assetCode,
+          assetId: a.id.toString(),
+          assetCode: a.assetCode,
           assetName: a.productName,
           category: a.categoryName,
-          description: a.notes,
+          serialNumber: a.serialNumber || 'N/A',
+          description: a.notes ||  'N/A',
           assignedEmployee: a.assignedUserName || 'Me',
           assignedDate: a.assetDate,
           status: this.formatStatus(a.status),
@@ -85,10 +90,10 @@ export class EmployeeAssetsComponent implements OnInit {
           image: ''
         }));
         this.assets.set(mapped);
-        this.loading.set(false);
+        this.isLoading.set(false);
       },
       error: () => {
-        this.loading.set(false);
+        this.isLoading.set(false);
       }
     });
   }
