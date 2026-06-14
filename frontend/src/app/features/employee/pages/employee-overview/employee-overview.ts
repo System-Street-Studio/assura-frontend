@@ -67,7 +67,7 @@ export class EmployeeOverviewComponent implements OnInit {
       error: () => this.isLoading.set(false)
     });
 
-    // Fetch Dashboard Activity
+    /*// Fetch Dashboard Activity
     this.dashboardService.getDashboardData().subscribe({
       next: (data: DashboardData) => {
         const activities = data.recentActivity.map(a => ({
@@ -78,7 +78,7 @@ export class EmployeeOverviewComponent implements OnInit {
       
       },
       error: () => this.isLoading.set(false)
-    });
+    });*/
   }
 
   private formatTimeAgo(date: Date): string {

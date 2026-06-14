@@ -1,13 +1,15 @@
 <div class="container">
-  <header>
-    <h1>Transfers</h1>
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1>Transfers</h1>
+      <p class="sub-text">Track, approve, and manage asset movements across divisions.</p>
+    </div>
+
     <div class="overview-section">
       <h3>Overview</h3>
-     
     </div>
   </header>
 
-  <!-- Tabs -->
   <div class="transfer-tabs">
     <button class="tab-btn" [class.active]="activeTab() === 'incoming'" (click)="setTab('incoming')">Incoming Requests</button>
     <button class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">Pending Approval</button>
@@ -15,176 +17,194 @@
     <button class="tab-btn" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">Completed</button>
   </div>
 
-  <!-- Stats Grid -->
   <div class="stats-grid">
     <div class="card blue-border" [class.highlight]="activeTab() === 'incoming'">
       <div class="card-content">
-        <div>
-          <p class="card-title">Incoming Requests</p>
-          <h2 class="card-number">7</h2>
-        </div>
+        <p class="card-title">Incoming Requests</p>
+        <h2 class="card-number">{{ incomingCount() }}</h2>
       </div>
     </div>
 
     <div class="card green-border" [class.highlight]="activeTab() === 'pending'">
       <div class="card-content">
-        <div>
-          <p class="card-title">Pending Approval</p>
-          
-          <h2 class="card-number">0</h2>
-        </div>
+        <p class="card-title">Pending Approval</p>
+        <h2 class="card-number">{{ pendingCount() }}</h2>
       </div>
     </div>
 
     <div class="card orange-border" [class.highlight]="activeTab() === 'active'">
       <div class="card-content">
-        <div>
-          <p class="card-title">Active Transfers</p>
-          <h2 class="card-number">2</h2>
-        </div>
+        <p class="card-title">Active Transfers</p>
+        <h2 class="card-number">{{ activeCount() }}</h2>
       </div>
     </div>
 
     <div class="card red-border" [class.highlight]="activeTab() === 'completed'">
       <div class="card-content">
-        <div>
-          <p class="card-title">Completed Transfers</p>
-          <h2 class="card-number">0</h2>
-        </div>
+        <p class="card-title">Completed Transfers</p>
+        <h2 class="card-number">{{ completedCount() }}</h2>
       </div>
     </div>
   </div>
 
-
-  
-
-  <!-- Content  -->
   <section class="content-container">
-    
-    <h2 class="section-main-title">{{ activeTab() | titlecase }} {{ activeTab() === 'active' || activeTab() === 'completed' ? 'Transfers' : 'Requests' }}</h2>
+    <div class="content-header-row">
+      <h2 class="section-main-title">
+        {{ activeTab() | titlecase }} {{ activeTab() === 'active' || activeTab() === 'completed' ? 'Transfers' : 'Requests' }}
+      </h2>
+    </div>
 
-    <!--Search and Filter -->
     @if (activeTab() === 'active' || activeTab() === 'completed') {
       <div class="table-actions">
         <div class="input-wrapper">
           <mat-icon class="search-icon">search</mat-icon>
           <input type="text" placeholder="Search Assets..." class="search-bar" [value]="searchQuery()" (input)="onSearchChange($event)">
         </div>
-        
 
         <div class="action-group">
-            
-              <div class="filter-dropdown">
-                <button class="filter-btn" (click)="showMenu.set(!showMenu())">
-                  <div class="filter-icon">
-                  <mat-icon>tune</mat-icon>
-                  <span>{{ filterType() === 'all' ? 'All Transfers' : (filterType() === 'IncomingActive' ? 'Incoming' : 'Outgoing') }}</span>
-                  </div>
-                  <mat-icon class="arrow">expand_more</mat-icon>
-
-                </button>
-
-                @if (showMenu()) {
-                 <div class="filter-menu-card">
-                <div class="filter-option" (click)="setFilterType('all')">All Transfers</div>
-                <div class="filter-option" (click)="setFilterType('IncomingActive')">Incoming Transfers</div>
-                <div class="filter-option" (click)="setFilterType('OutgoingActive')">Outgoing Transfers</div>
+          <div class="filter-dropdown">
+            <button class="filter-btn" (click)="$event.stopPropagation(); showMenu.set(!showMenu())">
+              <div class="filter-icon">
+                <mat-icon>tune</mat-icon>
+                <span>{{ filterType() === 'all' ? 'All Transfers' : (filterType() === 'IncomingActive' ? 'Incoming' : 'Outgoing') }}</span>
               </div>
-                }
-              </div>
-            </div>
+              <mat-icon class="arrow">expand_more</mat-icon>
+            </button>
 
+            @if (showMenu()) {
+              <div class="filter-menu-card">
+                <div class="filter-option" (click)="setFilterType('all')" [class.active]="filterType() === 'all'">All Transfers</div>
+                <div class="filter-option" (click)="setFilterType('IncomingActive')" [class.active]="filterType() === 'IncomingActive'">Incoming Transfers</div>
+                <div class="filter-option" (click)="setFilterType('OutgoingActive')" [class.active]="filterType() === 'OutgoingActive'">Outgoing Transfers</div>
+              </div>
+            }
+          </div>
+        </div>
       </div>
     }
 
-
-
     <div class="list-wrapper">
-
       @if (isLoading()) {
-        <div class="loading-state" >
-          <mat-icon class="spin-animation" >sync</mat-icon>
+        <div class="loading-state">
+          <mat-icon class="spin-animation">sync</mat-icon>
           <p>Loading transfers... Please wait.</p>
         </div>
       } 
       @else {
-
-      @for (item of filteredResults(); track item.id) {
         
-        <!-- Incoming Requests, Pending Approval -->
-        @if (activeTab() === 'incoming' || activeTab() === 'pending') {
-          <div class="asset-item-card">
-                <!-- <div class="asset-img-container">
-             <img [src]="item.image || 'assets/placeholder.png'" class="asset-image">
-            </div>-->
+        @for (item of paginatedRequests(); track item.id) {
+          
+          @if (activeTab() === 'incoming' || activeTab() === 'pending') {
+            <div class="asset-item-card">
+              <div class="card-badge-row">
+                <span class="time-stamp"><mat-icon>schedule</mat-icon>{{ item.timeAgo }}</span>
+              </div>
+                
+              <div class="asset-info-box">
+                <div class="info-header">
+                  <span class="asset-name-id">{{ item.productName  }} <span class="sub-id">Code: {{ item.assetCode || 'N/A' }}</span></span> 
+                  <span class="trf-id"> ( ID: #{{ item.id }} )</span>
+                </div>
 
-            <div class="asset-info-box">
-              <span class="time-stamp">{{ item.timeAgo }}</span>
-              <div class="info-header">
-                <span class="asset-name-id">{{ item.assetTag }} (ID: {{ item.id }})</span>
-
+                <div class="info-grid-details">
+                  <p><span>Division:</span> {{ item.toDivisionName }}</p>
+                  <p><span>Transfer Period:</span> {{ item.transferPeriod }}</p>
+                  <p><span>Requested by:</span> {{ item.transferByName }}</p>
+                  <p><span>Asset need to:</span> {{ item.targetUserName }}</p>
+                  <p class="full-width"><span>Reason:</span> {{ item.reason }}</p>
+                </div>
+              </div>
               
-
-              </div>
-              <div class="info-grid-details">
-                <p><span>Division:</span> {{ item.toDivisionName }}</p>
-                <p><span>Transfer Period:</span> {{ item.transferPeriod }}</p>
-                <p><span>Requested by:</span> {{ item.transferByName }}</p>
-                <p><span>Asset need to:</span> {{ item.targetUserName }}</p>
-                <p><span>Reason:</span> {{ item.reason }}</p>
+              <div class="action-buttons-cell">
+                @if (activeTab() === 'incoming') {
+                  <button class="btn-accept" (click)="acceptTransfer(+item.id)">Accept</button>
+                  <button class="btn-reject" (click)="rejectTransfer(+item.id)">Reject</button>
+                } @else {
+                  <span class="status-badge-outline pending">Pending Approval</span>
+                }
               </div>
             </div>
-            
-            <div class="action-buttons-cell">
-              @if (activeTab() === 'incoming') {
-                <button class="btn-accept" (click)="acceptTransfer(item.id)">Accept</button>
-                <button class="btn-reject" (click)="rejectTransfer(item.id)">Reject</button>
-              } @else {
-                <span class="status-badge-outline pending">Pending Approval</span>
+          }
+
+          @if (activeTab() === 'active' || activeTab() === 'completed') {
+            <div class="asset-item-card" [class.expanded]="expandedItemId() === item.id"> 
+              <div class="card-badge-row">
+                @if (activeTab() === 'active') {
+                  <div class="days-left-tag absolute-top-right">
+                    <mat-icon>hourglass_empty</mat-icon>
+                    {{ item.daysLeft || 'N/A' }}
+                  </div>
+                } @else {
+                  <span class="time-stamp absolute-top-right">
+                    <mat-icon>schedule</mat-icon>{{ item.timeAgo }}
+                  </span>
+                }
+              </div>
+
+              <div class="asset-info-box">
+                <div class="info-header-vertical">
+                  <span class="asset-name-id">{{ item.productName || 'Unnamed Product' }} <span class="sub-id">Code: {{ item.assetCode }} <span class="trf-id"> ( ID: #{{ item.id }} )</span> </span></span> 
+                  <div class="badge-group">
+                    <span class="badge-type" [ngClass]="item.type === 'IncomingActive' ? 'inc' : 'out'">
+                      {{ item.type === 'IncomingActive' ? 'Incoming' : 'Outgoing' }}
+                    </span>
+                    @if (activeTab() === 'completed') {
+                      <div class="status-pill completed">Completed</div>
+                    }
+                  </div>
+                </div>
+
+                <div class="info-grid-details"> 
+                  @if (item.type === 'OutgoingActive') {
+                    <p><span>Division(Transfer to):</span> {{ item.toDivisionName }}</p>
+                    <p><span>Asset Transfer To:</span> {{ item.targetUserName }}{{ item.targetUserId ? ' (ID: ' + item.targetUserId + ')' : '' }}</p>
+                  } @else {
+                    <p><span>Division(Transfer from):</span> {{ item.fromDivisionName }}</p> 
+                    <p><span>Asset Transfer From:</span> {{ item.currentHolderName }}{{ item.currentHolderId ? ' (ID: ' + item.currentHolderId + ')' : '' }}</p> 
+                  }
+                  <p><span>Transfer Period:</span> {{ item.transferPeriod }}</p>
+                </div>
+              </div>
+
+              <div class="action-buttons-cell">
+                <button class="btn-view-outline" (click)="$event.stopPropagation(); toggleDetails(item.id)">
+                  <mat-icon>{{ expandedItemId() === item.id ? 'expand_less' : 'visibility' }}</mat-icon>
+                  {{ expandedItemId() === item.id ? 'Hide Details' : 'View Details' }}
+                </button>
+              </div>
+
+              @if (expandedItemId() === item.id) {
+                <div class="more-details-panel">
+                  <h4><mat-icon>info</mat-icon> Detailed Transfer Information</h4>
+                  <div class="details-extended-grid">
+                    <p><span>Transfer ID:</span> #{{ item.id }}</p>
+                    <p><span>Asset Tag Code:</span> {{ item.assetTag }}</p>
+                    <p><span>Current Status:</span> <span class="status-badge-inline transfer">{{ item.status }}</span></p>
+                    <p><span>Transfer By:</span> {{ item.transferByName || 'N/A' }}</p>
+                    <p><span>Transfer Date:</span> {{ (item.transferDate | date: 'yyyy-MM-dd')}}</p>
+
+                    @if(activeTab() === 'completed') {
+                      <p><span>Return Date:</span> {{(item.returnDate | date: 'yyyy-MM-dd') ?? 'N/A'}}</p>
+                    }
+                    
+                    <p class="full-width"><span>Reason for Transfer:</span> {{ item.reason || 'No specific reason provided.' }}</p>
+                  </div>
+
+                  @if (activeTab() === 'active' && item.type === 'IncomingActive') {
+                    <div class="return-action-zone">
+                      <p class="action-notice">As the receiving division head, you can return this asset back to the original owner once the usage period is completed.</p>
+                      <button class="btn-return-asset" (click)="returnAsset(item.id)">
+                        <mat-icon>keyboard_return</mat-icon> Return Asset
+                      </button>
+                    </div>
+                  }
+                </div>
               }
+
             </div>
-          </div>
-        }
+          }
 
-        <!-- Active Transfers, Completed Transfers -->
-        @if (activeTab() === 'active' || activeTab() === 'completed') {
-          <div class="asset-item-card horizontal">
-            <!--<div class="asset-img-container">
-               <img [src]="item.image || 'assets/placeholder.png'" class="asset-image"> 
-            </div>-->
-
-            <div class="asset-info-box">
-              <div class="info-header">
-                <span class="asset-name-id">{{ item.assetTag }}</span>   
-              </div>
-
-              <span class="badge-type" [ngClass]="item.type === 'IncomingActive' ? 'inc' : 'out'">{{ item.type === 'IncomingActive' ? 'Incoming' : 'Outgoing' }}</span>
-                @if (activeTab() === 'completed') {
-                    <div class="status-pill completed">Completed</div>
-             }
-
-              <div class="info-grid-minimal">
-                <p><span>Asset ID:</span> {{ item.assetCode }}</p>
-                <p><span>To:</span> {{ item.targetUserName }}</p>
-                <p><span>Division:</span> {{ item.toDivisionName }}</p>
-              </div>
-
-              @if (activeTab() === 'active') {
-                <div class="days-left-tag">{{ item.daysLeft || 'N/A'}}</div>
-              }
-            </div>
-
-            <div class="action-buttons-cell">
-              @if (activeTab() === 'active' && item.type === 'IncomingActive') {
-                <button class="btn-return-outline">Return Asset</button>
-              } @else {
-                <button class="btn-view-outline">View Details</button>
-              }
-            </div>
-          </div>
-        }
-
-      }  @empty {
+        } @empty {
           <div class="empty-state">
             <mat-icon class="empty-icon">layers_clear</mat-icon>
             <h3>No Records Found</h3>
@@ -194,16 +214,13 @@
       }
     </div>
 
-    <!-- Pagination -->
-    @if (paginatedRequests().length > 0) {
-        <app-pagination 
-          [currentPage]="currentPage()" 
-          [totalPages]="totalPages()" 
-          [pageNumbers]="pageNumbers()"
-          (pageChange)="onPageChange($event)">
-        </app-pagination>
-      }
-
-    
+    @if (filteredResults().length > pageSize) {
+      <app-pagination 
+        [currentPage]="currentPage()" 
+        [totalPages]="totalPages()" 
+        [pageNumbers]="pageNumbers()"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
+    }
   </section>
 </div>

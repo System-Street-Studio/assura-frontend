@@ -39,5 +39,8 @@ export class EmployeeTransferService {
     return this.http.post<any>(`${this.baseUrl}/transfers/${transferId}/return`, {});
   }
 
+  getTransferCounts(userId: number): Observable<any> {
+  return this.http.get<any>(`${this.baseUrl}/transfers/counts?userId=${userId}`);
+  }
   
 }
