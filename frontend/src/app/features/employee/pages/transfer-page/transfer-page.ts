@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { TransferService } from '../../services/asset-transfer.service';
+import { EmployeeTransferService } from '../../services/asset-transfer.service';
 
 interface TransferData {
     id: number;
@@ -56,13 +56,15 @@ export class TransferPageComponent implements OnInit {
 
     activeTab = signal<'incoming' | 'pending' | 'active' | 'completed'>('incoming');
 
-    private allTransfers = signal<TransferDataLocal[]>([]);
-
-    filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
-    searchQuery = signal<string>('');
-
-    private transferService = inject(TransferService);
-    private authService = inject(AuthService);
+  // Transfer data
+  private allTransfers = signal<TransferDataLocal[]>([]);
+  
+  // Filter and search signals
+  filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
+  searchQuery = signal<string>('');
+  
+  private transferService = inject(EmployeeTransferService);
+  private authService = inject(AuthService);
 
     ngOnInit(): void {
         this.loadTransfers();

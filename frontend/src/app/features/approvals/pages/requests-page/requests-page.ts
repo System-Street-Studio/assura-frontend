@@ -6,13 +6,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 import { RequestService } from '../../services/requests.service';
 import { RequestItem } from '../../models/request.model';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 
 
 @Component({
   selector: 'app-requests-page',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterModule, MatMenuModule, FormsModule],
+  imports: [CommonModule, MatIconModule, RouterModule, MatMenuModule, FormsModule,PaginationComponent],
   templateUrl: './requests-page.html',
   styleUrl: './requests-page.css',
 })
@@ -40,6 +41,10 @@ export class RequestsPageComponent implements OnInit {
   transferRequests = signal<RequestItem[]>([]);
   maintenanceRequests = signal<RequestItem[]>([]);
   discardRequests = signal<RequestItem[]>([]);
+
+  // Pagination
+  pageSize = 10; 
+  currentPage = signal(1);
 
   // Summary Counts
   newAssetCount = signal(0);
@@ -111,108 +116,127 @@ ngOnInit() {
   }
 
 
-  // --- DYNAMIC FILTER ENGINE ---
-  filteredResults = computed(() => {
-    const tab = this.activeTab();
-    const query = this.searchQuery().toLowerCase().trim();
-    const filters = this.selectedFilters();
+        // --- DYNAMIC FILTER ENGINE ---
+        filteredResults = computed(() => {
+          const tab = this.activeTab();
+          const query = this.searchQuery().toLowerCase().trim();
+          const filters = this.selectedFilters();
 
-    let sourceList: RequestItem[] = [];
-    switch (tab) {
-      case 'transfer': sourceList = this.transferRequests(); break;
-      case 'maintenance': sourceList = this.maintenanceRequests(); break;
-      case 'discard': sourceList = this.discardRequests(); break;
-      default: sourceList = this.requests(); break;
-    }
+          let sourceList: RequestItem[] = [];
+          switch (tab) {
+            case 'transfer': sourceList = this.transferRequests(); break;
+            case 'maintenance': sourceList = this.maintenanceRequests(); break;
+            case 'discard': sourceList = this.discardRequests(); break;
+            default: sourceList = this.requests(); break;
+          }
 
-    return sourceList.filter(item => {
-      const personName = (item.name || item.employee || '').toLowerCase();
-      const assetName = item.assetName.toLowerCase();
+          return sourceList.filter(item => {
+            const personName = (item.name || item.employee || '').toLowerCase();
+            const assetName = (item.assetName || '').toLowerCase();
+            
+            const matchesSearch = !query || personName.includes(query) || assetName.includes(query);
+            const matchesPriority = filters['priority']?.length === 0 || filters['priority']?.includes(item.priority);
+            const matchesStatus = filters['status']?.length === 0 || filters['status']?.includes(item.status);
+            const matchesCategory = filters['category']?.length === 0 || 
+                                  (item.category && filters['category'].includes(item.category)) ||
+                                  filters['category']?.some(cat => assetName.includes(cat.toLowerCase()));
+            const matchesDivision = !filters['division'] || filters['division'].length === 0 || (item.division && filters['division'].includes(item.division));
 
-      const matchesSearch = !query || personName.includes(query) || assetName.includes(query);
-      const matchesPriority = filters['priority'].length === 0 || filters['priority'].includes(item.priority);
-      const matchesStatus = filters['status'].length === 0 || filters['status'].includes(item.status);
-      const matchesCategory = filters['category'].length === 0 ||
-        (item.category && filters['category'].includes(item.category)) ||
-        filters['category'].some(cat => assetName.includes(cat.toLowerCase()));
+            return matchesSearch && matchesPriority && matchesStatus && matchesCategory && matchesDivision;
+          });
+        });
 
-      const matchesDivision = filters['division'].length === 0 || (item.division && filters['division'].includes(item.division));
-      return matchesSearch && matchesPriority && matchesStatus && matchesCategory && matchesDivision;
-    });
-  });
+        filterCount = computed(() => {
+          return Object.values(this.selectedFilters()).reduce((acc, curr) => acc + curr.length, 0);
+        });
 
-  filterCount = computed(() => {
-    return Object.values(this.selectedFilters()).reduce((acc, curr) => acc + curr.length, 0);
-  });
+        //  PAGINATION ENGINE 
+        totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));
 
-  // --- ACTIONS ---
-  setTab(tab: 'new' | 'transfer' | 'maintenance' | 'discard') {
-    this.activeTab.set(tab);
-    this.resetFilters();
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab: tab },
-      queryParamsHandling: 'merge'
-    });
-  }
+        paginatedRequests = computed(() => {
+          const start = (this.currentPage() - 1) * this.pageSize;
+          return this.filteredResults().slice(start, start + this.pageSize);
+        });
 
-  toggleFilter(key: string, option: string) {
-    const current = { ...this.selectedFilters() };
-    const index = current[key].indexOf(option);
+        pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
 
-    if (index > -1) {
-      current[key] = current[key].filter(val => val !== option);
-    } else {
-      current[key] = [...current[key], option];
-    }
-    this.selectedFilters.set(current);
-  }
+        onPageChange(page: number) {
+          this.currentPage.set(page);
+        }
 
-  resetFilters() {
-    this.selectedFilters.set({ priority: [], category: [], status: [], division: [] });
-    this.searchQuery.set('');
-  }
+        // --- ACTIONS ---
+        setTab(tab: 'new' | 'transfer' | 'maintenance' | 'discard') {
+          this.activeTab.set(tab);
+          this.resetFilters();
+          this.currentPage.set(1);
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { tab: tab },
+            queryParamsHandling: 'merge'
+          });
+        }
 
-  checkStatus(id: number) {
-    console.log('Checking status for ID:', id);
-  }
+        toggleFilter(key: string, option: string) {
+          const current = { ...this.selectedFilters() };
+          const index = current[key].indexOf(option);
+          
+          if (index > -1) {
+            current[key] = current[key].filter(val => val !== option);
+          } else {
+            current[key] = [...current[key], option];
+          }
+          this.selectedFilters.set(current);
+          this.currentPage.set(1);
+        }
 
-  viewDetails(item: RequestItem) {
-    this.requestService.selectedRequest = item;
-    console.log("sending data:", item);
-    const tab = this.activeTab();
-    let routePath = '';
+        resetFilters() {
+          this.selectedFilters.set({ priority: [], category: [], status: [], division: [] });
+          this.searchQuery.set('');
+          this.currentPage.set(1);
+        }
 
-    switch (tab) {
-      case 'new': routePath = '/approvals/new-asset-req'; break;
-      case 'transfer': routePath = '/approvals/transfer-req'; break;
-      case 'maintenance': routePath = '/approvals/maintenance-req'; break;
-      case 'discard': routePath = '/approvals/discard-req'; break;
-    }
+        onSearchChange(value: string) {
+          this.searchQuery.set(value);
+          this.currentPage.set(1);
+        }
 
+        checkStatus(id: number) {
+          console.log('Checking status for ID:', id);
+        }
 
-    this.router.navigate([routePath, item.id], {
+        viewDetails(item: RequestItem) {
+          this.requestService.selectedRequest = item;
+          console.log("sending data:", item);
+          const tab = this.activeTab();
+          let routePath = '';
 
-      queryParams: { tab: tab }
-    });
-  }
+          switch (tab) {
+            case 'new': routePath = '/approvals/new-asset-req'; break;
+            case 'transfer': routePath = '/approvals/transfer-req'; break;
+            case 'maintenance': routePath = '/approvals/maintenance-req'; break;
+            case 'discard': routePath = '/approvals/discard-req'; break;
+          }
 
-  checkDetails(item: RequestItem) {
-    this.requestService.selectedRequest = item;
-    console.log("Checking data:", item);
-    const tab = this.activeTab();
-    let routePath = '';
+          this.router.navigate([routePath, item.id], {
+            queryParams: { tab: tab }
+          });
+        }
 
-    switch (tab) {
-      case 'new': routePath = '/approvals/new-asset-req'; break;
-      case 'transfer': routePath = '/approvals/transfer-req'; break;
-      case 'maintenance': routePath = '/approvals/maintenance-req'; break;
-      case 'discard': routePath = '/approvals/discard-req'; break;
-    }
+        checkDetails(item: RequestItem) {
+          this.requestService.selectedRequest = item;
+          console.log("Checking data:", item);
+          const tab = this.activeTab();
+          let routePath = '';
 
-    this.router.navigate([routePath, item.id], { 
-      queryParams: { tab: tab, readOnly: true } 
-    });
-  }
+          switch (tab) {
+            case 'new': routePath = '/approvals/new-asset-req'; break;
+            case 'transfer': routePath = '/approvals/transfer-req'; break;
+            case 'maintenance': routePath = '/approvals/maintenance-req'; break;
+            case 'discard': routePath = '/approvals/discard-req'; break;
+          }
 
+          this.router.navigate([routePath, item.id], { 
+            queryParams: { tab: tab, readOnly: true } 
+          });
+        }
 }

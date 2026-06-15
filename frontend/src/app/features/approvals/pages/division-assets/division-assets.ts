@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AssetService } from '../../../../features/inventory/services/asset.service';
 import { DivisionHeadDashboardService } from '../../services/division-head-dashboard.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 interface Asset {
   id: string;
@@ -24,12 +25,13 @@ interface Asset {
   condition?: string;
   purchasedDate?: string;
   lastInspected?: string;
+  serialNumber?: string;
 }
 
 @Component({
   selector: 'app-division-assets',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterModule, FormsModule],
+  imports: [CommonModule, MatIconModule, RouterModule, FormsModule,PaginationComponent],
   templateUrl: './division-assets.html',
   styleUrls: ['./division-assets.css']
 })
@@ -53,16 +55,23 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
 
   // Real categories from backend data
   availableCategories = signal<string[]>([]);
+  viewMode = signal<'grid' | 'list'>('grid');
 
+  currentPage = signal<number>(1);
+  itemsPerPage = signal<number>(12);
   // Asset counts for real data
   totalAssets = computed(() => this.assets().length);
   inUseAssets = computed(() => this.assets().filter(asset => asset.status === 'In Use').length);
   maintenanceAssets = computed(() => this.assets().filter(asset => asset.status === 'Maintenance').length);
   transferredAssets = computed(() => this.assets().filter(asset => asset.status === 'Transferred').length);
+  setViewMode(mode: 'grid' | 'list') {
+  this.viewMode.set(mode);
+  }
 
   ngOnInit(): void {
 
     this.loadDivisionAssets();
+    document.addEventListener('click', this.handleGlobalClick.bind(this));
   }
 
   ngOnDestroy(): void {
@@ -104,7 +113,8 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
           condition: a.condition || 'Good',
           purchasedDate: a.purchasedDate || undefined,
           lastInspected: a.lastInspected || undefined,
-          divisionId: a.divisionId?.toString() || undefined
+          divisionId: a.divisionId?.toString() || undefined,
+          serialNumber: a.serialNumber || 'N/A',
         }));
 
         this.assets.set(mappedAssets);
@@ -116,6 +126,7 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.isLoading.set(false);
+        this.errorMessage.set('Failed to load assets.');
       }
     });
   }
@@ -144,8 +155,13 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   }
 
   selectAsset(asset: Asset): void {
-    console.log('Selected asset:', asset);
+    
     this.selectedAsset.set(asset);
+  }
+
+  goBack(): void {
+    // Navigate back to previous page
+    this.selectedAsset.set(null);
   }
 
   viewAsset(asset: Asset): void {
@@ -164,7 +180,8 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
       const searchMatch = !query ||
         (asset.name || '').toLowerCase().includes(query) ||
         (asset.assetTag || '').toLowerCase().includes(query) ||
-        (asset.id || '').toLowerCase().includes(query);
+        (asset.id || '').toLowerCase().includes(query) ||
+        (asset.serialNumber || '').toLowerCase().includes(query);
 
       return categoryMatch && statusMatch && searchMatch;
     });
@@ -174,6 +191,31 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     return (status || '').toLowerCase().replace(' ', '-');
   }
 
+  totalPages = computed(() => {
+    return Math.ceil(this.filteredAssets().length / this.itemsPerPage()) || 1;
+  });
+
+  pageNumbers = computed(() => {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages(); i++) {
+      pages.push(i);
+    }
+    return pages;
+  });
+
+  paginatedAssets = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
+    const endIndex = startIndex + this.itemsPerPage();
+    return this.filteredAssets().slice(startIndex, endIndex);
+  });
+
+  onPageChange(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  // Filter methods
   toggleCategoryMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.showCategoryMenu.set(!this.showCategoryMenu());
@@ -193,15 +235,19 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
   // Setters for filter selections
   setFilterCategory(val: string): void {
     this.selectedCategory.set(val);
+    this.currentPage.set(1);
     this.showCategoryMenu.set(false);
   }
 
   setFilterStatus(val: string): void {
     this.selectedStatus.set(val);
+    this.currentPage.set(1);
     this.showStatusMenu.set(false);
   }
 
   onSearchChange(event: any): void {
-    this.searchQuery.set((event.target as HTMLInputElement).value || '');
+    const input = event.target as HTMLInputElement;
+    this.searchQuery.set(input.value || '');
+    this.currentPage.set(1);
   }
 }

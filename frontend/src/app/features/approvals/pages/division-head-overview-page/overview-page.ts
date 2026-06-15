@@ -9,7 +9,7 @@ import { RequestService } from '../../services/requests.service';
 interface PendingRequest {
   item: string;
   date: string;
-  status: string;
+  type: string;
   priority: string;
 }
 
@@ -89,7 +89,7 @@ export class DivisionHeadOverviewComponent implements OnInit {
         const mappedRequests = data.map(req => ({
           item: req.assetName || req.productName || 'Unknown Item',
           date: req.submittedDate || req.createdAt,
-          status: typeof req.status === 'number' ? this.mapStatus(req.status) : req.status,
+          type: req.requestType,
           priority: req.priority || 'Normal'
         }));
 

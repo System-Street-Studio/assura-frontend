@@ -35,6 +35,11 @@
 
           <div class="detail-info-grid">
             <div class="detail-row">
+              <span class="label">Serial Number :</span>
+              <span class="value">{{ asset.serialNumber }}</span>
+            </div>
+
+            <div class="detail-row">
               <span class="label">Assigned Employee :</span>
               <span class="value">{{ asset.assignedUserName || asset.assignedTo }}</span>
             </div>
@@ -107,123 +112,156 @@
                     </div>
                   </div>
                 </div>
-                } @else {
-                <section class="overview-section">
-                  <h3 class="section-label">Overview</h3>
-                  <div class="stat-grid">
-                    <div class="stat-card border-blue">
-                      <div class="stat-header">
-                        <span class="stat-title color-blue">Total Assets</span>
-                        <mat-icon>content_copy</mat-icon>
-                      </div>
-                      <div class="stat-value">{{ totalAssets() }}</div>
-                    </div>
-                    <div class="stat-card border-yellow">
-                      <div class="stat-header">
-                        <span class="stat-title color-yellow">In Use</span>
-                        <mat-icon>check_circle_outline</mat-icon>
-                      </div>
-                      <div class="stat-value">{{ inUseAssets() }}</div>
-                    </div>
-                    <div class="stat-card border-red">
-                      <div class="stat-header">
-                        <span class="stat-title color-red">Under maintenance</span>
-                        <mat-icon>build</mat-icon>
-                      </div>
-                      <div class="stat-value">{{ maintenanceAssets() }}</div>
-                    </div>
-                    <div class="stat-card border-green">
-                      <div class="stat-header">
-                        <span class="stat-title color-green">Transferred</span>
-                        <mat-icon>swap_horiz</mat-icon>
-                      </div>
-                      <div class="stat-value">{{ transferredAssets() }}</div>
-                    </div>
-                  </div>
-                </section>
 
-                <section class="assets-list-section">
-                  <h3 class="section-label">Division Assets</h3>
 
-                  <div class="filter-bar">
-                    <div class="search-box">
-                      <label>Search Assets</label>
-                      <div class="input-wrapper">
-                        <input type="text" placeholder="Search by name or Asset_ID" [value]="searchQuery()"
-                          (input)="onSearchChange($event)">
-                        <mat-icon>search</mat-icon>
-                      </div>
-                    </div>
+    } @else {
+      <section class="overview-section">
+      <h3 class="section-label">Overview</h3>
+      <div class="stat-grid">
+        <div class="stat-card border-blue">
+          <div class="stat-header">
+            <span class="stat-title color-blue">Total Assets</span>
+            <mat-icon>content_copy</mat-icon>
+          </div>
+          <div class="stat-value">{{ totalAssets() }}</div>
+        </div>
+        <div class="stat-card border-yellow">
+          <div class="stat-header">
+            <span class="stat-title color-yellow">In Use</span>
+            <mat-icon>check_circle_outline</mat-icon>
+          </div>
+          <div class="stat-value">{{ inUseAssets() }}</div>
+        </div>
+        <div class="stat-card border-red">
+          <div class="stat-header">
+            <span class="stat-title color-red">Under maintenance</span>
+            <mat-icon>build</mat-icon>
+          </div>
+          <div class="stat-value">{{ maintenanceAssets() }}</div>
+        </div>
+        <div class="stat-card border-green">
+          <div class="stat-header">
+            <span class="stat-title color-green">Transferred</span>
+            <mat-icon>swap_horiz</mat-icon>
+          </div>
+          <div class="stat-value">{{ transferredAssets() }}</div>
+        </div>
+      </div>
+    </section>
 
-                    <div class="selected-filters">
-                      <div class="styled-select" data-filter="category">
-                        <button class="filter-btn" (click)="toggleCategoryMenu($event)">
-                          <div class="filter-icon">
-                            <mat-icon>tune</mat-icon>
-                            <span>{{ selectedCategory() === 'all' ? 'All Categories' : selectedCategory() }}</span>
-                          </div>
-                          <mat-icon class="arrow">expand_more</mat-icon>
-                        </button>
+      <section class="assets-list-section">
+      <h3 class="section-label">Division Assets</h3>
+      
+      <div class="filter-bar">
+        <div class="search-box">
+          <label>Search Assets</label>
+          <div class="input-wrapper">
+            <input type="text" placeholder="Search by name or Asset_ID" [value]="searchQuery()" (input)="onSearchChange($event)">
+            <mat-icon>search</mat-icon>
+          </div>
+        </div>
+        
+        <div class="selected-filters">
+    <div class="styled-select" data-filter="category">
+      <button class="filter-btn" (click)="toggleCategoryMenu($event)">
+        <div class="filter-icon">
+          <mat-icon>tune</mat-icon>
+          <span>{{ selectedCategory() === 'all' ? 'All Categories' : selectedCategory() }}</span>
+        </div>
+        <mat-icon class="arrow">expand_more</mat-icon>
+      </button>
 
-                        @if (showCategoryMenu()) {
-                        <div class="filter-menu-card">
-                          <div class="filter-option" (click)="setFilterCategory('all')"
-                            [class.active]="selectedCategory() === 'all'">All Categories</div>
-                          @for (category of availableCategories(); track category) {
-                          <div class="filter-option" (click)="setFilterCategory(category)"
-                            [class.active]="selectedCategory() === category">{{ category }}</div>
-                          }
-                        </div>
-                        }
-                      </div>
+      @if (showCategoryMenu()) {
+        <div class="filter-menu-card">
+          <div class="filter-option" (click)="setFilterCategory('all')" [class.active]="selectedCategory() === 'all'">All Categories</div>
+          @for (category of availableCategories(); track category) {
+            <div class="filter-option" (click)="setFilterCategory(category)" [class.active]="selectedCategory() === category">{{ category }}</div>
+          }
+        </div>
+      }
+    </div>
 
-                      <div class="styled-select" data-filter="status">
-                        <button class="filter-btn" (click)="toggleStatusMenu($event)">
-                          <div class="filter-icon">
-                            <mat-icon>filter_list</mat-icon>
-                            <span>{{ selectedStatus() === 'all' ? 'All Status' : selectedStatus() }}</span>
-                          </div>
-                          <mat-icon class="arrow">expand_more</mat-icon>
-                        </button>
+    <div class="styled-select" data-filter="status">
+      <button class="filter-btn" (click)="toggleStatusMenu($event)">
+        <div class="filter-icon">
+          <mat-icon>filter_list</mat-icon>
+          <span>{{ selectedStatus() === 'all' ? 'All Status' : selectedStatus() }}</span>
+        </div>
+        <mat-icon class="arrow">expand_more</mat-icon>
+      </button>
 
-                        @if (showStatusMenu()) {
-                        <div class="filter-menu-card">
-                          <div class="filter-option" (click)="setFilterStatus('all')"
-                            [class.active]="selectedStatus() === 'all'">All Status</div>
-                          <div class="filter-option" (click)="setFilterStatus('In Use')"
-                            [class.active]="selectedStatus() === 'In Use'">In Use</div>
-                          <div class="filter-option" (click)="setFilterStatus('Transferred')"
-                            [class.active]="selectedStatus() === 'Transferred'">Transferred</div>
-                          <div class="filter-option" (click)="setFilterStatus('Maintenance')"
-                            [class.active]="selectedStatus() === 'Maintenance'">Maintenance</div>
-                        </div>
-                        }
-                      </div>
-                    </div>
+      @if (showStatusMenu()) {
+        <div class="filter-menu-card">
+          <div class="filter-option" (click)="setFilterStatus('all')" [class.active]="selectedStatus() === 'all'">All Status</div>
+          <div class="filter-option" (click)="setFilterStatus('In Use')" [class.active]="selectedStatus() === 'In Use'">In Use</div>
+          <div class="filter-option" (click)="setFilterStatus('Transferred')" [class.active]="selectedStatus() === 'Transferred'">Transferred</div>
+          <div class="filter-option" (click)="setFilterStatus('Maintenance')" [class.active]="selectedStatus() === 'Maintenance'">Maintenance</div>
+        </div>
+      }
+    </div>
+  </div>
 
-                    <div class="view-toggle">
-                      <mat-icon>reorder</mat-icon>
-                      <mat-icon class="active">grid_view</mat-icon>
-                    </div>
-                  </div>
+        <div class="view-toggle">
+        <mat-icon [class.active]="viewMode() === 'list'" (click)="setViewMode('list')">reorder</mat-icon>
+        <mat-icon [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')">grid_view</mat-icon>
+      </div>
 
-                  <div class="asset-grid">
-                    <div class="asset-card" *ngFor="let asset of filteredAssets()">
-                      <div class="card-body">
-                        <h4 class="asset-name">{{ asset.name }}</h4>
-                        <p class="asset-id">ID: {{ asset.id }} · {{ asset.type || asset.category }}</p>
 
-                        <div class="status-badge" [ngClass]="getAssetStatusClass(asset.status)">
-                          {{ asset.status }}
-                        </div>
+        </div>
+     
+        
+          @if (isLoading()) {
+          <div class="loading-state">
+            <mat-icon class="spin-animation">sync</mat-icon>
+            <p>Loading division assets...</p>
+          </div>
+        } @else {
 
-                        <p class="assigned-text">Assigned to {{ asset.assignedUserName || asset.assignedTo }}</p>
-                      </div>
-
-                      <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
-                    </div>
-                  </div>
-                </section>
-                }
+      <!--assets grid-->
+        <div class="asset-grid" [ngClass]="viewMode()">
+        @for (asset of paginatedAssets(); track asset.id) {
+          <div class="asset-card">
+       
+            
+            <div class="card-body">
+              <h4 class="asset-name">{{ asset.name }}</h4>
+              <span class="asset-id-only">ID: {{ asset.id }}</span>
+              <span class="asset-cat-only">{{ asset.category }}</span>
+              
+              <div class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
+                {{ asset.status }}
               </div>
+              
+              <p class="assigned-text">Assigned to {{ asset.assignedUserName }}</p>
+             
+            <button class="view-btn" (click)="viewAsset(asset)">View Asset Details</button>
             </div>
+          </div>
+        }
+        </div>
+
+        @if (paginatedAssets().length === 0 && !isLoading()) {
+        <div class="no-data-container" style="text-align: center; padding: 40px; color: #777;">
+          <mat-icon style="font-size: 48px; width: 48px; height: 48px;">inventory_2</mat-icon>
+          <p>No assets match your search or filter criteria.</p>
+        </div>
+}
+
+       @if (filteredAssets().length > 0) {
+        <app-pagination 
+          [currentPage]="currentPage()" 
+          [totalPages]="totalPages()" 
+          [pageNumbers]="pageNumbers()"
+          (pageChange)="onPageChange($any($event))"> </app-pagination>
+        }
+      }
+
+      </section>
+       
+    }
+
+  </div>
+
+  
+ 
+</div>

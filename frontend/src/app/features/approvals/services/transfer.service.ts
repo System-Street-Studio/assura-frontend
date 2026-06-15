@@ -7,7 +7,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 
 
 @Injectable({ providedIn: 'root' })
-export class TransferService {
+export class HeadTransferService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private baseUrl = environment.apiUrl;
@@ -41,7 +41,6 @@ export class TransferService {
       })
     );
   }
-
   // Get incoming transfers for the current user
   getIncomingTransfers(userId: number | null = null): Observable<any> {
     console.log('--- GETTING INCOMING TRANSFERS ---');
@@ -125,9 +124,18 @@ export class TransferService {
     );
   }
 
+  getTransferCounts(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/transfers/counts?userId=${userId}`);
+  }
   getDivisionHeadTransfers(tab: string): Observable<any[]> {
-    const params = new HttpParams().set('tab', tab);
+    const cacheBuster = new Date().getTime().toString();
+    const params = new HttpParams().set('tab', tab).set('_', cacheBuster); 
+
     return this.http.get<any[]>(`${this.baseUrl}/transfers/division-head`, { params });
+  }
+
+  cancelByHead(transferId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/cancel-head`, {});
   }
 
   approveByHead(transferId: number): Observable<any> {
@@ -141,7 +149,10 @@ export class TransferService {
 
 
   rejectByHead(transferId: number, reason: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject-head`, { reason });
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject`, { reason });
   }
 
+  returnActiveTransfer(transferId: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/transfers/${transferId}/return`, {});
+  }
 }
