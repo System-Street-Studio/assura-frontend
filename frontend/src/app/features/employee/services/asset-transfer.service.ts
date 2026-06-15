@@ -11,10 +11,9 @@ import { AuthService } from '../../../core/auth/auth.service';
 export class EmployeeTransferService {
     private http = inject(HttpClient);
      private baseUrl = environment.apiUrl;
-    //private apiUrl = `${environment.apiUrl}/transfers`;
-    // constructor(private http: HttpClient) { }
+   
   
-getTransfers(tab: string, filterType: string | null = null, employeeId: number | null = null): Observable<any[]> {
+  getTransfers(tab: string, filterType: string | null = null): Observable<any[]> {
     let params = new HttpParams().set('tab', tab);
 
     
@@ -22,13 +21,7 @@ getTransfers(tab: string, filterType: string | null = null, employeeId: number |
       params = params.set('filterType', filterType);
     }
 
-    if (employeeId) {
-      params = params.set('employeeId', employeeId.toString());
-    }
-
-    return this.http.get<any>(`${this.baseUrl}/transfers`, { params }).pipe(
-        map(res => res.data || [])
-    );
+    return this.http.get<any[]>(`${this.baseUrl}/transfers`, { params });
   }
   acceptTransfer(id: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/transfers/${id}/accept`, {});
@@ -42,9 +35,12 @@ getTransfers(tab: string, filterType: string | null = null, employeeId: number |
     return this.http.get<any>(`${this.baseUrl}/transfers/${id}`);
   }
 
- 
- 
+   returnActiveTransfer(transferId: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/transfers/${transferId}/return`, {});
+  }
 
- 
+  getTransferCounts(userId: number): Observable<any> {
+  return this.http.get<any>(`${this.baseUrl}/transfers/counts?userId=${userId}`);
+  }
   
 }

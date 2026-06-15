@@ -8,8 +8,11 @@ import { DashboardService } from '../../../../features/inventory/services/dashbo
 import { DashboardData } from '../../../../features/inventory/models/dashboard.model';
 
 interface RequestItem {
+  id: number;
   item: string;
-  date: string;
+  requestDate: string;
+  submittedBy: string;
+  requestType: string;
   status: string;
   priority: 'High' | 'Medium' | 'Low';
 }
@@ -31,63 +34,51 @@ export class EmployeeOverviewComponent implements OnInit {
   private assetService = inject(AssetService);
   private dashboardService = inject(DashboardService);
 
-  loading = signal(true);
+  isLoading = signal(true);
   pendingRequests = signal<RequestItem[]>([]);
   recentActivities = signal<Activity[]>([]);
 
-  assignedAssetsCount = signal<number>(0);
-  pendingRequestsCount = signal<number>(0);
-  temporaryTransfersCount = signal<number>(0);
-  maintenanceCount = signal<number>(0);
-
   ngOnInit() {
+    this.isLoading.set(true);
     const userId = this.authService.getUserId();
-    if (!userId) return;
+    if (!userId) {
+      this.isLoading.set(false);
+      return;
+    }
 
     // Fetch Requests
     this.assetService.getEmployeeRequests(userId).subscribe({
-      next: (data: any) => {
-        console.log("getEmployeeRequests returned:", data);
-        if (!Array.isArray(data)) {
-            console.error("Data is not an array!", data);
-            return;
-        }
+      next: (data: AssetRequest[]) => {
         const pending = data
           .filter(r => r.status === 'Pending')
           .slice(0, 5)
           .map(r => ({
+            id: r.id,
             item: r.assetName,
-            date: r.submittedDate,
+            requestDate: r.submittedDate,
+            submittedBy: r.submittedBy,
+            requestType: r.requestType,
             status: r.status,
             priority: (r.priority as any) || 'Medium'
           }));
         this.pendingRequests.set(pending);
-      }
+        this.isLoading.set(false); 
+      },
+      error: () => this.isLoading.set(false)
     });
 
-    // Fetch Dashboard Activity
+    /*// Fetch Dashboard Activity
     this.dashboardService.getDashboardData().subscribe({
       next: (data: DashboardData) => {
-        console.log("getDashboardData returned:", data);
-        if (data && Array.isArray(data.recentActivity)) {
-            const activities = data.recentActivity.map(a => ({
-              description: `${a.assetName} (${a.assetCode}) - ${a.action}`,
-              timestamp: this.formatTimeAgo(new Date(a.timestamp))
-            }));
-            this.recentActivities.set(activities);
-        } else {
-            console.error("data.recentActivity is not an array!", data.recentActivity);
-        }
-
-        this.assignedAssetsCount.set(data.kpis?.totalAssets || 0);
-        this.pendingRequestsCount.set(data.kpis?.pendingRequests || 0);
-        this.temporaryTransfersCount.set(data.kpis?.temporaryAssignedAssets || 0);
-        this.maintenanceCount.set(data.kpis?.maintenanceDue || 0);
-
-        this.loading.set(false);
+        const activities = data.recentActivity.map(a => ({
+          description: `${a.assetName} (${a.assetId}) - ${a.action}`,
+          timestamp: this.formatTimeAgo(new Date(a.timestamp))
+        }));
+        this.recentActivities.set(activities);
+      
       },
-      error: () => this.loading.set(false)
-    });
+      error: () => this.isLoading.set(false)
+    });*/
   }
 
   private formatTimeAgo(date: Date): string {

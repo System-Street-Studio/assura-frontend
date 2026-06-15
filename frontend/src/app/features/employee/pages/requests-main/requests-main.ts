@@ -67,6 +67,7 @@ export class RequestsMainComponent implements OnInit {
   );
   
   constructor(private assetService: AssetService, private cdr: ChangeDetectorRef, private router: Router, private authService: AuthService) {}
+  isLoading = signal(false);
 
   ngOnInit() {
     const empId = this.authService.getUserId();
@@ -75,15 +76,21 @@ export class RequestsMainComponent implements OnInit {
       return;
     }
 
+    this.isLoading.set(true);
+
     this.assetService.getEmployeeRequests(empId).subscribe({
       next: (data: AssetRequest[]) => {
         // Keep only the latest 20 requests
         const limitedData = data.slice(0, this.maxRequests);
         this.recentRequests.set(limitedData);
         this.currentPage.set(1); // Reset to first page
+        this.isLoading.set(false);
         this.cdr.detectChanges(); 
       },
-      error: (err) => console.error('Error fetching employee requests:', err)
+      error: (err) => {
+        console.error('Error fetching employee requests:', err);
+        this.isLoading.set(false); 
+      }
     });
   }
 

@@ -1,184 +1,349 @@
-import { Component, signal, computed, OnInit, inject } from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { EmployeeTransferService } from '../../services/asset-transfer.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 interface TransferData {
-    id: number;
-    transferNumber?: string;
-    transferDate: string;
-    createdAt: string;
-    assetId?: number;
-    assetTag?: string;
-    assetCode?: string;
-    productName?: string;
-    fromDivisionName?: string;
-    toDivisionName?: string;
-    transferByName?: string;
-    targetUserId?: number;
-    targetUserName?: string;
-    currentHolderId?: number;
-    status?: string;
-    transferPeriod?: string;
+  id: string;
+  transferNumber: string;
+  reason: string;
+  status: string;
+  assetRequestId: number;
+  assetId: number;
+  assetTag?: string;
+  assetCode?: string;
+  productName?: string;
+  fromDivisionId: number;
+  fromDivisionName: string;
+  toDivisionId: number;
+  toDivisionName: string;
+  transferById: number;
+  transferByName: string;
+  targetUserId: number;
+  targetUserName: string;
+  currentHolderId?: number;
+  currentHolderName?: string;
+  transferPeriod?: string;
+  transferDate: any; 
+  returnDate: any;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface TransferDataLocal {
-    id: number | string;
-    assetTag: string;
-    assetCode: string;
-    productName: string;
-    toDivisionName?: string;
-    transferByName?: string;
-    targetUserId?: number;
-    targetUserName?: string;
-    currentHolderId?: number;
-    reason?: string;
-    status?: string;
-    transferPeriod?: string;
-    timeAgo?: string;
-    type?: 'IncomingActive' | 'OutgoingActive' | 'Incoming' | 'Outgoing' | string;
-    daysLeft?: string;
+  id: string;
+  assetTag: string;
+  assetCode: string;
+  productName: string;
+  toDivisionName: string;
+  fromDivisionName: string;
+  transferByName: string;
+  targetUserId: number;
+  targetUserName: string;
+  currentHolderId?: number;
+  currentHolderName?: string;
+  reason: string;
+  transferPeriod: string;
+  status: string;
+  timeAgo: string;
+  image?: string;
+  type?: 'IncomingActive' | 'OutgoingActive'; 
+  daysLeft?: string;
+  createdAt: string;
+  updatedAt: string;   
+  transferDate: any;   
+  returnDate: any;     
 }
 
 @Component({
-    selector: 'app-transfers',
-    standalone: true,
-    imports: [CommonModule, MatIconModule, FormsModule],
-    templateUrl: './transfer-page.html',
-    styleUrl: './transfer-page.css'
+  selector: 'app-transfers',
+  standalone: true,
+  imports: [CommonModule, MatIconModule, FormsModule, PaginationComponent],
+  templateUrl: './transfer-page.html',
+  styleUrl: './transfer-page.css'
 })
-export class TransferPageComponent implements OnInit {
-    isLoading = signal(false);
-    errorMessage = signal('');
-    showMenu = signal(false);
+export class TransferPageComponent implements OnInit, OnDestroy {
 
-    activeTab = signal<'incoming' | 'pending' | 'active' | 'completed'>('incoming');
-
-  // Transfer data
-  private allTransfers = signal<TransferDataLocal[]>([]);
+  // Summary counts Signals
+  incomingCount = signal(0);
+  pendingCount = signal(0);
+  activeCount = signal(0);
+  completedCount = signal(0);
   
-  // Filter and search signals
+  isLoading = signal(false);
+  errorMessage = signal('');
+  showMenu = signal(false); 
   filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
   searchQuery = signal<string>('');
+  activeTab = signal<'incoming' | 'pending' | 'active' | 'completed'>('incoming');
+
+  expandedItemId = signal<string | null>(null);
   
-  private transferService = inject(EmployeeTransferService);
-  private authService = inject(AuthService);
+  private allTransfers = signal<TransferDataLocal[]>([]);
+  private refreshInterval: any;
 
-    ngOnInit(): void {
-        this.loadTransfers();
+  
+
+  constructor(
+    private employeeTransferService: EmployeeTransferService,
+    private authService: AuthService,
+    private elementRef: ElementRef
+  ) {}
+
+  ngOnInit(): void {
+    this.loadTransfers();
+    this.loadAllCounts();
+    
+    // Refresh data every 5 minutes
+    this.refreshInterval = setInterval(() => {
+      this.loadTransfers();
+      this.loadAllCounts();
+    }, 300000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshInterval) clearInterval(this.refreshInterval);
+  }
+
+  toggleDetails(id: string) {
+    if (this.expandedItemId() === id) {
+      this.expandedItemId.set(null); 
+    } else {
+      this.expandedItemId.set(id);
+    }
+  }
+
+  returnAsset(id: string) {
+    if (confirm('Are you sure you want to return this asset? This will change asset status to "In Use" and complete the transfer.')) {
+      this.employeeTransferService.returnActiveTransfer(Number(id)).subscribe({
+        next: () => {
+          this.loadTransfers();
+          this.loadAllCounts();
+          this.expandedItemId.set(null);
+        },
+        error: (err) => console.error('Error returning asset:', err)
+      });
+    }
+  }
+
+  setTab(tab: 'incoming' | 'pending' | 'active' | 'completed') {
+    this.activeTab.set(tab);
+    this.filterType.set('all');
+    this.expandedItemId.set(null);
+    this.allTransfers.set([]);
+    this.currentPage.set(1);
+    this.loadTransfers();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = this.elementRef.nativeElement.querySelector('.filter-dropdown')?.contains(event.target);
+    if (!clickedInside && this.showMenu()) {
+      this.showMenu.set(false);
+    }
+  }
+
+  loadTransfers() {
+    this.isLoading.set(true);
+    const currentUserId = this.authService.getUserId();
+    if (!currentUserId) {
+      this.errorMessage.set('User not authenticated');
+      this.isLoading.set(false);
+      return;
     }
 
-    setTab(tab: 'incoming' | 'pending' | 'active' | 'completed') {
-        this.activeTab.set(tab);
-        this.filterType.set('all');
-        this.loadTransfers();
-    }
-
-    loadTransfers() {
-        this.isLoading.set(true);
-        const currentUserId = this.authService.getUserId?.() || null;
-        const employeeId = currentUserId ? Number(currentUserId) : null;
-        
-        this.transferService.getTransfers(this.activeTab(), this.filterType(), employeeId).subscribe({
-            next: (data: TransferData[]) => {
-                const mapped = data.map(d => this.mapToLocal(d, employeeId));
-                this.allTransfers.set(mapped);
-                this.isLoading.set(false);
-            },
-            error: () => {
-                this.isLoading.set(false);
-            }
-        });
-    }
-
-    private mapToLocal(item: TransferData, loginUserId: number | null): TransferDataLocal {
-        let userType: TransferDataLocal['type'] = undefined;
-        if ((this.activeTab() === 'active' || this.activeTab() === 'completed') && loginUserId != null) {
-            if (item.targetUserId === loginUserId) userType = 'IncomingActive';
-            else if (item.currentHolderId === loginUserId) userType = 'OutgoingActive';
-        }
-
-        return {
-            id: item.id,
-            assetTag: item.assetTag || 'N/A',
-            assetCode: item.assetCode || 'N/A',
-            productName: item.productName || '',
-            toDivisionName: item.toDivisionName,
-            transferByName: item.transferByName,
-            targetUserId: item.targetUserId,
-            targetUserName: item.targetUserName,
-            currentHolderId: item.currentHolderId,
-            reason: '',
-            status: item.status || 'IncomingActive',
-            transferPeriod: item.transferPeriod,
-            timeAgo: this.calculateTimeAgo(item.createdAt),
-            type: userType,
-            daysLeft: this.calculateDaysLeft(item.transferDate)
-        };
-    }
-
-    filteredResults = computed(() => {
-        let results = this.allTransfers();
-        if (this.activeTab() === 'active' && this.filterType() !== 'all') {
-            results = results.filter(t => t.type === this.filterType());
-        }
-        const query = this.searchQuery().toLowerCase().trim();
-        if (query) {
-            results = results.filter(t =>
-                (t.assetTag || '').toLowerCase().includes(query) ||
-                (t.assetCode || '').toLowerCase().includes(query) ||
-                (t.targetUserName || '').toLowerCase().includes(query)
-            );
-        }
-        return results;
+    this.employeeTransferService.getTransfers(this.activeTab()).subscribe({
+      next: (data: TransferData[]) => {
+        const mappedData = data.map(item => this.mapToLocal(item, Number(currentUserId)));
+        this.allTransfers.set(mappedData);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading transfers', err);
+        this.isLoading.set(false);
+      }
     });
+  }
 
-    incomingCount = computed(() => this.allTransfers().filter(i => i.status === 'IncomingActive').length);
-    pendingCount = computed(() => this.allTransfers().filter(i => i.status === 'Pending').length);
-    activeCount = computed(() => this.allTransfers().filter(i => i.status === 'Active').length);
-    completedCount = computed(() => this.allTransfers().filter(i => i.status === 'Completed').length);
-
-    onSearchChange(event: Event): void {
-        const input = event.target as HTMLInputElement;
-        this.searchQuery.set(input.value || '');
+  private mapToLocal(item: TransferData, loginUserId: number): TransferDataLocal {
+   
+    let userType: 'IncomingActive' | 'OutgoingActive' | undefined;
+    
+        if (this.activeTab() === 'active' || this.activeTab() === 'completed') {
+      
+      if (Number(item.targetUserId) === Number(loginUserId)) {
+        userType = 'IncomingActive';
+      } else if (Number(item.currentHolderId) === Number(loginUserId)) {
+        userType = 'OutgoingActive';
+      }
     }
+    
+    const hasEndDate = item.transferPeriod && item.transferPeriod.includes(' to ');
+    const endDateString = hasEndDate ? item.transferPeriod!.split(' to ')[1] : '';
+    const daysLeftText = endDateString ? this.calculateDaysRemaining(endDateString) : 'No Date';
+    
+    
+    return {
+      id: item.id,
+      assetTag: item.assetTag || 'N/A',
+      assetCode: item.assetCode || 'N/A',
+      productName: item.productName || '',
+      toDivisionName: item.toDivisionName,
+      fromDivisionName: item.fromDivisionName,
+      transferByName: item.transferByName,
+      targetUserId: item.targetUserId,
+      targetUserName: item.targetUserName,
+      currentHolderId: item.currentHolderId,
+      currentHolderName: item.currentHolderName || 'N/A',
+      status: item.status,
+      reason: item.reason || '',
+      transferPeriod: item.transferPeriod || 'N/A',
+      timeAgo: this.getTimeAgo(item.updatedAt),
+      type: userType,
+      daysLeft: daysLeftText,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      transferDate: item.transferDate,
+      returnDate: item.returnDate
+    };
+  }
+  
+  // loads the counts for each transfer category
+  loadAllCounts() {
+    const userId = Number(this.authService.getUserId());
+    this.employeeTransferService.getTransferCounts(userId).subscribe({
+      next: (counts) => {
+        if (counts) {
+          this.incomingCount.set(counts.incomingCount);
+          this.pendingCount.set(counts.pendingCount);
+          this.activeCount.set(counts.activeCount);
+          this.completedCount.set(counts.completedCount);
+        }
+      },
+      error: (err) => console.error('Error loading counts from backend:', err)
+    });
+  }
 
-    setFilterType(type: 'all' | 'IncomingActive' | 'OutgoingActive'): void {
-        this.filterType.set(type);
-        this.showMenu.set(false);
+  // filtering results based on active tab, filter type, and search query
+  filteredResults = computed(() => {
+    let results = this.allTransfers();
+    
+    
+    if ((this.activeTab() === 'active' || this.activeTab() === 'completed') && this.filterType() !== 'all') {
+      results = results.filter(t => t.type === this.filterType());
     }
+    
+    const query = this.searchQuery().toLowerCase().trim();
+    if (query) {
+      results = results.filter(t =>
+        t.assetTag.toLowerCase().includes(query) ||
+        t.assetCode.toLowerCase().includes(query) ||
+        t.targetUserName.toLowerCase().includes(query) ||
+        t.productName.toLowerCase().includes(query)
+      );
+    }
+    results.sort((a, b) => Number(b.id) - Number(a.id));
+    return results;
+  });
 
-    private calculateTimeAgo(dateStr?: string): string {
-        if (!dateStr) return 'Just now';
-        const date = new Date(dateStr);
-        const diff = Date.now() - date.getTime();
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        if (days === 0) return 'Today';
-        if (days === 1) return 'Yesterday';
-        return `${days} days ago`;
-    }
+  onSearchChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery.set(input.value);
+    this.currentPage.set(1);
+  }
 
-    private calculateDaysLeft(dateStr?: string): string {
-        if (!dateStr) return '';
-        const then = new Date(dateStr).getTime();
-        const diff = then - Date.now();
-        const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-        return days > 0 ? `${days} days left` : 'Overdue';
-    }
+  setFilterType(type: 'all' | 'IncomingActive' | 'OutgoingActive'): void {
+    this.filterType.set(type);
+    this.showMenu.set(false);
+    this.currentPage.set(1);
+  }
 
-    acceptTransfer(id: number | string) {
-        this.transferService.acceptTransfer(Number(id)).subscribe({
-            next: () => this.loadTransfers(),
-            error: (err) => console.error('Error updating status', err)
-        });
-    }
+  // Action methods for Accept
+  acceptTransfer(id: number) {
+    this.employeeTransferService.acceptTransfer(id).subscribe({
+      next: () => {
+        this.loadTransfers(); 
+        this.loadAllCounts(); 
+      },
+      error: (err) => console.error('Error updating status', err)
+    });
+  }
 
-    rejectTransfer(id: number | string) {
-        this.transferService.rejectTransfer(Number(id)).subscribe({
-            next: () => this.loadTransfers(),
-            error: (err) => console.error('Error rejecting transfer', err)
-        });
+  // Similar methods for  reject can be implemented here
+  rejectTransfer(id: number) {
+    this.employeeTransferService.rejectTransfer(id).subscribe({
+      next: () => {
+        this.loadTransfers();
+        this.loadAllCounts(); 
+      },
+      error: (err) => console.error('Error rejecting transfer', err)
+    });
+  }
+
+  // Additional methods for confirm, cancel, etc. can be implemented similarly
+  private getTimeAgo(dateString: string): string {
+    if (!dateString) return 'Just now';
+
+    const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Just now';
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    
+    if (diffMs < 0) return 'Just now'; 
+
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    const diffWeeks = Math.floor(diffDays / 7);
+    const diffMonths = Math.floor(diffDays / 30);
+
+    if (diffSeconds < 60) return 'Just now';
+    if (diffMinutes < 60) return diffMinutes === 1 ? '1 min ago' : `${diffMinutes} mins ago`;
+    if (diffHours < 24) return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffWeeks < 4) return diffWeeks === 1 ? '1 week ago' : `${diffWeeks} weeks ago`;
+    
+    return diffMonths === 1 ? '1 month ago' : `${diffMonths} months ago`;
+  }
+
+  //  This function calculates the days remaining 
+  private calculateDaysRemaining(transferDate: string): string {
+    if (!transferDate) return 'No Date';
+
+    const date = new Date(transferDate);
+    const now = new Date(); 
+    const diffTime = date.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+      return diffDays === -1 ? 'Overdue by 1 day' : `Overdue by ${Math.abs(diffDays)} days`;
     }
+    if (diffDays === 0) return 'Expires Today';
+    if (diffDays === 1) return 'Tomorrow';
+    
+    return `${diffDays} days left`;
+  }
+
+      pageSize = 10;
+      currentPage = signal(1);
+
+      totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));
+
+      paginatedRequests = computed(() => {
+        const start = (this.currentPage() - 1) * this.pageSize;
+        return this.filteredResults().slice(start, start + this.pageSize);
+        
+      });
+
+      pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+
+
+      onPageChange(page: number) {
+        this.currentPage.set(page);
+      }
 }

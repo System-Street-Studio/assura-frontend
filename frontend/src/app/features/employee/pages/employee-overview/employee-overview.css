@@ -1,3 +1,4 @@
+
 :host {
   --teal: #00afb5;
   --navy: #004777;
@@ -19,49 +20,41 @@
   flex: 1;
   overflow-y: auto;
 }
-
-h3 {
+h3{
   margin-bottom: 15px;
 }
 
-.page-title {
+.page-title{
   padding-bottom: 30px;
 }
 
 .content-padding {
   padding: 15px 20px;
-  flex: 1;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
-  margin-bottom: 20px;
+  gap: 20px;
+  padding: 20px 20px;
   font-weight: 600;
+
 }
 
 /* Action Buttons */
 .action-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
   background: var(--teal);
   color: white;
   border: none;
-  padding: 15px;
+  padding: 15px 15px;
   border-radius: 8px;
   font-weight: 550;
   cursor: pointer;
   transition: opacity 0.2s;
   font-size: 14px;
-  box-shadow: 2px 5px 16px 2px rgba(134, 134, 135, 0.6);
-  text-align: center;
+  box-shadow: 2px 5px 16px 2px rgba(134, 134, 135, 0.6); 
+
 }
 
 .action-btn:hover {
@@ -76,45 +69,47 @@ h3 {
   text-align: center;
 }
 
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
+  gap: 20px;
 }
 
-.stat-card.border-blue {
-  box-shadow: 0 4px 8px rgba(48, 86, 174, 0.4);
+.stat-card.border-blue { 
+    box-shadow: 0 4px 8px rgba(48, 86, 174, 0.4); 
+   
 }
-
-.stat-card.border-green {
-  box-shadow: 0 4px 8px rgba(32, 183, 83, 0.4);
+.stat-card.border-green { 
+    box-shadow: 0 4px 8px rgba(32, 183, 83, 0.4); 
+   
 }
-
 .stat-card.border-yellow {
-  box-shadow: 0 4px 8px rgba(223, 171, 38, 0.4);
-}
+    box-shadow: 0 4px 8px rgba(223, 171, 38, 0.4); 
 
+}
 .stat-card.border-red {
-  box-shadow: 0 4px 8px rgba(233, 153, 113, 0.4);
-}
+    box-shadow: 0 4px 8px rgba(233, 153, 113, 0.4);
 
-.stat-card.border-blue:hover {
-  box-shadow: 2px 5px 16px 2px rgba(157, 157, 237, 0.6);
+ }
+.stat-card.border-blue:hover { 
+    box-shadow: 2px 5px 16px 2px rgba(157, 157, 237, 0.6);
+  
 }
-
-.stat-card.border-green:hover {
-  box-shadow: 2px 5px 16px 2px rgba(140, 227, 169, 0.6);
+.stat-card.border-green:hover { 
+     box-shadow: 2px 5px 16px 2px rgba(140, 227, 169, 0.6); 
+  
 }
-
 .stat-card.border-yellow:hover {
-  box-shadow: 2px 5px 16px 2px rgba(239, 210, 123, 0.6);
+    box-shadow: 2px 5px 16px 2px rgba(239, 210, 123, 0.6); 
+  
 }
-
 .stat-card.border-red:hover {
-  box-shadow: 2px 5px 16px 2px rgba(250, 162, 118, 0.6);
-}
+    box-shadow: 2px 5px 16px 2px rgba(250, 162, 118, 0.6);
+ 
+ }
 
-.stat-top {
+.stat-top{
   color: var(--navy);
 }
 
@@ -125,18 +120,16 @@ h3 {
   text-align: center;
 }
 
-.stat-sub {
-  font-size: 12px;
-  color: #777;
-}
+.stat-sub { font-size: 12px; color: #777; }
 
 
 /* Details Section */
 .details-layout {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 25px;
-  margin-top: 10px;
+ width: 100%;
+ display: flex;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  
 }
 
 .white-panel {
@@ -144,26 +137,18 @@ h3 {
   padding: 20px;
   border-radius: 12px;
   border: 1px solid #e0e6ed;
-  box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6);
+  box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6); 
 }
+
+
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-th {
-  text-align: left;
-  color: #888;
-  font-size: 13px;
-  padding: 10px;
-  padding-top: 0;
-}
-
-td {
-  padding: 12px 10px;
-  border-top: 1px solid #f0f0f0;
-}
+th { text-align: left; color: #888; font-size: 13px; padding-bottom: 10px; }
+td { padding: 12px 0; border-top: 1px solid #f0f0f0; }
 
 .status-pill {
   font-size: 12px;
@@ -172,56 +157,215 @@ td {
   padding: 2px 10px;
 }
 
-.status-pill.pending {
-  color: #d946ef;
-  border: 1px solid #d946ef;
-  background-color: #edd6ff;
-}
-
-.status-pill.approved {
-  color: #22c55e;
-  border: 1px solid #68d447;
-  background-color: #e1f7d2;
-}
-
-.status-pill.rejected {
-  color: #ef4444;
-  border: 1px solid #ab3324;
-  background-color: #fad3ce;
-}
-
-.status-pill.cancelled {
-  color: #64748b;
-  border: 1px solid #5970f3;
-  background-color: #ceb7fe;
-}
+.status-pill.pending { color: #d946ef;border: 1px solid #d946ef;background-color: #edd6ff;}
+.status-pill.approved { color: #22c55e; border: 1px solid #68d447;background-color: #e1f7d2;}
+.status-pill.rejected { color: #ef4444;border: 1px solid #ab3324;background-color: #fad3ce; }
+.status-pill.cancelled { color: #64748b; border: 1px solid #5970f3;background-color: #ceb7fe;}
 
 
-.high {
-  color: #d00;
-  font-weight: 600;
-}
-
-.medium {
-  color: var(--navy);
-}
-
-.low {
-  color: orange;
-}
+.high { color: #d00; font-weight: 600; }
+.medium { color: var(--navy); }
+.low { color: orange; }
 
 .activity-item {
   padding: 12px 0;
   border-bottom: 1px solid #f9f9f9;
 }
 
-.act-desc {
-  margin: 0;
-  font-size: 13.5px;
-  line-height: 1.4;
+.act-desc { margin: 0; font-size: 13.5px; line-height: 1.4; }
+.act-time { font-size: 12px; color: #999; }
+
+
+
+/* --- Dashboard Panel Empty State (Fixing Table Header Issue) --- */
+.dashboard-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 15px;
+  color: #64748b;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #fafafa;
+  margin-top: 10px;
 }
 
-.act-time {
-  font-size: 12px;
-  color: #999;
+.dashboard-empty-state .empty-icon {
+  font-size: 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  display: inline-block !important;
 }
+
+.dashboard-empty-state h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+  font-family: 'jost', sans-serif;
+}
+
+.dashboard-empty-state p {
+  font-size: 13px;
+  margin: 0;
+  color: #64748b;
+  font-family: 'jost', sans-serif;
+  max-width: 320px;
+}
+
+/* --- Loading State --- */
+
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+ 
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  text-align: center;
+  color: #64748b;
+}
+
+.loading-state p {
+  font-size: 14px;
+  margin-top: 12px;
+  font-weight: 550;
+  font-family: 'jost', sans-serif;
+  white-space: nowrap;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin-animation {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #0fb3ba;
+}
+
+/* --- 🌟 COMPLETE DASHBOARD TABLE & PANEL UPGRADE 🌟 --- */
+
+/* 1. White Panel එක ඇතුළත Table එක 100% Width කරන්න */
+.white-panel {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Soft premium shadow */
+  width: 100%; /* Ensure panel expands fully */
+  box-sizing: border-box;
+}
+
+.white-panel h3 {
+  font-family: 'jost', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* 2. Full Width Table Layout & Smooth Borders */
+.data-table {
+  width: 100% !important; /* Forces the table to take 100% space */
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+/* Header UI Styles */
+.data-table th {
+  text-align: left;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+  padding: 14px 20px;
+  background-color: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Rounding the top corners of the header */
+.data-table th:first-child {
+  border-top-left-radius: 8px;
+}
+.data-table th:last-child {
+  border-top-right-radius: 8px;
+}
+
+/* Table Body Rows */
+.data-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+/* Interactive Hover Effect */
+.data-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f8fafc;
+  transform: translateY(-1px); /* Slight lift effect on hover */
+}
+
+/* 3. Typography & Badges Customization */
+.id-badge {
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12.5px;
+  border: 1px solid #e2e8f0;
+}
+
+.date-col {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.type-col {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+.priority-pill {
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 2px 10px;
+  min-width: 75px;
+  text-align: center;
+  display: inline-block;
+}
+
+.priority-pill.normal { color: #07c74d; }
+.priority-pill.low { color: #ffc107; }
+.priority-pill.high { color: #be2a2a; }
+.priority-pill.critical { color: #e50909; }
