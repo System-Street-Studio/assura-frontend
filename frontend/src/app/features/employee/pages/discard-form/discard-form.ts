@@ -57,18 +57,24 @@ export class DiscardFormComponent implements OnInit {
     }
     this.isSubmitting.set(true);
 
-    const payload = {
-      type: 5,   // RequestType.Disposal
-      priority: 2, // PriorityType.Normal
-      description: `Discard Request - Asset: ${this.asset()}. Reason: ${this.reason()}`.trim(),
-    };
+    const formData = new FormData();
+    const userId = this.authService.getUserId();
+    const userName = this.authService.getUserName();
 
-    // Note: We use createUnifiedRequest as per HEAD, but keeping the selectedFiles upload approach if needed.
-    // If createUnifiedRequest doesn't take files, it will just use the payload.
-    this.assetRequestService.createUnifiedRequest(payload).subscribe({
-      next: () => {
+    formData.append('employeeId', userId ? userId.toString() : '');
+    formData.append('submittedBy', userName || '');
+    formData.append('assetName', this.asset());
+    formData.append('assetCategory', 'General');
+    formData.append('priority', 'Normal');
+    formData.append('requestType', 'Discard');
+    formData.append('reason', this.reason());
+    formData.append('description', `Discard Request for ${this.asset()}`);
+    formData.append('quantity', '1');
+
+    this.assetRequestService.createRequest(formData, this.selectedFiles()).subscribe({
+      next: (res: any) => {
         this.isSubmitting.set(false);
-        alert('Discard Request Submitted Successfully!');
+        alert(res?.message || 'Discard Request Submitted Successfully!');
         this.location.back();
       },
       error: (err) => {

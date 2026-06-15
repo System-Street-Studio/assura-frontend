@@ -60,29 +60,30 @@ export class MaintenanceFormComponent implements OnInit {
     }
     this.isSubmitting.set(true);
 
-    // Map priority string to PriorityType enum value
-    const priorityMap: Record<string, number> = { Low: 1, Normal: 2, Medium: 3, High: 4, Urgent: 5 };
+    const formData = new FormData();
+    const userId = this.authService.getUserId();
+    const userName = this.authService.getUserName();
 
-    const payload = {
-      type: 4,   // RequestType.Maintenance
-      priority: priorityMap[this.priority()] ?? 2,
-      description: `Maintenance Request - Issue: ${this.issueType()}. ${this.description()}`.trim(),
-      assetId: this.selectedAssetId() ?? undefined
-    };
+    formData.append('employeeId', userId ? userId.toString() : '');
+    formData.append('submittedBy', userName || '');
+    formData.append('assetName', this.asset());
+    formData.append('assetCategory', 'General');
+    formData.append('priority', this.priority());
+    formData.append('requestType', 'Maintenance');
+    formData.append('reason', this.issueType());
+    formData.append('description', `Maintenance Request for ${this.asset()}: ${this.description()}`);
+    formData.append('quantity', '1');
 
-    this.assetRequestService.createUnifiedRequest(payload).subscribe({
-      next: () => {
+    this.assetRequestService.createRequest(formData, this.selectedFiles()).subscribe({
+      next: (res: any) => {
         this.isSubmitting.set(false);
-        alert('Maintenance Request Submitted Successfully!');
+        alert(res?.message || 'Maintenance Request Submitted Successfully!');
         this.location.back();
       },
       error: (err) => {
         this.isSubmitting.set(false);
         console.error('Save failed', err);
-        console.error('Error status:', err.status);
-        console.error('Error response:', err.error);
-        const errorMsg = err.error?.message || err.error?.errors || err.statusText || 'Unknown error';
-        alert(`Error submitting request:\n${JSON.stringify(errorMsg)}`);
+        alert('Error submitting request. Please try again.');
       }
     });
   }
