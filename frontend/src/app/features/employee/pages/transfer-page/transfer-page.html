@@ -112,6 +112,7 @@
                   <p><span>Requested by:</span> {{ item.transferByName }}</p>
                   <p><span>Asset need to:</span> {{ item.targetUserName }}</p>
                   <p class="full-width"><span>Reason:</span> {{ item.reason }}</p>
+                 
                 </div>
               </div>
               
@@ -129,16 +130,18 @@
           @if (activeTab() === 'active' || activeTab() === 'completed') {
             <div class="asset-item-card" [class.expanded]="expandedItemId() === item.id"> 
               <div class="card-badge-row">
-                @if (activeTab() === 'active') {
-                  <div class="days-left-tag absolute-top-right">
-                    <mat-icon>hourglass_empty</mat-icon>
-                    {{ item.daysLeft || 'N/A' }}
-                  </div>
-                } @else {
-                  <span class="time-stamp absolute-top-right">
-                    <mat-icon>schedule</mat-icon>{{ item.timeAgo }}
-                  </span>
-                }
+               
+                 @if (activeTab() === 'active' ) {
+                <div class="days-left-tag absolute-top-right">
+                  <mat-icon>hourglass_empty</mat-icon>
+                  {{ item.daysLeft|| 'N/A' }}
+                </div>
+              } 
+                <span class="time-stamp ">
+                  <mat-icon>schedule</mat-icon>{{ item.timeAgo }}
+                </span>
+                
+                
               </div>
 
               <div class="asset-info-box">
@@ -152,6 +155,7 @@
                       <div class="status-pill completed">Completed</div>
                     }
                   </div>
+                  
                 </div>
 
                 <div class="info-grid-details"> 
@@ -214,7 +218,7 @@
       }
     </div>
 
-    @if (filteredResults().length > pageSize) {
+    @if (filteredResults().length > 0) {
       <app-pagination 
         [currentPage]="currentPage()" 
         [totalPages]="totalPages()" 

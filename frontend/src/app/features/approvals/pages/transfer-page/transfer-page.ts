@@ -102,23 +102,31 @@ export class TransferPageComponent implements OnInit, OnDestroy {
  loadTransfers() {
   this.isLoading.set(true);
   const userDivisionId = Number(this.authService.getDivisionId());
+  const rawDivId = this.authService.getDivisionId();
+console.log('Raw Division ID from Auth:', rawDivId);
 
   this.transferService.getDivisionHeadTransfers(this.activeTab()).subscribe({
     next: (data) => {
       
       const mapped = data.map(item => {
        
-        let assignedType: 'Incoming Active' | 'Outgoing Active' = 'Outgoing Active';
+        let assignedType: 'Incoming Active' | 'Outgoing Active';
+
+        const toId = Number(item.toDivisionId);
+        const fromId = Number(item.fromDivisionId);
+
         
-        if (Number(item.toDivisionId) === userDivisionId) {
-          assignedType = 'Incoming Active';
-        } else if (Number(item.fromDivisionId) === userDivisionId) {
-          assignedType = 'Outgoing Active';
-        } else {
-         
-          assignedType = item.toDivisionName?.toLowerCase().includes('it') || item.targetUserName?.toLowerCase().includes('it')
-            ? 'Incoming Active' 
-            : 'Outgoing Active';
+        if (toId === userDivisionId) {
+            assignedType = 'Incoming Active';
+        } 
+      
+        else if (fromId === userDivisionId) {
+            assignedType = 'Outgoing Active';
+        } 
+       
+        else {
+            console.warn(`Division ID mismatch: My Div(${userDivisionId}) | From(${fromId}) | To(${toId})`);
+            assignedType = 'Outgoing Active'; 
         }
 
         const hasEndDate = item.transferPeriod && item.transferPeriod.includes(' to ');
@@ -247,7 +255,7 @@ returnAsset(id: string) {
         t.transferByName.toLowerCase().includes(query)
       );
     }
-    
+     results.sort((a, b) => Number(b.id) - Number(a.id));
     return results;
   });
 

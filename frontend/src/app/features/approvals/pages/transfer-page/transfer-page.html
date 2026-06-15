@@ -166,7 +166,7 @@
             
             <div class="action-buttons-cell">
                 @if (activeTab() === 'incoming') {
-                  <button class="btn-accept" (click)="approveTransfer(item.id)">Approve</button>
+                  <button class="btn-approve" (click)="approveTransfer(item.id)">Approve</button>
                   <button class="btn-reject" (click)="rejectTransfer(item.id)">Reject</button>
                 }
                 @if (activeTab() === 'pending') {
@@ -186,11 +186,11 @@
                   <mat-icon>hourglass_empty</mat-icon>
                   {{ item.daysLeft }}
                 </div>
-              } @else {
-                <span class="time-stamp absolute-top-right">
+              } 
+                <span class="time-stamp ">
                   <mat-icon>schedule</mat-icon>{{ item.timeAgo }}
                 </span>
-              }
+              
             </div>
 
             <div class="asset-info-box">
@@ -202,6 +202,7 @@
                     <div class="status-pill completed">Completed</div>
                   }
                 </div>
+                
               </div>
 
               

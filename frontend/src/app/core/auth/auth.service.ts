@@ -165,6 +165,7 @@ export class AuthService {
     try {
       const decoded: any = jwtDecode(token);
       const divisionId = decoded.divisionId ?? 
+                        decoded.DivisionId ??
                         decoded.division_id ?? 
                         decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/divisionId'] ??
                         null;

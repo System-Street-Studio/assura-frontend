@@ -85,9 +85,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   private allTransfers = signal<TransferDataLocal[]>([]);
   private refreshInterval: any;
 
-  // Pagination Logic
-  pageSize = 10;
-  currentPage = signal(1);
+  
 
   constructor(
     private employeeTransferService: EmployeeTransferService,
@@ -182,11 +180,11 @@ export class TransferPageComponent implements OnInit, OnDestroy {
         userType = 'OutgoingActive';
       }
     }
-
+    
     const hasEndDate = item.transferPeriod && item.transferPeriod.includes(' to ');
     const endDateString = hasEndDate ? item.transferPeriod!.split(' to ')[1] : '';
     const daysLeftText = endDateString ? this.calculateDaysRemaining(endDateString) : 'No Date';
-
+    
     
     return {
       id: item.id,
@@ -203,7 +201,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
       status: item.status,
       reason: item.reason || '',
       transferPeriod: item.transferPeriod || 'N/A',
-      timeAgo: this.getTimeAgo(item.createdAt),
+      timeAgo: this.getTimeAgo(item.updatedAt),
       type: userType,
       daysLeft: daysLeftText,
       createdAt: item.createdAt,
@@ -232,6 +230,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   // filtering results based on active tab, filter type, and search query
   filteredResults = computed(() => {
     let results = this.allTransfers();
+    
     
     if ((this.activeTab() === 'active' || this.activeTab() === 'completed') && this.filterType() !== 'all') {
       results = results.filter(t => t.type === this.filterType());
@@ -289,6 +288,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     if (!dateString) return 'Just now';
 
     const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Just now';
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     
@@ -311,7 +311,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     return diffMonths === 1 ? '1 month ago' : `${diffMonths} months ago`;
   }
 
-  // 💡 This function calculates the days remaining until the transfer expires based on the end date. It also handles overdue cases and formats the output accordingly.
+  //  This function calculates the days remaining 
   private calculateDaysRemaining(transferDate: string): string {
     if (!transferDate) return 'No Date';
 
@@ -329,16 +329,21 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     return `${diffDays} days left`;
   }
 
-  totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));
+      pageSize = 10;
+      currentPage = signal(1);
 
-  paginatedRequests = computed(() => {
-    const start = (this.currentPage() - 1) * this.pageSize;
-    return this.filteredResults().slice(start, start + this.pageSize);
-  });
+      totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));
 
-  pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+      paginatedRequests = computed(() => {
+        const start = (this.currentPage() - 1) * this.pageSize;
+        return this.filteredResults().slice(start, start + this.pageSize);
+        
+      });
 
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
+      pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+
+
+      onPageChange(page: number) {
+        this.currentPage.set(page);
+      }
 }
