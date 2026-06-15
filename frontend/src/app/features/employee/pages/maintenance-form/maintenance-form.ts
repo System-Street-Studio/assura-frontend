@@ -60,21 +60,22 @@ export class MaintenanceFormComponent implements OnInit {
     }
     this.isSubmitting.set(true);
 
-    const formData = new FormData();
     const userId = this.authService.getUserId();
     const userName = this.authService.getUserName();
 
-    formData.append('employeeId', userId ? userId.toString() : '');
-    formData.append('submittedBy', userName || '');
-    formData.append('assetName', this.asset());
-    formData.append('assetCategory', 'General');
-    formData.append('priority', this.priority());
-    formData.append('requestType', 'Maintenance');
-    formData.append('reason', this.issueType());
-    formData.append('description', `Maintenance Request for ${this.asset()}: ${this.description()}`);
-    formData.append('quantity', '1');
+    const requestData = {
+      employeeId: userId ? userId.toString() : '',
+      submittedBy: userName || '',
+      assetName: this.asset(),
+      assetCategory: 'General',
+      priority: this.priority(),
+      requestType: 'Maintenance',
+      reason: this.issueType(),
+      description: `Maintenance Request for ${this.asset()}: ${this.description()}`,
+      quantity: 1
+    };
 
-    this.assetRequestService.createRequest(formData, this.selectedFiles()).subscribe({
+    this.assetRequestService.createRequest(requestData, this.selectedFiles()).subscribe({
       next: (res: any) => {
         this.isSubmitting.set(false);
         alert(res?.message || 'Maintenance Request Submitted Successfully!');

@@ -57,21 +57,22 @@ export class DiscardFormComponent implements OnInit {
     }
     this.isSubmitting.set(true);
 
-    const formData = new FormData();
     const userId = this.authService.getUserId();
     const userName = this.authService.getUserName();
 
-    formData.append('employeeId', userId ? userId.toString() : '');
-    formData.append('submittedBy', userName || '');
-    formData.append('assetName', this.asset());
-    formData.append('assetCategory', 'General');
-    formData.append('priority', 'Normal');
-    formData.append('requestType', 'Discard');
-    formData.append('reason', this.reason());
-    formData.append('description', `Discard Request for ${this.asset()}`);
-    formData.append('quantity', '1');
+    const requestData = {
+      employeeId: userId ? userId.toString() : '',
+      submittedBy: userName || '',
+      assetName: this.asset(),
+      assetCategory: 'General',
+      priority: 'Normal',
+      requestType: 'Discard',
+      reason: this.reason(),
+      description: `Discard Request for ${this.asset()}`,
+      quantity: 1
+    };
 
-    this.assetRequestService.createRequest(formData, this.selectedFiles()).subscribe({
+    this.assetRequestService.createRequest(requestData, this.selectedFiles()).subscribe({
       next: (res: any) => {
         this.isSubmitting.set(false);
         alert(res?.message || 'Discard Request Submitted Successfully!');
