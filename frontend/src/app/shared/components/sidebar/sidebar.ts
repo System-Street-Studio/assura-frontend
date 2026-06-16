@@ -53,7 +53,11 @@ export class SharedSidebarComponent {
     { label: 'Assigned', icon: 'group', link: '/hr/assigned', roles: ['HR', 'Admin'] },
 
     // Accountant section
+    { label: 'Dashboard', icon: 'home', link: '/accountant/overview', roles: ['Accountant', 'Admin'] },
     { label: 'Discarded', icon: 'cancel', link: '/accountant/discarded', roles: ['Accountant', 'Admin'] },
+    { label: 'Receipts', icon: 'receipt', link: '/accountant/receipt', roles: ['Accountant', 'Admin'] },
+    { label: 'Discard Notes', icon: 'note_alt', link: '/accountant/discard-note', roles: ['Accountant', 'Admin'] },
+    { label: 'Lost Assets', icon: 'error_outline', link: '/accountant/lose', roles: ['Accountant', 'Admin'] },
 
     // Reporting / Auditor section
     { label: 'Dashboard', icon: 'dashboard', link: '/reporting/dashboard', roles: ['Auditor', 'Admin'] },
