@@ -44,6 +44,7 @@
     </div>
 </div>
 
-<app-status-card *ngIf="showSuccessPopup" status="success" message="Repairing firm added successfully!"
-    subMessage="Return to firm list">
-</app-status-card>
+<div class="global-toast-container" *ngIf="showSuccessPopup">
+    <app-status-card label="Repairing firm added successfully!" icon="check_box" color="#10b981">
+    </app-status-card>
+</div>

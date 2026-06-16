@@ -71,19 +71,19 @@
     </div>
 
     <!-- Detail Modal -->
-    <div class="detail-overlay" *ngIf="selectedAsset" (click)="closeDetail()">
-        <div class="detail-card" (click)="$event.stopPropagation()">
-            <div class="detail-header">
-                <button class="detail-close-x" (click)="closeDetail()">
+    <div class="global-modal-overlay" *ngIf="selectedAsset" (click)="closeDetail()">
+        <div class="global-modal-card" (click)="$event.stopPropagation()">
+            <div class="global-modal-header">
+                <h2>Asset Details</h2>
+                <button class="global-modal-close-btn" (click)="closeDetail()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
-                <h2>Asset Details</h2>
             </div>
-            <div class="detail-body">
+            <div class="global-modal-body">
                 <div class="detail-icon-section">
                     <div class="detail-icon">
                         <svg *ngIf="selectedAsset.type === 'Laptop'" xmlns="http://www.w3.org/2000/svg" width="60"
@@ -139,28 +139,27 @@
                         <span>#{{ selectedAsset.id }}</span>
                     </div>
                 </div>
-
-                <div class="detail-actions">
-                    <button class="close-detail-btn" (click)="closeDetail()">Close</button>
-                    <button class="edit-asset-btn" (click)="openEditAssetModal(selectedAsset)">Edit Asset</button>
-                </div>
+            </div>
+            <div class="global-modal-footer">
+                <button class="close-detail-btn" (click)="closeDetail()">Close</button>
+                <button class="edit-asset-btn" (click)="openEditAssetModal(selectedAsset)">Edit Asset</button>
             </div>
         </div>
     </div>
     <!-- Add Asset Modal -->
-    <div class="detail-overlay" *ngIf="isAddAssetModalOpen" (click)="closeAddAssetModal()">
-        <div class="detail-card" (click)="$event.stopPropagation()">
-            <div class="detail-header">
-                <button class="detail-close-x" (click)="closeAddAssetModal()">
+    <div class="global-modal-overlay" *ngIf="isAddAssetModalOpen" (click)="closeAddAssetModal()">
+        <div class="global-modal-card" (click)="$event.stopPropagation()">
+            <div class="global-modal-header">
+                <h2>Add New Asset</h2>
+                <button class="global-modal-close-btn" (click)="closeAddAssetModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
-                <h2>Add New Asset</h2>
             </div>
-            <div class="detail-body">
+            <div class="global-modal-body">
                 <div class="form-group">
                     <label>Asset Name</label>
                     <input type="text" name="assetName" [ngModel]="newAsset.name" (ngModelChange)="newAsset.name = $event" placeholder="e.g. Dell Latitude 7420">
@@ -182,28 +181,28 @@
                     <label>Division</label>
                     <input type="text" name="division" [ngModel]="newAsset.division" (ngModelChange)="newAsset.division = $event" placeholder="e.g. IT Department">
                 </div>
-                <div class="detail-actions" style="margin-top: 24px;">
-                    <button class="close-detail-btn" (click)="closeAddAssetModal()">Cancel</button>
-                    <button class="edit-asset-btn" (click)="submitAddAsset()">Add Asset</button>
-                </div>
+            </div>
+            <div class="global-modal-footer">
+                <button class="close-detail-btn" (click)="closeAddAssetModal()">Cancel</button>
+                <button class="edit-asset-btn" (click)="submitAddAsset()">Add Asset</button>
             </div>
         </div>
     </div>
 
     <!-- Edit Asset Modal -->
-    <div class="detail-overlay" *ngIf="isEditAssetModalOpen && editingAsset" (click)="closeEditAssetModal()">
-        <div class="detail-card" (click)="$event.stopPropagation()">
-            <div class="detail-header">
-                <button class="detail-close-x" (click)="closeEditAssetModal()">
+    <div class="global-modal-overlay" *ngIf="isEditAssetModalOpen && editingAsset" (click)="closeEditAssetModal()">
+        <div class="global-modal-card" (click)="$event.stopPropagation()">
+            <div class="global-modal-header">
+                <h2>Edit Asset</h2>
+                <button class="global-modal-close-btn" (click)="closeEditAssetModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
-                <h2>Edit Asset</h2>
             </div>
-            <div class="detail-body">
+            <div class="global-modal-body">
                 <div class="form-group">
                     <label>Asset Name</label>
                     <input type="text" name="editAssetName" [ngModel]="editingAsset.name" (ngModelChange)="editingAsset.name = $event" placeholder="e.g. Dell Latitude 7420">
@@ -233,10 +232,10 @@
                         <option value="Assigned">Assigned</option>
                     </select>
                 </div>
-                <div class="detail-actions" style="margin-top: 24px;">
-                    <button class="close-detail-btn" (click)="closeEditAssetModal()">Cancel</button>
-                    <button class="edit-asset-btn" (click)="submitEditAsset()">Save Changes</button>
-                </div>
+            </div>
+            <div class="global-modal-footer">
+                <button class="close-detail-btn" (click)="closeEditAssetModal()">Cancel</button>
+                <button class="edit-asset-btn" (click)="submitEditAsset()">Save Changes</button>
             </div>
         </div>
     </div>

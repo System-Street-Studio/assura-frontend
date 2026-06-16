@@ -139,7 +139,10 @@
                     </td>
                 </tr>
                 <tr *ngIf="viewRequests.length === 0 && !loading">
-                    <td colspan="9" class="empty-state">No requests found</td>
+                    <td colspan="9" class="global-empty-state-td">
+                        <mat-icon class="empty-icon">build</mat-icon>
+                        <div class="empty-text">No requests found</div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -152,31 +155,37 @@
 </div>
 
 <!-- Action Modal -->
-<div class="overlay" *ngIf="showActionModal" (click)="showActionModal = false">
-    <div class="action-dialog" (click)="$event.stopPropagation()">
-        <h3>Confirm Action</h3>
-        <p>Are you sure you want to change the status to "{{ actionType }}" for {{ actionRequest?.maintenanceNumber }}?
-        </p>
-        <div class="modal-actions">
+<div class="global-modal-overlay" *ngIf="showActionModal" (click)="showActionModal = false">
+    <div class="global-modal-card" (click)="$event.stopPropagation()">
+        <div class="global-modal-header">
+            <h2>Confirm Action</h2>
+            <button class="global-modal-close-btn" (click)="showActionModal = false">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <div class="global-modal-body">
+            <p>Are you sure you want to change the status to "{{ actionType }}" for {{ actionRequest?.maintenanceNumber }}?</p>
+        </div>
+        <div class="global-modal-footer">
             <button class="btn outline" (click)="showActionModal = false">Cancel</button>
             <button class="btn primary" (click)="confirmAction()" [disabled]="actionProcessing">Confirm</button>
         </div>
     </div>
 </div>
 
-<!-- Drawer (Simplified) -->
-<div class="drawer-overlay" *ngIf="showDetail" (click)="showDetail = false">
-    <aside class="detail-drawer" (click)="$event.stopPropagation()">
-        <header class="drawer-header">
-            <h3>Details: {{ detailRequest?.maintenanceNumber }}</h3>
-            <button (click)="showDetail = false"><mat-icon>close</mat-icon></button>
-        </header>
-        <div class="drawer-body" *ngIf="detailRequest">
+<!-- Drawer (Simplified) converted to Modal -->
+<div class="global-modal-overlay" *ngIf="showDetail" (click)="showDetail = false">
+    <div class="global-modal-card" (click)="$event.stopPropagation()">
+        <div class="global-modal-header">
+            <h2>Details: {{ detailRequest?.maintenanceNumber }}</h2>
+            <button class="global-modal-close-btn" (click)="showDetail = false"><mat-icon>close</mat-icon></button>
+        </div>
+        <div class="global-modal-body" *ngIf="detailRequest">
             <p><strong>Asset:</strong> {{ detailRequest.assetName }}</p>
             <p><strong>Description:</strong> {{ detailRequest.description }}</p>
             <p><strong>Type:</strong> {{ detailRequest.type }}</p>
             <p><strong>Status:</strong> {{ detailRequest.status }}</p>
             <p><strong>Cost:</strong> ${{ detailRequest.cost }}</p>
         </div>
-    </aside>
+    </div>
 </div>
