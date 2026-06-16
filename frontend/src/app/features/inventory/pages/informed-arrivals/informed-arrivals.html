@@ -31,11 +31,11 @@
                     </td>
                     <td class="actions-col">
                         <button class="btn-text" (click)="openInformModal(item)" title="Inform Stakeholders"
-                            [disabled]="item.status !== 'Pending'">
+                            [disabled]="(item.status || '').toLowerCase() !== 'pending'">
                             <mat-icon>notifications_active</mat-icon>
                             Inform
                         </button>
-                        <button class="btn-text" title="Register" [disabled]="item.status !== 'Pending'">
+                        <button class="btn-text" title="Register" [disabled]="(item.status || '').toLowerCase() !== 'pending'">
                             <mat-icon>inventory</mat-icon>
                             Register
                         </button>
