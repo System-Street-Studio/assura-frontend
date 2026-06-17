@@ -34,7 +34,7 @@
         <div class="table-actions">
           <button type="button">Type</button>
           <button type="button">Date</button>
-          <button type="button">Export</button>
+          <button type="button" (click)="exportTable()">Export</button>
         </div>
       </div>
 
@@ -84,21 +84,23 @@
         <h3>Quick Export</h3>
         <label>
           Format
-          <select>
-            <option>PDF</option>
-            <option>Excel</option>
-            <option>CSV</option>
+          <select [(ngModel)]="selectedFormat">
+            <option value="PDF">PDF</option>
+            <option value="Excel">Excel</option>
+            <option value="CSV">CSV</option>
           </select>
         </label>
         <label>
           Date Range
-          <select>
+          <select [(ngModel)]="selectedDateRange">
             <option>This month</option>
             <option>Last quarter</option>
             <option>This year</option>
           </select>
         </label>
-        <button type="button">Download</button>
+        <button type="button" (click)="downloadQuickExport()" [disabled]="isExporting">
+          {{ isExporting ? 'Exporting...' : 'Download' }}
+        </button>
       </div>
     </aside>
   </div>
