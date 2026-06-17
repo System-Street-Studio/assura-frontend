@@ -93,11 +93,21 @@
           </select>
         </label>
         <label>
+          Report Type
+          <select [(ngModel)]="selectedExportType">
+            <option value="Audit">Audit</option>
+            <option value="Exception">Exception</option>
+            <option value="Lifecycle">Lifecycle</option>
+            <option value="Finance">Finance</option>
+          </select>
+        </label>
+        <label>
           Date Range
           <select [(ngModel)]="selectedDateRange">
-            <option>This month</option>
-            <option>Last quarter</option>
-            <option>This year</option>
+            <option value="this-month">This month</option>
+            <option value="last-month">Last month</option>
+            <option value="this-year">This year</option>
+            <option value="all-time">All time</option>
           </select>
         </label>
         <button type="button" (click)="downloadQuickExport()" [disabled]="isExporting">

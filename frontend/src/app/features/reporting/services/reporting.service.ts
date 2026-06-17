@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
@@ -60,5 +60,14 @@ export class ReportingService {
 
   createReport(data: any): Observable<string> {
     return this.http.post(`${this.apiUrl}/reports`, data, { responseType: 'text' });
+  }
+
+  getReportData(type: string, startDate?: string, endDate?: string, divisionId?: number): Observable<any[]> {
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    if (divisionId) params = params.set('divisionId', divisionId.toString());
+    
+    return this.http.get<any[]>(`${this.apiUrl}/reports/${type}/data`, { params });
   }
 }

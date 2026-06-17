@@ -31,7 +31,8 @@ export class ReportingReportComponent implements OnInit {
   });
 
   selectedFormat = 'CSV';
-  selectedDateRange = 'This month';
+  selectedDateRange = 'this-month';
+  selectedExportType = 'Audit';
   isExporting = false;
   
   showScheduleModal = false;
@@ -53,72 +54,137 @@ export class ReportingReportComponent implements OnInit {
 
     switch (this.selectedFormat) {
       case 'CSV':
-        this.downloadCSV(items);
+        this.downloadCSV(items, true, 'Report_Library');
         break;
       case 'Excel':
-        this.downloadExcel(items);
+        this.downloadExcel(items, true, 'Report_Library');
         break;
       case 'PDF':
-        this.downloadPDF(items);
+        this.downloadPDF(items, true, 'Report Library');
         break;
     }
   }
 
   downloadQuickExport(): void {
     this.isExporting = true;
-    // Use setTimeout to show loading state briefly
-    setTimeout(() => {
-      this.exportTable();
-      this.isExporting = false;
-    }, 300);
+    
+    // Calculate dates based on selectedDateRange
+    let startDate: string | undefined;
+    let endDate: string | undefined;
+    const now = new Date();
+    
+    if (this.selectedDateRange === 'this-month') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
+    } else if (this.selectedDateRange === 'last-month') {
+      startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
+      endDate = new Date(now.getFullYear(), now.getMonth(), 0).toISOString();
+    } else if (this.selectedDateRange === 'this-year') {
+      startDate = new Date(now.getFullYear(), 0, 1).toISOString();
+      endDate = new Date(now.getFullYear(), 11, 31).toISOString();
+    }
+
+    this.reportingService.getReportData(this.selectedExportType, startDate, endDate).subscribe({
+      next: (data) => {
+        if (!data || data.length === 0) {
+          alert('No data available for the selected filters.');
+          this.isExporting = false;
+          return;
+        }
+
+        const safeTitle = `${this.selectedExportType}_Report_${this.selectedDateRange}`;
+        switch(this.selectedFormat) {
+          case 'CSV':
+            this.downloadCSV(data, false, safeTitle);
+            break;
+          case 'Excel':
+            this.downloadExcel(data, false, safeTitle);
+            break;
+          case 'PDF':
+            this.downloadPDF(data, false, safeTitle);
+            break;
+        }
+        this.isExporting = false;
+      },
+      error: (err) => {
+        console.error('Quick export failed:', err);
+        alert('Failed to generate custom report.');
+        this.isExporting = false;
+      }
+    });
   }
 
   exportSingleReport(report: any): void {
-    const items = [report];
-    switch(this.selectedFormat) {
-      case 'CSV':
-        this.downloadCSV(items);
-        break;
-      case 'Excel':
-        this.downloadExcel(items);
-        break;
-      case 'PDF':
-        this.downloadPDF(items);
-        break;
+    this.isExporting = true;
+    this.reportingService.getReportData(report.type).subscribe({
+      next: (data) => {
+        if (!data || data.length === 0) {
+          alert('No data available for this report.');
+          this.isExporting = false;
+          return;
+        }
+
+        const safeTitle = report.title ? report.title.replace(/\s+/g, '_') : 'Export';
+        switch(this.selectedFormat) {
+          case 'CSV':
+            this.downloadCSV(data, false, safeTitle);
+            break;
+          case 'Excel':
+            this.downloadExcel(data, false, safeTitle);
+            break;
+          case 'PDF':
+            this.downloadPDF(data, false, report.title);
+            break;
+        }
+        this.isExporting = false;
+      },
+      error: () => {
+        alert('Failed to fetch report data.');
+        this.isExporting = false;
+      }
+    });
+  }
+
+  private getHeadersAndRows(items: any[], isReportList: boolean): { headers: string[], rows: any[][] } {
+    if (items.length === 0) return { headers: [], rows: [] };
+    
+    if (isReportList) {
+      return {
+        headers: ['Report ID', 'Title', 'Owner', 'Type', 'Period', 'Generated', 'Status', 'Size'],
+        rows: items.map(i => [i.id, i.title, i.owner, i.type, i.period, i.generated, i.status, i.size])
+      };
+    } else {
+      const headers = Object.keys(items[0]);
+      const rows = items.map(item => headers.map(h => item[h]));
+      return { headers, rows };
     }
   }
 
-  private downloadCSV(items: any[]): void {
-    const headers = ['Report ID', 'Title', 'Owner', 'Type', 'Period', 'Generated', 'Status', 'Size'];
-    const rows = items.map(item => [
-      item.id, item.title, item.owner, item.type, item.period, item.generated, item.status, item.size
-    ]);
+  private downloadCSV(items: any[], isReportList: boolean, filename: string): void {
+    const { headers, rows } = this.getHeadersAndRows(items, isReportList);
 
     let csvContent = headers.join(',') + '\n';
     rows.forEach(row => {
-      csvContent += row.map((field: string) => `"${(field || '').replace(/"/g, '""')}"`).join(',') + '\n';
+      csvContent += row.map(field => {
+        const val = field !== null && field !== undefined ? String(field) : '';
+        return `"${val.replace(/"/g, '""')}"`;
+      }).join(',') + '\n';
     });
 
-    this.triggerDownload(csvContent, 'asset-report.csv', 'text/csv');
+    this.triggerDownload(csvContent, `${filename}.csv`, 'text/csv');
   }
 
-  private downloadExcel(items: any[]): void {
-    // Generate an HTML table that Excel can open
-    const headers = ['Report ID', 'Title', 'Owner', 'Type', 'Period', 'Generated', 'Status', 'Size'];
+  private downloadExcel(items: any[], isReportList: boolean, filename: string): void {
+    const { headers, rows } = this.getHeadersAndRows(items, isReportList);
 
     let table = '<table>';
     table += '<thead><tr>' + headers.map(h => `<th style="background:#0b6c78;color:white;padding:8px;font-weight:bold;">${h}</th>`).join('') + '</tr></thead>';
     table += '<tbody>';
-    items.forEach(item => {
+    rows.forEach(row => {
       table += '<tr>';
-      table += `<td style="padding:6px;border:1px solid #ddd;">${item.id}</td>`;
-      table += `<td style="padding:6px;border:1px solid #ddd;">${item.title}</td>`;
-      table += `<td style="padding:6px;border:1px solid #ddd;">${item.owner}</td>`;
-      table += `<td style="padding:6px;border:1px solid #ddd;">${item.type}</td>`;
-      table += `<td style="padding:6px;border:1px solid #ddd;">${item.period}</td>`;
-      table += `<td style="padding:6px;border:1px solid #ddd;">${item.generated}</td>`;
-      table += `<td style="padding:6px;border:1px solid #ddd;">${item.status}</td>`;
-      table += `<td style="padding:6px;border:1px solid #ddd;">${item.size}</td>`;
+      row.forEach(field => {
+        table += `<td style="padding:6px;border:1px solid #ddd;">${field !== null && field !== undefined ? field : ''}</td>`;
+      });
       table += '</tr>';
     });
     table += '</tbody></table>';
@@ -131,23 +197,24 @@ export class ReportingReportComponent implements OnInit {
       </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
       </head><body>${table}</body></html>`;
 
-    this.triggerDownload(excelContent, 'asset-report.xls', 'application/vnd.ms-excel');
+    this.triggerDownload(excelContent, `${filename}.xls`, 'application/vnd.ms-excel');
   }
 
-  private downloadPDF(items: any[]): void {
-    const headers = ['Report ID', 'Title', 'Owner', 'Type', 'Period', 'Generated', 'Status', 'Size'];
+  private downloadPDF(items: any[], isReportList: boolean, title: string): void {
+    const { headers, rows } = this.getHeadersAndRows(items, isReportList);
     const now = new Date().toLocaleDateString();
 
     let tableRows = '';
-    items.forEach(item => {
-      tableRows += `<tr>
-        <td>${item.id}</td><td>${item.title}</td><td>${item.owner}</td><td>${item.type}</td>
-        <td>${item.period}</td><td>${item.generated}</td><td>${item.status}</td><td>${item.size}</td>
-      </tr>`;
+    rows.forEach(row => {
+      tableRows += '<tr>';
+      row.forEach(field => {
+        tableRows += `<td>${field !== null && field !== undefined ? field : ''}</td>`;
+      });
+      tableRows += '</tr>';
     });
 
     const html = `
-    <html><head><title>Assura Report Export</title>
+    <html><head><title>${title}</title>
     <style>
       body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #1e293b; }
       h1 { color: #0b6c78; font-size: 24px; margin-bottom: 4px; }
@@ -158,7 +225,7 @@ export class ReportingReportComponent implements OnInit {
       tr:nth-child(even) { background: #f8fafc; }
       .footer { margin-top: 32px; font-size: 11px; color: #94a3b8; text-align: center; }
     </style></head><body>
-      <h1>Assura — Asset Report</h1>
+      <h1>${title}</h1>
       <p class="subtitle">Generated on ${now}</p>
       <table>
         <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
