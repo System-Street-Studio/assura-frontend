@@ -188,7 +188,7 @@
 
 .table-head {
   display: grid;
-  grid-template-columns: 100px 1fr 120px 100px 120px 120px 100px 80px;
+  grid-template-columns: 130px 1fr 100px 100px 100px 100px 90px 70px 40px;
   padding: 12px 16px;
   border-bottom: 1px solid #f1f5f9;
   color: #64748b;
@@ -199,7 +199,7 @@
 
 .table-row {
   display: grid;
-  grid-template-columns: 100px 1fr 120px 100px 120px 120px 100px 80px;
+  grid-template-columns: 130px 1fr 100px 100px 100px 100px 90px 70px 40px;
   padding: 14px 16px;
   border-bottom: 1px solid #f8fafc;
   align-items: center;
@@ -208,6 +208,27 @@
 }
 
 .table-row:hover { background: #f8fafc; }
+
+.row-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.row-action-btn:hover {
+  background: #0b6c78;
+  color: white;
+  border-color: #0b6c78;
+}
 
 .status-pill {
   padding: 4px 10px;

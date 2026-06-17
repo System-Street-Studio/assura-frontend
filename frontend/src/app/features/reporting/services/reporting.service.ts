@@ -57,4 +57,8 @@ export class ReportingService {
   verifyAsset(id: number): Observable<boolean> {
     return this.http.post<boolean>(`${this.apiUrl}/assets/${id}/verify`, {});
   }
+
+  createReport(data: any): Observable<string> {
+    return this.http.post(`${this.apiUrl}/reports`, data, { responseType: 'text' });
+  }
 }

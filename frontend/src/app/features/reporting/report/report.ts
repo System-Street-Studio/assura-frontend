@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ReportingService } from '../services/reporting.service';
 
@@ -17,9 +17,27 @@ export class ReportingReportComponent implements OnInit {
   readonly reportItems = signal<any[]>([]);
   readonly insights = signal<any[]>([]);
 
+  readonly searchTerm = signal('');
+  
+  readonly filteredReports = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.reportItems();
+    return this.reportItems().filter(r => 
+      r.id?.toLowerCase().includes(term) ||
+      r.title?.toLowerCase().includes(term) ||
+      r.owner?.toLowerCase().includes(term) ||
+      r.type?.toLowerCase().includes(term)
+    );
+  });
+
   selectedFormat = 'CSV';
   selectedDateRange = 'This month';
   isExporting = false;
+  
+  showScheduleModal = false;
+  showNewReportModal = false;
+  newReportTitle = '';
+  newReportType = 'Audit';
 
   ngOnInit(): void {
     this.reportingService.getReports().subscribe(data => {
@@ -30,7 +48,7 @@ export class ReportingReportComponent implements OnInit {
   }
 
   exportTable(): void {
-    const items = this.reportItems();
+    const items = this.filteredReports();
     if (!items.length) return;
 
     switch (this.selectedFormat) {
@@ -53,6 +71,21 @@ export class ReportingReportComponent implements OnInit {
       this.exportTable();
       this.isExporting = false;
     }, 300);
+  }
+
+  exportSingleReport(report: any): void {
+    const items = [report];
+    switch(this.selectedFormat) {
+      case 'CSV':
+        this.downloadCSV(items);
+        break;
+      case 'Excel':
+        this.downloadExcel(items);
+        break;
+      case 'PDF':
+        this.downloadPDF(items);
+        break;
+    }
   }
 
   private downloadCSV(items: any[]): void {
@@ -151,5 +184,72 @@ export class ReportingReportComponent implements OnInit {
     link.download = filename;
     link.click();
     URL.revokeObjectURL(link.href);
+  }
+
+  openScheduleModal(): void {
+    this.showScheduleModal = true;
+  }
+  
+  closeScheduleModal(): void {
+    this.showScheduleModal = false;
+  }
+
+  scheduleFrequency = 'Daily';
+
+  scheduleReport(): void {
+    const payload = {
+      title: 'Scheduled Report',
+      type: 'Audit',
+      isScheduled: true,
+      scheduleFrequency: this.scheduleFrequency
+    };
+
+    this.reportingService.createReport(payload).subscribe({
+      next: () => {
+        alert('Report scheduled successfully!');
+        this.closeScheduleModal();
+        this.loadReports();
+      },
+      error: () => {
+        alert('Failed to schedule report');
+      }
+    });
+  }
+
+  openNewReportModal(): void {
+    this.showNewReportModal = true;
+  }
+
+  closeNewReportModal(): void {
+    this.showNewReportModal = false;
+    this.newReportTitle = '';
+  }
+  
+  createNewReport(): void {
+    if (this.newReportTitle.trim()) {
+      const payload = {
+        title: this.newReportTitle,
+        type: this.newReportType,
+        isScheduled: false
+      };
+
+      this.reportingService.createReport(payload).subscribe({
+        next: () => {
+          this.closeNewReportModal();
+          this.loadReports();
+        },
+        error: () => {
+          alert('Failed to create report');
+        }
+      });
+    }
+  }
+
+  private loadReports(): void {
+    this.reportingService.getReports().subscribe(data => {
+      this.summaries.set(data.summaries);
+      this.reportItems.set(data.reportItems);
+      this.insights.set(data.insights);
+    });
   }
 }

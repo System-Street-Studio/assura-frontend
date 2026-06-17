@@ -8,10 +8,10 @@
     <div class="header-actions">
       <label class="search-field">
         <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Search reports..." />
+        <input type="search" placeholder="Search reports..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
       </label>
-      <button class="secondary-button" type="button">Schedule</button>
-      <button class="primary-button" type="button">
+      <button class="secondary-button" type="button" (click)="openScheduleModal()">Schedule</button>
+      <button class="primary-button" type="button" (click)="openNewReportModal()">
         <span aria-hidden="true">+</span>
         New Report
       </button>
@@ -48,9 +48,10 @@
           <span>Generated</span>
           <span>Status</span>
           <span>Size</span>
+          <span></span>
         </div>
 
-        @for (report of reportItems(); track report.id) {
+        @for (report of filteredReports(); track report.id) {
           <div class="table-row">
             <strong>{{ report.id }}</strong>
             <span>{{ report.title }}</span>
@@ -60,6 +61,7 @@
             <span>{{ report.generated }}</span>
             <span class="status-pill" [class]="report.status.toLowerCase()">{{ report.status }}</span>
             <span>{{ report.size }}</span>
+            <button class="row-action-btn" type="button" (click)="exportSingleReport(report)" title="Export Report">↓</button>
           </div>
         }
       </div>
@@ -108,4 +110,60 @@
   <button class="help-button" type="button" aria-label="Open help">
     <span aria-hidden="true">?</span>
   </button>
+
+  @if (showScheduleModal) {
+    <div class="modal-backdrop">
+      <div class="modal-panel">
+        <header>
+          <h2>Schedule Report</h2>
+          <button type="button" (click)="closeScheduleModal()">×</button>
+        </header>
+        <div class="modal-body">
+          <p>Set up automated delivery for your reports.</p>
+          <label>
+            Frequency
+            <select [(ngModel)]="scheduleFrequency">
+              <option value="Daily">Daily</option>
+              <option value="Weekly">Weekly</option>
+              <option value="Monthly">Monthly</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="secondary-button" (click)="closeScheduleModal()">Cancel</button>
+          <button type="button" class="primary-button" (click)="scheduleReport()">Save Schedule</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showNewReportModal) {
+    <div class="modal-backdrop">
+      <div class="modal-panel">
+        <header>
+          <h2>Create New Report</h2>
+          <button type="button" (click)="closeNewReportModal()">×</button>
+        </header>
+        <div class="modal-body">
+          <label>
+            Report Title
+            <input type="text" [(ngModel)]="newReportTitle" placeholder="Enter a descriptive title" />
+          </label>
+          <label>
+            Report Type
+            <select [(ngModel)]="newReportType">
+              <option>Audit</option>
+              <option>Exception</option>
+              <option>Lifecycle</option>
+              <option>Finance</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="secondary-button" (click)="closeNewReportModal()">Cancel</button>
+          <button type="button" class="primary-button" (click)="createNewReport()" [disabled]="!newReportTitle.trim()">Create</button>
+        </div>
+      </div>
+    </div>
+  }
 </section>
