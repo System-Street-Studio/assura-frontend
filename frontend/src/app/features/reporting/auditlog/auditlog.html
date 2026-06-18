@@ -8,11 +8,50 @@
     <div class="header-actions">
       <label class="search-field">
         <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Search audit log..." />
+        <input type="search" placeholder="Search audit log..." [(ngModel)]="searchTerm" />
       </label>
-      <button class="secondary-button" type="button">Date Range</button>
-      <button class="secondary-button" type="button">Module</button>
-      <button class="primary-button" type="button">Export Log</button>
+
+      <!-- Date Range Filter Dropdown -->
+      <div class="dropdown-container">
+        <button class="secondary-button" type="button" (click)="toggleDateRangeDropdown()">
+          📅 Date: {{ selectedDateRange() }}
+        </button>
+        @if (showDateRangeDropdown()) {
+          <div class="dropdown-menu">
+            <button type="button" (click)="selectDateRange('All')">All Time</button>
+            <button type="button" (click)="selectDateRange('Today')">Today</button>
+            <button type="button" (click)="selectDateRange('Last 7 Days')">Last 7 Days</button>
+            <button type="button" (click)="selectDateRange('Last 30 Days')">Last 30 Days</button>
+          </div>
+        }
+      </div>
+
+      <!-- Module Filter Dropdown -->
+      <div class="dropdown-container">
+        <button class="secondary-button" type="button" (click)="toggleModuleDropdown()">
+          📦 Module: {{ selectedModule() }}
+        </button>
+        @if (showModuleDropdown()) {
+          <div class="dropdown-menu">
+            @for (mod of availableModules(); track mod) {
+              <button type="button" (click)="selectModule(mod)">{{ mod }}</button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Export Log Dropdown -->
+      <div class="dropdown-container">
+        <button class="primary-button" type="button" (click)="toggleExportDropdown()">
+          📤 Export Log
+        </button>
+        @if (showExportDropdown()) {
+          <div class="dropdown-menu dropdown-right">
+            <button type="button" (click)="exportToCsv()">📄 Export as CSV</button>
+            <button type="button" (click)="triggerPrint()">🖨️ Print / Save as PDF</button>
+          </div>
+        }
+      </div>
     </div>
   </header>
 
@@ -33,7 +72,7 @@
       </div>
 
       <div class="timeline">
-        @for (log of logs().slice(0, 4); track log.time + log.action + log.actor) {
+        @for (log of filteredLogs().slice(0, 4); track log.time + log.action + log.actor) {
           <article class="timeline-item" [class]="log.status.toLowerCase()">
             <span class="timeline-dot" aria-hidden="true"></span>
             <div>
@@ -42,6 +81,9 @@
               <small>{{ log.actor }} · {{ log.date }} {{ log.time }}</small>
             </div>
           </article>
+        }
+        @if (filteredLogs().length === 0) {
+          <p class="no-data-msg">No recent activity found matching filters.</p>
         }
       </div>
     </section>
@@ -67,7 +109,7 @@
           <span>Status</span>
         </div>
 
-        @for (log of logs(); track log.date + log.time + log.action + log.actor) {
+        @for (log of filteredLogs(); track log.date + log.time + log.action + log.actor) {
           <div class="table-row">
             <div>
               <strong>{{ log.time }}</strong>
@@ -82,6 +124,11 @@
             <span>{{ log.module }}</span>
             <span>{{ log.ip }}</span>
             <span class="status-pill" [class]="log.status.toLowerCase()">{{ log.status }}</span>
+          </div>
+        }
+        @if (filteredLogs().length === 0) {
+          <div class="no-data-row">
+            No audit logs found matching filters.
           </div>
         }
       </div>
