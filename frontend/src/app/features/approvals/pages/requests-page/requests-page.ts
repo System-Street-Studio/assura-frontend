@@ -59,6 +59,7 @@ export class RequestsPageComponent implements OnInit {
       label: 'Status',
       key: 'status',
       options: [
+        'Pending',
         'PendingDivisionHeadApproval',
         'PendingStorekeeperReview',
         'TemporaryAssigned',

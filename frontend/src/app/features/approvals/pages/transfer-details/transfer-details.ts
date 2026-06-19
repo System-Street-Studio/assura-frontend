@@ -80,7 +80,7 @@ export class TransferDetailsComponent implements OnInit {
   }
 
   canDivisionHeadAct(): boolean {
-    return this.authService.hasRole(['DivisionHead', 'Admin']) && this.requestStatus === 'PendingDivisionHeadApproval';
+    return this.authService.hasRole(['DivisionHead', 'Admin']) && (this.requestStatus === 'PendingDivisionHeadApproval' || this.requestStatus === 'Pending');
   }
 
   canStorekeeperProcess(): boolean {
@@ -121,6 +121,7 @@ export class TransferDetailsComponent implements OnInit {
       case 'PendingDivisionHeadApproval':
       case 'PendingStorekeeperReview':
       case 'PendingProcurement':
+      case 'Pending':
         return 'pending';
       case 'TemporaryAssigned':
         return 'temporary';

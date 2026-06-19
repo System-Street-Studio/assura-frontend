@@ -82,7 +82,7 @@ export class NewAssetDetailsComponent implements OnInit {
   }
 
   canDivisionHeadAct(): boolean {
-    return this.isDivisionHeadView() && this.requestStatus === 'PendingDivisionHeadApproval';
+    return this.isDivisionHeadView() && (this.requestStatus === 'PendingDivisionHeadApproval' || this.requestStatus === 'Pending');
   }
 
   canStorekeeperProcess(): boolean {
@@ -123,6 +123,7 @@ export class NewAssetDetailsComponent implements OnInit {
       case 'PendingDivisionHeadApproval':
       case 'PendingStorekeeperReview':
       case 'PendingProcurement':
+      case 'Pending':
         return 'pending';
       case 'TemporaryAssigned':
         return 'temporary';

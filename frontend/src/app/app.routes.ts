@@ -13,10 +13,6 @@ export const routes: Routes = [
         loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
     },
     {
-        path: 'role-select',
-        loadComponent: () => import('./features/role-select/role-select').then(m => m.RoleSelectComponent)
-    },
-    {
         path: 'reporting',
         component: ShellComponent,
         children: [
