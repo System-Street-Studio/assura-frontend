@@ -4,7 +4,7 @@
   </header>
 
   <div class="metrics-grid">
-    @for (metric of metrics; track metric.label) {
+    @for (metric of metrics(); track metric.label) {
       <article class="metric-card">
         <span>{{ metric.label }}</span>
         <strong>{{ metric.value }}</strong>
@@ -21,7 +21,7 @@
       <div class="donut-row">
         <div class="donut-chart" aria-label="Assets by category donut chart"></div>
         <ul class="legend-list">
-          @for (item of categoryLegend; track item.label) {
+          @for (item of categoryLegend(); track item.label) {
             <li>
               <span [style.background]="item.color"></span>
               {{ item.label }}
@@ -34,7 +34,7 @@
     <article class="panel">
       <h2>Assets by Status</h2>
       <div class="bar-chart status-chart">
-        @for (bar of statusBars; track bar.label) {
+        @for (bar of statusBars(); track bar.label) {
           <div class="bar-item">
             <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
             <small>{{ bar.label }}</small>
@@ -44,9 +44,9 @@
     </article>
 
     <article class="panel">
-      <h2>Assets by Department</h2>
-      <div class="bar-chart department-chart">
-        @for (bar of departmentBars; track bar.label) {
+      <h2>Assets by Division</h2>
+      <div class="bar-chart division-chart">
+        @for (bar of divisionBars(); track bar.label) {
           <div class="bar-item">
             <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
             <small>{{ bar.label }}</small>
@@ -58,7 +58,7 @@
     <article class="panel">
       <h2>Asset Value by Category</h2>
       <div class="bar-chart value-chart">
-        @for (bar of valueBars; track bar.label) {
+        @for (bar of valueBars(); track bar.label) {
           <div class="bar-item">
             <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
             <small>{{ bar.label }}</small>
@@ -73,11 +73,11 @@
     <div class="anomaly-grid">
       <article class="anomaly-card info">
         <span aria-hidden="true">△</span>
-        <strong>12 Ghost assets detected during audit</strong>
+        <strong>{{ anomalies().ghostAssetsDetected }} Ghost assets detected during audit</strong>
       </article>
       <article class="anomaly-card danger">
         <span aria-hidden="true">△</span>
-        <strong>8 Assets missing physical verification</strong>
+        <strong>{{ anomalies().missingPhysicalVerification }} Assets missing physical verification</strong>
       </article>
     </div>
   </section>

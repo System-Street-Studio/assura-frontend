@@ -8,8 +8,11 @@ import { DashboardService } from '../../../../features/inventory/services/dashbo
 import { DashboardData } from '../../../../features/inventory/models/dashboard.model';
 
 interface RequestItem {
+  id: number;
   item: string;
-  date: string;
+  requestDate: string;
+  submittedBy: string;
+  requestType: string;
   status: string;
   priority: 'High' | 'Medium' | 'Low';
 }
@@ -31,25 +34,36 @@ export class EmployeeOverviewComponent implements OnInit {
   private assetService = inject(AssetService);
   private dashboardService = inject(DashboardService);
 
-  loading = signal(true);
+  isLoading = signal(true);
   pendingRequests = signal<RequestItem[]>([]);
   recentActivities = signal<Activity[]>([]);
 
   ngOnInit() {
+    this.isLoading.set(true);
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      this.isLoading.set(false);
+      return;
+    }
+
     // Fetch Requests
-    this.assetService.getEmployeeRequests(this.authService.getUserId() || '').subscribe({
+    this.assetService.getEmployeeRequests(userId).subscribe({
       next: (data: AssetRequest[]) => {
         const pending = data
           .filter(r => r.status === 'Pending')
           .slice(0, 5)
           .map(r => ({
+            id: r.id,
             item: r.assetName,
-            date: r.submittedDate,
+            requestDate: r.submittedDate,
+            submittedBy: r.submittedBy,
+            requestType: r.requestType,
             status: r.status,
             priority: (r.priority as any) || 'Medium'
           }));
         this.pendingRequests.set(pending);
-      }
+      },
+      error: () => this.isLoading.set(false)
     });
 
     // Fetch Dashboard Activity
@@ -60,9 +74,9 @@ export class EmployeeOverviewComponent implements OnInit {
           timestamp: this.formatTimeAgo(new Date(a.timestamp))
         }));
         this.recentActivities.set(activities);
-        this.loading.set(false);
+        this.isLoading.set(false);
       },
-      error: () => this.loading.set(false)
+      error: () => this.isLoading.set(false)
     });
   }
 

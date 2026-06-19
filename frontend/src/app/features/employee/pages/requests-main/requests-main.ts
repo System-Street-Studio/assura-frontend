@@ -3,8 +3,8 @@ import { ChangeDetectorRef, Component, OnInit, signal, computed, inject } from '
 import { RouterModule, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetRequest, AssetService } from '../../services/asset-request.service';
-import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 
 
@@ -66,12 +66,20 @@ export class RequestsMainComponent implements OnInit {
     this.recentRequests().filter(r => r.status === 'Rejected').length
   );
   
-  private authService = inject(AuthService);
+  isLoading = signal(false);
 
-  constructor(private assetService: AssetService, private cdr: ChangeDetectorRef, private router: Router) {}
+  constructor(private assetService: AssetService, private cdr: ChangeDetectorRef, private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
-    this.assetService.getEmployeeRequests(this.authService.getUserId() || '').subscribe({
+    const empId = this.authService.getUserId();
+    if (!empId) {
+      console.error('Employee ID not found');
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.assetService.getEmployeeRequests(empId).subscribe({
       next: (data: AssetRequest[]) => {
         const mapped = data.map(request => ({
           ...request,
@@ -81,9 +89,13 @@ export class RequestsMainComponent implements OnInit {
         const limitedData = mapped.slice(0, this.maxRequests);
         this.recentRequests.set(limitedData);
         this.currentPage.set(1);
+        this.isLoading.set(false);
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error fetching employee requests:', err)
+      error: (err) => {
+        console.error('Error fetching employee requests:', err);
+        this.isLoading.set(false);
+      }
     });
   }
 

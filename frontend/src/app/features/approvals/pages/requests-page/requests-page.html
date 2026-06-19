@@ -24,7 +24,7 @@
           <p class="card-title">New Asset Request</p>
           <div class="icon-circle blue-bg"><mat-icon>content_copy</mat-icon></div>
           <h2 class="card-number">{{ newAssetCount() }}</h2>
-          <span class="card-sub">Pending</span>
+          
         </div>
       </div>
     </div>
@@ -35,7 +35,7 @@
           <p class="card-title">Transfer Requests</p>
           <div class="icon-box green-text"><mat-icon>swap_horiz</mat-icon></div>
           <h2 class="card-number">{{ transferCount() }}</h2>
-          <span class="card-sub">Pending</span>
+          
         </div>
       </div>
     </div>
@@ -46,7 +46,7 @@
           <p class="card-title">Maintenance Requests</p>
           <div class="icon-box orange-text"><mat-icon>build</mat-icon></div>
           <h2 class="card-number">{{ maintenanceCount() }}</h2>
-          <span class="card-sub">Pending</span>
+         
         </div>
       </div>
     </div>
@@ -57,7 +57,7 @@
           <p class="card-title">Discard Requests</p>
           <div class="icon-box red-text"><mat-icon>delete</mat-icon></div>
           <h2 class="card-number">{{ discardCount() }}</h2>
-          <span class="card-sub">Pending</span>
+          
         </div>
       </div>
     </div>
@@ -112,67 +112,82 @@
       </mat-menu>
     </div>
 
-    <div *ngIf="isLoading()" class="loading-container">
-      <p>Loading your requests...</p>
+    <div *ngIf="isLoading()" class="loading-state">
+      <mat-icon class="spin-animation">sync</mat-icon>
+        <p>Loading your requests... Please wait.</p>
     </div>
 
-    <table *ngIf="!isLoading()">
+    <table *ngIf="!isLoading() && paginatedRequests().length > 0 "  >
       <thead>
         <tr>
+          <th>Id</th>
           @if (activeTab() === 'new') {
-          <th>Employee Name</th>
-          <th>Status</th>
-          <th>Requested Asset</th>
-          <th>Request Date</th>
-          <th>Priority</th>
+            <th>Request Date</th>
+            <th>Requested Asset</th>
+            <th>Emp Id</th>
           } @else {
-          <th>Submit Date</th>
-          <th>Asset / Category</th>
-          <th>Employee Name</th>
+            <th>Submit Date</th>
+            <th>Asset / Category</th>
+            <th>Emp Id</th>
+          }
           <th>Status</th>
           <th>Priority</th>
-          }
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        @for (item of filteredResults(); track item.id) {
-        <tr>
-          @if (activeTab() === 'new') {
-          <td class="bold-text">{{ item.name }}</td>
-          <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
-          <td>{{ item.assetName }}</td>
-          <td>{{ item.date|date }}</td>
-          <td class="priority-cell" [attr.data-priority]="item.priority">{{ item.priority }}</td>
-          } @else {
-          <td>{{ item.date |date }}</td>
-          <td>
-            <div class="asset-info">
-              <span class="asset-name">{{ item.assetName }}</span>
-              @if (item.division) { <span class="asset-cat">({{ item.division }})</span> }
-            </div>
-          </td>
-          <td class="emp-name">{{ item.name }}</td>
-          <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
-          <td class="priority-cell" [attr.data-priority]="item.priority">{{ item.priority || 'Normal' }}</td>
-          }
-          <td>
-            @if (item.status === 'Pending' || item.status === 'PendingDivisionHeadApproval') {
-            <button class="btn-view" (click)="viewDetails(item)"> <mat-icon>visibility</mat-icon> View Details</button>
+        @for (item of paginatedRequests(); track item.id) {
+          <tr>
+            <td>#{{ item.id }}</td>
+            @if (activeTab() === 'new') {
+              <td>{{ item.date|date }}</td>
+              <td>{{ item.assetName }}</td>
+              <td class="bold-text">{{ item. requesterId}}</td>
+              <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
+              <td class="priority-cell" [attr.data-priority]="item.priority">{{ item.priority }}</td>
             } @else {
-            <button class="btn-check">Check</button>
+
+              <td>{{ item.date |date }}</td>
+              <td>
+                <div class="asset-info">
+                  <span class="asset-name">{{ item.assetName }}</span>
+                  @if (item.category) { <span class="asset-cat">({{ item.category }})</span> }
+                </div>
+              </td>
+              <td class="emp-name">{{  item.requesterId }}</td>
+              <td><span class="status-badge" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
+              <td class="priority-cell" [attr.data-priority]="item.priority">{{ item.priority || 'Normal' }}</td>
             }
-          </td>
-        </tr>
-        } @empty {
-        <tr>
-          <td colspan="6" style="text-align: center; padding: 60px; color: #94a3b8;">
-            <mat-icon style="font-size: 48px; width: 48px; height: 48px;">search_off</mat-icon>
-            <p>No requests found matching your filters.</p>
-          </td>
-        </tr>
+            <td>
+              @if (item.status === 'Pending') {
+            
+                  <button class="btn-view"  (click)="viewDetails(item)"> <mat-icon>visibility</mat-icon> View Details</button>
+                
+              } @else {
+                <button class="btn-check" (click)="checkDetails(item)">Check</button>
+              }
+            </td>
+          </tr>
         }
       </tbody>
     </table>
+
+    @if (!isLoading() && paginatedRequests().length === 0) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h3>No Requests Found</h3>
+        <p>There are no asset requests matching this criteria at the moment.</p>
+      </div>
+    }
+
+    @if (paginatedRequests().length > 0) {
+    <app-pagination 
+      [currentPage]="currentPage()" 
+      [totalPages]="totalPages()" 
+      [pageNumbers]="pageNumbers()"
+      (pageChange)="onPageChange($event)">
+    </app-pagination>
+  }
+
   </section>
 </div>

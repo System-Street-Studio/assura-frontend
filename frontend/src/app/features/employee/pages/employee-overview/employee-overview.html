@@ -1,87 +1,106 @@
 <div class="dashboard-wrapper">
-  <div class="content-padding">
-    <h1 class="page-title">Dashboard</h1>
+    <div class="content-padding">
+      <h1 class="page-title">Dashboard</h1>
 
-    <!--Quick action buttons and overview cards-->
-    <section class="section">
-      <h3 class="section-label">Quick Action</h3>
-      <div class="grid-4">
-        <button class="action-btn" routerLink="/employee/new-asset-request"><mat-icon
-            class="add_circle">add_circle</mat-icon><br>Request New Asset</button>
-        <button class="action-btn" routerLink="/employee/transfer-form"><mat-icon
-            class="swap_horiz">swap_horiz</mat-icon><br>Request Temporary Transfer</button>
-        <button class="action-btn" routerLink="/employee/employee-assets"><mat-icon
-            class="open_in_new">open_in_new</mat-icon><br>View My Assets</button>
-        <button class="action-btn" routerLink="/employee/all-emp-requests"><mat-icon
-            class="assignment">assignment</mat-icon><br>View My Requests</button>
+      
+    @if (isLoading()) {
+      <div class="loading-state">
+        <mat-icon class="spin-animation">sync</mat-icon>
+        <p>Loading your dashboard...</p>
       </div>
-    </section>
+    } @else {
 
-    <section class="section">
-      <h3 class="section-label">Overview</h3>
-      <div class="grid-4">
-        <div class="stat-card border-blue">
-          <div class="stat-top">My Assigned Assets </div>
-          <div class="stat-val">12</div>
-          <div class="stat-sub">All assets assigned to me</div>
+<!--Quick action buttons and overview cards-->
+      <section class="section">
+        <h3 class="section-label">Quick Action</h3>
+        <div class="grid-4">
+          <button class="action-btn" routerLink="/employee/new-asset-request"><mat-icon class="add_circle">add_circle</mat-icon><br>Request New Asset</button>
+          <button class="action-btn" routerLink="/employee/transfer-form"><mat-icon class="swap_horiz">swap_horiz</mat-icon><br>Request Temporary Transfer</button>
+          <button class="action-btn" routerLink="/employee/employee-assets"><mat-icon class="open_in_new">open_in_new</mat-icon><br>View My Assets</button>
+          <button class="action-btn" routerLink="/employee/all-emp-requests"><mat-icon class="assignment">assignment</mat-icon><br>View My Requests</button>
         </div>
-        <div class="stat-card border-green">
-          <div class="stat-top">Pending Requests </div>
-          <div class="stat-val">03</div>
-          <div class="stat-sub">Waiting for approval</div>
+      </section>
+
+      <section class="section">
+        <h3 class="section-label">Overview</h3>
+        <div class="grid-4">
+          <div class="stat-card border-blue">
+            <div class="stat-top">My Assigned Assets </div>
+            <div class="stat-val"></div>
+            <div class="stat-sub">All assets assigned to me</div>
+          </div>
+          <div class="stat-card border-green">
+            <div class="stat-top">Pending Requests </div>
+            <div class="stat-val"></div>
+            <div class="stat-sub">Waiting for approval</div>
+          </div>
+          <div class="stat-card border-yellow">
+            <div class="stat-top">Temporary transfers </div>
+            <div class="stat-val"></div>
+            <div class="stat-sub">All temporary transfers your assets</div>
+          </div>
+          <div class="stat-card border-red">
+            <div class="stat-top">Assets in maintenance </div>
+            <div class="stat-val"></div>
+            <div class="stat-sub">Awaiting repair or service</div>
+          </div>
         </div>
-        <div class="stat-card border-yellow">
-          <div class="stat-top">Temporary transfers </div>
-          <div class="stat-val">01</div>
-          <div class="stat-sub">All temporary transfers your assets</div>
-        </div>
-        <div class="stat-card border-red">
-          <div class="stat-top">Assets in maintenance </div>
-          <div class="stat-val">02</div>
-          <div class="stat-sub">Awaiting repair or service</div>
-        </div>
-      </div>
-    </section>
+      </section>
 
     <!--Pending requests -->
     <div class="details-layout">
       <div class="white-panel">
         <h3>Pending Requests</h3>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Request Date</th>
-              <th>Status</th>
-              <th>Priority</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (req of pendingRequests(); track req.item) {
-            <tr>
-              <td>{{ req.item }}</td>
-              <td>{{ req.date }}</td>
-              <td><span class="status-pill {{ req.status.toLowerCase() }}">{{ req.status }}</span></td>
-              <td [ngClass]="req.priority.toLowerCase()">{{ req.priority }}</td>
-            </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-
-      <!--recent activities table-->
-      <div class="white-panel">
-        <h3>Recent Activities</h3>
-        <div class="activity-feed">
-          @for (act of recentActivities(); track act.description) {
-          <div class="activity-item">
-            <p class="act-desc">{{ act.description }}</p>
-            <span class="act-time">{{ act.timestamp }}</span>
+        
+        @if (pendingRequests().length > 0) {
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Request ID</th>
+                <th>Request Date</th>
+                <th>Request Type</th>
+                <th>Item</th>
+                <th>Priority</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (req of pendingRequests(); track $index) {
+                <tr>
+                  <td><span class="id-badge">#{{ req.id }}</span></td>
+                  <td class="date-col">{{ req.requestDate | date: 'yyyy-MM-dd' }}</td>
+                  <td class="type-col">{{ req.requestType }}</td>
+                  <td class="item-name">{{ req.item }}</td> 
+                  <td>
+                    <span class="priority-pill" [ngClass]="req.priority.toLowerCase()">
+                      {{ req.priority }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <div class="dashboard-empty-state">
+             <mat-icon class="empty-icon">layers_clear</mat-icon>
+            <h3>No Pending Requests</h3>
+            <p>You don't have any pending asset or maintenance requests at the moment.</p>
           </div>
-          }
-        </div>
+        }
       </div>
-    </div>
-  </div>
 
+<!--recent activities table-->
+    <!-- <div class="white-panel">
+          <h3>Recent Activities</h3>
+          <div class="activity-feed">
+            @for (act of recentActivities(); track $index) {
+              <div class="activity-item">
+                <p class="act-desc">{{ act.description }}</p>
+                <span class="act-time">{{ act.timestamp }}</span>
+              </div>
+            }
+          </div>
+        </div>--> 
+      </div>
+    }
+  
 </div>

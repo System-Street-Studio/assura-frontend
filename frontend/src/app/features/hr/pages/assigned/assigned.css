@@ -58,6 +58,23 @@ tbody tr:last-child td {
   border-bottom: none;
 }
 
+.edit-btn {
+  background: #0b6c78;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-btn:hover {
+  background: #095a64;
+  transform: translateY(-1px);
+}
+
 @media (max-width: 768px) {
   .hr-shell {
     padding: 20px;

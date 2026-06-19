@@ -8,10 +8,10 @@
     <div class="header-actions">
       <label class="search-field">
         <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Search reports..." />
+        <input type="search" placeholder="Search reports..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
       </label>
-      <button class="secondary-button" type="button">Schedule</button>
-      <button class="primary-button" type="button">
+      <button class="secondary-button" type="button" (click)="openScheduleModal()">Schedule</button>
+      <button class="primary-button" type="button" (click)="openNewReportModal()">
         <span aria-hidden="true">+</span>
         New Report
       </button>
@@ -19,7 +19,7 @@
   </header>
 
   <div class="summary-grid">
-    @for (summary of summaries; track summary.label) {
+    @for (summary of summaries(); track summary.label) {
       <article class="summary-card" [class]="summary.tone">
         <span>{{ summary.label }}</span>
         <strong>{{ summary.value }}</strong>
@@ -34,7 +34,7 @@
         <div class="table-actions">
           <button type="button">Type</button>
           <button type="button">Date</button>
-          <button type="button">Export</button>
+          <button type="button" (click)="exportTable()">Export</button>
         </div>
       </div>
 
@@ -48,9 +48,10 @@
           <span>Generated</span>
           <span>Status</span>
           <span>Size</span>
+          <span></span>
         </div>
 
-        @for (report of reportItems; track report.id) {
+        @for (report of filteredReports(); track report.id) {
           <div class="table-row">
             <strong>{{ report.id }}</strong>
             <span>{{ report.title }}</span>
@@ -60,6 +61,7 @@
             <span>{{ report.generated }}</span>
             <span class="status-pill" [class]="report.status.toLowerCase()">{{ report.status }}</span>
             <span>{{ report.size }}</span>
+            <button class="row-action-btn" type="button" (click)="exportSingleReport(report)" title="Export Report">↓</button>
           </div>
         }
       </div>
@@ -70,7 +72,7 @@
         <h2>Report Insights</h2>
       </div>
 
-      @for (insight of insights; track insight.title) {
+      @for (insight of insights(); track insight.title) {
         <article class="insight-card" [class]="insight.tone">
           <span aria-hidden="true"></span>
           <div>
@@ -84,21 +86,33 @@
         <h3>Quick Export</h3>
         <label>
           Format
-          <select>
-            <option>PDF</option>
-            <option>Excel</option>
-            <option>CSV</option>
+          <select [(ngModel)]="selectedFormat">
+            <option value="PDF">PDF</option>
+            <option value="Excel">Excel</option>
+            <option value="CSV">CSV</option>
+          </select>
+        </label>
+        <label>
+          Report Type
+          <select [(ngModel)]="selectedExportType">
+            <option value="Audit">Audit</option>
+            <option value="Exception">Exception</option>
+            <option value="Lifecycle">Lifecycle</option>
+            <option value="Finance">Finance</option>
           </select>
         </label>
         <label>
           Date Range
-          <select>
-            <option>This month</option>
-            <option>Last quarter</option>
-            <option>This year</option>
+          <select [(ngModel)]="selectedDateRange">
+            <option value="this-month">This month</option>
+            <option value="last-month">Last month</option>
+            <option value="this-year">This year</option>
+            <option value="all-time">All time</option>
           </select>
         </label>
-        <button type="button">Download</button>
+        <button type="button" (click)="downloadQuickExport()" [disabled]="isExporting">
+          {{ isExporting ? 'Exporting...' : 'Download' }}
+        </button>
       </div>
     </aside>
   </div>
@@ -106,4 +120,60 @@
   <button class="help-button" type="button" aria-label="Open help">
     <span aria-hidden="true">?</span>
   </button>
+
+  @if (showScheduleModal) {
+    <div class="modal-backdrop">
+      <div class="modal-panel">
+        <header>
+          <h2>Schedule Report</h2>
+          <button type="button" (click)="closeScheduleModal()">×</button>
+        </header>
+        <div class="modal-body">
+          <p>Set up automated delivery for your reports.</p>
+          <label>
+            Frequency
+            <select [(ngModel)]="scheduleFrequency">
+              <option value="Daily">Daily</option>
+              <option value="Weekly">Weekly</option>
+              <option value="Monthly">Monthly</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="secondary-button" (click)="closeScheduleModal()">Cancel</button>
+          <button type="button" class="primary-button" (click)="scheduleReport()">Save Schedule</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showNewReportModal) {
+    <div class="modal-backdrop">
+      <div class="modal-panel">
+        <header>
+          <h2>Create New Report</h2>
+          <button type="button" (click)="closeNewReportModal()">×</button>
+        </header>
+        <div class="modal-body">
+          <label>
+            Report Title
+            <input type="text" [(ngModel)]="newReportTitle" placeholder="Enter a descriptive title" />
+          </label>
+          <label>
+            Report Type
+            <select [(ngModel)]="newReportType">
+              <option>Audit</option>
+              <option>Exception</option>
+              <option>Lifecycle</option>
+              <option>Finance</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="secondary-button" (click)="closeNewReportModal()">Cancel</button>
+          <button type="button" class="primary-button" (click)="createNewReport()" [disabled]="!newReportTitle.trim()">Create</button>
+        </div>
+      </div>
+    </div>
+  }
 </section>

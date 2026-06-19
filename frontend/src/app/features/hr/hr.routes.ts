@@ -14,7 +14,7 @@ export const hrRoutes: Routes = [
         loadComponent: () => import('./pages/assigned/assigned').then((m) => m.HrAssignedComponent),
     },
     {
-        path: 'my-assets',
+        path: 'activity-logs',
         loadComponent: () => import('./pages/myasset/myasset').then((m) => m.HrMyAssetComponent),
     },
     {

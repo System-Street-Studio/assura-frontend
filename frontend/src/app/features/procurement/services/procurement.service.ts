@@ -107,6 +107,27 @@ export class ProcurementService {
     }
 
     /**
+     * Get a specific Maintenance record by ID
+     */
+    getMaintenanceById(id: number): Observable<MaintenanceDto> {
+        console.log(`[DEBUG] ProcurementService: Fetching maintenance record ${id}`);
+        return this.http.get<MaintenanceDto>(`${this.maintenanceUrl}/${id}`).pipe(
+            catchError(err => {
+                console.error(`[DEBUG] ProcurementService: Error fetching maintenance ${id}`, err);
+                return throwError(() => err);
+            })
+        );
+    }
+
+    /**
+     * Update the status of a Maintenance record
+     */
+    updateMaintenanceStatus(id: number, status: string): Observable<void> {
+        console.log(`[DEBUG] ProcurementService: Updating maintenance record ${id} status to ${status}`);
+        return this.http.put<void>(`${this.maintenanceUrl}/${id}/status`, { status });
+    }
+
+    /**
      * Get all Assets (Summary)
      */
     getAssets(): Observable<AssetSummaryDto[]> {

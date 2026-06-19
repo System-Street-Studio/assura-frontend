@@ -13,13 +13,13 @@
       <form (ngSubmit)="onSubmit()" class="asset-form">
 
         <div class="form-group">
-          <label>Required Asset</label>
+          <label>Required Asset <span class="required" >*</span></label>
           <input type="text" [ngModel]="assetName()" (ngModelChange)="assetName.set($event)" name="assetName"
             placeholder="Type the name/description of the asset you need..." class="form-control" required>
         </div>
 
         <div class="form-group">
-          <label>Asset Category</label>
+          <label>Asset Category <span class="required" >*</span></label>
           <select [ngModel]="category()" (ngModelChange)="category.set($event)" name="category" class="form-control">
             <option value="" disabled selected>Select an asset category</option>
             @for (cat of categories(); track cat.id) {
@@ -45,13 +45,14 @@
           <label>Priority</label>
           <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority" class="form-control">
             <option value="Normal">Normal</option>
+            <option value="Low">Low</option>
             <option value="High">High</option>
             <option value="Critical">Critical</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>Reason for transfer</label>
+          <label>Reason for transfer <span class="required" >*</span></label>
           <textarea [ngModel]="reason()" (ngModelChange)="reason.set($event)" name="reason"
             placeholder="Briefly explain why this asset transfer is needed..." class="form-control" rows="3"></textarea>
         </div>

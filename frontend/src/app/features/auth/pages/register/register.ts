@@ -29,6 +29,7 @@ export class RegisterComponent {
 
     isLoading = false;
     isSuccess = false;
+    errorMessage = '';
 
     passwordMatchValidator(g: any) {
         return g.get('password').value === g.get('confirmPassword').value
@@ -39,6 +40,7 @@ export class RegisterComponent {
         if (this.registerForm.invalid) return;
 
         this.isLoading = true;
+        this.errorMessage = '';
         const { firstName, lastName, username, email, password } = this.registerForm.value;
 
         const registerData: RegisterRequest = {
@@ -56,7 +58,7 @@ export class RegisterComponent {
             },
             error: (err) => {
                 this.isLoading = false;
-                // Handle error (optional: show error message)
+                this.errorMessage = err.error?.message || 'Registration failed. Username or email might already exist.';
                 console.error('Registration failed', err);
             }
         });

@@ -1,15 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface ReceiptItem {
-    id: string;
-    assetName: string;
-    division: string;
-    date: string;
-    amount: string;
-    status: string;
-}
+import { ReceiptsService, Receipt } from '../../../services/receipts.service';
 
 @Component({
     selector: 'app-acc-receipt',
@@ -19,24 +11,15 @@ interface ReceiptItem {
     styleUrls: ['./acc-receipt.css']
 })
 export class AccReceiptComponent implements OnInit {
-    receipts: ReceiptItem[] = [
-        { id: '1', assetName: 'Dell XPS 15 Laptop', division: 'Information Technology', date: '20 Feb 2026', amount: 'Rs. 45,000', status: 'Uploaded' },
-        { id: '2', assetName: 'HP LaserJet Printer', division: 'Admin', date: '18 Feb 2026', amount: 'Rs. 12,500', status: 'Pending' },
-        { id: '3', assetName: 'MacBook Pro 14', division: 'Design', date: '15 Feb 2026', amount: 'Rs. 85,000', status: 'Uploaded' },
-        { id: '4', assetName: 'Cisco Router 2901', division: 'Information Technology', date: '12 Feb 2026', amount: 'Rs. 32,000', status: 'Uploaded' },
-        { id: '5', assetName: 'Samsung Monitor 27"', division: 'Design', date: '10 Feb 2026', amount: 'Rs. 18,500', status: 'Pending' },
-        { id: '6', assetName: 'Lenovo ThinkPad X1', division: 'Finance', date: '08 Feb 2026', amount: 'Rs. 62,000', status: 'Uploaded' },
-        { id: '7', assetName: 'Canon Scanner DR-C225', division: 'Admin', date: '05 Feb 2026', amount: 'Rs. 9,800', status: 'Pending' },
-        { id: '8', assetName: 'APC UPS 1500VA', division: 'Information Technology', date: '02 Feb 2026', amount: 'Rs. 15,000', status: 'Uploaded' },
-        { id: '9', assetName: 'Epson Projector EB-X41', division: 'Marketing', date: '28 Jan 2026', amount: 'Rs. 28,000', status: 'Uploaded' },
-        { id: '10', assetName: 'Microsoft Surface Pro', division: 'HR', date: '25 Jan 2026', amount: 'Rs. 72,000', status: 'Pending' },
-        { id: '11', assetName: 'Logitech Webcam C920', division: 'IT Support', date: '20 Jan 2026', amount: 'Rs. 4,500', status: 'Uploaded' },
-        { id: '12', assetName: 'Brother Printer MFC', division: 'Admin', date: '15 Jan 2026', amount: 'Rs. 22,000', status: 'Pending' }
-    ];
-
-    filteredReceipts: ReceiptItem[] = [];
+    receipts: Receipt[] = [];
+    filteredReceipts: Receipt[] = [];
     searchTerm = '';
     showAddModal = false;
+    isLoading = true;
+    selectedFile: File | null = null;
+    selectedFileName = '';
+    createdReceiptId: string | null = null;
+    uploadError = '';
 
     newReceipt = {
         assetName: '',
@@ -45,8 +28,29 @@ export class AccReceiptComponent implements OnInit {
         amount: ''
     };
 
+    constructor(
+        private receiptsService: ReceiptsService,
+        private cdr: ChangeDetectorRef
+    ) {}
+
     ngOnInit() {
-        this.filteredReceipts = [...this.receipts];
+        this.loadReceipts();
+    }
+
+    private loadReceipts() {
+        this.receiptsService.getAll().subscribe({
+            next: (data) => {
+                this.receipts = data;
+                this.filteredReceipts = [...this.receipts];
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            },
+            error: (err) => {
+                console.error('Failed to load receipts:', err);
+                this.isLoading = false;
+                this.cdr.markForCheck();
+            }
+        });
     }
 
     filterReceipts() {
@@ -65,34 +69,88 @@ export class AccReceiptComponent implements OnInit {
 
     openAddReceipt() {
         this.showAddModal = true;
+        this.selectedFile = null;
+        this.selectedFileName = '';
+        this.createdReceiptId = null;
+        this.uploadError = '';
     }
 
     closeAddReceipt() {
         this.showAddModal = false;
         this.newReceipt = { assetName: '', division: '', date: '', amount: '' };
+        this.selectedFile = null;
+        this.selectedFileName = '';
+        this.createdReceiptId = null;
+        this.uploadError = '';
     }
 
-    submitReceipt() {
-        if (this.newReceipt.assetName && this.newReceipt.division) {
-            const newItem: ReceiptItem = {
-                id: (this.receipts.length + 1).toString(),
-                assetName: this.newReceipt.assetName,
-                division: this.newReceipt.division,
-                date: this.newReceipt.date || 'N/A',
-                amount: this.newReceipt.amount || 'N/A',
-                status: 'Pending'
-            };
-            this.receipts.unshift(newItem);
-            this.filterReceipts();
-            this.closeAddReceipt();
+    onFileSelected(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            this.selectedFile = input.files[0];
+            this.selectedFileName = input.files[0].name;
         }
     }
 
-    viewReceipt(item: ReceiptItem) {
-        console.log('Viewing receipt:', item.assetName);
+    submitReceipt() {
+        if (!this.newReceipt.assetName || !this.newReceipt.division) return;
+
+        this.receiptsService.create(this.newReceipt).subscribe({
+            next: (created) => {
+                if (this.selectedFile) {
+                    // Upload the file right after creation
+                    this.receiptsService.uploadFile(created.id, this.selectedFile).subscribe({
+                        next: (updated) => {
+                            this.receipts.unshift(updated);
+                            this.filterReceipts();
+                            this.closeAddReceipt();
+                        },
+                        error: (err) => {
+                            // Still add the receipt even if upload fails
+                            this.receipts.unshift(created);
+                            this.filterReceipts();
+                            this.uploadError = 'Receipt created but file upload failed.';
+                            this.cdr.markForCheck();
+                        }
+                    });
+                } else {
+                    this.receipts.unshift(created);
+                    this.filterReceipts();
+                    this.closeAddReceipt();
+                }
+            },
+            error: (err) => console.error('Failed to create receipt:', err)
+        });
     }
 
-    downloadReceipt(item: ReceiptItem) {
-        console.log('Downloading receipt:', item.assetName);
+    viewReceipt(item: Receipt) {
+        if (item.fileUrl) {
+            window.open(item.fileUrl, '_blank');
+        } else {
+            alert(`No file attached to receipt for "${item.assetName}".`);
+        }
+    }
+
+    downloadReceipt(item: Receipt) {
+        if (!item.fileUrl) {
+            alert(`No file attached to receipt for "${item.assetName}".`);
+            return;
+        }
+
+        // Fetch as blob so the browser downloads instead of navigating
+        fetch(item.fileUrl)
+            .then(res => res.blob())
+            .then(blob => {
+                const ext = item.fileUrl!.split('.').pop() || 'pdf';
+                const fileName = `receipt_${item.assetName.replace(/\s+/g, '_')}.${ext}`;
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+            })
+            .catch(() => alert('Failed to download file.'));
     }
 }
+

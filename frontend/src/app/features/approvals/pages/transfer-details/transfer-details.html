@@ -1,3 +1,4 @@
+    
 <div class="container">
   <div class="header-section">
     <div class="page-title">Requests</div>
@@ -6,14 +7,13 @@
   <div class="modal-overlay">
     <div class="modal-container">
       <div class="modal-header">
-        <h2>Temporary Transfer Request Details</h2>
+        <h2>Temporary Transfer Request Details ( ID: #{{ request().id }} )</h2>
         <button class="close-btn" (click)="close()">
           <mat-icon>close</mat-icon>
         </button>
       </div>
 
       <div class="details-grid">
-        <!-- Line 1: Asset Name | Asset Category -->
         <div class="info-group">
           <label>Asset Name</label>
           <p class="bold-text">{{ request().assetName }}</p>
@@ -24,7 +24,6 @@
           <p class="bold-text">{{ request().category }}</p>
         </div>
 
-        <!-- Line 2: Employee Name | Employee ID -->
         <div class="info-group">
           <label>Employee Name</label>
           <p class="bold-text">{{ request().name }}</p>
@@ -32,10 +31,9 @@
 
         <div class="info-group">
           <label>Employee ID</label>
-          <p class="bold-text">{{ request().employee }}</p>
+          <p class="bold-text">{{ request().requesterId || request().employeeId || request().employee || 'N/A' }}</p>
         </div>
 
-        <!-- Line 3: Submitted Date & Time | Transfer Period -->
         <div class="info-group">
           <label>Submitted Date & Time</label>
           <p class="bold-text">{{ request().date | date:'medium' }}</p>
@@ -49,11 +47,10 @@
           </div>
           <div class="timeline-row">
             <span class="timeline-label">To:</span>
-            <p class="bold-text">{{ getTransferDates().to }}</p>
+            <p class="bold-text">{{ getTransferDates().to || 'N/A' }}</p>
           </div>
         </div>
 
-        <!-- Line 4: Quantity | Priority -->
         <div class="info-group">
           <label>Quantity</label>
           <p class="bold-text">{{ request().quantity }}</p>
@@ -61,23 +58,21 @@
 
         <div class="info-group">
           <label>Priority</label>
-          <p class="bold-text" [ngClass]="'priority-' + (request().priority || '').toLowerCase()">{{ request().priority
-            }}</p>
+          <p class="bold-text" [ngClass]="'priority-' + (request().priority || '').toLowerCase()">
+            {{ request().priority }}
+          </p>
         </div>
 
-        <!-- Full Width: Description -->
         <div class="info-group full-width">
           <label>Description</label>
-          <p class="bold-text">{{ request().specs }}</p>
+          <p class="bold-text">{{ request().specs || request().description || 'N/A' }}</p>
         </div>
 
-        <!-- Full Width: Reason -->
         <div class="info-group full-width">
           <label>Reason</label>
           <p class="bold-text">{{ getCleanReason() }}</p>
         </div>
 
-        <!-- Full Width: Status -->
         <div class="info-group full-width">
           <label>Status</label>
           <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
@@ -87,7 +82,7 @@
       <hr />
 
       <!-- Action buttons for Division Head -->
-      <div class="action-buttons" *ngIf="canDivisionHeadAct()">
+      <div class="action-buttons" *ngIf="!isReadOnly() && canDivisionHeadAct()">
         <button class="btn-approve" (click)="approveRequest()" [disabled]="processing()">
           <mat-icon>check_circle</mat-icon> Approve Request
         </button>
@@ -98,7 +93,7 @@
       </div>
 
       <!-- Action buttons for Storekeeper -->
-      <div class="action-buttons" *ngIf="canStorekeeperProcess()">
+      <div class="action-buttons" *ngIf="!isReadOnly() && canStorekeeperProcess()">
         <div class="suggestion-panel" *ngIf="suggestedAssets().length > 0">
           <label class="suggestion-title">Suggested In-Store Assets</label>
           <div class="suggestion-list">
@@ -126,9 +121,16 @@
       </div>
 
       <!-- Confirmation for Storekeeper -->
-      <div class="action-buttons" *ngIf="canStorekeeperConfirm()">
+      <div class="action-buttons" *ngIf="!isReadOnly() && canStorekeeperConfirm()">
         <button class="btn-approve" (click)="confirmTemporaryAssignment()" [disabled]="processing()">
           <mat-icon>verified</mat-icon> Confirm Physical Handover
+        </button>
+      </div>
+
+      <!-- View in Pool for Read-only mode -->
+      <div class="action-buttons" *ngIf="isReadOnly()">
+        <button class="btn-pool" (click)="viewInPool()">
+          <mat-icon>search</mat-icon> View in Pool
         </button>
       </div>
     </div>

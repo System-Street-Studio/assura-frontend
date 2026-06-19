@@ -1,0 +1,46 @@
+import { Injectable, inject ,signal} from '@angular/core';
+import { HttpClient ,HttpParams} from '@angular/common/http';
+import { Observable, of, catchError} from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../core/auth/auth.service';
+
+
+
+@Injectable({ providedIn: 'root' })
+export class EmployeeTransferService {
+    private http = inject(HttpClient);
+     private baseUrl = environment.apiUrl;
+   
+  
+  getTransfers(tab: string, filterType: string | null = null): Observable<any[]> {
+    let params = new HttpParams().set('tab', tab);
+
+    
+    if (filterType && filterType !== 'all') {
+      params = params.set('filterType', filterType);
+    }
+
+    return this.http.get<any[]>(`${this.baseUrl}/transfers`, { params });
+  }
+  acceptTransfer(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${id}/accept`, {});
+  }
+
+  rejectTransfer(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transfers/${id}/reject`, {});
+  }
+
+  getTransferById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/transfers/${id}`);
+  }
+
+   returnActiveTransfer(transferId: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/transfers/${transferId}/return`, {});
+  }
+
+  getTransferCounts(userId: number): Observable<any> {
+  return this.http.get<any>(`${this.baseUrl}/transfers/counts?userId=${userId}`);
+  }
+  
+}

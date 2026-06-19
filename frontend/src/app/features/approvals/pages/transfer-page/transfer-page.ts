@@ -1,157 +1,347 @@
-
-
-import { Component, signal, computed, OnInit, inject } from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy ,HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { RequestService } from '../../services/requests.service';
+import { HeadTransferService } from '../../services/transfer.service';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
-// දත්ත වල ව්‍යුහය (Interface)
+// Data structure interface
 interface TransferData {
-  id: string; // This is the record ID for operations
-  dbId: number;
-  assetName: string;
-  division: string;
-  duration: string;
-  requestedBy: string;
-  assetNeedTo: string;
+  id: string;
+  assetTag: string;
+  assetCode: string;
+  productName: string;
+  targetUserName: string;
+  targetUserId?: number;
+  currentHolderName: string;
+  currentHolderId?: number;
+  fromDivisionName: string;
+  toDivisionName: string;
+  fromDivisionId: number;
+  toDivisionId: number;
+  transferByName: string;
+  transferById?: number;
   reason: string;
+  transferPeriod?: string;
+  transferDate: any;
+  returnDate: any;
   status: string;
   timeAgo: string;
-  image?: string;
-  type?: 'Incoming' | 'Outgoing';
+  createdDate?: string;
+  type?: 'Incoming Active' | 'Outgoing Active';
   daysLeft?: string;
-  acceptedBy?: string;
-  assetOwner?: string;
 }
 
 @Component({
   selector: 'app-transfers',
   standalone: true,
-  imports: [CommonModule, MatIconModule, FormsModule],
+  imports: [CommonModule, MatIconModule, FormsModule,PaginationComponent],
   templateUrl: './transfer-page.html',
-  styleUrl: './transfer-page.css'
+  styleUrls: ['./transfer-page.css']
 })
-export class TransferPageComponent implements OnInit {
-  private requestService = inject(RequestService);
+export class TransferPageComponent implements OnInit, OnDestroy {
+  // Component signals
+  isLoading = signal(false);
+  activeTab = signal<'outgoing' | 'incoming' | 'pending' | 'active' | 'completed'>('outgoing');
+  filterType = signal<'all' | 'Incoming Active' | 'Outgoing Active'>('all');
+  searchQuery = signal<string>('');
+  showMenu = signal(false);
 
-  activeTab = signal<'incoming' | 'pending' | 'active' | 'completed'>('incoming');
+  // Summary counts
+  outgoingCount = signal(0);
+  incomingCount = signal(0);
+  pendingCount = signal(0);
+  activeCount = signal(0);
+  completedCount = signal(0);
+
+  expandedItemId = signal<string | null>(null);
 
   private allData = signal<TransferData[]>([]);
+  private refreshInterval: any;
 
-  showMenu = false;
-  filterType = signal<'all' | 'Incoming' | 'Outgoing'>('all');
-  searchQuery = signal<string>('');
+  constructor(
+    private transferService: HeadTransferService,
+    private authService: AuthService,
+    private elementRef: ElementRef
+  ) {}
 
   ngOnInit(): void {
     this.loadTransfers();
+    this.loadAllCounts();
+    
+    //refresh data every 5 minutes
+    this.refreshInterval = setInterval(() => {
+    this.loadTransfers();
+    this.loadAllCounts();
+    }, 300000);
   }
 
-  loadTransfers() {
-    this.requestService.getAllRequests(true).subscribe({
-      next: (requests: any[]) => {
-        const transfers = requests
-          .filter(r => r.type === 'Transfer')
-          .map(r => {
-            const status = this.mapWorkflowStatus(r.status);
-            return {
-              id: r.requestNumber || r.id.toString(),
-              dbId: r.id,
-              assetName: r.assetName || 'Unknown Asset',
-              division: r.assetDivisionName || 'General',
-              duration: 'As requested',
-              requestedBy: r.requesterName,
-              assetNeedTo: r.requesterName,
-              reason: r.description || 'Asset Transfer Request',
-              status: status,
-              timeAgo: 'Recently',
-              image: this.getDefaultImage(r.category),
-              // Logic: If requester's department is the current head's department, it's Outgoing from their perspective? 
-              // Actually, Incoming = we receive, Outgoing = we send.
-              // If AssetDivisionName is ours, we are SENDING (Outgoing).
-              type: r.assetDivisionName === r.department ? 'Incoming' : 'Outgoing',
-              acceptedBy: 'Pending',
-              assetOwner: r.requesterName
-            } as TransferData;
-          });
-        this.allData.set(transfers);
-      }
+  ngOnDestroy(): void {
+    if (this.refreshInterval) clearInterval(this.refreshInterval);
+  }
+
+  loadAllCounts() {
+    const userId = Number(this.authService.getUserId());
+    
+    this.transferService.getTransferCounts(userId).subscribe({
+      next: (counts) => {
+        if (counts) {
+          this.outgoingCount.set(counts.outgoingCount);
+          this.incomingCount.set(counts.incomingCount);
+          this.pendingCount.set(counts.pendingCount);
+          this.activeCount.set(counts.activeCount);
+          this.completedCount.set(counts.completedCount);
+        }
+      },
+      error: (err) => console.error('Error loading counts from backend:', err)
     });
   }
 
-  private mapWorkflowStatus(status: string): string {
-    if (status === 'PendingDivisionHeadApproval') return 'Incoming';
-    if (status === 'PendingStorekeeperReview') return 'Pending';
-    if (status === 'Approved') return 'Confirmed';
-    if (status === 'Rejected') return 'Rejected';
-    if (status === 'TemporaryAssigned') return 'Active';
-    if (status === 'Completed') return 'Completed';
-    return status;
-  }
+  // Function to load transfers based on active tab
+ loadTransfers() {
+  this.isLoading.set(true);
+  const userDivisionId = Number(this.authService.getDivisionId());
+  const rawDivId = this.authService.getDivisionId();
+console.log('Raw Division ID from Auth:', rawDivId);
 
-  private getDefaultImage(category: string): string {
-    if (category?.toLowerCase().includes('laptop')) return 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220';
-    return 'https://tse2.mm.bing.net/th/id/OIP.U_KKE5Cp6OVgC8akAAmqPAHaHa?pid=Api&P=0&h=220';
-  }
+  this.transferService.getDivisionHeadTransfers(this.activeTab()).subscribe({
+    next: (response) => {
+      // Safely extract the array whether it's wrapped in { data: [...] } or just [...]
+      let dataArray = Array.isArray(response) ? response : (response as any)?.data;
+      if (!Array.isArray(dataArray)) {
+          console.warn("API did not return an array. Defaulting to empty array.", response);
+          dataArray = [];
+      }
 
-  filteredResults = computed(() => {
-    const tab = this.activeTab();
-    const typeFilter = this.filterType();
-    const query = this.searchQuery().toLowerCase().trim();
-    let data = this.allData();
+      const mapped = dataArray.map((item: any) => {
+       
+        let assignedType: 'Incoming Active' | 'Outgoing Active';
 
-    if (tab === 'incoming') data = data.filter(i => i.status === 'Incoming');
-    else if (tab === 'pending') data = data.filter(i => i.status === 'Pending' || i.status === 'Confirmed' || i.status === 'Rejected');
-    else if (tab === 'active') data = data.filter(i => i.status === 'Active');
-    else if (tab === 'completed') data = data.filter(i => i.status === 'Completed');
+        const toId = Number(item.toDivisionId);
+        const fromId = Number(item.fromDivisionId);
 
-    if ((tab === 'active' || tab === 'completed') && typeFilter !== 'all') {
-      data = data.filter(item => item.type === typeFilter);
-    }
+        
+        if (toId === userDivisionId) {
+            assignedType = 'Incoming Active';
+        } 
+      
+        else if (fromId === userDivisionId) {
+            assignedType = 'Outgoing Active';
+        } 
+       
+        else {
+            console.warn(`Division ID mismatch: My Div(${userDivisionId}) | From(${fromId}) | To(${toId})`);
+            assignedType = 'Outgoing Active'; 
+        }
 
-    if (query) {
-      data = data.filter(item =>
-        item.assetName.toLowerCase().includes(query) ||
-        item.id.toLowerCase().includes(query)
-      );
-    }
+        const hasEndDate = item.transferPeriod && item.transferPeriod.includes(' to ');
+        const endDateString = hasEndDate ? item.transferPeriod!.split(' to ')[1] : '';
+        const daysLeftText = endDateString ? this.calculateDaysRemaining(endDateString) : 'No Date';
 
-    return data;
+        return {
+          ...item,
+          id: item.id.toString(),
+          timeAgo: this.getTimeAgo(item.createdAt || item.requestDate), 
+          type: assignedType,
+          daysLeft: daysLeftText
+        };
+      });
+      this.allData.set(mapped);
+      this.isLoading.set(false);
+    },
+    error: () => this.isLoading.set(false)
   });
+}
+
+toggleDetails(id: string) {
+    if (this.expandedItemId() === id) {
+      this.expandedItemId.set(null); 
+    } else {
+      this.expandedItemId.set(id);
+    }
+  }
+
+  // Function to return an active transfer (used in active transfers tab)
+returnAsset(id: string) {
+    if (confirm('Are you sure you want to return this asset? This will change asset status to "In Use" and complete the transfer.')) {
+      this.transferService.returnActiveTransfer(Number(id)).subscribe({
+        next: () => {
+         
+          this.loadTransfers();
+          this.loadAllCounts();
+          this.expandedItemId.set(null);
+        },
+        error: (err) => console.error('Error returning asset:', err)
+      });
+    }
+  }
+
+  // Mapping function to convert API data to local format
+  setTab(tab: 'outgoing' | 'incoming' | 'pending' | 'active' | 'completed') {
+    this.activeTab.set(tab);
+    this.filterType.set('all');
+    this.expandedItemId.set(null);
+    this.allData.set([]); 
+    this.currentPage.set(1);
+    this.loadTransfers();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+   
+    const clickedInside = this.elementRef.nativeElement.querySelector('.filter-dropdown')?.contains(event.target);
+    
+    if (!clickedInside && this.showMenu()) {
+      this.showMenu.set(false);
+    }
+  }
+
+  // Action functions for approve, reject, confirm
+  approveTransfer(id: string) {
+    this.transferService.approveByHead(Number(id)).subscribe(() => {
+      this.loadTransfers();
+      this.loadAllCounts(); 
+    });
+  }
+
+  confirmTransfer(id: string) {
+    this.transferService.confirmByHead(Number(id)).subscribe(() => {
+      this.loadTransfers();
+      this.loadAllCounts(); 
+    });
+  }
+
+  cancelTransfer(id: string) {
+    this.transferService.cancelByHead(Number(id)).subscribe(() => {
+      this.loadTransfers();
+      this.loadAllCounts(); 
+    }); 
+  }
+
+  rejectTransfer(id: string) {
+    const reason = prompt('Please enter a reason for rejection:');
+    if (reason === null) return;
+    this.transferService.rejectByHead(Number(id), reason || 'No reason provided').subscribe(() => {
+      this.loadTransfers();
+      this.loadAllCounts(); 
+    });
+  }
+
+  
+
+  // Filter and search functions
+  setFilterType(type: 'all' | 'Incoming Active' | 'Outgoing Active') {
+    this.filterType.set(type);
+    this.showMenu.set(false);
+    this.currentPage.set(1);
+  }
 
   onSearchChange(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(value);
+    this.searchQuery.set((event.target as HTMLInputElement).value);
+    this.currentPage.set(1);
   }
 
-  setFilterType(type: 'all' | 'Incoming' | 'Outgoing') {
-    this.filterType.set(type);
-  }
+  // Computed properties for filtered results and counts
+  filteredResults = computed(() => {
+    let results = this.allData();
+    
+    // Apply active tab filter for incoming/active transfers
+    if ((this.activeTab() === 'active' || this.activeTab() === 'completed') && this.filterType() !== 'all') {
+      results = results.filter(t => t.type === this.filterType());
+    }
+    
+    // Apply search query filter
+    const query = this.searchQuery().toLowerCase();
+    if (query) {
+      results = results.filter(t =>
+        t.assetTag.toLowerCase().includes(query) ||
+        t.assetCode.toLowerCase().includes(query) ||
+        t.productName.toLowerCase().includes(query) ||
+        t.transferByName.toLowerCase().includes(query)
+      );
+    }
+     results.sort((a, b) => Number(b.id) - Number(a.id));
+    return results;
+  });
 
-  incomingCount = computed(() => this.allData().filter(i => i.status === 'Incoming').length);
-  pendingCount = computed(() => this.allData().filter(i => i.status === 'Pending' || i.status === 'Confirmed').length);
-  activeCount = computed(() => this.allData().filter(i => i.status === 'Active').length);
-  completedCount = computed(() => this.allData().filter(i => i.status === 'Completed').length);
+      
 
-  setTab(tab: 'incoming' | 'pending' | 'active' | 'completed') {
-    this.activeTab.set(tab);
-  }
+ 
+  //calculate days receiving transfer request
+      private getTimeAgo(dateString: string): string {
+      if (!dateString) return 'Just now';
 
-  onAccept(id: number) {
-    this.requestService.approveRequest(id).subscribe({
-      next: () => {
-        console.log('✅ Approved transfer:', id);
-        this.loadTransfers();
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      
+      if (diffMs < 0) return 'Just now'; 
+
+      const diffSeconds = Math.floor(diffMs / 1000);
+      const diffMinutes = Math.floor(diffSeconds / 60);
+      const diffHours = Math.floor(diffMinutes / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      const diffWeeks = Math.floor(diffDays / 7);
+      const diffMonths = Math.floor(diffDays / 30);
+
+      if (diffSeconds < 60) {
+        return 'Just now';
       }
-    });
-  }
-
-  onReject(id: number) {
-    this.requestService.rejectRequest(id, 'Rejected by division head').subscribe({
-      next: () => {
-        console.log('❌ Rejected transfer:', id);
-        this.loadTransfers();
+      if (diffMinutes < 60) {
+        return diffMinutes === 1 ? '1 min ago' : `${diffMinutes} mins ago`;
       }
-    });
-  }
+      if (diffHours < 24) {
+        return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+      }
+      if (diffDays === 1) {
+        return 'Yesterday';
+      }
+      if (diffDays < 7) {
+        return `${diffDays} days ago`;
+      }
+      
+      if (diffWeeks < 4) {
+        return diffWeeks === 1 ? '1 week ago' : `${diffWeeks} weeks ago`;
+      }
+      
+      return diffMonths === 1 ? '1 month ago' : `${diffMonths} months ago`;
+    }
+
+    //calculate remaining days for overdue transfer period
+    private calculateDaysRemaining(transferDate: string): string {
+      if (!transferDate) return 'No Date';
+
+      const date = new Date(transferDate);
+      const now = new Date();  
+      const diffTime = date.getTime() - now.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) {
+        return diffDays === -1 ? 'Overdue by 1 day' : `Overdue by ${Math.abs(diffDays)} days`;
+      }
+      if (diffDays === 0) return 'Expires Today';
+      if (diffDays === 1) return 'Tomorrow';
+      
+      return `${diffDays} days left`;
+    }
+  
+   
+      pageSize = 10;
+      currentPage = signal(1);
+
+      totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));
+
+      paginatedRequests = computed(() => {
+        const start = (this.currentPage() - 1) * this.pageSize;
+        return this.filteredResults().slice(start, start + this.pageSize);
+      });
+
+      pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+
+
+      onPageChange(page: number) {
+        this.currentPage.set(page);
+      }
+
 }

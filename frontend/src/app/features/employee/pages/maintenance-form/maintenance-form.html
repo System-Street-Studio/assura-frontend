@@ -27,7 +27,7 @@
         </div>
 
         <div class="field">
-          <label>Issue Type</label>
+          <label>Issue Type <span class="required">*</span></label>
           <select [ngModel]="issueType()" (ngModelChange)="issueType.set($event)" name="issueType">
             <option value="Damaged">Damaged</option>
             <option value="Software">Software Malfunction</option>
@@ -46,9 +46,10 @@
         </div>
 
         <div class="field">
-          <label>Priority</label>
+          <label>Priority <span class="required" >*</span></label>
           <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority">
             <option value="Normal">Normal</option>
+            <option value="Low">Low</option>
             <option value="High">High</option>
             <option value="Critical">Critical</option>
           </select>

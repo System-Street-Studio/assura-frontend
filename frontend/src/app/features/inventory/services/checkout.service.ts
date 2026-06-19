@@ -15,7 +15,7 @@ export class CheckoutService {
     private http = inject(HttpClient);
     private assetService = inject(AssetService);
     private assetsApiUrl = `${environment.apiUrl}/assets`;
-    private userApiUrl = `${environment.apiUrl}/user`;
+    private userApiUrl = `${environment.apiUrl}/users`;
 
     getAll(): Observable<CheckoutRecord[]> {
         return this.http.get<CheckoutRecord[] | null>(`${this.assetsApiUrl}/checkout-records`).pipe(

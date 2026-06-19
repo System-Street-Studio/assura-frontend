@@ -17,7 +17,7 @@
   </header>
 
   <div class="stats-grid">
-    @for (stat of stats; track stat.label) {
+    @for (stat of stats(); track stat.label) {
       <article class="stat-card" [class]="stat.tone">
         <span>{{ stat.label }}</span>
         <strong>{{ stat.value }}</strong>
@@ -33,7 +33,7 @@
       </div>
 
       <div class="timeline">
-        @for (log of logs.slice(0, 4); track log.time + log.action) {
+        @for (log of logs().slice(0, 4); track log.time + log.action + log.actor) {
           <article class="timeline-item" [class]="log.status.toLowerCase()">
             <span class="timeline-dot" aria-hidden="true"></span>
             <div>
@@ -67,7 +67,7 @@
           <span>Status</span>
         </div>
 
-        @for (log of logs; track log.date + log.time + log.action) {
+        @for (log of logs(); track log.date + log.time + log.action + log.actor) {
           <div class="table-row">
             <div>
               <strong>{{ log.time }}</strong>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HrAssignmentService } from '../../services/hr-assignment.service';
 
@@ -9,23 +9,28 @@ import { HrAssignmentService } from '../../services/hr-assignment.service';
   templateUrl: './pending.html',
   styleUrls: ['./pending.css'],
 })
-export class HrPendingComponent {
+export class HrPendingComponent implements OnInit {
   private router = inject(Router);
   private hrAssignmentService = inject(HrAssignmentService);
 
-  activeUserId = '';
+  activeUserIdNum = 0;
   readonly pendingUsers = this.hrAssignmentService.pendingUsers;
 
-  showDetails(userId: string): void {
-    this.activeUserId = userId;
+  ngOnInit(): void {
+    this.hrAssignmentService.getPendingUsers().subscribe();
+  }
+
+  showDetails(id: number): void {
+    this.activeUserIdNum = id;
   }
 
   hideDetails(): void {
-    this.activeUserId = '';
+    this.activeUserIdNum = 0;
   }
 
-  openAssignForm(userId: string): void {
-    this.hrAssignmentService.selectPendingUser(userId);
-    this.router.navigate(['/hr-assign-role']);
+  openAssignForm(id: number): void {
+    this.hrAssignmentService.selectPendingUser(id);
+    this.router.navigate(['/hr/assign-role']);
   }
 }
+

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ProcurementService } from '../../services/procurement.service';
@@ -13,6 +13,7 @@ import { ProcurementService } from '../../services/procurement.service';
 export class OverviewComponent implements OnInit {
     private authService = inject(AuthService);
     private procurementService = inject(ProcurementService);
+    private cdr = inject(ChangeDetectorRef);
 
     greeting = '';
     firstName = '';
@@ -45,6 +46,7 @@ export class OverviewComponent implements OnInit {
                     repairsCompleted: data.repairsCompleted ?? data.RepairsCompleted ?? 0
                 };
                 console.log('[DEBUG] OverviewComponent: Updated stats object:', this.stats);
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Error loading procurement stats', err);

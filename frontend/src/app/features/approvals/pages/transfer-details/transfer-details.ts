@@ -16,28 +16,38 @@ import { AuthService } from '../../../../core/auth/auth.service';
 })
 export class TransferDetailsComponent implements OnInit {
   private router = inject(Router);
-  private route = inject(ActivatedRoute); // මේ line එක අනිවාර්යයෙන් එක් කරන්න
-  private location = inject(Location);
+  private route = inject(ActivatedRoute); 
+  //private location = inject(Location);
   private requestService = inject(RequestService);
   private authService = inject(AuthService);
 
-  // Navigation state එකෙන් එන දත්ත ලබා ගැනීම
+
+ 
   request = signal<any>({});
   isLoading = signal<boolean>(true);
+  error = signal<string>('');
+  isReadOnly = signal<boolean>(false);
 
   ngOnInit() {
-    // 1. Service එකේ ඇති දත්ත පරීක්ෂා කිරීම
+    // Check for readOnly query parameter
+    const readOnly = this.route.snapshot.queryParamMap.get('readOnly');
+    this.isReadOnly.set(readOnly === 'true');
+    console.log('Is read-only mode:', this.isReadOnly());
+
+    //  Service handling
     if (this.requestService.selectedRequest) {
-      console.log("received data from Service");
+      console.log("received data from Service ");
       this.request.set(this.requestService.selectedRequest);
       this.loadSuggestedAssets();
       this.isLoading.set(false);
     } else {
-      // 2. Refresh වුවහොත් URL එකෙන් ID එක ගෙන API call එකක් යැවීම
+      // Refresh 
       const id = this.route.snapshot.paramMap.get('id');
       console.log("Route ID parameter:", id);
       if (id) {
         this.loadSuggestedAssets(Number(id));
+        console.log("get request by ID:", id);
+
         this.requestService.getRequestById(+id).subscribe({
           next: (data) => {
             console.log("Data fetched:", data);
@@ -46,11 +56,13 @@ export class TransferDetailsComponent implements OnInit {
           },
           error: (err) => {
             console.error("API error:", err);
+            this.error.set('Failed to load request details');
             this.isLoading.set(false);
           }
         });
       } else {
         console.warn("No ID found in route");
+        this.error.set('No request ID provided');
         this.isLoading.set(false);
       }
     }
@@ -121,7 +133,6 @@ export class TransferDetailsComponent implements OnInit {
     }
   }
 
-
   approveRequest() {
     const id = this.request().id;
     if (!id || this.processing()) {
@@ -129,6 +140,7 @@ export class TransferDetailsComponent implements OnInit {
     }
 
     this.processing.set(true);
+
     this.requestService.approveRequest(id).subscribe({
       next: () => {
         this.processing.set(false);
@@ -136,6 +148,7 @@ export class TransferDetailsComponent implements OnInit {
         this.popupMessage.set('Request Approved Successfully');
         this.popupType.set('success');
         this.showPopup.set(true);
+       
       },
       error: (err) => {
         this.processing.set(false);
@@ -159,6 +172,7 @@ export class TransferDetailsComponent implements OnInit {
         this.popupMessage.set('Request Rejected Successfully!');
         this.popupType.set('reject');
         this.showPopup.set(true);
+        
       },
       error: (err) => {
         this.processing.set(false);
@@ -242,6 +256,7 @@ export class TransferDetailsComponent implements OnInit {
     });
   }
 
+  
 
   getTransferDates() {
     const reason = this.request().justification || this.request().reason || '';
@@ -256,7 +271,6 @@ export class TransferDetailsComponent implements OnInit {
 
   getCleanReason() {
     const reason = this.request().justification || this.request().reason || '';
-
     // Remove transfer period information in all possible formats:
     // (Transfer periods: date to date)
     // [Transfer periods: date to date]
@@ -276,7 +290,22 @@ export class TransferDetailsComponent implements OnInit {
     return cleanedReason || reason.trim();
   }
 
-  viewInPool() { console.log('Viewing in Pool'); }
+  viewInPool() {
+    const requestId = this.request().id;
+    console.log("received requestID-" + requestId + " to pool-page");
+    console.log("Navigating to pool with request ID:", requestId);
+    
+    this.router.navigate(['/approvals/asset-pool'], {
+      state: { 
+        transferRequestId: requestId,
+        message: 'received requestID-' + requestId + ' to pool-page'
+      }
+    }).then(nav => {
+      console.log('Navigation Status:', nav);
+    }, err => {
+      console.error('Navigation Error:', err); 
+    });
+  }
 
   close() {
     const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'transfer';

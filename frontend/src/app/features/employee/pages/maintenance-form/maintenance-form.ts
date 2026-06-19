@@ -53,22 +53,32 @@ export class MaintenanceFormComponent implements OnInit {
 
   // Submit logic
   onSubmit() {
+    // Validate required fields
+    if (!this.asset() || !this.issueType() || !this.priority()) {
+      alert('Failed to create maintenance request. Please fill all required fields.');
+      return;
+    }
     this.isSubmitting.set(true);
 
-    // Map priority string to PriorityType enum value
-    const priorityMap: Record<string, number> = { Low: 1, Normal: 2, Medium: 3, High: 4, Urgent: 5 };
+    const userId = this.authService.getUserId();
+    const userName = this.authService.getUserName();
 
-    const payload = {
-      type: 4,   // RequestType.Maintenance
-      priority: priorityMap[this.priority()] ?? 2,
-      description: `Maintenance Request - Issue: ${this.issueType()}. ${this.description()}`.trim(),
-      assetId: this.selectedAssetId() ?? undefined
+    const requestData = {
+      employeeId: userId ? userId.toString() : '',
+      submittedBy: userName || '',
+      assetName: this.asset(),
+      assetCategory: 'General',
+      priority: this.priority(),
+      requestType: 'Maintenance',
+      reason: this.issueType(),
+      description: `Maintenance Request for ${this.asset()}: ${this.description()}`,
+      quantity: 1
     };
 
-    this.assetRequestService.createUnifiedRequest(payload).subscribe({
-      next: () => {
+    this.assetRequestService.createRequest(requestData, this.selectedFiles()).subscribe({
+      next: (res: any) => {
         this.isSubmitting.set(false);
-        alert('Maintenance Request Submitted Successfully!');
+        alert(res?.message || 'Maintenance Request Submitted Successfully!');
         this.location.back();
       },
       error: (err) => {

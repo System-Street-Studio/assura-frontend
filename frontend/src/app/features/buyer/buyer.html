@@ -4,7 +4,7 @@
             <h1>Buyers</h1>
             <p>Manage your vendor and supplier relationships</p>
         </div>
-        <button class="add-btn">
+        <button class="add-btn" (click)="openAddModal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19" />
@@ -89,6 +89,47 @@
                 <div class="detail-actions">
                     <button class="close-detail-btn" (click)="closeDetail()">Close</button>
                     <button class="contact-btn">Contact Buyer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Buyer Modal -->
+    <div class="detail-overlay" *ngIf="showAddModal" (click)="closeAddModal()">
+        <div class="detail-card" (click)="$event.stopPropagation()">
+            <button class="detail-close-x" (click)="closeAddModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="detail-body">
+                <h2 class="modal-title">Add New Buyer</h2>
+                <div class="detail-info-grid">
+                    <div class="detail-info-item">
+                        <label>Company / Buyer Name *</label>
+                        <input class="modal-input" type="text" placeholder="e.g. Techno Supplies Ltd" [value]="newBuyer.name" (input)="newBuyer.name = $any($event.target).value" />
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Contact Person *</label>
+                        <input class="modal-input" type="text" placeholder="e.g. John Perera" [value]="newBuyer.contact" (input)="newBuyer.contact = $any($event.target).value" />
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Email</label>
+                        <input class="modal-input" type="email" placeholder="e.g. info@techno.lk" [value]="newBuyer.email" (input)="newBuyer.email = $any($event.target).value" />
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Phone</label>
+                        <input class="modal-input" type="text" placeholder="e.g. 071-234-5678" [value]="newBuyer.phone" (input)="newBuyer.phone = $any($event.target).value" />
+                    </div>
+                    <div class="detail-info-item">
+                        <label>Category</label>
+                        <input class="modal-input" type="text" placeholder="e.g. Electronics, Furniture" [value]="newBuyer.category" (input)="newBuyer.category = $any($event.target).value" />
+                    </div>
+                </div>
+                <div class="detail-actions">
+                    <button class="close-detail-btn" (click)="closeAddModal()">Cancel</button>
+                    <button class="contact-btn" (click)="submitAddBuyer()" [disabled]="isSubmitting">{{ isSubmitting ? 'Saving...' : 'Add Buyer' }}</button>
                 </div>
             </div>
         </div>

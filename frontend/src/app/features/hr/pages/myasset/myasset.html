@@ -1,10 +1,10 @@
 <div class="hr-shell">
   <section class="audit-page" aria-labelledby="audit-title">
     <div class="audit-shell">
-      <h1 id="audit-title" class="page-title">HR My Assets</h1>
+      <h1 id="audit-title" class="page-title">HR Activity Logs</h1>
 
       <label class="search-field" aria-label="Search audit logs">
-        <input type="search" placeholder="Search by HR Officer, Employee, or Status" [value]="searchTerm"
+        <input type="search" placeholder="Search by HR Officer, Employee, or Status" [value]="searchTerm()"
           (input)="updateSearch($event)" />
       </label>
 
@@ -25,7 +25,7 @@
           </thead>
 
           <tbody>
-            @for (entry of filteredAuditLogs; track entry.date + entry.time + entry.employee) {
+            @for (entry of filteredAuditLogs(); track $index) {
             <tr>
               <td>
                 <span>{{ entry.date }}</span>

@@ -20,7 +20,7 @@
 
         <div class="info-group">
           <label>Employee ID</label>
-          <p class="bold-text">{{ request().employee }}</p>
+          <p class="bold-text">{{ request().requesterId || request().employeeId || request().employee || 'N/A' }}</p>
         </div>
 
         <div class="info-group">
@@ -40,15 +40,19 @@
 
         <div class="info-group">
           <label>Division</label>
-          <p class="bold-text">{{ request().division }}</p>
+          <p class="bold-text">{{ request().division || 'N/A' }}</p>
         </div>
 
         <div class="info-group">
           <label>Priority</label>
-          <p class="priority-text" [style.color]="request().priority === 'High' ? 'red' : 'inherit'"
-            [ngClass]="'priority-' + (request().priority || '').toLowerCase()">
+          <p class="priority-text" [ngClass]="'priority-' + (request().priority || '').toLowerCase()">
             {{ request().priority }}
           </p>
+        </div>
+
+        <div class="info-group">
+          <label>Status</label>
+          <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
         </div>
 
         <div class="info-group full-width">
@@ -60,17 +64,12 @@
           <label>Justification</label>
           <p class="justification-text">{{ request().justification || request().reason || 'N/A' }}</p>
         </div>
-
-        <div class="info-group">
-          <label>Status</label>
-          <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
-        </div>
       </div>
 
       <hr />
 
       <!-- Action buttons for Division Head -->
-      <div class="action-buttons" *ngIf="canDivisionHeadAct()">
+      <div class="action-buttons" *ngIf="!isReadOnly() && canDivisionHeadAct()">
         <button class="btn-approve" (click)="approveRequest()" [disabled]="processing()">
           <mat-icon>check_circle</mat-icon> Approve Request
         </button>
@@ -81,7 +80,7 @@
       </div>
 
       <!-- Action buttons for Storekeeper -->
-      <div class="action-buttons" *ngIf="canStorekeeperProcess()">
+      <div class="action-buttons" *ngIf="!isReadOnly() && canStorekeeperProcess()">
         <div class="suggestion-panel" *ngIf="suggestedAssets().length > 0">
           <label class="suggestion-title">Suggested In-Store Assets</label>
           <div class="suggestion-list">
@@ -109,7 +108,7 @@
       </div>
 
       <!-- Confirmation for Storekeeper -->
-      <div class="action-buttons" *ngIf="canStorekeeperConfirm()">
+      <div class="action-buttons" *ngIf="!isReadOnly() && canStorekeeperConfirm()">
         <button class="btn-approve" (click)="confirmTemporaryAssignment()" [disabled]="processing()">
           <mat-icon>verified</mat-icon> Confirm Physical Handover
         </button>

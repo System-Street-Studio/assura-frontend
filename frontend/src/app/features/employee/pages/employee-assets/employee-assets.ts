@@ -9,6 +9,7 @@ import { AssetDetail } from '../../../../features/inventory/models/asset.model';
 
 interface Asset {
   assetId: string;
+  assetCode: string;
   assetName: string;
   image: string;
   conditionStatus: string;
@@ -16,6 +17,7 @@ interface Asset {
   status: string;
   category: string;
   description?: string;
+  serialNumber?: string;
   assignedEmployee: string;
 }
 
@@ -52,7 +54,7 @@ export class EmployeeAssetsComponent implements OnInit {
   }
 
   searchTerm = signal('');
-  loading = signal(true);
+  isLoading = signal(true);
   statusMenuOpen = signal(false);
   categoryMenuOpen = signal(false);
 
@@ -71,24 +73,27 @@ export class EmployeeAssetsComponent implements OnInit {
   assets = signal<Asset[]>([]);
 
   ngOnInit() {
-    this.assetService.getAll(true).subscribe({
+    this.isLoading.set(true);
+    this.assetService.getAll().subscribe({
       next: (data: AssetDetail[]) => {
         const mapped = data.map(a => ({
-          assetId: a.assetCode,
+          assetId: a.id.toString(),
+          assetCode: a.assetCode,
           assetName: a.productName,
           category: a.categoryName,
-          description: a.notes,
+          serialNumber: a.serialNumber || 'N/A',
+          description: a.notes ||  'N/A',
           assignedEmployee: a.assignedUserName || 'Me',
           assignedDate: a.assetDate,
           status: this.formatStatus(a.status),
           conditionStatus: 'Good',
-          image: this.getPlaceholderImage(a.categoryName)
+          image: ''
         }));
         this.assets.set(mapped);
-        this.loading.set(false);
+        this.isLoading.set(false);
       },
       error: () => {
-        this.loading.set(false);
+        this.isLoading.set(false);
       }
     });
   }
@@ -103,15 +108,6 @@ export class EmployeeAssetsComponent implements OnInit {
     return map[status] || status;
   }
 
-  private getPlaceholderImage(category: string): string {
-    if (category.toLowerCase().includes('laptop') || category.toLowerCase().includes('electronic')) {
-      return 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220';
-    }
-    if (category.toLowerCase().includes('chair') || category.toLowerCase().includes('furniture')) {
-      return 'https://i5.walmartimages.com/seo/Lacoo-Faux-Leather-High-Back-Executive-Office-Chair-with-Lumbar-Support-Black_bf489981-70b3-42c2-972e-93ea9995756c.160b1f502b31db454018d773aed8b003.jpeg';
-    }
-    return 'https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/e-series/e2425hsm/media-gallery/monitor-dell-pro-e2425hsm-bk-gallery-1.psd?fmt=png-alpha&pscan=auto&scl=1&hei=804&wid=868&qlt=100,1&resMode=sharp2&size=868,804&chrss=full';
-  }
 
   categories = computed(() => {
     const uniqueCategories = [...new Set(this.assets().map(a => a.category))];

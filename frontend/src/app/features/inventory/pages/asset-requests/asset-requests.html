@@ -122,7 +122,7 @@
       <tbody>
         <!-- Empty state -->
         <tr *ngIf="viewRequests().length === 0">
-          <td colspan="9" class="empty-state">
+          <td colspan="9" class="global-empty-state-td">
             <mat-icon class="empty-icon">inbox</mat-icon>
             <div class="empty-text">
               {{ hasActiveFilters ? 'No requests match your filters' : 'No asset requests yet' }}
@@ -236,54 +236,55 @@
   </app-pagination>
 
   <!-- ═══ APPROVE / REJECT MODAL ═══ -->
-  <div class="overlay" *ngIf="showActionModal" (click)="cancelAction()">
-    <div class="action-dialog" (click)="$event.stopPropagation()">
-      <div class="action-icon-wrap" [class.approve-icon]="actionType === 'approve'"
-        [class.reject-icon]="actionType === 'reject'">
-        <mat-icon class="action-modal-icon">
-          {{ actionType === 'approve' ? 'check_circle' : 'cancel' }}
-        </mat-icon>
+  <div class="global-modal-overlay" *ngIf="showActionModal" (click)="cancelAction()">
+    <div class="global-modal-card" (click)="$event.stopPropagation()">
+      <div class="global-modal-header">
+        <h2>{{ actionType === 'approve' ? 'Approve' : 'Reject' }} Request</h2>
+        <button class="global-modal-close-btn" (click)="cancelAction()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
 
-      <h3>{{ actionType === 'approve' ? 'Approve' : 'Reject' }} Request</h3>
-      <p class="action-subtitle" *ngIf="actionRequest">
-        <strong>{{ actionRequest.assetName }}</strong> (×{{ actionRequest.quantity }})
-        requested by <strong>{{ actionRequest.requestedBy }}</strong>
-      </p>
+      <div class="global-modal-body">
+        <p class="action-subtitle" *ngIf="actionRequest">
+          <strong>{{ actionRequest.assetName }}</strong> (×{{ actionRequest.quantity }})
+          requested by <strong>{{ actionRequest.requestedBy }}</strong>
+        </p>
 
-      <!-- Summary card -->
-      <div class="action-summary" *ngIf="actionRequest">
-        <div class="summary-row">
-          <span class="summary-label">Division</span>
-          <span class="summary-value">{{ actionRequest.division }}</span>
+        <!-- Summary card -->
+        <div class="action-summary" *ngIf="actionRequest">
+          <div class="summary-row">
+            <span class="summary-label">Division</span>
+            <span class="summary-value">{{ actionRequest.division }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Priority</span>
+            <span class="priority-badge sm" [ngClass]="getPriorityClass(actionRequest.priority)">
+              <mat-icon class="priority-icon">{{ getPriorityIcon(actionRequest.priority) }}</mat-icon>
+              {{ actionRequest.priority }}
+            </span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Reason</span>
+            <span class="summary-value reason">{{ actionRequest.reason }}</span>
+          </div>
         </div>
-        <div class="summary-row">
-          <span class="summary-label">Priority</span>
-          <span class="priority-badge sm" [ngClass]="getPriorityClass(actionRequest.priority)">
-            <mat-icon class="priority-icon">{{ getPriorityIcon(actionRequest.priority) }}</mat-icon>
-            {{ actionRequest.priority }}
-          </span>
-        </div>
-        <div class="summary-row">
-          <span class="summary-label">Reason</span>
-          <span class="summary-value reason">{{ actionRequest.reason }}</span>
-        </div>
-      </div>
 
-      <!-- Notes -->
-      <div class="action-field">
-        <label class="action-label">
-          Notes
-          <span class="optional" *ngIf="actionType === 'approve'">(optional)</span>
-          <span class="required" *ngIf="actionType === 'reject'">*</span>
-        </label>
-        <textarea class="action-textarea" rows="3"
-          [placeholder]="actionType === 'approve' ? 'Add any notes for the requester…' : 'Provide a reason for rejection…'"
-          [(ngModel)]="actionNotes"></textarea>
+        <!-- Notes -->
+        <div class="action-field">
+          <label class="action-label">
+            Notes
+            <span class="optional" *ngIf="actionType === 'approve'">(optional)</span>
+            <span class="required" *ngIf="actionType === 'reject'">*</span>
+          </label>
+          <textarea class="action-textarea" rows="3"
+            [placeholder]="actionType === 'approve' ? 'Add any notes for the requester…' : 'Provide a reason for rejection…'"
+            [(ngModel)]="actionNotes"></textarea>
+        </div>
       </div>
 
       <!-- Actions -->
-      <div class="action-buttons">
+      <div class="global-modal-footer">
         <button class="btn outline" (click)="cancelAction()" [disabled]="actionProcessing">
           Cancel
         </button>
@@ -300,86 +301,88 @@
   </div>
 
   <!-- ═══ REQUEST DETAIL DRAWER ═══ -->
-  <div class="overlay" *ngIf="showDetail" (click)="closeDetail()">
-    <div class="detail-drawer" (click)="$event.stopPropagation()">
-      <div class="drawer-header">
-        <h3>Request Details</h3>
-        <button class="drawer-close" (click)="closeDetail()">
+  <div class="global-modal-overlay" *ngIf="showDetail" (click)="closeDetail()">
+    <div class="global-modal-card" (click)="$event.stopPropagation()">
+      <div class="global-modal-header">
+        <h2>Request Details</h2>
+        <button class="global-modal-close-btn" (click)="closeDetail()">
           <mat-icon>close</mat-icon>
         </button>
       </div>
 
-      <div class="drawer-body" *ngIf="detailRequest">
-        <div class="drawer-id">{{ detailRequest.id }}</div>
+      <ng-container *ngIf="detailRequest">
+        <div class="global-modal-body">
+          <div class="drawer-id">{{ detailRequest.id }}</div>
 
-        <div class="drawer-status-row">
-          <span class="status-badge lg" [ngClass]="getStatusClass(detailRequest.status)">
-            <span class="status-dot"></span>
-            {{ detailRequest.status }}
-          </span>
-          <span class="priority-badge" [ngClass]="getPriorityClass(detailRequest.priority)">
-            <mat-icon class="priority-icon">{{ getPriorityIcon(detailRequest.priority) }}</mat-icon>
-            {{ detailRequest.priority }}
-          </span>
-        </div>
+          <div class="drawer-status-row">
+            <span class="status-badge lg" [ngClass]="getStatusClass(detailRequest.status)">
+              <span class="status-dot"></span>
+              {{ detailRequest.status }}
+            </span>
+            <span class="priority-badge" [ngClass]="getPriorityClass(detailRequest.priority)">
+              <mat-icon class="priority-icon">{{ getPriorityIcon(detailRequest.priority) }}</mat-icon>
+              {{ detailRequest.priority }}
+            </span>
+          </div>
 
-        <div class="drawer-section">
-          <h4>Requester</h4>
-          <div class="drawer-requester">
-            <div class="avatar lg" [ngClass]="getAvatarClass(detailRequest.id)">
-              {{ getInitials(detailRequest.requestedBy) }}
+          <div class="drawer-section">
+            <h4>Requester</h4>
+            <div class="drawer-requester">
+              <div class="avatar lg" [ngClass]="getAvatarClass(detailRequest.id)">
+                {{ getInitials(detailRequest.requestedBy) }}
+              </div>
+              <div>
+                <div class="drawer-name">{{ detailRequest.requestedBy }}</div>
+                <div class="drawer-sub">{{ detailRequest.division }} · {{ detailRequest.email }}</div>
+              </div>
             </div>
-            <div>
-              <div class="drawer-name">{{ detailRequest.requestedBy }}</div>
-              <div class="drawer-sub">{{ detailRequest.division }} · {{ detailRequest.email }}</div>
+          </div>
+
+          <div class="drawer-section">
+            <h4>Asset Requested</h4>
+            <div class="drawer-field">
+              <span class="drawer-label">Item</span>
+              <span class="drawer-value">{{ detailRequest.assetName }}</span>
+            </div>
+            <div class="drawer-field">
+              <span class="drawer-label">Category</span>
+              <span class="drawer-value">{{ detailRequest.category }}</span>
+            </div>
+            <div class="drawer-field">
+              <span class="drawer-label">Quantity</span>
+              <span class="drawer-value">{{ detailRequest.quantity }}</span>
             </div>
           </div>
-        </div>
 
-        <div class="drawer-section">
-          <h4>Asset Requested</h4>
-          <div class="drawer-field">
-            <span class="drawer-label">Item</span>
-            <span class="drawer-value">{{ detailRequest.assetName }}</span>
+          <div class="drawer-section">
+            <h4>Reason</h4>
+            <p class="drawer-reason">{{ detailRequest.reason }}</p>
           </div>
-          <div class="drawer-field">
-            <span class="drawer-label">Category</span>
-            <span class="drawer-value">{{ detailRequest.category }}</span>
-          </div>
-          <div class="drawer-field">
-            <span class="drawer-label">Quantity</span>
-            <span class="drawer-value">{{ detailRequest.quantity }}</span>
-          </div>
-        </div>
 
-        <div class="drawer-section">
-          <h4>Reason</h4>
-          <p class="drawer-reason">{{ detailRequest.reason }}</p>
-        </div>
+          <div class="drawer-section">
+            <h4>Timeline</h4>
+            <div class="drawer-field">
+              <span class="drawer-label">Requested</span>
+              <span class="drawer-value">{{ formatDate(detailRequest.requestDate) }}</span>
+            </div>
+            <div class="drawer-field" *ngIf="detailRequest.responseDate">
+              <span class="drawer-label">Responded</span>
+              <span class="drawer-value">{{ formatDate(detailRequest.responseDate) }}</span>
+            </div>
+            <div class="drawer-field" *ngIf="detailRequest.respondedBy">
+              <span class="drawer-label">By</span>
+              <span class="drawer-value">{{ detailRequest.respondedBy }}</span>
+            </div>
+          </div>
 
-        <div class="drawer-section">
-          <h4>Timeline</h4>
-          <div class="drawer-field">
-            <span class="drawer-label">Requested</span>
-            <span class="drawer-value">{{ formatDate(detailRequest.requestDate) }}</span>
-          </div>
-          <div class="drawer-field" *ngIf="detailRequest.responseDate">
-            <span class="drawer-label">Responded</span>
-            <span class="drawer-value">{{ formatDate(detailRequest.responseDate) }}</span>
-          </div>
-          <div class="drawer-field" *ngIf="detailRequest.respondedBy">
-            <span class="drawer-label">By</span>
-            <span class="drawer-value">{{ detailRequest.respondedBy }}</span>
+          <div class="drawer-section" *ngIf="detailRequest.approverNotes">
+            <h4>Response Notes</h4>
+            <p class="drawer-notes">{{ detailRequest.approverNotes }}</p>
           </div>
         </div>
 
-        <div class="drawer-section" *ngIf="detailRequest.approverNotes">
-          <h4>Response Notes</h4>
-          <p class="drawer-notes">{{ detailRequest.approverNotes }}</p>
-        </div>
-
-        <!-- Actions for pending requests -->
-        <div class="drawer-actions" *ngIf="detailRequest.status === 'Pending'">
+        <div class="global-modal-footer" *ngIf="detailRequest.status === 'Pending'">
+          <!-- Actions for pending requests -->
           <button class="btn green" (click)="closeDetail(); openAction('approve', detailRequest)">
             <mat-icon class="btn-icon">check</mat-icon> Approve
           </button>
@@ -387,70 +390,72 @@
             <mat-icon class="btn-icon">close</mat-icon> Reject
           </button>
         </div>
-      </div>
+      </ng-container>
     </div>
   </div>
 
   <!-- ═══ PROCESS REQUEST MODAL (Storekeeper Only) ═══ -->
-  <div class="overlay" *ngIf="showProcessModal" (click)="cancelProcess()">
-    <div class="action-dialog" (click)="$event.stopPropagation()">
-      <div class="action-icon-wrap" [class.approve-icon]="processIsInStock" [class.reject-icon]="!processIsInStock">
-        <mat-icon class="action-modal-icon">
-          {{ processIsInStock ? 'inventory_2' : 'shopping_cart' }}
-        </mat-icon>
+  <div class="global-modal-overlay" *ngIf="showProcessModal" (click)="cancelProcess()">
+    <div class="global-modal-card" (click)="$event.stopPropagation()">
+      <div class="global-modal-header">
+        <h2>Process Request</h2>
+        <button class="global-modal-close-btn" (click)="cancelProcess()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
 
-      <h3>Process Request</h3>
-      <p class="action-subtitle" *ngIf="processRequest">
-        Checking stock for <strong>{{ processRequest.assetName }}</strong>
-      </p>
+      <div class="global-modal-body">
+        <p class="action-subtitle" *ngIf="processRequest">
+          Checking stock for <strong>{{ processRequest.assetName }}</strong>
+        </p>
 
-      <div class="action-field">
-        <label class="action-label">Stock Status</label>
-        <div class="radio-group">
-          <label class="radio-label">
-            <input type="radio" [value]="true" [(ngModel)]="processIsInStock" name="stock">
-            Available in Stock
-          </label>
-          <label class="radio-label">
-            <input type="radio" [value]="false" [(ngModel)]="processIsInStock" name="stock">
-            Not in Stock (Escalate to Procurement)
-          </label>
-        </div>
-      </div>
-
-      <!-- Asset Number if found -->
-      <div class="action-field" *ngIf="processIsInStock">
-        <label class="action-label">Select Suggested Asset</label>
-        <select class="action-input" [(ngModel)]="selectedSuggestedAssetId" (ngModelChange)="onSuggestedAssetChanged()"
-          *ngIf="suggestedAssets.length > 0">
-          <option *ngFor="let asset of suggestedAssets" [ngValue]="asset.id">
-            {{ asset.assetCode }} - {{ asset.productName }} (Score {{ asset.score }})
-          </option>
-        </select>
-
-        <div class="suggested-asset-card" *ngIf="selectedSuggestedAsset as selectedAsset">
-          <div class="asset-line">
-            <strong>{{ selectedAsset.assetCode }}</strong>
-            <span class="asset-score">Match {{ selectedAsset.score }}</span>
+        <div class="action-field">
+          <label class="action-label">Stock Status</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" [value]="true" [(ngModel)]="processIsInStock" name="stock">
+              Available in Stock
+            </label>
+            <label class="radio-label">
+              <input type="radio" [value]="false" [(ngModel)]="processIsInStock" name="stock">
+              Not in Stock (Escalate to Procurement)
+            </label>
           </div>
-          <div class="asset-meta">{{ selectedAsset.productName }} • {{ selectedAsset.categoryName }}</div>
-          <div class="asset-meta" *ngIf="selectedAsset.serialNumber">Serial: {{ selectedAsset.serialNumber }}</div>
         </div>
 
-        <div class="manual-entry" *ngIf="suggestedAssets.length === 0">
-          <p class="input-help">No suggested assets found. Enter an asset ID manually.</p>
-          <input type="number" class="action-input" placeholder="e.g. 101" [(ngModel)]="processAssetId">
+        <!-- Asset Number if found -->
+        <div class="action-field" *ngIf="processIsInStock">
+          <label class="action-label">Select Suggested Asset</label>
+          <select class="action-input" [(ngModel)]="selectedSuggestedAssetId" (ngModelChange)="onSuggestedAssetChanged()"
+            *ngIf="suggestedAssets.length > 0">
+            <option *ngFor="let asset of suggestedAssets" [ngValue]="asset.id">
+              {{ asset.assetCode }} - {{ asset.productName }} (Score {{ asset.score }})
+            </option>
+          </select>
+
+          <div class="suggested-asset-card" *ngIf="selectedSuggestedAsset as selectedAsset">
+            <div class="asset-line">
+              <strong>{{ selectedAsset.assetCode }}</strong>
+              <span class="asset-score">Match {{ selectedAsset.score }}</span>
+            </div>
+            <div class="asset-meta">{{ selectedAsset.productName }} • {{ selectedAsset.categoryName }}</div>
+            <div class="asset-meta" *ngIf="selectedAsset.serialNumber">Serial: {{ selectedAsset.serialNumber }}</div>
+          </div>
+
+          <div class="manual-entry" *ngIf="suggestedAssets.length === 0">
+            <p class="input-help">No suggested assets found. Enter an asset ID manually.</p>
+            <input type="number" class="action-input" placeholder="e.g. 101" [(ngModel)]="processAssetId">
+          </div>
+        </div>
+
+        <div class="action-field">
+          <label class="action-label">Remarks</label>
+          <textarea class="action-textarea" rows="2" placeholder="Internal remarks..."
+            [(ngModel)]="processRemarks"></textarea>
         </div>
       </div>
 
-      <div class="action-field">
-        <label class="action-label">Remarks</label>
-        <textarea class="action-textarea" rows="2" placeholder="Internal remarks..."
-          [(ngModel)]="processRemarks"></textarea>
-      </div>
-
-      <div class="action-buttons">
+      <div class="global-modal-footer">
         <button class="btn outline" (click)="cancelProcess()" [disabled]="processLoading">Cancel</button>
         <button class="btn" [ngClass]="processIsInStock ? 'teal' : 'orange'" (click)="confirmProcess()"
           [disabled]="processLoading || !canSubmitProcess">

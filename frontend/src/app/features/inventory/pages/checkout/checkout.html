@@ -244,15 +244,17 @@
     </app-pagination>
 
     <!-- ═══ NEW CHECKOUT MODAL ═══ -->
-    <div class="overlay" *ngIf="showCheckoutModal" (click)="cancelCheckout()">
-        <div class="checkout-dialog" (click)="$event.stopPropagation()">
-            <div class="modal-icon-wrap checkout-icon-bg">
-                <mat-icon class="modal-icon">exit_to_app</mat-icon>
+    <div class="global-modal-overlay" *ngIf="showCheckoutModal" (click)="cancelCheckout()">
+        <div class="global-modal-card" (click)="$event.stopPropagation()">
+            <div class="global-modal-header">
+                <h2>New Checkout</h2>
+                <button class="global-modal-close-btn" (click)="cancelCheckout()">
+                    <mat-icon>close</mat-icon>
+                </button>
             </div>
-            <h3>New Checkout</h3>
-            <p class="modal-subtitle">Assign an available asset to an employee.</p>
-
-            <div class="modal-form">
+            <div class="global-modal-body">
+                <p class="modal-subtitle">Assign an available asset to an employee.</p>
+                <div class="modal-form">
                 <div class="modal-field" [class.has-error]="submitted && !checkoutForm.assetId">
                     <label>Asset *</label>
                     <select [(ngModel)]="checkoutForm.assetId">
@@ -298,9 +300,10 @@
                     <textarea rows="3" placeholder="Reason for checkout, special instructions…"
                         [(ngModel)]="checkoutForm.notes"></textarea>
                 </div>
+                </div>
             </div>
 
-            <div class="modal-actions">
+            <div class="global-modal-footer">
                 <button class="btn outline" (click)="cancelCheckout()" [disabled]="checkoutProcessing">Cancel</button>
                 <button class="btn primary" (click)="confirmCheckout()" [disabled]="checkoutProcessing">
                     <mat-icon class="btn-icon" *ngIf="!checkoutProcessing">exit_to_app</mat-icon>

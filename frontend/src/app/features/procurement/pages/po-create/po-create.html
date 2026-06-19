@@ -1,7 +1,6 @@
 <div class="po-create-container">
-    <div class="popup-overlay" *ngIf="showSuccessPopup" (click)="showSuccessPopup = false">
-        <app-status-card label="Saved" icon="check_box" color="#00AFB5"></app-status-card>
-        <div class="popup-hint">Click anywhere to close</div>
+    <div class="global-toast-container" *ngIf="showSuccessPopup" (click)="showSuccessPopup = false">
+        <app-status-card label="Saved" icon="check_box" color="#10b981"></app-status-card>
     </div>
     <h1 class="page-title">Add New Purchasing Order</h1>
 
