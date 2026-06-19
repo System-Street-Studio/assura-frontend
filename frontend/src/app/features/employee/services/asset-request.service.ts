@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 export interface AssetRequest {
   id: number;
@@ -36,7 +36,23 @@ export class AssetService {
   }
 
   getEmployeeRequests(empId: string): Observable<AssetRequest[]> {
-    return this.http.get<AssetRequest[]>(`${this.apiUrl}/employee/${empId}`);
+    return this.http.get<any[]>(this.unifiedApiUrl).pipe(
+      map(requests => requests.map(request => ({
+          id: request.id,
+          employeeId: String(request.requesterId || empId),
+          submittedBy: request.requesterName || 'Employee',
+          assetName: request.assetName || request.assetCode || 'N/A',
+          assetCategory: request.assetDivisionName || request.department || 'N/A',
+          quantity: request.quantity || 1,
+          priority: this.normalizePriority(request.priority),
+          reason: request.description || '',
+          description: request.description || '',
+          status: this.normalizeStatus(request.status),
+          submittedDate: request.createdAt || new Date().toISOString(),
+          requestType: this.normalizeRequestType(request.type),
+        } as AssetRequest))
+      )
+    );
   }
 
   getPendingRequests(): Observable<AssetRequest[]> {
@@ -45,5 +61,45 @@ export class AssetService {
 
   getRequestById(requestId: number): Observable<AssetRequest> {
     return this.http.get<AssetRequest>(`${this.apiUrl}/${requestId}`);
+  }
+
+  normalizeStatus(status: string): string {
+    switch (status) {
+      case 'PendingDivisionHeadApproval':
+      case 'PendingStorekeeperReview':
+      case 'PendingProcurement':
+        return 'Pending';
+      case 'TemporaryAssigned':
+        return 'Approved';
+      default:
+        return status;
+    }
+  }
+
+  private normalizePriority(priority: any): string {
+    const priorityMap: Record<string, string> = {
+      1: 'Low',
+      2: 'Normal',
+      3: 'Medium',
+      4: 'High',
+      5: 'Urgent',
+    };
+
+    return priorityMap[String(priority)] || priority || 'Normal';
+  }
+
+  private normalizeRequestType(type: any): string {
+    if (typeof type === 'string') {
+      return type;
+    }
+
+    const requestTypeMap: Record<string, string> = {
+      1: 'New Asset',
+      2: 'Maintenance',
+      3: 'Discard',
+      4: 'Transfer',
+    };
+
+    return requestTypeMap[String(type)] || 'Request';
   }
 }

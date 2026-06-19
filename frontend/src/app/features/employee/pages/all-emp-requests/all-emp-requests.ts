@@ -49,12 +49,12 @@ export class AllRequestsComponent implements OnInit {
   constructor(private assetService: AssetService) { }
   
   ngOnInit() {
-    const userId = this.authService.getUserId();
-    if (userId) {
-      this.assetService.getEmployeeRequests(userId).subscribe((data: AssetRequest[]) => {
-        this.requests.set(data);
-      });
-    }
+    this.assetService.getEmployeeRequests(this.authService.getUserId() || '').subscribe((data: AssetRequest[]) => {
+      this.requests.set(data.map(request => ({
+        ...request,
+        status: this.assetService.normalizeStatus(request.status),
+      })));
+    });
   }
 
   /*// Mock Data 

@@ -1,10 +1,11 @@
 <div class="loading-state" *ngIf="loading">
+  <!-- Displays a spinning loading indicator until asset data is fully fetched -->
   <mat-icon class="loading-spinner rotating">autorenew</mat-icon>
   <p>Loading Asset Details...</p>
 </div>
 
 <div class="asset-detail-page" *ngIf="!loading && asset">
-  <!-- Back link -->
+  <!-- Navigation link to return to the main inventory table -->
   <button class="back-link" (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
     Back to Assets
@@ -48,7 +49,7 @@
     </div>
   </div>
 
-  <!-- Content grid -->
+  <!-- Content grid: Splits the page into a main details section (left) and a status sidebar (right) -->
   <div class="content-grid">
     <div class="main-col">
       <!-- About / QR section -->
@@ -165,6 +166,7 @@
   </div>
 
   <!-- ═══ CHECK-IN MODAL ═══ -->
+  <!-- Opens as an overlay allowing users to return a deployed asset and log its condition -->
   <div class="overlay" *ngIf="showCheckinModal" (click)="cancelCheckin()">
     <div class="checkin-dialog" (click)="$event.stopPropagation()">
       <div class="checkin-icon-wrap">
@@ -204,6 +206,7 @@
   </div>
 
   <!-- Delete Confirmation -->
+  <!-- Prompt to prevent accidental permanent deletion of an asset -->
   <div class="overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()">
     <div class="confirm-dialog" (click)="$event.stopPropagation()">
       <h3>Delete Asset?</h3>

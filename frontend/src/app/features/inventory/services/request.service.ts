@@ -28,13 +28,13 @@ export class RequestService {
       map(requests => requests.map(r => ({
         id: r.id,
         requestNumber: r.requestNumber,
-        requestedBy: r.requesterName,
+        requestedBy: r.requesterName || r.requestedBy,
         requesterName: r.requesterName,
-        assetName: r.assetName || 'N/A',
+        assetName: r.assetName || r.description || 'N/A',
         description: r.description,
         reason: r.description || '',
         priority: r.priority,
-        status: r.status,
+        status: r.status,  // pass through the raw backend status (PendingStorekeeperReview, TemporaryAssigned, etc.)
         requestDate: r.createdAt,
         createdAt: r.createdAt,
         division: r.department || r.division || 'N/A',
@@ -82,49 +82,9 @@ export class RequestService {
   }
 
   // Fetch approved new asset requests from division head (assetrequests endpoint)
+  // NOTE: This is kept for legacy compatibility but returns empty - all requests
+  // are now served by the main getAll() endpoint
   getApprovedNewAssetRequests(): Observable<AssetRequest[]> {
-    const url = `${this.baseUrl}/assetrequests?status=Approved&type=New Asset`;
-    console.log(`🔍 Fetching approved requests from: ${url}`);
-    return this.http.get<any>(url).pipe(
-      map(response => {
-        console.log('📥 Raw API Response:', response);
-
-        // Handle potential wrapped response (e.g., { data: [...] })
-        let requests = Array.isArray(response) ? response : (response?.data || []);
-
-        console.log(`📦 Approved requests parsed: ${requests.length}`, requests);
-
-        if (!requests || requests.length === 0) {
-          return [];
-        }
-
-        return requests.map((r: any) => {
-          console.log(`  → Mapping request ID ${r.id}:`, r);
-          return {
-            id: r.id,
-            requestNumber: `REQ-${r.id}`,
-            requestedBy: r.requesterName || 'Unknown',
-            requesterName: r.requesterName,
-            assetName: r.assetName || 'N/A',
-            description: r.description || '',
-            reason: r.reason || r.description || '',
-            priority: r.priority || 'Normal',
-            status: 'Approved',
-            requestDate: r.submittedDate || new Date().toISOString(),
-            createdAt: r.submittedDate,
-            division: r.department || r.division || 'N/A',
-            email: r.email || 'N/A',
-            category: r.assetCategory || 'N/A',
-            assetCategory: r.assetCategory || 'N/A',
-            quantity: r.quantity || 1,
-            selected: false
-          } as AssetRequest;
-        });
-      }),
-      catchError(error => {
-        console.error('❌ Error fetching approved requests:', error);
-        return of([]);
-      })
-    );
+    return of([]);
   }
 }

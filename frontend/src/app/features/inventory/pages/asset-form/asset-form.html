@@ -1,38 +1,51 @@
 <div class="asset-form-page">
-  <!-- Breadcrumb + Header -->
+  <!-- Top bar: back button + breadcrumb. onCancel() uses Location.back() (no save) -->
   <div class="top-bar">
     <button class="back-link" (click)="onCancel()">
       <mat-icon>arrow_back</mat-icon>
     </button>
+    <!-- pageTitle is a computed getter: 'New Asset' | 'Edit Asset' | 'Clone Asset' -->
     <span class="breadcrumb">Assets / {{ pageTitle }}</span>
   </div>
 
+  <!-- Form header: shows dynamic title + a live badge of the current asset code -->
   <div class="form-header">
     <h2>{{ pageTitle }}</h2>
+    <!-- Badge only appears once the user has typed an asset code -->
     <span class="asset-id-badge" *ngIf="assetCodeValue">
       <mat-icon class="badge-icon">tag</mat-icon>
       {{ assetCodeValue }}
     </span>
   </div>
 
+  <!-- Main reactive form.
+       [formGroup] binds to the `assetForm` FormGroup defined in the component.
+       (ngSubmit) triggers onSave() which validates then calls the appropriate API. -->
   <form class="form-card" [formGroup]="assetForm" (ngSubmit)="onSave()">
+
+    <!-- Two-column grid: left = Basic Info, right = Details -->
     <div class="form-grid">
-      <!-- ── Left Column ── -->
+
+      <!-- ── LEFT COLUMN: Basic Information ── -->
       <div class="form-col">
         <div class="section-label">Basic Information</div>
 
+        <!-- Asset Code: required unique identifier (e.g. ASSET-001).
+             [class.has-error] adds a red border when showError() returns true. -->
         <div class="form-group" [class.has-error]="showError('assetCode')">
           <label for="assetCode">Asset Code *</label>
-          <input id="assetCode" type="text" formControlName="assetCode" placeholder="e.g. ASSET-001"
-            required />
+          <input id="assetCode" type="text" formControlName="assetCode" placeholder="e.g. ASSET-001" required />
           <span class="error-text" *ngIf="showError('assetCode')">Asset Code is required</span>
         </div>
 
+        <!-- Asset Tag: optional secondary label (e.g. a physical barcode sticker reference) -->
         <div class="form-group">
           <label for="assetTag">Asset Tag</label>
           <input id="assetTag" type="text" formControlName="assetTag" placeholder="e.g. TAG-123" />
         </div>
 
+        <!-- Product dropdown: populated from the `products` array loaded via ProductService.
+             [ngValue]="0" is the placeholder; Validators.min(1) makes 0 an invalid selection. -->
         <div class="form-group" [class.has-error]="showError('productId')">
           <label for="productId">Product *</label>
           <select id="productId" formControlName="productId" required>
@@ -42,6 +55,8 @@
           <span class="error-text" *ngIf="showError('productId')">Product is required</span>
         </div>
 
+        <!-- Status dropdown: driven by the `statuses` string-array in the component
+             (InUse, InStore, UnderMaintenance, Discarded, Transferred, Lost) -->
         <div class="form-group" [class.has-error]="showError('status')">
           <label for="status">Status *</label>
           <select id="status" formControlName="status" required>
@@ -52,10 +67,11 @@
         </div>
       </div>
 
-      <!-- ── Right Column ── -->
+      <!-- ── RIGHT COLUMN: Details ── -->
       <div class="form-col">
         <div class="section-label">Details</div>
 
+        <!-- Category: groups assets into logical types (e.g. Electronics, Furniture) -->
         <div class="form-group" [class.has-error]="showError('categoryId')">
           <label for="categoryId">Category *</label>
           <select id="categoryId" formControlName="categoryId" required>
@@ -65,6 +81,7 @@
           <span class="error-text" *ngIf="showError('categoryId')">Category is required</span>
         </div>
 
+        <!-- Supplier: the vendor from whom the asset was purchased -->
         <div class="form-group" [class.has-error]="showError('supplierId')">
           <label for="supplierId">Supplier *</label>
           <select id="supplierId" formControlName="supplierId" required>
@@ -74,6 +91,7 @@
           <span class="error-text" *ngIf="showError('supplierId')">Supplier is required</span>
         </div>
 
+        <!-- Division: the department or business unit responsible for this asset -->
         <div class="form-group" [class.has-error]="showError('divisionId')">
           <label for="divisionId">Division *</label>
           <select id="divisionId" formControlName="divisionId" required>
@@ -83,34 +101,40 @@
           <span class="error-text" *ngIf="showError('divisionId')">Division is required</span>
         </div>
 
+        <!-- Serial Number: manufacturer serial for exact unit identification.
+             Cleared automatically in clone mode to avoid duplicate serials. -->
         <div class="form-group">
           <label for="serialNumber">Serial Number</label>
-          <input id="serialNumber" type="text" formControlName="serialNumber"
-            placeholder="e.g. SN123456" />
+          <input id="serialNumber" type="text" formControlName="serialNumber" placeholder="e.g. SN123456" />
         </div>
       </div>
     </div>
 
-    <!-- ── Full-width section ── -->
+    <!-- ── Full-width Additional section (outside the two-column grid) ── -->
     <div class="form-section">
       <div class="section-label">Additional</div>
 
+      <!-- Side-by-side pair: Asset Date and Purchase Value -->
       <div class="form-row-pair">
+        <!-- Asset Date: purchase/registration date; defaults to today via getTodayDateString() -->
         <div class="form-group" [class.has-error]="showError('assetDate')">
           <label for="assetDate">Asset Date</label>
           <input id="assetDate" type="date" formControlName="assetDate" />
           <span class="error-text" *ngIf="showError('assetDate')">Asset date is required</span>
         </div>
+
+        <!-- Purchase Value: monetary amount in LKR.
+             .money-row makes the currency badge and input appear as one fused control. -->
         <div class="form-group">
           <label for="purchaseValue">Purchase Value</label>
           <div class="money-row">
             <span class="currency-badge">LKR</span>
-            <input id="purchaseValue" type="number" formControlName="purchaseValue"
-              placeholder="0" min="0" step="1" />
+            <input id="purchaseValue" type="number" formControlName="purchaseValue" placeholder="0" min="0" step="1" />
           </div>
         </div>
       </div>
 
+      <!-- Notes: free-text remarks about the asset (max 1000 chars enforced in the FormGroup) -->
       <div class="form-group">
         <label for="notes">Notes</label>
         <textarea id="notes" formControlName="notes" rows="3"
@@ -118,18 +142,24 @@
       </div>
     </div>
 
-    <!-- ── Actions ── -->
+    <!-- ── Action Buttons ── -->
     <div class="form-actions">
+      <!-- Cancel: navigates back without saving -->
       <button type="button" class="btn outline" (click)="onCancel()">Cancel</button>
+
+      <!-- Submit: disabled while saving or form is invalid.
+           Icon swaps to a spinning 'sync' during the in-flight API call.
+           Label changes contextually by mode. -->
       <button type="submit" class="btn primary" [disabled]="saving || assetForm.invalid">
         <mat-icon class="btn-icon" *ngIf="!saving">save</mat-icon>
         <mat-icon class="btn-icon spin" *ngIf="saving">sync</mat-icon>
-        {{ saving ? 'Saving...' : (mode === 'create' ? 'Create Asset' : mode === 'clone' ? 'Create Clone' : 'Save
-        Changes') }}
+        {{ saving ? 'Saving...' : (mode === 'create' ? 'Create Asset' : mode === 'clone' ? 'Create Clone' : 'Save Changes') }}
       </button>
     </div>
   </form>
 </div>
 
+<!-- Result Overlay: covers the whole page after a save attempt.
+     Auto-closes after 2 seconds; (closed) fires onResultClosed() which then navigates away. -->
 <app-result-overlay *ngIf="showResult" [type]="resultType" [title]="resultTitle" [message]="resultMessage"
   (closed)="onResultClosed()"></app-result-overlay>

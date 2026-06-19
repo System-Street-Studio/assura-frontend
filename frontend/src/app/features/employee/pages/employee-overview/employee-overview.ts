@@ -36,11 +36,8 @@ export class EmployeeOverviewComponent implements OnInit {
   recentActivities = signal<Activity[]>([]);
 
   ngOnInit() {
-    const userId = this.authService.getUserId();
-    if (!userId) return;
-
     // Fetch Requests
-    this.assetService.getEmployeeRequests(userId).subscribe({
+    this.assetService.getEmployeeRequests(this.authService.getUserId() || '').subscribe({
       next: (data: AssetRequest[]) => {
         const pending = data
           .filter(r => r.status === 'Pending')

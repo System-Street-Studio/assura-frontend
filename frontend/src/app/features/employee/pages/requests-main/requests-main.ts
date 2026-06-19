@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetRequest, AssetService } from '../../services/asset-request.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 
 
@@ -65,18 +66,24 @@ export class RequestsMainComponent implements OnInit {
     this.recentRequests().filter(r => r.status === 'Rejected').length
   );
   
+  private authService = inject(AuthService);
+
   constructor(private assetService: AssetService, private cdr: ChangeDetectorRef, private router: Router) {}
 
   ngOnInit() {
-    this.assetService.getPendingRequests().subscribe({
+    this.assetService.getEmployeeRequests(this.authService.getUserId() || '').subscribe({
       next: (data: AssetRequest[]) => {
-        // Keep only the latest 20 requests
-        const limitedData = data.slice(0, this.maxRequests);
+        const mapped = data.map(request => ({
+          ...request,
+          status: this.assetService.normalizeStatus(request.status),
+        }));
+
+        const limitedData = mapped.slice(0, this.maxRequests);
         this.recentRequests.set(limitedData);
-        this.currentPage.set(1); // Reset to first page
-        this.cdr.detectChanges(); 
+        this.currentPage.set(1);
+        this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error fetching pending requests:', err)
+      error: (err) => console.error('Error fetching employee requests:', err)
     });
   }
 
