@@ -417,7 +417,7 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   canStorekeeperProcess(request: AssetRequest): boolean {
-    return request.status === 'Pending' || request.status === 'PendingStorekeeperReview';
+    return request.status === 'Pending' || request.status === 'PendingStorekeeperReview' || request.status === 'Approved';
   }
 
   canStorekeeperConfirm(request: AssetRequest): boolean {
