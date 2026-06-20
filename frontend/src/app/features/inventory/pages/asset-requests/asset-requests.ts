@@ -66,11 +66,13 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   get pendingCount(): number {
-    return this.allRequests().filter((r) => r.status === 'Pending').length;
+    const pending = ['Pending', 'PendingDivisionHeadApproval', 'PendingStorekeeperReview'];
+    return this.allRequests().filter((r) => pending.includes(r.status)).length;
   }
 
   get approvedCount(): number {
-    return this.allRequests().filter((r) => r.status === 'Approved').length;
+    const approved = ['Approved', 'TemporaryAssigned', 'Checked Out'];
+    return this.allRequests().filter((r) => approved.includes(r.status)).length;
   }
 
   get rejectedCount(): number {
@@ -78,11 +80,13 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   get fulfilledCount(): number {
-    return this.allRequests().filter((r) => r.status === 'Fulfilled').length;
+    const fulfilled = ['Fulfilled', 'Returned'];
+    return this.allRequests().filter((r) => fulfilled.includes(r.status)).length;
   }
 
   get urgentCount(): number {
-    return this.allRequests().filter((r) => r.priority === 'Urgent' && r.status === 'Pending').length;
+    const pending = ['Pending', 'PendingDivisionHeadApproval', 'PendingStorekeeperReview'];
+    return this.allRequests().filter((r) => r.priority === 'Urgent' && pending.includes(r.status)).length;
   }
 
   get departments(): string[] {
@@ -90,8 +94,12 @@ export class AssetRequestsComponent implements OnInit {
     return Array.from(depts).sort();
   }
 
-  get statuses(): RequestStatus[] {
-    return ['Pending', 'Approved', 'Rejected', 'Fulfilled', 'Cancelled'];
+  get statuses(): string[] {
+    return [
+      'PendingDivisionHeadApproval', 'PendingStorekeeperReview',
+      'TemporaryAssigned', 'PendingProcurement',
+      'Approved', 'Rejected', 'Fulfilled', 'Checked Out', 'Returned'
+    ];
   }
 
   get priorities(): RequestPriority[] {
@@ -123,35 +131,17 @@ export class AssetRequestsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading.set(true);
-    console.log('📥 Loading inventory requests...');
 
     this.requestService.getAll().subscribe({
-      next: (existingRequests: AssetRequest[]) => {
-        const initial = existingRequests || [];
-        console.log('✅ getAll() returned:', initial.length, 'requests');
-        this.allRequests.set(initial);
-
-        this.requestService.getApprovedNewAssetRequests().subscribe({
-          next: (approvedRequests: AssetRequest[]) => {
-            console.log('✅ getApprovedNewAssetRequests() returned:', approvedRequests.length, 'requests');
-            if (approvedRequests?.length > 0) {
-              this.allRequests.update(current => {
-                const merged = [...current, ...approvedRequests];
-                return merged.sort((a, b) => Number(b.id) - Number(a.id));
-              });
-            }
-            this.applyFilters();
-            this.loading.set(false);
-          },
-          error: (err) => {
-            console.warn('⚠️ Warning:', err);
-            this.applyFilters();
-            this.loading.set(false);
-          }
-        });
+      next: (requests: AssetRequest[]) => {
+        this.allRequests.set(requests || []);
+        this.applyFilters();
+        this.loading.set(false);
       },
       error: () => {
         this.toast.show('Failed to load requests', 'error');
+        this.allRequests.set([]);
+        this.applyFilters();
         this.loading.set(false);
       }
     });
@@ -336,13 +326,12 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   /* ── Helpers ── */
-  getStatusClass(status: RequestStatus): string {
-    if (status === 'Pending' || status === 'PendingStorekeeperReview') return 'pending';
-    if (status === 'TemporaryAssigned') return 'approved';
-    if (status === 'PendingProcurement') return 'rejected';
-    if (status === 'Approved') return 'approved';
-    if (status === 'Rejected') return 'rejected';
-    if (status === 'Fulfilled') return 'fulfilled';
+  getStatusClass(status: string): string {
+    if (['Pending', 'PendingDivisionHeadApproval', 'PendingStorekeeperReview'].includes(status)) return 'pending';
+    if (['TemporaryAssigned', 'Approved', 'Checked Out'].includes(status)) return 'approved';
+    if (['Rejected'].includes(status)) return 'rejected';
+    if (['Fulfilled', 'Returned'].includes(status)) return 'fulfilled';
+    if (status === 'PendingProcurement') return 'pending';
     return 'cancelled';
   }
 
@@ -417,7 +406,7 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   canStorekeeperProcess(request: AssetRequest): boolean {
-    return request.status === 'Pending' || request.status === 'PendingStorekeeperReview' || request.status === 'Approved';
+    return ['Pending', 'PendingStorekeeperReview', 'Approved', 'PendingDivisionHeadApproval'].includes(request.status);
   }
 
   canStorekeeperConfirm(request: AssetRequest): boolean {

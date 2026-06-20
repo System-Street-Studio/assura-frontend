@@ -1,3 +1,25 @@
+/**
+ * Styles for the Inventory Dashboard page.
+ *
+ * Layout Strategy:
+ * - `.kpi-grid`    : 6-column CSS Grid for KPI cards; collapses to 3 → 2 → 1 at breakpoints.
+ * - `.two-column`  : Equal 2-column grid for the Activity Feed and Warranty Alerts panels.
+ * - `.charts-grid` : 2-column grid for the four Chart.js chart cards.
+ * - `.anomaly-row` : 3-column grid for anomaly summary cards.
+ *
+ * Animation:
+ * - `fadeInUp`  : Each dashboard section slides up on load with a staggered delay.
+ * - `shimmer`   : Loading skeleton shimmer effect on skeleton placeholder elements.
+ * - `pulse`     : Pulsing red dot on the Ghost Assets anomaly card for urgency.
+ *
+ * Colour system (shared across KPI accents, icon wraps, and chart cards):
+ *   teal   #0b6c78  — primary brand colour
+ *   blue   #3b82f6  — checked-out / trend indicators
+ *   green  #19a974  — available assets
+ *   purple #6366f1  — value / division
+ *   orange #f59e0b  — pending / warnings
+ *   red    #ef4444  — maintenance / critical
+ */
 :host {
   display: block;
   background: #f5f7f8;
@@ -9,7 +31,10 @@
   font-family: 'Jost', sans-serif;
 }
 
-/* ── Entrance Animation ── */
+/* ── Entrance Animation ──
+   Each direct <section> child of .dashboard-content fades in from below.
+   Staggered `animation-delay` on nth-child selectors staggers the reveal
+   so cards appear sequentially rather than all at once. */
 .dashboard-content > section {
   animation: fadeInUp 0.4s ease-out both;
 }
@@ -25,7 +50,10 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Welcome Banner ── */
+/* ── Welcome Banner ──
+   Full-width teal gradient card with `overflow: hidden` to clip the decorative
+   circular shapes (.banner-bg-shape) that bleed outside the card bounds.
+   `.banner-stats` uses backdrop-filter: blur for a frosted-glass appearance. */
 .welcome-banner {
   display: flex;
   align-items: center;
@@ -162,7 +190,11 @@
   transform: translateY(-1px);
 }
 
-/* ── KPI Grid ── */
+/* ── KPI Grid ──
+   6-column grid; each card has a 3px coloured top accent bar (.kpi-accent).
+   Clickable cards lift on hover via translateY(-3px).
+   .kpi-bar / .kpi-bar-fill: a thin progress bar whose width is bound in the
+   template via [style.width.%] to the computed utilization/available rate. */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -306,7 +338,9 @@
 .kpi-bar-fill.blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
 .kpi-bar-fill.green { background: linear-gradient(90deg, #19a974, #34d399); }
 
-/* ── Two Column Layout ── */
+/* ── Two Column Layout ──
+   Equal 2-column grid used for the Recent Activity panel and Warranty Alerts panel.
+   Both panels share the .panel, .panel-header, and .panel-empty base classes. */
 .two-column {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -395,7 +429,11 @@
   opacity: 0.4;
 }
 
-/* ── Activity Feed ── */
+/* ── Activity Feed ──
+   Scrollable list (max-height: 360px) with a thin custom scrollbar.
+   Each item has a .activity-timeline column (dot + vertical connector line)
+   so consecutive items appear connected. The line is hidden on the last item
+   via `*ngIf="!last"` in the template. */
 .activity-list {
   max-height: 360px;
   overflow-y: auto;
@@ -522,7 +560,12 @@
   font-weight: 500;
 }
 
-/* ── Warranty Alerts ── */
+/* ── Warranty Alerts ──
+   Scrollable list with severity-driven left border colours:
+     .severity-critical → 3px red border
+     .severity-warning  → 3px amber border
+     .severity-info     → 3px blue border
+   The icon circle and badge colours also match the severity via class binding. */
 .warranty-list {
   max-height: 360px;
   overflow-y: auto;
@@ -657,7 +700,11 @@
   margin-top: 3px;
 }
 
-/* ── Charts Grid ── */
+/* ── Charts Grid ──
+   2-column grid, each card has a fixed min-height of 290px so charts
+   have consistent space regardless of data volume.
+   .chart-area: 210px height container for the <canvas baseChart> element.
+   .card-accent: same 3px top gradient bar pattern as KPI cards. */
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -734,7 +781,12 @@
   height: 210px;
 }
 
-/* ── Anomalies ── */
+/* ── Anomalies ──
+   3-column grid of anomaly summary cards.
+   Each card has a coloured left border (critical/warning/info) and an icon
+   circle whose background also matches the severity.
+   The ghost-assets card includes an `.anomaly-pulse` element — a small red
+   circle that animates via @keyframes pulse to indicate urgency. */
 .anomalies {
   margin-bottom: 12px;
 }
@@ -890,7 +942,12 @@
   gap: 6px;
 }
 
-/* ── Responsive ── */
+/* ── Responsive Breakpoints ──
+   1200px: KPI grid collapses from 6 → 3 columns.
+    900px: KPI → 2 cols; banner stacks vertically; two-column, charts, and
+           anomaly grids all collapse to single column.
+    600px: Page padding reduced; KPI → 1 col; quick-action buttons stack
+           vertically; banner stats stack vertically. */
 @media (max-width: 1200px) {
   .kpi-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -955,7 +1012,15 @@
   }
 }
 
-/* ── Loading Skeleton ── */
+/* ── Loading Skeleton ──
+   Shown while `loading` is true in the component.
+   Uses a @keyframes shimmer animation that slides a lighter gradient band
+   across the placeholder elements (background-position: 200% → -200%) to
+   create the illusion of content being loaded.
+   Skeleton shapes mirror the dimensions of their real counterparts:
+     .skeleton-banner → welcome banner height
+     .skeleton-card   → KPI card min-height
+     .skeleton-chart  → chart card min-height */
 .skeleton-banner {
   height: 140px;
   border-radius: 16px;

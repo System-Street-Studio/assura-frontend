@@ -81,20 +81,10 @@ export class SidebarComponent {
 
   get filteredMenuItems(): MenuItem[] {
     const userRoles = this.authService.getRoles();
-    const currentUrl = this.router.url;
-
-    // Determine the current section from the URL (e.g. '/inventory/assets' -> 'inventory')
-    const sectionMatch = currentUrl.match(/^\/([^/]+)/);
-    const currentSection = sectionMatch ? sectionMatch[1] : '';
 
     return this.menuItems.filter(item => {
       const hasRole = item.roles.includes('ANY') || userRoles.some(role => item.roles.includes(role));
-      if (!hasRole) return false;
-
-      if (item.isGlobal) return true;
-
-      // Only show items that belong to the current URL section
-      return item.link.startsWith(`/${currentSection}`);
+      return hasRole;
     });
   }
 

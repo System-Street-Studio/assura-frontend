@@ -7,6 +7,8 @@ import { MaintenanceService } from '../../services/maintenance.service';
 import {
     MaintenanceRequest,
     MaintenanceStatus,
+    MaintenanceStats,
+    SimilarAsset
 } from '../../models/maintenance.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
@@ -26,6 +28,8 @@ export class MaintenanceComponent implements OnInit {
     allRequests: MaintenanceRequest[] = [];
     filteredRequests: MaintenanceRequest[] = [];
     viewRequests: MaintenanceRequest[] = [];
+    
+    stats: MaintenanceStats | null = null;
 
     loading = true;
     searchTerm = '';
@@ -36,32 +40,29 @@ export class MaintenanceComponent implements OnInit {
     pageSizes = [5, 10, 25, 50];
     pages: number[] = [1];
 
-    /* ── Action modal ── */
+    /* ── Action modals ── */
     showActionModal = false;
-    actionType: 'start' | 'complete' | 'forward' | 'reject' = 'start';
+    actionType: 'start' | 'complete' | 'reject' = 'start';
     actionRequest: MaintenanceRequest | null = null;
     actionProcessing = false;
+    actionNotes = '';
+
+    /* ── Assign Temp Asset Modal ── */
+    showAssignModal = false;
+    similarAssets: SimilarAsset[] = [];
+    selectedSimilarAssetId: number | null = null;
+    loadingSimilarAssets = false;
+
+    /* ── Send For Repair Modal ── */
+    showRepairModal = false;
+    selectedFirmId: number | null = null;
+
+    /* ── Escalate Modal ── */
+    showEscalateModal = false;
 
     /* ── Detail drawer ── */
     showDetail = false;
     detailRequest: MaintenanceRequest | null = null;
-
-    /* ── Stats ── */
-    get totalCount(): number {
-        return this.allRequests.length;
-    }
-
-    get pendingCount(): number {
-        return this.allRequests.filter((r) => r.status === 'Pending').length;
-    }
-
-    get inProgressCount(): number {
-        return this.allRequests.filter((r) => r.status === 'In Progress').length;
-    }
-
-    get completedCount(): number {
-        return this.allRequests.filter((r) => r.status === 'Completed').length;
-    }
 
     get totalPages(): number {
         return Math.ceil(this.filteredRequests.length / this.pageSize) || 1;
@@ -75,21 +76,17 @@ export class MaintenanceComponent implements OnInit {
         return Math.min(this.currentPage * this.pageSize, this.filteredRequests.length);
     }
 
-    get selectedCount(): number {
-        return this.viewRequests.filter((r) => r.selected).length;
-    }
-
-    get allSelected(): boolean {
-        return this.viewRequests.length > 0 && this.viewRequests.every((r) => r.selected);
-    }
-
     ngOnInit(): void {
+        this.loadData();
+    }
+
+    loadData(): void {
+        this.loading = true;
         this.svc.getAll().subscribe({
-            next: (data: MaintenanceRequest[]) => {
+            next: (data) => {
                 this.allRequests = data || [];
                 this.applyFilters();
-                this.loading = false;
-                this.cdr.detectChanges();
+                this.loadStats();
             },
             error: (err: HttpErrorResponse) => {
                 if (err.status === 403) {
@@ -103,6 +100,20 @@ export class MaintenanceComponent implements OnInit {
         });
     }
 
+    loadStats(): void {
+        this.svc.getStats().subscribe({
+            next: (stats) => {
+                this.stats = stats;
+                this.loading = false;
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.loading = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
     applyFilters(): void {
         const term = this.searchTerm.toLowerCase().trim();
 
@@ -111,7 +122,7 @@ export class MaintenanceComponent implements OnInit {
                 !term ||
                 (r.maintenanceNumber || '').toLowerCase().includes(term) ||
                 (r.assetName || '').toLowerCase().includes(term) ||
-                (r.assetId || '').toLowerCase().includes(term) ||
+                (r.assetCode || '').toLowerCase().includes(term) ||
                 (r.description || '').toLowerCase().includes(term);
 
             const matchesStatus = !this.filterStatus || r.status === this.filterStatus;
@@ -122,6 +133,11 @@ export class MaintenanceComponent implements OnInit {
         this.currentPage = 1;
         this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
         this.updateView();
+    }
+
+    setFilterStatus(status: string): void {
+        this.filterStatus = this.filterStatus === status ? '' : status;
+        this.applyFilters();
     }
 
     clearFilters(): void {
@@ -146,15 +162,13 @@ export class MaintenanceComponent implements OnInit {
         this.updateView();
     }
 
-    toggleSelectAll(): void {
-        const target = !this.allSelected;
-        this.viewRequests.forEach((r) => (r.selected = target));
-    }
+    // ── Simple Actions ──
 
-    openAction(type: 'start' | 'complete' | 'forward' | 'reject', request: MaintenanceRequest, event: Event): void {
+    openAction(type: 'start' | 'complete' | 'reject', request: MaintenanceRequest, event: Event): void {
         event.stopPropagation();
         this.actionType = type;
         this.actionRequest = request;
+        this.actionNotes = '';
         this.showActionModal = true;
     }
 
@@ -162,25 +176,143 @@ export class MaintenanceComponent implements OnInit {
         if (!this.actionRequest) return;
         this.actionProcessing = true;
 
-        const newStatus: MaintenanceStatus =
-            this.actionType === 'start' ? 'In Progress' :
-                this.actionType === 'complete' ? 'Completed' :
-                    this.actionType === 'forward' ? 'Forwarded' : 'Rejected';
+        let obs$;
+        switch (this.actionType) {
+            case 'start':
+                obs$ = this.svc.start(this.actionRequest.id);
+                break;
+            case 'complete':
+                obs$ = this.svc.complete(this.actionRequest.id);
+                break;
+            case 'reject':
+                obs$ = this.svc.reject(this.actionRequest.id, this.actionNotes);
+                break;
+        }
 
-        this.svc.updateStatus(this.actionRequest.maintenanceNumber, newStatus).subscribe({
-            next: (updated: MaintenanceRequest) => {
-                const idx = this.allRequests.findIndex((r) => r.maintenanceNumber === updated.maintenanceNumber);
-                if (idx !== -1) this.allRequests[idx] = updated;
-                this.applyFilters();
-                this.showActionModal = false;
-                this.actionProcessing = false;
-                this.toast.success(`Request ${updated.maintenanceNumber} updated to ${newStatus}`);
+        obs$.subscribe({
+            next: () => {
+                this.toast.success('Action successful');
+                this.closeModals();
+                this.loadData(); // Refresh everything
             },
             error: () => {
-                this.actionProcessing = false;
                 this.toast.error('Action failed');
-            },
+                this.actionProcessing = false;
+                this.cdr.detectChanges();
+            }
         });
+    }
+
+    // ── Assign Temp Asset ──
+
+    openAssignTemp(request: MaintenanceRequest, event: Event): void {
+        event.stopPropagation();
+        this.actionRequest = request;
+        this.showAssignModal = true;
+        this.loadingSimilarAssets = true;
+        this.selectedSimilarAssetId = null;
+        this.actionNotes = '';
+
+        this.svc.getSimilarAssets(request.id).subscribe({
+            next: (assets) => {
+                this.similarAssets = assets;
+                this.loadingSimilarAssets = false;
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.toast.error('Failed to load similar assets');
+                this.loadingSimilarAssets = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    selectSimilarAsset(id: number): void {
+        this.selectedSimilarAssetId = id;
+    }
+
+    confirmAssignTemp(): void {
+        if (!this.actionRequest || !this.selectedSimilarAssetId) return;
+        this.actionProcessing = true;
+
+        this.svc.assignTempAsset(this.actionRequest.id, this.selectedSimilarAssetId, this.actionNotes).subscribe({
+            next: () => {
+                this.toast.success('Temporary asset assigned successfully');
+                this.closeModals();
+                this.loadData();
+            },
+            error: () => {
+                this.toast.error('Failed to assign temporary asset');
+                this.actionProcessing = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    // ── Send for Repair ──
+
+    openSendForRepair(request: MaintenanceRequest, event: Event): void {
+        event.stopPropagation();
+        this.actionRequest = request;
+        this.showRepairModal = true;
+        this.selectedFirmId = null;
+        this.actionNotes = '';
+    }
+
+    confirmSendForRepair(): void {
+        if (!this.actionRequest) return;
+        this.actionProcessing = true;
+
+        this.svc.sendForRepair(this.actionRequest.id, this.selectedFirmId || undefined, this.actionNotes).subscribe({
+            next: () => {
+                this.toast.success('Asset sent for repair');
+                this.closeModals();
+                this.loadData();
+            },
+            error: () => {
+                this.toast.error('Failed to update status');
+                this.actionProcessing = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    // ── Escalate ──
+
+    openEscalate(request: MaintenanceRequest, event: Event): void {
+        event.stopPropagation();
+        this.actionRequest = request;
+        this.showEscalateModal = true;
+        this.actionNotes = '';
+    }
+
+    confirmEscalate(): void {
+        if (!this.actionRequest) return;
+        this.actionProcessing = true;
+
+        this.svc.escalateToProcurement(this.actionRequest.id, this.actionNotes).subscribe({
+            next: () => {
+                this.toast.success('Escalated to procurement');
+                this.closeModals();
+                this.loadData();
+            },
+            error: () => {
+                this.toast.error('Failed to escalate');
+                this.actionProcessing = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    // ── Helpers ──
+
+    closeModals(): void {
+        this.showActionModal = false;
+        this.showAssignModal = false;
+        this.showRepairModal = false;
+        this.showEscalateModal = false;
+        this.actionProcessing = false;
+        this.actionRequest = null;
     }
 
     openDetail(request: MaintenanceRequest): void {
@@ -188,18 +320,36 @@ export class MaintenanceComponent implements OnInit {
         this.showDetail = true;
     }
 
-    getStatusClass(status: MaintenanceStatus): string {
+    getStatusClass(status: string): string {
         switch (status) {
-            case 'Pending': return 'pending';
-            case 'In Progress': return 'in-progress';
+            case 'PendingApproval': return 'pending';
+            case 'Approved': return 'approved';
+            case 'InProgress': return 'in-progress';
+            case 'TempAssigned': return 'assigned';
+            case 'SentForRepair': return 'repair';
+            case 'EscalatedToProcurement': return 'escalated';
             case 'Completed': return 'completed';
-            case 'Forwarded': return 'forwarded';
             case 'Rejected': return 'rejected';
             default: return '';
         }
     }
 
-    formatDate(dateStr: string): string {
+    getStatusLabel(status: string): string {
+        switch (status) {
+            case 'PendingApproval': return 'Pending Approval';
+            case 'Approved': return 'Approved';
+            case 'InProgress': return 'In Progress';
+            case 'TempAssigned': return 'Temp Assigned';
+            case 'SentForRepair': return 'Sent For Repair';
+            case 'EscalatedToProcurement': return 'Escalated';
+            case 'Completed': return 'Completed';
+            case 'Rejected': return 'Rejected';
+            default: return status;
+        }
+    }
+
+    formatDate(dateStr: string | undefined): string {
+        if (!dateStr) return '-';
         return new Date(dateStr).toLocaleDateString();
     }
 }

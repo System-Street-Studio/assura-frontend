@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
-
 export interface AttachmentFile {
   id?: string;
   fileName: string;
@@ -39,10 +38,6 @@ export class AssetService {
   private unifiedApiUrl = `${environment.apiUrl}/requests`;
 
   constructor(private http: HttpClient) { }
-
-  /*createRequest(data: any): Observable<AssetRequest> {
-    return this.http.post<AssetRequest>(this.apiUrl, data);
-  }*/
 
   //create request with file attachments
   createRequest(data: any, files?: File[]): Observable<AssetRequest> {
@@ -80,10 +75,22 @@ export class AssetService {
   }
 
   getEmployeeRequests(empId: string): Observable<AssetRequest[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/employee/${empId}`).pipe(
-      map((apiData: any[]) => apiData.map(item => ({
-        ...item
-      }) as AssetRequest))
+    return this.http.get<any[]>(this.unifiedApiUrl).pipe(
+      map(requests => requests.map(request => ({
+          id: request.id,
+          employeeId: String(request.requesterId || empId),
+          submittedBy: request.requesterName || 'Employee',
+          assetName: request.assetName || request.assetCode || 'N/A',
+          assetCategory: request.assetDivisionName || request.department || 'N/A',
+          quantity: request.quantity || 1,
+          priority: this.normalizePriority(request.priority),
+          reason: request.description || '',
+          description: request.description || '',
+          status: this.normalizeStatus(request.status),
+          submittedDate: request.createdAt || new Date().toISOString(),
+          requestType: this.normalizeRequestType(request.type),
+        } as AssetRequest))
+      )
     );
   }
 
@@ -101,5 +108,45 @@ export class AssetService {
         ...item
       }) as AssetRequest)
     );
+  }
+
+  normalizeStatus(status: string): string {
+    switch (status) {
+      case 'PendingDivisionHeadApproval':
+      case 'PendingStorekeeperReview':
+      case 'PendingProcurement':
+        return 'Pending';
+      case 'TemporaryAssigned':
+        return 'Approved';
+      default:
+        return status;
+    }
+  }
+
+  private normalizePriority(priority: any): string {
+    const priorityMap: Record<string, string> = {
+      1: 'Low',
+      2: 'Normal',
+      3: 'Medium',
+      4: 'High',
+      5: 'Urgent',
+    };
+
+    return priorityMap[String(priority)] || priority || 'Normal';
+  }
+
+  private normalizeRequestType(type: any): string {
+    if (typeof type === 'string') {
+      return type;
+    }
+
+    const requestTypeMap: Record<string, string> = {
+      1: 'New Asset',
+      2: 'Maintenance',
+      3: 'Discard',
+      4: 'Transfer',
+    };
+
+    return requestTypeMap[String(type)] || 'Request';
   }
 }

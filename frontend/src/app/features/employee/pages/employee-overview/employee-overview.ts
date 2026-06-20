@@ -62,23 +62,22 @@ export class EmployeeOverviewComponent implements OnInit {
             priority: (r.priority as any) || 'Medium'
           }));
         this.pendingRequests.set(pending);
-        this.isLoading.set(false); 
       },
       error: () => this.isLoading.set(false)
     });
 
-    /*// Fetch Dashboard Activity
+    // Fetch Dashboard Activity
     this.dashboardService.getDashboardData().subscribe({
       next: (data: DashboardData) => {
         const activities = data.recentActivity.map(a => ({
-          description: `${a.assetName} (${a.assetId}) - ${a.action}`,
+          description: `${a.assetName} (${a.assetCode}) - ${a.action}`,
           timestamp: this.formatTimeAgo(new Date(a.timestamp))
         }));
         this.recentActivities.set(activities);
-      
+        this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
-    });*/
+    });
   }
 
   private formatTimeAgo(date: Date): string {

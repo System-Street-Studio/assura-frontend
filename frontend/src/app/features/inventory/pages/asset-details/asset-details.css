@@ -1,3 +1,11 @@
+/**
+ * Styles for the Asset Details page component.
+ * 
+ * Layout Strategy:
+ * - Uses a CSS Grid for the primary content division (.content-grid) separating details from status.
+ * - Utilizes Flexbox extensively for inner component alignment (headers, tabs, detail fields).
+ * - Implements custom fixed overlays with CSS animations (fadeIn, popIn) for modal dialogs.
+ */
 :host {
   display: block;
 }

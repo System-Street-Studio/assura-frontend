@@ -1,14 +1,29 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     Dashboard Page — Storekeeper home screen
+     Sections:
+       1. Loading Skeleton — shown while API data is in-flight
+       2. Welcome Banner  — greeting, quick stats, quick-action buttons
+       3. KPI Grid        — 7 key metric cards with progress bars
+       4. Two-Column Row  — Recent Activity feed | Warranty Expiry alerts
+       5. Charts Grid     — 4 Chart.js charts (doughnut, line, 2x bar)
+       6. Anomalies       — Ghost assets, missing assets, maintenance overdue
+     ═══════════════════════════════════════════════════════════════ -->
 <div class="page">
 
-  <!-- ── Loading Skeleton ── -->
+  <!-- ── 1. Loading Skeleton ──────────────────────────────────────────────
+       Displayed while `loading` is true (during the API call).
+       Mimics the real page layout with animated shimmer placeholders so
+       the user understands content is loading, not that the page is broken. -->
   <div class="skeleton-view" *ngIf="loading">
     <div class="skeleton-banner"></div>
+    <!-- Render 6 skeleton KPI cards matching the real grid size -->
     <div class="kpi-grid">
       <div class="kpi-card skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
         <div class="skeleton-line short"></div>
         <div class="skeleton-line wide"></div>
       </div>
     </div>
+    <!-- Render 4 skeleton chart cards -->
     <div class="charts-grid">
       <div class="card skeleton-chart" *ngFor="let i of [1,2,3,4]">
         <div class="skeleton-line short"></div>
@@ -17,17 +32,26 @@
     </div>
   </div>
 
-  <!-- ── Dashboard Content ── -->
+  <!-- ── 2–6. Main Dashboard Content ─────────────────────────────────────
+       Only visible after data has loaded successfully. -->
   <div class="dashboard-content" *ngIf="!loading">
 
-    <!-- Welcome Banner -->
+    <!-- ── 2. Welcome Banner ── -->
+    <!-- Full-width teal gradient card with ambient background circles,
+         a contextual greeting, high-level stats, and navigation shortcuts. -->
     <section class="welcome-banner">
+      <!-- Decorative blurred circles; purely visual, pointer-events: none -->
       <div class="banner-bg-shape"></div>
       <div class="banner-bg-shape secondary"></div>
+
       <div class="welcome-left">
+        <!-- Greeting changes based on time of day using Angular's inline ternary -->
         <h1 class="welcome-title">Good {{ today.getHours() < 12 ? 'Morning' : today.getHours() < 17 ? 'Afternoon'
             : 'Evening' }}, Storekeeper</h1>
+            <!-- Current date formatted via Angular's `date` pipe -->
             <p class="welcome-sub">Here's your inventory overview for {{ today | date:'MMMM d, yyyy' }}</p>
+
+            <!-- Mini stat pills inside the banner — pulled from computed getters and KPI data -->
             <div class="banner-stats">
               <div class="banner-stat">
                 <span class="banner-stat-value">{{ utilizationRate }}%</span>
@@ -35,6 +59,7 @@
               </div>
               <div class="banner-stat-divider"></div>
               <div class="banner-stat">
+                <!-- `number` pipe adds thousand-separator formatting (e.g. 1,234) -->
                 <span class="banner-stat-value">{{ kpis.totalAssets | number }}</span>
                 <span class="banner-stat-label">Total Assets</span>
               </div>
@@ -45,7 +70,10 @@
               </div>
             </div>
       </div>
+
+      <!-- Quick-action buttons on the right side of the banner -->
       <div class="quick-actions">
+        <!-- routerLink navigates to the asset creation form (create mode) -->
         <a class="quick-btn primary" routerLink="/inventory/assets/new">
           <mat-icon>add_circle</mat-icon> New Asset
         </a>
@@ -55,8 +83,13 @@
       </div>
     </section>
 
-    <!-- KPI Cards -->
+    <!-- ── 3. KPI Cards Grid ── -->
+    <!-- 7 cards rendered in a 6-column responsive grid.
+         Cards with `routerLink` are clickable and navigate to a filtered assets view.
+         The `.kpi-bar-fill` width is bound to computed rate percentages via [style.width.%]. -->
     <section class="kpi-grid">
+
+      <!-- Total Assets: always 100% bar fill since it IS the total -->
       <div class="kpi-card clickable" routerLink="/inventory/assets">
         <div class="kpi-accent teal"></div>
         <div class="kpi-header">
@@ -70,6 +103,7 @@
         </div>
       </div>
 
+      <!-- Checked Out: bar fill = utilizationRate (checkedOut / totalAssets × 100) -->
       <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'checked_out' }">
         <div class="kpi-accent blue"></div>
         <div class="kpi-header">
@@ -83,6 +117,7 @@
         </div>
       </div>
 
+      <!-- Available: bar fill = availableRate (available / totalAssets × 100) -->
       <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'available' }">
         <div class="kpi-accent green"></div>
         <div class="kpi-header">
@@ -96,6 +131,7 @@
         </div>
       </div>
 
+      <!-- Total Value: no progress bar (monetary value, not a ratio) -->
       <div class="kpi-card">
         <div class="kpi-accent purple"></div>
         <div class="kpi-header">
@@ -106,6 +142,7 @@
         <div class="kpi-label">Total Value</div>
       </div>
 
+      <!-- Pending Requests: negative change badge only appears when count exceeds 15 -->
       <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'pending' }">
         <div class="kpi-accent orange"></div>
         <div class="kpi-header">
@@ -117,6 +154,7 @@
         <div class="kpi-label">Pending Requests</div>
       </div>
 
+      <!-- Maintenance Due: negative change badge appears when count exceeds 10 -->
       <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }">
         <div class="kpi-accent red"></div>
         <div class="kpi-header">
@@ -128,6 +166,8 @@
         <div class="kpi-label">Maintenance Due</div>
       </div>
 
+      <!-- Temporary Assigned: links to the approvals module.
+           Shows sub-details (awaiting pickup, escalated) in a meta row below the label. -->
       <div class="kpi-card clickable" routerLink="/approvals/requests" [queryParams]="{ tab: 'new' }">
         <div class="kpi-accent orange"></div>
         <div class="kpi-header">
@@ -143,40 +183,50 @@
       </div>
     </section>
 
-    <!-- Two-Column: Activity Feed + Warranty Alerts -->
+    <!-- ── 4. Two-Column Row: Recent Activity | Warranty Alerts ── -->
     <section class="two-column">
-      <!-- Recent Activity -->
+
+      <!-- Recent Activity Feed -->
+      <!-- `*ngIf="recentActivity.length; else emptyActivity"` conditionally shows the list
+           or falls back to a friendly empty state. -->
       <div class="panel">
         <div class="panel-header">
           <h2 class="panel-title"><mat-icon>history</mat-icon> Recent Activity</h2>
           <a class="panel-link" routerLink="/inventory/assets">View all <mat-icon>arrow_forward</mat-icon></a>
         </div>
         <div class="activity-list" *ngIf="recentActivity.length; else emptyActivity">
+          <!-- `let last = last` gives the last-item flag so we can hide the connector line -->
           <div class="activity-item" *ngFor="let item of recentActivity; let last = last">
+            <!-- Timeline column: coloured dot + vertical connector line (hidden on last item) -->
             <div class="activity-timeline">
               <div class="timeline-dot" [style.background]="item.color"></div>
               <div class="timeline-line" *ngIf="!last"></div>
             </div>
+            <!-- Action icon: background and foreground colour come from the activity item -->
             <div class="activity-icon" [style.background]="item.color + '14'" [style.color]="item.color">
               <mat-icon>{{ item.icon }}</mat-icon>
             </div>
             <div class="activity-body">
               <div class="activity-main">
                 <strong>{{ item.assetName }}</strong>
+                <!-- `formatActionLabel()` maps raw action keys to readable strings -->
                 <span class="activity-badge" [style.background]="item.color + '14'" [style.color]="item.color">
                   {{ formatActionLabel(item.action) }}
                 </span>
               </div>
+              <!-- Meta row: asset code · user · relative timestamp -->
               <div class="activity-meta">
                 <span class="activity-id">{{ item.assetCode }}</span>
                 <span class="activity-sep">·</span>
                 <span>{{ item.user }}</span>
                 <span class="activity-sep">·</span>
+                <!-- `formatTimeAgo()` converts the Date to a human-readable relative string -->
                 <span class="activity-time">{{ formatTimeAgo(item.timestamp) }}</span>
               </div>
             </div>
           </div>
         </div>
+        <!-- Empty state template reference -->
         <ng-template #emptyActivity>
           <div class="panel-empty">
             <mat-icon>inbox</mat-icon>
@@ -185,14 +235,17 @@
         </ng-template>
       </div>
 
-      <!-- Warranty Expiring -->
+      <!-- Warranty Expiry Panel -->
       <div class="panel">
         <div class="panel-header">
           <h2 class="panel-title"><mat-icon>shield</mat-icon> Warranty Expiring</h2>
+          <!-- Badge shows total count of expiring warranties -->
           <span class="panel-badge">{{ warrantyAlerts.length }} alerts</span>
         </div>
         <div class="warranty-list" *ngIf="warrantyAlerts.length; else emptyWarranty">
+          <!-- `[class]="'severity-' + alert.severity"` adds a coloured left border per severity -->
           <div class="warranty-item" *ngFor="let alert of warrantyAlerts" [class]="'severity-' + alert.severity">
+            <!-- Severity icon: colour and icon driven by alert.severity value -->
             <div class="warranty-severity-icon" [class]="alert.severity">
               <mat-icon>{{ alert.severity === 'critical' ? 'error' : alert.severity === 'warning' ? 'warning' : 'info'
                 }}</mat-icon>
@@ -202,6 +255,7 @@
               <div class="warranty-meta">{{ alert.assetId }} · {{ alert.category }}</div>
             </div>
             <div class="warranty-right">
+              <!-- Badge: days remaining with colour matching severity -->
               <span class="warranty-badge" [class]="alert.severity">
                 {{ alert.daysRemaining }}d left
               </span>
@@ -218,8 +272,13 @@
       </div>
     </section>
 
-    <!-- Charts Grid -->
+    <!-- ── 5. Charts Grid ── -->
+    <!-- 2×2 grid of Chart.js charts.
+         Each card uses `baseChart` directive from ng2-charts, with separate [data] and [options] bindings.
+         The `type` attribute specifies which Chart.js renderer to use. -->
     <section class="charts-grid">
+
+      <!-- Doughnut: Assets by Category — shows proportional breakdown across asset types -->
       <div class="card">
         <div class="card-accent teal"></div>
         <div class="card-header">
@@ -230,10 +289,12 @@
           <div class="card-icon-wrap teal"><mat-icon>pie_chart</mat-icon></div>
         </div>
         <div class="chart-area doughnut">
+          <!-- doughnutData and doughnutOptions are set up in prepareCharts() -->
           <canvas baseChart [data]="doughnutData" [options]="doughnutOptions" type="doughnut"></canvas>
         </div>
       </div>
 
+      <!-- Line: Checkout Trend — monthly volume of checkout activity -->
       <div class="card">
         <div class="card-accent blue"></div>
         <div class="card-header">
@@ -248,6 +309,7 @@
         </div>
       </div>
 
+      <!-- Bar: Assets by Status — lifecycle distribution (InUse, InStore, etc.) -->
       <div class="card">
         <div class="card-accent green"></div>
         <div class="card-header">
@@ -262,6 +324,7 @@
         </div>
       </div>
 
+      <!-- Bar: Assets by Division — how assets are spread across business units -->
       <div class="card">
         <div class="card-accent purple"></div>
         <div class="card-header">
@@ -277,12 +340,21 @@
       </div>
     </section>
 
-    <!-- Anomalies -->
+    <!-- ── 6. Asset Anomalies ── -->
+    <!-- Three cards highlighting operational problems that require investigation.
+         Each links to the assets list with a filter query param for drill-down.
+         Severity is indicated by the left border colour:
+           critical (red) → ghost assets
+           warning (amber) → missing assets
+           info (blue) → maintenance overdue -->
     <section class="anomalies">
       <h2 class="section-title"><mat-icon>warning</mat-icon> Asset Anomalies</h2>
       <div class="anomaly-row">
+
+        <!-- Ghost Assets: exist in database but cannot be located physically -->
         <div class="anomaly-card critical">
           <div class="anomaly-icon-wrap critical-bg">
+            <!-- Pulsing red dot signals urgent attention needed -->
             <span class="anomaly-pulse"></span>
             <mat-icon>visibility_off</mat-icon>
           </div>
@@ -294,6 +366,7 @@
           </div>
         </div>
 
+        <!-- Missing Assets: not found during a physical audit/scan -->
         <div class="anomaly-card warning">
           <div class="anomaly-icon-wrap warning-bg"><mat-icon>search_off</mat-icon></div>
           <div class="anomaly-body">
@@ -304,6 +377,7 @@
           </div>
         </div>
 
+        <!-- Maintenance Overdue: assets whose scheduled service date has passed -->
         <div class="anomaly-card info">
           <div class="anomaly-icon-wrap info-bg"><mat-icon>build_circle</mat-icon></div>
           <div class="anomaly-body">
@@ -317,4 +391,5 @@
     </section>
 
   </div>
+
 </div>
