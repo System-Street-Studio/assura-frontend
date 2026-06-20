@@ -13,7 +13,7 @@ interface Asset {
   assetName: string;
   image: string;
   conditionStatus: string;
-  assignedDate: string;
+  //assignedDate: string;
   status: string;
   category: string;
   description?: string;
@@ -58,6 +58,8 @@ export class EmployeeAssetsComponent implements OnInit {
   statusMenuOpen = signal(false);
   categoryMenuOpen = signal(false);
 
+  viewMode = signal<'grid' | 'list'>('grid');
+
   onSearchChange(value: string) {
     this.searchTerm.set(value);
     this.currentPage.set(1);
@@ -84,9 +86,9 @@ export class EmployeeAssetsComponent implements OnInit {
           serialNumber: a.serialNumber || 'N/A',
           description: a.notes ||  'N/A',
           assignedEmployee: a.assignedUserName || 'Me',
-          assignedDate: a.assetDate,
+          assignedDate:  'N/A',
+          conditionStatus: 'N/A',
           status: this.formatStatus(a.status),
-          conditionStatus: 'Good',
           image: ''
         }));
         this.assets.set(mapped);
@@ -98,12 +100,18 @@ export class EmployeeAssetsComponent implements OnInit {
     });
   }
 
+
+  setViewMode(mode: 'grid' | 'list') {
+  this.viewMode.set(mode);
+  }
+
   private formatStatus(status: string): string {
     const map: Record<string, string> = {
       'InUse': 'In Use',
       'InStore': 'Stored',
       'UnderMaintenance': 'Maintenance',
-      'Discarded': 'Discarded'
+      'Discarded': 'Discarded',
+      'Transferred': 'Transferred'
     };
     return map[status] || status;
   }

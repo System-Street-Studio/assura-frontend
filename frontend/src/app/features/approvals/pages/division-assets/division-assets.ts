@@ -20,6 +20,8 @@ interface Asset {
   assignedUserId?: string;
   divisionId?: string;
   serialNumber?: string;
+  //conditionStatus?: string; 
+  //assignedDate?: string;
 }
 
 @Component({

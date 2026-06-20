@@ -3,110 +3,89 @@
     
     <div class="header-section">
       <h1 class="page-title">Division Assets</h1>
-      @if (selectedAsset()) {
-        <div class="back-btn" (click)="goBack()">
-          <mat-icon>arrow_back</mat-icon> 
-        </div>
-      }
     </div>
 
+
+    <!--Display asset details if an asset is selected, otherwise show the overview and list-->
     @if (selectedAsset(); as asset) {
-      <div class="details-view-container">
-        <h3 class="section-label">Asset Details: {{ asset.name }}</h3>
-        
-        <div class="details-layout">
-          <div class="card-panel main-info">
-            <h3>General Information</h3>
-            <div class="asset-identity">
-              <!--<img [src]="asset.image" alt="Asset" class="detail-img">-->
-              <div class="identity-text">
-                <p class="name-bold">{{ asset.name }}</p>
-                <p class="id-sub">ID: {{ asset.id }}</p>
-                <p class="type-sub">{{ asset.category }}</p>
-              </div>
-            </div>
-            <hr class="divider">
-            
-            <div class="detail-row">
-              <span class="label">Asset Information :</span>
-              <span class="value">{{ asset.specs }}</span>
-            </div>
 
-            <div class="detail-row">
-              <span class="label">Serial Number :</span>
-              <span class="value">{{ asset.serialNumber }}</span>
-            </div>
+      <!--asset details section-->
+    <div class="details-view">
+      <button (click)="goBack()" class="back-link">
+        <mat-icon>arrow_back</mat-icon> Back to Assets
+      </button>
 
-            <div class="detail-row">
-              <span class="label">Assigned Employee :</span>
-              <span class="value">{{ asset.assignedUserName  }}</span>
-            </div>
-
-            @if (asset.assignedUserId) {
-              <div class="detail-row">
-                <span class="label">Assigned User ID :</span>
-                <span class="value">{{ asset.assignedUserId }}</span>
-              </div>
-            }
-
-            <div class="detail-row">
-              <span class="label">Asset Category :</span>
-              <span class="value">{{ asset.category }}</span>
-            </div>
-
-            <div class="detail-row">
-              <span class="label">Owned Division :</span>
-              <span class="value">{{ asset.division }}</span>
-            </div>
-
-            <div class="detail-row">
-              <span class="label">Status :</span>
-              <span class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">
-                {{ asset.status }}
-              </span>
-            </div>
-
-           
-          </div>
-
-          <div class="side-column">
-            <div class="card-panel">
-              <h3>Asset Lifecycle</h3>
-              <div class="timeline">
-
-                <div class="timeline-item">
-                  <span class="date">2022-01-10</span>
-                  <p class="event">Purchased: Acquired new device</p>
-                </div>
-
-                <div class="timeline-item">
-                  <span class="date">2022-01-20</span>
-                  <p class="event">Assigned: Given to {{ asset.assignedUserName }}</p>
-                </div>
-
-              </div>
-            </div>
-
-            <div class="card-panel mt-20">
-
-              
-
-              <div class="detail-row">
-                <span class="label">Purchased Date:</span>
-                <span class="value">2022-01-10</span>
-              </div>
-
-              <div class="detail-row">
-                <span class="label">Last Inspected:</span>
-                <span class="value">2024-11-15</span>
-              </div>
-
-            </div>
+      <div class="info-card">
+        <div class="title">
+          <h2>General Information</h2>
+        </div>
+        <div class="info-header">
+         <!-- <img [src]="selectedAsset()?.image" class="info-img"> -->
+          <div class="info-title">
+            <h2>{{asset.name }}</h2>
+            <p><strong>Asset ID: #{{ asset.id }}</strong></p>
           </div>
         </div>
+
+        <div class="info-body">
+
+          <div class="info-row">
+            <span class="label">Asset Specifications :</span>
+            <div class="val">
+              <p> {{ asset.specs}}</p>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Assigned Employee :</span>
+            <span class="val">{{ asset.assignedUserName }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Assigned Employee ID :</span>
+            <span class="val">#{{ asset.assignedUserId }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Asset Category:</span>
+            <span class="val">{{ asset.category }}</span>
+          </div>
+
+           <div class="info-row">
+            <span class="label">Serial Number:</span>
+            <span class="val">{{ asset.serialNumber }}</span>
+          </div>
+
+          <!--
+          <div class="info-row">
+            <span class="label">Assigned Date :</span>
+            <span class="val">{{ asset.assignedDate | date:'yyyy-MM-dd' }}</span>
+          </div>-->
+
+          <div class="info-row">
+            <span class="label">Status :</span>
+            <span class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">{{ asset.status }}</span>
+          </div>
+
+          <!--
+          <div class="info-row">
+            <span class="label">Condition :</span>
+            <span class="val">{{asset.conditionStatus }}</span>
+          </div>-->
+
+        </div>
+
+       
+
       </div>
 
+    </div>
+
+
+
     } @else {
+
+      <!-- Overview and list of assets -->
       <section class="overview-section">
       <h3 class="section-label">Overview</h3>
       <div class="stat-grid">
@@ -141,6 +120,7 @@
       </div>
     </section>
 
+      <!-- List of assets with search and filter options -->
       <section class="assets-list-section">
       <h3 class="section-label">Division Assets</h3>
       
@@ -153,7 +133,7 @@
           </div>
         </div>
         
-        <div class="selected-filters">
+      <div class="selected-filters">
     <div class="styled-select" data-filter="category">
       <button class="filter-btn" (click)="toggleCategoryMenu($event)">
         <div class="filter-icon">
@@ -237,8 +217,9 @@
           <mat-icon style="font-size: 48px; width: 48px; height: 48px;">inventory_2</mat-icon>
           <p>No assets match your search or filter criteria.</p>
         </div>
-}
-
+          }
+          
+        <!-- Pagination -->
        @if (filteredAssets().length > 0) {
         <app-pagination 
           [currentPage]="currentPage()" 
