@@ -58,25 +58,33 @@ export class ProcurementMaintenanceComponent implements OnInit {
     this.isLoadingRequests = true;
     this.procurementService.getPendingRequests().subscribe({
       next: (data: any[]) => {
-        this.pendingRequests = data.map((r: any) => ({
-          id: r.id,
-          employeeName: r.employeeName,
-          divisionName: r.divisionName,
-          date: r.date,
-          specifications: r.specifications,
-          specialNote: r.specialNote,
-          type: r.type,
-          description: r.description,
-          assetId: r.assetId,
-          // Template-compatible aliases
-          assetName: r.description || r.specialNote || `Request #${r.id}`,
-          division: r.divisionName,
-          timestamp: r.date ? new Date(r.date).toLocaleDateString() : 'N/A',
-          specificationsArray: r.specifications ? [r.specifications] : []
-        }));
+        // Filter to show only maintenance and repair requests
+        this.pendingRequests = data
+          .filter((r: any) => 
+            r.type?.toLowerCase() === 'maintenance' || 
+            r.type?.toLowerCase() === 'repair'
+          )
+          .map((r: any) => ({
+            id: r.id,
+            employeeName: r.employeeName,
+            divisionName: r.divisionName,
+            date: r.date,
+            specifications: r.specifications,
+            specialNote: r.specialNote,
+            type: r.type,
+            description: r.description,
+            assetId: r.assetId,
+            // Template-compatible aliases
+            assetName: r.description || r.specialNote || `Request #${r.id}`,
+            division: r.divisionName,
+            timestamp: r.date ? new Date(r.date).toLocaleDateString() : 'N/A',
+            specificationsArray: r.specifications ? [r.specifications] : []
+          }));
         this.filteredRequests = [...this.pendingRequests];
         if (this.filteredRequests.length > 0) {
           this.selectedRequest = this.filteredRequests[0];
+        } else {
+          this.selectedRequest = null;
         }
         this.isLoadingRequests = false;
       },
