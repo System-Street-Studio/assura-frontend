@@ -44,7 +44,7 @@ export class SharedSidebarComponent {
     { label: 'Request List', icon: 'swap_horiz', link: '/inventory/asset-requests', roles: ['Storekeeper', 'Admin'] },
     { label: 'Check Out', icon: 'exit_to_app', link: '/inventory/check-out', roles: ['Storekeeper', 'Admin'] },
     { label: 'Check In', icon: 'login', link: '/inventory/check-in', roles: ['Storekeeper', 'Admin'] },
-    { label: 'Maintenance', icon: 'build', link: '/inventory/maintenance', roles: ['Procurement', 'Storekeeper', 'Admin'] },
+    { label: 'Maintenance', icon: 'build', link: '/inventory/maintenance', roles: ['Storekeeper', 'Admin'] },
 
     // HR section
     { label: 'Overview', icon: 'home', link: '/hr/overview', roles: ['HR', 'Admin'] },
