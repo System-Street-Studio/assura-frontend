@@ -72,7 +72,7 @@
       </div>
 
       <div class="timeline">
-        @for (log of filteredLogs().slice(0, 4); track log.time + log.action + log.actor) {
+        @for (log of filteredLogs().slice(0, 4); track $index) {
           <article class="timeline-item" [class]="log.status.toLowerCase()">
             <span class="timeline-dot" aria-hidden="true"></span>
             <div>
@@ -109,7 +109,7 @@
           <span>Status</span>
         </div>
 
-        @for (log of filteredLogs(); track log.date + log.time + log.action + log.actor) {
+        @for (log of filteredLogs(); track $index) {
           <div class="table-row">
             <div>
               <strong>{{ log.time }}</strong>
