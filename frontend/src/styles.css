@@ -267,3 +267,32 @@ body {
         opacity: 1;
     }
 }
+
+/* =========================================
+   GLOBAL PRINT STYLES
+   ========================================= */
+@media print {
+    /* Hide layout navigational wrappers */
+    app-shared-sidebar,
+    app-shared-navbar,
+    .sidebar,
+    .navbar {
+        display: none !important;
+    }
+    
+    /* Reset main shell layout spacing constraints so label prints clean */
+    .shell-layout,
+    .main-area,
+    .main-content,
+    .content,
+    .page-content {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+}
