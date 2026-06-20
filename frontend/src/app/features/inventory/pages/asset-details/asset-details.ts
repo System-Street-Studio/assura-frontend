@@ -67,12 +67,12 @@ export class AssetDetailsComponent implements OnInit {
       next: (a: AssetDetail) => {
         this.asset = a;
         // Move to next macro-task to avoid NG0100
-        setTimeout(() => {
+        setTimeout(async () => {
           if (a.qrCode?.trim()) {
             this.qrDataUrl = `data:image/png;base64,${a.qrCode}`;
           } else {
             // Encode the Asset Code in QR as requested by user for mobile app compatibility
-            void this.generateQr(a.assetCode);
+            await this.generateQr(a.assetCode);
           }
           this.loading = false;
           this.cdr.detectChanges();
