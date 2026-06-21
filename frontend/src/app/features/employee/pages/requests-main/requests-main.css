@@ -92,8 +92,8 @@ mat-icon.cancel { font-size: 20px;color: #ef4444;}
   font-family: 'jost';
   box-shadow: 0 20px 40px rgba(2, 39, 126, 0.3);
   display: flex;
-  align-items: center;    /* Vertically centers icon and text */
-  justify-content: center; /* Horizontally centers the group */
+  align-items: center;    
+  justify-content: center; 
   gap: 12px;              
 }
 
@@ -186,6 +186,7 @@ mat-icon.cancel { font-size: 20px;color: #ef4444;}
   font-weight: 500;
 }
 
+/* Status Pills */
 .status-pill {
   font-size: 12px;
   font-weight: 700;
@@ -196,11 +197,31 @@ mat-icon.cancel { font-size: 20px;color: #ef4444;}
   display: inline-block;
 }
 
-.status-pill.pending { color: #d946ef;border: 1px solid #d946ef;background-color: #edd6ff;}
-.status-pill.approved { color: #22c55e; border: 1px solid #68d447;background-color: #e1f7d2;}
-.status-pill.rejected { color: #ef4444;border: 1px solid #ab3324;background-color: #fad3ce; }
-.status-pill.cancelled { color: #64748b; border: 1px solid #5970f3;background-color: #ceb7fe;}
-.status-pill.in-progress { color: #0783ff; border: 1px solid #188eef; background-color: #c4e3fc; }
+.status-pill.pending { 
+  color: #d946ef;
+  border: 1px solid #d946ef;
+  background-color: #edd6ff;
+}
+.status-pill.approved { 
+  color: #22c55e; 
+  border: 1px solid #68d447;
+  background-color: #e1f7d2;
+}
+.status-pill.rejected { 
+  color: #ef4444;
+  border: 1px solid #ab3324;
+  background-color: #fad3ce; 
+}
+.status-pill.cancelled { 
+  color: #64748b; 
+  border: 1px solid #5970f3;
+  background-color: #ceb7fe;
+}
+.status-pill.in-progress { 
+  color: #0783ff; 
+  border: 1px solid #188eef; 
+  background-color: #c4e3fc; 
+}
 
 .priority-pill {
   font-size: 12px;
@@ -239,11 +260,11 @@ mat-icon.cancel { font-size: 20px;color: #ef4444;}
 
 /* Target the icon inside the button */
 mat-icon {
-  font-size: 18px;      /* Default is usually 24px */
-  width: 18px;         /* Match width to font-size */
-  height: 18px;        /* Match height to font-size */
-  line-height: 18px;   /* Ensures vertical centering */
-  display: flex;       /* Helps with alignment */
+  font-size: 18px;  
+  width: 18px;         
+  height: 18px;        
+  line-height: 18px;   
+  display: flex;       
   align-items: center;
   justify-content: center;
 }
@@ -255,6 +276,7 @@ mat-icon {
   align-items: center;
 }
 
+/*view all link*/
 .view-all {
   font-size: 12px;
   color: #3b82f6;
@@ -333,6 +355,7 @@ mat-icon {
   color: #0fb3ba !important;
 }
 
+/* --- Empty State --- */
 .empty-state {
   display: flex;                  
   flex-direction: column;       

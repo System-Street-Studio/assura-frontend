@@ -4,6 +4,7 @@
     <a (click)="onCancel()" class="back-link">←</a>
     <h2 class="page-title">Temporary Asset Transfer Requests</h2>
 
+    <!-- header -->
     <div class="form-card">
       <div class="form-header">
         <h3>Request Details</h3>
@@ -12,12 +13,14 @@
 
       <form (ngSubmit)="onSubmit()" class="asset-form">
 
+        <!-- asset Name-->
         <div class="form-group">
           <label>Required Asset <span class="required" >*</span></label>
           <input type="text" [ngModel]="assetName()" (ngModelChange)="assetName.set($event)" name="assetName"
             placeholder="Type the name/description of the asset you need..." class="form-control" required>
         </div>
 
+        <!-- Catagory -->
         <div class="form-group">
           <label>Asset Category <span class="required" >*</span></label>
           <select [ngModel]="category()" (ngModelChange)="category.set($event)" name="category" class="form-control">
@@ -28,6 +31,7 @@
           </select>
         </div>
 
+        <!-- Specifications -->
         <div class="form-group">
           <label>Required Specifications</label>
           <textarea [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"
@@ -35,12 +39,14 @@
             rows="3"></textarea>
         </div>
 
+        <!-- Quantity -->
         <div class="form-group">
           <label>Quantity</label>
           <input type="number" [ngModel]="quantity()" (ngModelChange)="quantity.set($event)" name="quantity"
             class="form-control">
         </div>
 
+        <!-- Priority -->
         <div class="form-group">
           <label>Priority</label>
           <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority" class="form-control">
@@ -51,12 +57,14 @@
           </select>
         </div>
 
+        <!-- Reason for Transfer -->
         <div class="form-group">
           <label>Reason for transfer <span class="required" >*</span></label>
           <textarea [ngModel]="reason()" (ngModelChange)="reason.set($event)" name="reason"
             placeholder="Briefly explain why this asset transfer is needed..." class="form-control" rows="3"></textarea>
         </div>
 
+        <!-- Duration Selection -->
         <div class="duration-section">
           <label class="section-title">Select Duration</label>
 
@@ -88,6 +96,7 @@
           </div>
         </div>
 
+        <!-- File Attachment -->
         <div class="form-group">
           <label>Attachment (Optional)</label>
           @if (selectedFiles().length === 0) {
@@ -119,6 +128,7 @@
           }
         </div>
 
+      <!-- file submit-->
         <div class="form-actions">
           <button type="button" class="cancel-btn" (click)="onCancel()" [disabled]="isSubmitting()">Cancel</button>
           <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
@@ -134,3 +144,14 @@
     </div>
   </div>
 </div>
+
+
+// Result Overlay
+@if(showResult()){
+  <app-result-overlay
+    [type]="resultType()"
+    [title]="resultTitle()"
+    [message]="resultMessage()"
+    (closed)="onResultClosed()">
+  </app-result-overlay>
+}

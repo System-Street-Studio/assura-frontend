@@ -76,6 +76,7 @@
             </div>
           }
           
+          // Show selected files with option to remove
           @if (selectedFiles().length > 0) {
             <div class="selected-files" >
               <p class="files-label">Selected Files: {{ selectedFiles().length }}</p>
@@ -111,3 +112,14 @@
     </div> <!-- Form Card End -->
   </div> <!-- Content Padding End -->
 </div> <!-- Main Content End -->
+
+
+// Result Overlay
+@if(showResult()){
+  <app-result-overlay
+    [type]="resultType()"
+    [title]="resultTitle()"
+    [message]="resultMessage()"
+    (closed)="onResultClosed()">
+  </app-result-overlay>
+}

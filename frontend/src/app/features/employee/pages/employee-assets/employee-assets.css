@@ -444,7 +444,7 @@ mat-icon {
   gap: 20px;
 }
 
-/* Grid Card Styles */
+/* Grid Styles */
 .asset-grid.grid .asset-card {
   background: #ffffff;
   border-radius: 12px;
@@ -545,7 +545,7 @@ mat-icon {
   background-color: #008296;
 }
 
-
+/*asset card styles*/
 .asset-card {
   background: white;
   border-radius: 10px;

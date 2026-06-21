@@ -74,6 +74,7 @@ export class EmployeeAssetsComponent implements OnInit {
 
   assets = signal<Asset[]>([]);
 
+  //map asset details
   ngOnInit() {
     this.isLoading.set(true);
     this.assetService.getAll().subscribe({
@@ -100,7 +101,7 @@ export class EmployeeAssetsComponent implements OnInit {
     });
   }
 
-
+//view mode change
   setViewMode(mode: 'grid' | 'list') {
   this.viewMode.set(mode);
   }
@@ -116,12 +117,13 @@ export class EmployeeAssetsComponent implements OnInit {
     return map[status] || status;
   }
 
-
+//catagories
   categories = computed(() => {
     const uniqueCategories = [...new Set(this.assets().map(a => a.category))];
     return uniqueCategories.sort();
   });
 
+  //assets counts
   totalAssets = computed(() => this.assets().length);
 
   assetsInUse = computed(() =>
@@ -140,6 +142,7 @@ export class EmployeeAssetsComponent implements OnInit {
     this.assets().filter(a => a.status === 'Discarded').length
   );
 
+  //filter section
   filteredAssets = computed(() => {
     const term = this.searchTerm().toLowerCase();
     const status = this.selectedStatus();
@@ -153,6 +156,7 @@ export class EmployeeAssetsComponent implements OnInit {
     });
   });
 
+
   totalPages = computed(() => Math.max(1, Math.ceil(this.filteredAssets().length / this.pageSize)));
 
   paginatedAssets = computed(() => {
@@ -162,44 +166,52 @@ export class EmployeeAssetsComponent implements OnInit {
 
   pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
 
+  // navigation to pages
   onPageChange(page: number) {
     this.currentPage.set(page);
   }
 
-
+//view button
   viewDetails(asset: Asset) {
     this.selectedAsset.set(asset);
   }
 
+  //back button
   backToList() {
     this.selectedAsset.set(null);
   }
 
+  //filter by status
   setStatus(status: string) {
     this.selectedStatus.set(status === 'All' ? '' : status);
     this.statusMenuOpen.set(false);
     this.currentPage.set(1);
   }
 
+  //fileter by category
   setCategory(category: string) {
     this.selectedCategory.set(category === 'All Categories' ? '' : category);
     this.categoryMenuOpen.set(false);
     this.currentPage.set(1);
   }
 
+  //get status lables
   getStatusLabel(): string {
     return this.selectedStatus() || 'All Status';
   }
 
+  //get asset categories
   getCategoryLabel(): string {
     return this.selectedCategory() || 'All Categories';
   }
 
+  //status badge
   getStatusBadgeClass(status: string | undefined): string {
     if (!status) return '';
     return status.replace(' ', '-').toLowerCase();
   }
 
+  //button for go to discard form
   goToMaintenanceForm(): void {
     if (this.selectedAsset()) {
       this.router.navigate(['/employee/maintenance-form'], {
@@ -208,6 +220,7 @@ export class EmployeeAssetsComponent implements OnInit {
     }
   }
 
+  //button for go to discard form
   goToDiscardForm(): void {
     if (this.selectedAsset()) {
       this.router.navigate(['/employee/discard-form'], {

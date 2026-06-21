@@ -15,6 +15,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
   templateUrl: './requests-main.html',
   styleUrl: './requests-main.css',
 })
+
 export class RequestsMainComponent implements OnInit {
   recentRequests = signal<AssetRequest[]>([]);
   currentPage = signal(1);
@@ -69,8 +70,9 @@ export class RequestsMainComponent implements OnInit {
   
 
   constructor(private assetService: AssetService, private cdr: ChangeDetectorRef, private router: Router, private authService: AuthService) {}
-isLoading = signal(false);
+  isLoading = signal(false);
 
+  // Fetch employee requests on component initialization
   ngOnInit() {
     const empId = this.authService.getUserId();
     if (!empId) {
@@ -80,10 +82,11 @@ isLoading = signal(false);
 
     this.isLoading.set(true);
 
+    // Fetch requests for the logged-in employee
     this.assetService.getEmployeeRequests(empId).subscribe({
       next: (data: AssetRequest[]) => {
 
-          // // Keep only the latest 20 requests
+          // Keep only the latest 20 requests
         const limitedData = data.slice(0, this.maxRequests);
         this.recentRequests.set(limitedData);
         this.currentPage.set(1);
@@ -97,14 +100,17 @@ isLoading = signal(false);
     });
   }
 
+  // Navigate to request details page
   onPageChange(page: number) {
     this.currentPage.set(page);
   }
 
+  // TrackBy function for ngFor to optimize rendering
   trackByReqId(index: number, req: AssetRequest): number {
     return req.id;
   }
 
+  // Navigate to request details page
   viewRequestDetails(request: AssetRequest) {
     this.router.navigate(['/employee/request-details', request.id], { state: { request } });
   }

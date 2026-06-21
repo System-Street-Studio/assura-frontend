@@ -4,6 +4,7 @@
   <div class="header-row">
     <h2 class="page-title">My All Requests ( {{ requests().length }} )</h2>
 
+    <!--Search and filter-->
     <div class="controls">
       <div class="search-container">
         <mat-icon class="search-icon">search</mat-icon>
@@ -32,6 +33,7 @@
     </div>
   </div>
 
+  <!--Loarding state-->
   @if (isLoading()) {
     <div class="loading-state">
       <mat-icon class="spin-animation">sync</mat-icon>
@@ -39,6 +41,7 @@
     </div>
   } @else {
     
+    <!--requests table-->
     @if (paginatedRequests().length > 0) {
       <table class="requests-table">
         <thead>
@@ -83,6 +86,7 @@
         </tbody>
       </table>
 
+      <!--pagination-->
       <app-pagination 
         [currentPage]="currentPage()" 
         [totalPages]="totalPages()" 
@@ -91,6 +95,7 @@
       </app-pagination>
 
     } @else {
+      <!--empty state-->
       <div class="empty-state">
          <mat-icon class="empty-icon">layers_clear</mat-icon>
         <h3>No Records Found</h3>

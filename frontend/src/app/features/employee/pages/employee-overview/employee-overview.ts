@@ -81,6 +81,7 @@ export class EmployeeOverviewComponent implements OnInit {
     });*/
   }
 
+  // Simple time ago formatter for recent activity timestamps
   private formatTimeAgo(date: Date): string {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();

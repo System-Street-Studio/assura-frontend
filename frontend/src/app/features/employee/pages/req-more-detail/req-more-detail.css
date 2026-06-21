@@ -3,6 +3,7 @@
   font-family: 'jost', sans-serif;
 }
 
+/*page header*/
 .detail-container {
   padding: 20px;
   background-color: #efefef;
@@ -13,6 +14,7 @@
   margin-bottom: 30px;
 }
 
+/* back link styles */
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -51,6 +53,7 @@
   gap: 20px;
 }
 
+/*card styles*/
 .card {
   background: white;
   border-radius: 12px;
@@ -126,6 +129,7 @@
   border-bottom: 2px solid #f0f0f0;
 }
 
+/*detail row styles*/
 .detail-row {
   display: grid;
   grid-template-columns: 180px 1fr;
@@ -168,8 +172,7 @@
   width: fit-content;
 }
 
-/* Transfer Details Special Styling */
-/* Now uses same layout as all detail-rows */
+
 
 /* Status Badges */
 .status-badge {
@@ -181,12 +184,36 @@
   border: 1px solid;
 }
 
-.status-pending { background: #fce4f9; color: #da05bd; border-color: #f870d9; }
-.status-approved { background: #dffee1; color: #05a50d; border-color: #48fb51; }
-.status-in-progress { background: #c4e3fc; color: #0783ff; border-color: #188eef; }
-.status-rejected { background: #fedadf; color: #f60101; border-color: #f95f5f; }
-.status-cancelled { background: #e0e0e0; color: #606060; border-color: #bdbdbd; }
-.status-critical { background: #ffe0e0; color: #d32f2f; border-color: #ff5252; }
+.status-pending { 
+  background: #fce4f9; 
+  color: #da05bd; 
+  border-color: #f870d9; 
+}
+.status-approved { 
+  background: #dffee1; 
+  color: #05a50d; 
+  border-color: #48fb51; 
+}
+.status-in-progress { 
+  background: #c4e3fc; 
+  color: #0783ff; 
+  border-color: #188eef; 
+}
+.status-rejected { 
+  background: #fedadf; 
+  color: #f60101; 
+  border-color: #f95f5f; 
+}
+.status-cancelled { 
+  background: #e0e0e0; 
+  color: #606060; 
+  border-color: #bdbdbd; 
+}
+.status-critical { 
+  background: #ffe0e0; 
+  color: #d32f2f; 
+  border-color: #ff5252; 
+}
 
 /* Priority Badges */
 .priority-badge {
@@ -273,6 +300,7 @@
   background-color: #d93025;
 }
 
+/* Loading, Error, and No Data States */
 .loading,
 .error-message,
 .no-data {
@@ -341,7 +369,7 @@
   font-size: 15px;
 }
 
-/* ===== ATTACHMENTS SECTION STYLES ===== */
+/*  ATTACHMENTS SECTION STYLES */
 
 .attachments-section {
   border-top: 3px solid #00afb5;

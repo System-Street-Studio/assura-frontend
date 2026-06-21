@@ -285,6 +285,7 @@ select, textarea {
   opacity: 0.5;
 }
 
+/*spinner styles*/
 .spinner {
   animation: spin 1s linear infinite;
 }

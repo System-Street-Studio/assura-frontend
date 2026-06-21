@@ -108,7 +108,7 @@
   display: flex;
   align-items: center;
   border: 1px solid #ddd;
-  border-radius: 10px; /* Rounded corners like in image */
+  border-radius: 10px; 
   padding: 1px 12px;
   background: #fff;
 }
@@ -127,6 +127,7 @@
   width: 40px;
 }
 
+/* File Upload Section */
 .upload-box {
   border: 2px dashed #d0d8e0;
   border-radius: 8px;
@@ -358,6 +359,7 @@
   opacity: 0.5;
 }
 
+/*Spinner styles*/
 .spinner {
   animation: spin 1s linear infinite;
 }

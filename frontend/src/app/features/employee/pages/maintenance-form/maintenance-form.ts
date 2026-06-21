@@ -7,11 +7,12 @@ import { AssetService as AssetRequestService } from '../../services/asset-reques
 import { AssetService } from '../../../inventory/services/asset.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AssetDetail } from '../../../inventory/models/asset.model';
+import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 
 @Component({
   selector: 'app-maintenance-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, ResultOverlayComponent],
   templateUrl: './maintenance-form.html',
   styleUrls: ['./maintenance-form.css']
 })
@@ -21,6 +22,12 @@ export class MaintenanceFormComponent implements OnInit {
   private assetService = inject(AssetService);
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
+
+  // Result Signals
+  showResult = signal(false);
+  resultType = signal<'success' | 'error'>('success');
+  resultTitle = signal('');
+  resultMessage = signal('');
 
   // Form Signals
   assignedAssets = signal<AssetDetail[]>([]);
@@ -32,6 +39,7 @@ export class MaintenanceFormComponent implements OnInit {
   selectedFiles = signal<File[]>([]);
   isSubmitting = signal(false);
 
+  // Load assigned assets on init
   ngOnInit(): void {
     this.assetService.getAll().subscribe({
       next: (assets) => {
@@ -75,16 +83,25 @@ export class MaintenanceFormComponent implements OnInit {
       quantity: 1
     };
 
+    // Call service to create request with attachments
     this.assetRequestService.createRequest(requestData, this.selectedFiles()).subscribe({
       next: (res: any) => {
         this.isSubmitting.set(false);
-        alert(res?.message || 'Maintenance Request Submitted Successfully!');
+        this.resultType.set('success');
+        this.resultTitle.set('Success');
+        this.resultMessage.set(res?.message || 'Maintenance Request Submitted Successfully!');
+        this.showResult.set(true);
         this.location.back();
       },
       error: (err) => {
         this.isSubmitting.set(false);
         console.error('Save failed', err);
-        alert('Error submitting request. Please try again.');
+        this.resultType.set('error');
+        this.resultTitle.set('Submission Failed');
+        this.resultMessage.set(
+          err?.error?.message || 'Error submitting request. Please try again.'
+        );
+        this.showResult.set(true);
       }
     });
   }
@@ -94,6 +111,16 @@ export class MaintenanceFormComponent implements OnInit {
     this.location.back();
   }
 
+    // Handle result overlay close
+  onResultClosed(): void {
+  this.showResult.set(false);
+
+  if (this.resultType() === 'success') {
+    this.location.back();
+  }
+}
+
+// File attachment logic
   onFileSelected(event: any): void {
     const files = event.target.files;
     if (files) {
@@ -102,6 +129,7 @@ export class MaintenanceFormComponent implements OnInit {
     }
   }
 
+  // Remove selected file
   removeFile(index: number): void {
     this.selectedFiles.update(files => {
       const updated = [...files];
@@ -110,6 +138,7 @@ export class MaintenanceFormComponent implements OnInit {
     });
   }
 
+  // Trigger file input click
   browseFiles(): void {
     const input = document.createElement('input');
     input.type = 'file';

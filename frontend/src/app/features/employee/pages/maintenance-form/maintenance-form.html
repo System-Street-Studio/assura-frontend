@@ -1,16 +1,19 @@
 <div class="container">
   <div class="content-padding">
 
+    <!--Back link and page header -->
     <h1 class="section-label">Requests</h1>
     <a (click)="onCancel()" class="back-link">←</a>
     <h2 class="page-title">Maintenance Requests</h2>
 
+    <!-- Form card -->
     <div class="form-card">
       <header>
         <h3>Asset Maintenance Details</h3>
         <p>Please provide details about the asset and the issue you are experiencing</p>
       </header>
 
+       <!-- asset Name -->
       <form (ngSubmit)="onSubmit()">
         <div class="field">
           <label>Asset</label>
@@ -26,6 +29,7 @@
           </select>
         </div>
 
+         <!-- Issue type -->
         <div class="field">
           <label>Issue Type <span class="required">*</span></label>
           <select [ngModel]="issueType()" (ngModelChange)="issueType.set($event)" name="issueType">
@@ -38,6 +42,7 @@
           </select>
         </div>
 
+          <!-- Description -->
         <div class="field">
           <label>Description</label>
           <textarea [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"
@@ -45,6 +50,7 @@
           </textarea>
         </div>
 
+          <!-- Priority -->
         <div class="field">
           <label>Priority <span class="required" >*</span></label>
           <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority">
@@ -55,6 +61,7 @@
           </select>
         </div>
 
+          <!-- Attachment -->
         <div class="field">
           <label>Attachment (Optional)</label>
           @if (selectedFiles().length === 0) {
@@ -86,6 +93,7 @@
           }
         </div>
 
+         <!-- Form Submit -->
         <div class="actions">
           <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">Cancel</button>
           <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
@@ -101,3 +109,14 @@
     </div>
   </div>
 </div>
+
+
+// Result Overlay
+@if(showResult()){
+  <app-result-overlay
+    [type]="resultType()"
+    [title]="resultTitle()"
+    [message]="resultMessage()"
+    (closed)="onResultClosed()">
+  </app-result-overlay>
+}

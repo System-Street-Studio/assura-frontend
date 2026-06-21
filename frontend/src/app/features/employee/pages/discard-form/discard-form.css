@@ -1,3 +1,4 @@
+/* Styles for Discard Request Form */
 .container {
   background-color: #efefef;
   min-height: 100vh;
@@ -73,6 +74,7 @@ textarea{
     height: auto;
 }
 
+/* File Upload Styles */
 .upload-box {
   border: 2px dashed #d0d8e0;
   border-radius: 8px;
@@ -254,6 +256,7 @@ textarea{
     gap: 1rem;
 }
 
+/*Submit and Cancel Buttons */
 .btn-primary {
   background: #00a9b4;
   color: white;
@@ -301,6 +304,7 @@ textarea{
   opacity: 0.5;
 }
 
+/*spinner styles */
 .spinner {
   animation: spin 1s linear infinite;
 }

@@ -13,6 +13,7 @@
     </div>
   } @else if (request()) {
     <div class="detail-content">
+
       <!-- Request Header Card -->
       <div class="card header-card">
         <div class="header-info">
@@ -60,12 +61,16 @@
                 <span>{{ request()!.assetName }}</span>
               }
             </div>
+
+            <!-- Asset ID -->
             @if (request()!.requestType === 'Maintenance' || request()!.requestType === 'Discard') {
               <div class="detail-row">
                 <label>Asset ID:</label>
                 <span>{{ extractAssetId(request()!.assetName) }}</span>
               </div>
             }
+
+            <!-- Asset Category and Quantity (if applicable) -->
             @if (request()!.assetCategory && request()!.assetCategory !== 'N/A') {
               <div class="detail-row">
                 <label>Asset Category:</label>
@@ -201,13 +206,15 @@
           Close
         </button>
         @if (request()!.status === 'Pending') {
-          <button class="btn btn-danger">
+          <button class="btn btn-danger" >
             Cancel Request
           </button>
         }
       </div>
     </div>
   } @else {
+
+    <!-- No Data Found -->
     <div class="no-data">
       <mat-icon>inbox</mat-icon>
       <p>No request found</p>
