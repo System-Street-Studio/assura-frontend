@@ -25,6 +25,7 @@ export class MaintenanceFormComponent implements OnInit {
   // Form Signals
   assignedAssets = signal<AssetDetail[]>([]);
   asset = signal('');
+  selectedAssetId = signal<number | null>(null);
   issueType = signal('Damaged');
   description = signal('');
   priority = signal('Normal');
@@ -35,14 +36,14 @@ export class MaintenanceFormComponent implements OnInit {
     this.assetService.getAll().subscribe({
       next: (assets) => {
         this.assignedAssets.set(assets);
-        
+
         // Auto-select asset from route state
         const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state.assetName;
         if (passedAssetName) {
-          // Find the matching asset and set it with full format
           const matchedAsset = assets.find(a => a.productName === passedAssetName);
           if (matchedAsset) {
             this.asset.set(matchedAsset.productName + ' (' + matchedAsset.assetCode + ')');
+            this.selectedAssetId.set(Number(matchedAsset.id));
           }
         }
       },
@@ -59,32 +60,31 @@ export class MaintenanceFormComponent implements OnInit {
     }
     this.isSubmitting.set(true);
 
-    const requestPayload = {
-      employeeId: this.authService.getUserId() || '',
-      submittedBy: this.authService.getUserName() || 'Employee',
-      assetCategory: 'N/A',
+    const userId = this.authService.getUserId();
+    const userName = this.authService.getUserName();
+
+    const requestData = {
+      employeeId: userId ? userId.toString() : '',
+      submittedBy: userName || '',
       assetName: this.asset(),
-      description: this.description(),
-      reason: `Issue: ${this.issueType()}`,
-      quantity: 1,
+      assetCategory: 'General',
       priority: this.priority(),
       requestType: 'Maintenance',
-      submittedDate: new Date().toISOString()
+      reason: this.issueType(),
+      description: `Maintenance Request for ${this.asset()}: ${this.description()}`,
+      quantity: 1
     };
 
-    this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
-      next: () => {
+    this.assetRequestService.createRequest(requestData, this.selectedFiles()).subscribe({
+      next: (res: any) => {
         this.isSubmitting.set(false);
-        alert('Maintenance Request Submitted Successfully!');
+        alert(res?.message || 'Maintenance Request Submitted Successfully!');
         this.location.back();
       },
       error: (err) => {
         this.isSubmitting.set(false);
         console.error('Save failed', err);
-        console.error('Error status:', err.status);
-        console.error('Error response:', err.error);
-        const errorMsg = err.error?.message || err.error?.errors || err.statusText || 'Unknown error';
-        alert(`Error submitting request:\n${JSON.stringify(errorMsg)}`);
+        alert('Error submitting request. Please try again.');
       }
     });
   }

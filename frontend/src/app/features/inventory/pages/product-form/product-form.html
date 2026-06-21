@@ -1,0 +1,75 @@
+<div class="product-form-page">
+  <div class="top-bar">
+    <button class="back-link" type="button" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="breadcrumb">Inventory / Products / {{ pageTitle }}</span>
+  </div>
+
+  <div class="form-header">
+    <div>
+      <h2>{{ pageTitle }}</h2>
+      <p class="subtitle">{{ mode === 'edit' ? 'Update product metadata used by assets and requests.' : 'Create a product record that can be reused across asset registrations.' }}</p>
+    </div>
+  </div>
+
+  <div class="loading-card" *ngIf="loading">
+    <mat-icon class="spin">sync</mat-icon>
+    <span>Loading product details...</span>
+  </div>
+
+  <div class="form-shell" *ngIf="!loading">
+    <form class="form-card" [formGroup]="productForm" (ngSubmit)="onSave()">
+      <div class="grid">
+        <div class="field full-width" [class.has-error]="showError('name')">
+          <label for="name">Product Name *</label>
+          <input id="name" type="text" formControlName="name" placeholder="e.g. Lenovo ThinkPad T14" />
+          <span class="error-text" *ngIf="showError('name')">Product name is required</span>
+        </div>
+
+        <div class="field" [class.has-error]="showError('manufacturer')">
+          <label for="manufacturer">Manufacturer</label>
+          <input id="manufacturer" type="text" formControlName="manufacturer" placeholder="e.g. Lenovo" />
+        </div>
+
+        <div class="field" [class.has-error]="showError('modelNumber')">
+          <label for="modelNumber">Model Number</label>
+          <input id="modelNumber" type="text" formControlName="modelNumber" placeholder="e.g. T14 Gen 4" />
+        </div>
+
+        <div class="field full-width" [class.has-error]="showError('description')">
+          <label for="description">Description</label>
+          <textarea id="description" rows="4" formControlName="description" placeholder="Optional notes about the product..."></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn outline" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn primary" [disabled]="submitting || isInvalid">
+          <mat-icon *ngIf="!submitting">save</mat-icon>
+          <mat-icon *ngIf="submitting" class="spin">sync</mat-icon>
+          {{ submitLabel }}
+        </button>
+      </div>
+    </form>
+
+    <aside class="summary-card">
+      <h3>Preview</h3>
+      <div class="preview-item">
+        <span class="label">Name</span>
+        <span class="value">{{ productForm.controls.name.value || 'Unnamed product' }}</span>
+      </div>
+      <div class="preview-item">
+        <span class="label">Manufacturer</span>
+        <span class="value">{{ productForm.controls.manufacturer.value || '—' }}</span>
+      </div>
+      <div class="preview-item">
+        <span class="label">Model</span>
+        <span class="value">{{ productForm.controls.modelNumber.value || '—' }}</span>
+      </div>
+      <div class="preview-note">
+        Products are validated before submission to avoid empty catalog rows and broken asset references.
+      </div>
+    </aside>
+  </div>
+</div>

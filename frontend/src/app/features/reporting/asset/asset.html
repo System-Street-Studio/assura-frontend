@@ -1,0 +1,108 @@
+<section class="asset-page">
+  <header class="asset-toolbar">
+    <div>
+      <h1>Asset List</h1>
+    </div>
+
+    <div class="toolbar-actions">
+      <label class="search-box">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" placeholder="Search assets..." />
+      </label>
+      <button class="filter-button" type="button">Bulk Edit</button>
+      <button class="filter-button" type="button">Columns</button>
+      <button class="filter-button" type="button">Add new asset</button>
+      <button class="new-button" type="button">
+        <span aria-hidden="true">+</span>
+        New
+      </button>
+      <button class="delete-button" type="button">
+        <span aria-hidden="true">×</span>
+        Delete
+      </button>
+    </div>
+  </header>
+
+  <div class="list-card">
+    <div class="list-header">
+      <label class="select-label">
+        <input type="checkbox" />
+        <span>{{ selectedCount() }} selected</span>
+      </label>
+      <span>ID</span>
+      <span>Product</span>
+      <span>Status</span>
+      <span>Checked by</span>
+      <span>Assura Name</span>
+      <span>Serial</span>
+      <span>Warranty</span>
+      <span>End of Life</span>
+      <span>Code Number</span>
+      @if (isAuditor()) {
+        <span>Actions</span>
+      }
+    </div>
+
+    @for (asset of assets(); track asset.id) {
+    <div class="asset-row">
+      <label class="asset-select">
+        <input type="checkbox" [checked]="asset.selected" (change)="toggleSelect(asset)" />
+        <span class="color-dot" [style.background]="asset.swatch"></span>
+      </label>
+
+      <strong class="asset-id">{{ asset.assetId }}</strong>
+
+      <div class="product-cell">
+        <span class="product-thumb" [class]="asset.imageClass"></span>
+        <span>{{ asset.product }}</span>
+      </div>
+
+      <span class="status-pill" [class]="asset.status.toLowerCase().replace(' ', '-')">
+        {{ asset.status }}
+      </span>
+
+      <div class="person-cell">
+        @if (asset.checkedBy) {
+          <span>{{ asset.checkedBy }}</span>
+          <small>{{ asset.checkedRole }}</small>
+        } @else {
+          <span class="muted">--</span>
+        }
+      </div>
+
+      <span>{{ asset.assuraName }}</span>
+      <span>{{ asset.serial }}</span>
+      <span>{{ asset.warranty }}</span>
+      <span>{{ asset.endOfLife }}</span>
+      <span>{{ asset.codeNumber }}</span>
+
+      @if (isAuditor()) {
+        <div class="actions-cell">
+          <button class="verify-btn" type="button" (click)="verifyAsset(asset)">
+            Verify
+          </button>
+        </div>
+      }
+    </div>
+    } @empty {
+      <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">📭</span>
+        <p>No assets found in the system.</p>
+      </div>
+    }
+  </div>
+
+  <div class="pagination-container">
+    <div class="page-info">
+      Showing <strong>{{ totalCount() > 0 ? (currentPage() - 1) * pageSize() + 1 : 0 }} - {{ Math.min(currentPage() * pageSize(), totalCount()) }}</strong> of <strong>{{ totalCount() }}</strong> assets
+    </div>
+    
+    <app-pagination 
+      [currentPage]="currentPage()" 
+      [totalPages]="totalPages()" 
+      [pageNumbers]="pageNumbers()" 
+      (pageChange)="goToPage($event)">
+    </app-pagination>
+  </div>
+
+</section>

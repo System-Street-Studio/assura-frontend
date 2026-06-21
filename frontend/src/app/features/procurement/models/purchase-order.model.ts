@@ -59,7 +59,7 @@ export interface PurchasingOrderSummaryDto {
     id: number;
     orderNumber: string;
     issuedDate: Date | string;
-    departmentName: string;
+    divisionName: string;
     totalAmount?: number;
     status?: string;
     supplierName?: string;
@@ -75,4 +75,7 @@ export interface AssetRequestDto {
     date: Date | string;
     specifications?: string;
     specialNote?: string;
+    type?: string;
+    description?: string;
+    assetId?: number;
 }

@@ -42,4 +42,10 @@ export class ApiService {
     console.log(`[DEBUG] ApiService: DELETE ${url}`);
     return this.http.delete<T>(url);
   }
+
+  patch<T>(endpoint: string, body: unknown): Observable<T> {
+    const url = `${this.baseUrl}/${endpoint}`;
+    console.log(`[DEBUG] ApiService: PATCH ${url}`, body);
+    return this.http.patch<T>(url, body);
+  }
 }

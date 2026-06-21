@@ -50,10 +50,18 @@ export class PurchaseOrdersComponent implements OnInit {
             next: (result) => {
                 console.log(`[DEBUG] PurchaseOrdersComponent [${this.instanceId}]: Received ${result.orders.length} orders and ${result.requests.length} requests`);
                 this.orders = result.orders;
-                this.requests = result.requests;
+                
+                // Filter to show only new asset requests (Asset / NewAsset / New Asset)
+                this.requests = result.requests.filter(r => 
+                    r.type?.toLowerCase() === 'asset' || 
+                    r.type?.toLowerCase() === 'newasset' || 
+                    r.type?.toLowerCase() === 'new asset'
+                );
 
                 if (this.requests.length > 0) {
                     this.selectedRequest = this.requests[0];
+                } else {
+                    this.selectedRequest = null;
                 }
 
                 this.isLoading = false;

@@ -19,6 +19,8 @@ export class ResetPasswordComponent implements OnInit {
     private route = inject(ActivatedRoute);
 
     resetForm: FormGroup = this.fb.group({
+        email: ['', [Validators.required, Validators.email]],
+        token: ['', [Validators.required]],
         newPassword: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
@@ -31,11 +33,11 @@ export class ResetPasswordComponent implements OnInit {
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
-            this.token = params['token'] || '';
-            this.email = params['email'] || '';
+            const token = params['token'] || '';
+            const email = params['email'] || '';
 
-            if (!this.token || !this.email) {
-                this.errorMessage = 'Invalid password reset link. Please request a new one.';
+            if (token && email) {
+                this.resetForm.patchValue({ token, email });
             }
         });
     }
@@ -47,15 +49,15 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     onSubmit(): void {
-        if (this.resetForm.invalid || !this.token || !this.email) return;
+        if (this.resetForm.invalid) return;
 
         this.isLoading = true;
         this.message = '';
         this.errorMessage = '';
 
         const data = {
-            email: this.email,
-            token: this.token,
+            email: this.resetForm.value.email,
+            token: this.resetForm.value.token,
             newPassword: this.resetForm.value.newPassword
         };
 

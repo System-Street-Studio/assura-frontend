@@ -1,8 +1,8 @@
-import { Component, OnInit, inject ,signal} from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { RequestService } from '../../services/request.service';
+import { RequestService, SuggestedAsset } from '../../services/request.service';
 import { AssetRequest, RequestPriority, RequestStatus } from '../../models/request.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
@@ -19,22 +19,25 @@ export class AssetRequestsComponent implements OnInit {
   private requestService = inject(RequestService);
   private toast = inject(ToastService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
- allRequests = signal<AssetRequest[]>([]);
+  allRequests = signal<AssetRequest[]>([]);
   filteredRequests = signal<AssetRequest[]>([]);
   viewRequests = signal<AssetRequest[]>([]);
-  
+
   loading = signal(true);
 
- 
+
   searchTerm = '';
   filterStatus = '';
   filterPriority = '';
-  filterDepartment = '';
+  filterDivision = '';
 
   currentPage = 1;
   pageSize = 10;
   pageSizes = [5, 10, 25, 50];
+  pages: number[] = [1];
+  divisions: string[] = [];
 
   /* ── Action modal ── */
   showActionModal = false;
@@ -48,6 +51,8 @@ export class AssetRequestsComponent implements OnInit {
   processRequest: AssetRequest | null = null;
   processIsInStock = true;
   processAssetId: number | null = null;
+  suggestedAssets: SuggestedAsset[] = [];
+  selectedSuggestedAssetId: number | null = null;
   processRemarks = '';
   processLoading = false;
 
@@ -61,11 +66,13 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   get pendingCount(): number {
-    return this.allRequests().filter((r) => r.status === 'Pending').length;
+    const pending = ['Pending', 'PendingDivisionHeadApproval', 'PendingStorekeeperReview'];
+    return this.allRequests().filter((r) => pending.includes(r.status)).length;
   }
 
   get approvedCount(): number {
-    return this.allRequests().filter((r) => r.status === 'Approved').length;
+    const approved = ['Approved', 'TemporaryAssigned', 'Checked Out'];
+    return this.allRequests().filter((r) => approved.includes(r.status)).length;
   }
 
   get rejectedCount(): number {
@@ -73,36 +80,33 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   get fulfilledCount(): number {
-    return this.allRequests().filter((r) => r.status === 'Fulfilled').length;
+    const fulfilled = ['Fulfilled', 'Returned'];
+    return this.allRequests().filter((r) => fulfilled.includes(r.status)).length;
   }
 
   get urgentCount(): number {
-    return this.allRequests().filter((r) => r.priority === 'Urgent' && r.status === 'Pending').length;
+    const pending = ['Pending', 'PendingDivisionHeadApproval', 'PendingStorekeeperReview'];
+    return this.allRequests().filter((r) => r.priority === 'Urgent' && pending.includes(r.status)).length;
   }
 
   get departments(): string[] {
-    const depts = new Set(this.allRequests().map((r) => r.department));
+    const depts = new Set(this.allRequests().map((r) => r.division));
     return Array.from(depts).sort();
   }
 
-  get isStorekeeper(): boolean {
-    return this.authService.hasRole(['Storekeeper', 'Admin']);
-  }
-
-  get statuses(): RequestStatus[] {
-    return ['Pending', 'Approved', 'Rejected', 'Fulfilled', 'Cancelled'];
+  get statuses(): string[] {
+    return [
+      'PendingDivisionHeadApproval', 'PendingStorekeeperReview',
+      'TemporaryAssigned', 'PendingProcurement',
+      'Approved', 'Rejected', 'Fulfilled', 'Checked Out', 'Returned'
+    ];
   }
 
   get priorities(): RequestPriority[] {
     return ['Urgent', 'High', 'Normal', 'Low'];
   }
-
   get totalPages(): number {
     return Math.ceil(this.filteredRequests().length / this.pageSize) || 1;
-  }
-
-  get pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
   get showingFrom(): number {
@@ -121,40 +125,23 @@ export class AssetRequestsComponent implements OnInit {
     return this.viewRequests().length > 0 && this.viewRequests().every((r) => r.selected);
   }
 
+  get isStorekeeper(): boolean {
+    return this.authService.hasRole(['Storekeeper', 'Admin']);
+  }
+
   ngOnInit(): void {
     this.loading.set(true);
-    console.log('📥 Loading inventory requests...');
 
     this.requestService.getAll().subscribe({
-      next: (existingRequests: AssetRequest[]) => {
-        const initial = existingRequests || [];
-        console.log('✅ getAll() returned:', initial.length, 'requests');
-        this.allRequests.set(initial);
-
-        this.requestService.getApprovedNewAssetRequests().subscribe({
-          next: (approvedRequests: AssetRequest[]) => {
-            console.log('✅ getApprovedNewAssetRequests() returned:', approvedRequests.length, 'requests');
-            if (approvedRequests?.length > 0) {
-              console.log('  Adding approved requests to allRequests...');
-              this.allRequests.update(current => {
-                const merged = [...current, ...approvedRequests];
-                console.log('  After merge, allRequests has:', merged.length, merged);
-                return merged.sort((a, b) => Number(b.id) - Number(a.id));
-              });
-            }
-            console.log('  Calling applyFilters()...');
-            this.applyFilters();
-            this.loading.set(false);
-          },
-          error: (err) => {
-            console.warn('⚠️ Warning:', err);
-            this.applyFilters();
-            this.loading.set(false);
-          }
-        });
+      next: (requests: AssetRequest[]) => {
+        this.allRequests.set(requests || []);
+        this.applyFilters();
+        this.loading.set(false);
       },
       error: () => {
         this.toast.show('Failed to load requests', 'error');
+        this.allRequests.set([]);
+        this.applyFilters();
         this.loading.set(false);
       }
     });
@@ -164,13 +151,13 @@ export class AssetRequestsComponent implements OnInit {
   applyFilters(): void {
     console.log('🔄 applyFilters() called - loading:', this.loading());
     console.log('  allRequests:', this.allRequests().length, this.allRequests());
-    
+
     const term = this.searchTerm.toLowerCase().trim();
     const results = this.allRequests().filter((r) => {
       const name = (r.requesterName || r.requestedBy || '').toLowerCase();
       const asset = (r.assetName || '').toLowerCase();
       const requestedBy = (r.requestedBy || '').toLowerCase();
-      
+
       const matchesSearch =
         !term ||
         name.includes(term) ||
@@ -178,34 +165,35 @@ export class AssetRequestsComponent implements OnInit {
         String(r.id).toLowerCase().includes(term) ||
         (r.requestNumber || '').toLowerCase().includes(term) ||
         r.assetName.toLowerCase().includes(term) ||
-        asset.includes(term)||
-        r.department.toLowerCase().includes(term) ||
+        asset.includes(term) ||
+        (r.division || '').toLowerCase().includes(term) ||
         (r.reason || '').toLowerCase().includes(term);
 
       const matchesStatus = !this.filterStatus || r.status === this.filterStatus;
       const matchesPriority = !this.filterPriority || r.priority === this.filterPriority;
-      const matchesDept = !this.filterDepartment || r.department === this.filterDepartment;
+      const matchesDept = !this.filterDivision || r.division === this.filterDivision;
 
       return matchesSearch && matchesStatus && matchesPriority && matchesDept;
     });
-    
+
     // Sort by requestDate (most recent first)
     results.sort((a, b) => {
       const dateA = new Date(a.requestDate).getTime();
       const dateB = new Date(b.requestDate).getTime();
       return dateB - dateA; // Descending order (newest first)
     });
-    
+
     console.log('  filteredRequests after filter and sort:', results.length, results);
     this.filteredRequests.set(results);
     this.currentPage = 1;
+    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
     this.updateView();
 
-    if(this.loading()) {
+    if (this.loading()) {
       console.log('🔴 Setting loading to false...');
       this.loading.set(false);
     }
-    
+
     console.log('🟢 applyFilters() END - loading now:', this.loading(), 'viewRequests:', this.viewRequests().length);
   }
 
@@ -213,12 +201,12 @@ export class AssetRequestsComponent implements OnInit {
     this.searchTerm = '';
     this.filterStatus = '';
     this.filterPriority = '';
-    this.filterDepartment = '';
+    this.filterDivision = '';
     this.applyFilters();
   }
 
   get hasActiveFilters(): boolean {
-    return !!this.searchTerm || !!this.filterStatus || !!this.filterPriority || !!this.filterDepartment;
+    return !!this.searchTerm || !!this.filterStatus || !!this.filterPriority || !!this.filterDivision;
   }
 
   /* ── Pagination ── */
@@ -298,7 +286,7 @@ export class AssetRequestsComponent implements OnInit {
 
         const verb = this.actionType === 'approve' ? 'approved' : 'rejected';
         this.toast.show(`Request ${updated.id} has been ${verb}`, 'success');
-        
+
         // Refresh approved requests after approval/rejection - defer to next tick
         setTimeout(() => this.refreshApprovedRequests(), 0);
       },
@@ -338,15 +326,13 @@ export class AssetRequestsComponent implements OnInit {
   }
 
   /* ── Helpers ── */
-  getStatusClass(status: RequestStatus): string {
-    const map: Record<RequestStatus, string> = {
-      Pending: 'pending',
-      Approved: 'approved',
-      Rejected: 'rejected',
-      Fulfilled: 'fulfilled',
-      Cancelled: 'cancelled',
-    };
-    return map[status] || '';
+  getStatusClass(status: string): string {
+    if (['Pending', 'PendingDivisionHeadApproval', 'PendingStorekeeperReview'].includes(status)) return 'pending';
+    if (['TemporaryAssigned', 'Approved', 'Checked Out'].includes(status)) return 'approved';
+    if (['Rejected'].includes(status)) return 'rejected';
+    if (['Fulfilled', 'Returned'].includes(status)) return 'fulfilled';
+    if (status === 'PendingProcurement') return 'pending';
+    return 'cancelled';
   }
 
   getPriorityClass(priority: RequestPriority): string {
@@ -412,13 +398,55 @@ export class AssetRequestsComponent implements OnInit {
     this.processRequest = request;
     this.processIsInStock = true;
     this.processAssetId = null;
+    this.selectedSuggestedAssetId = null;
+    this.suggestedAssets = [];
     this.processRemarks = '';
     this.showProcessModal = true;
+    this.loadSuggestedAssets(request.id);
+  }
+
+  canStorekeeperProcess(request: AssetRequest): boolean {
+    return ['Pending', 'PendingStorekeeperReview', 'Approved', 'PendingDivisionHeadApproval'].includes(request.status);
+  }
+
+  canStorekeeperConfirm(request: AssetRequest): boolean {
+    return request.status === 'TemporaryAssigned';
   }
 
   cancelProcess(): void {
     this.showProcessModal = false;
     this.processRequest = null;
+    this.selectedSuggestedAssetId = null;
+    this.suggestedAssets = [];
+  }
+
+  loadSuggestedAssets(requestId: number | string): void {
+    this.requestService.getSuggestedAssets(requestId).subscribe({
+      next: (assets) => {
+        this.suggestedAssets = assets || [];
+        if (this.suggestedAssets.length > 0) {
+          this.selectedSuggestedAssetId = this.suggestedAssets[0].id;
+          this.processAssetId = this.suggestedAssets[0].id;
+        }
+      },
+      error: () => {
+        this.suggestedAssets = [];
+      }
+    });
+  }
+
+  onSuggestedAssetChanged(): void {
+    this.processAssetId = this.selectedSuggestedAssetId;
+  }
+
+  get selectedSuggestedAsset(): SuggestedAsset | null {
+    if (!this.selectedSuggestedAssetId) return null;
+    return this.suggestedAssets.find(a => a.id === this.selectedSuggestedAssetId) ?? null;
+  }
+
+  get canSubmitProcess(): boolean {
+    if (!this.processIsInStock) return true;
+    return !!this.processAssetId;
   }
 
   confirmProcess(): void {
@@ -427,7 +455,7 @@ export class AssetRequestsComponent implements OnInit {
 
     const command = {
       id: Number(this.processRequest.id),
-      assetId: this.processAssetId,
+      assetId: this.processIsInStock ? this.processAssetId : null,
       isInStock: this.processIsInStock,
       remarks: this.processRemarks
     };
@@ -443,6 +471,18 @@ export class AssetRequestsComponent implements OnInit {
         this.toast.show('Failed to process request', 'error');
         this.processLoading = false;
       }
+    });
+  }
+
+  confirmTemporaryAssignment(request: AssetRequest): void {
+    this.requestService.confirmTemporaryAssignment(request.id).subscribe({
+      next: () => {
+        this.toast.show('Temporary assignment confirmed', 'success');
+        this.ngOnInit();
+      },
+      error: () => {
+        this.toast.show('Failed to confirm assignment', 'error');
+      },
     });
   }
 }

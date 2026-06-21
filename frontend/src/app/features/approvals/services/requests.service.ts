@@ -6,12 +6,21 @@ import { Observable} from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
+export interface SuggestedAsset {
+  id: number;
+  assetCode: string;
+  productName: string;
+  categoryName: string;
+  serialNumber?: string;
+  score: number;
+}
+
 
 @Injectable({ providedIn: 'root' })
 export class RequestService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
-  
+
   selectedRequest: RequestItem | null = null;
 
   //map API data to RequestItem model
@@ -20,9 +29,9 @@ export class RequestService {
       map((apiData: any[]) => apiData.map(item => ({
         id: item.id,
         name: item.requesterName,
-        employee: item.requesterId, // Legacy field for backward compatibility
-        requesterId: item.requesterId, // Current user who made request
-        employeeId: item.requesterId, // Alternative field name
+        employee: item.requesterId,
+        requesterId: item.requesterId,
+        employeeId: item.requesterId,
         assetName: item.assetName,
         category: item.assetCategory,
         status: item.status,
@@ -41,7 +50,7 @@ export class RequestService {
 
   //map API data to RequestItem model(for single request)
   getRequestById(id: number): Observable<RequestItem> {
-    return this.http.get<any>(`${this.baseUrl}/assetrequests/${id}`).pipe(
+    return this.http.get<any>(`${this.baseUrl}/requests/${id}`).pipe(
       map((apiData: any) => ({
         id: apiData.id,
         name: apiData.requesterName,
@@ -49,22 +58,20 @@ export class RequestService {
         requesterId: apiData.requesterId,
         employeeId: apiData.requesterId,
         assetName: apiData.assetName,
-        category: apiData.assetCategory,
+        category: apiData.type || 'Asset',
         status: apiData.status,
-        date: apiData.submittedDate,
+        date: apiData.createdAt,
         priority: apiData.priority,
-        type: apiData.requestType,
+        type: apiData.type,
         quantity: apiData.quantity,
         description: apiData.description,
-        reason: apiData.reason,
+        reason: apiData.description,
         specs: apiData.description,
-        justification: apiData.reason,
-     
+        justification: apiData.reason || apiData.description
       } as RequestItem))
     );
   }
 
-  //approve request
   approveRequest(id: number): Observable<boolean> {
     return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/approve`, {}).pipe(
       map(result => {
@@ -74,12 +81,42 @@ export class RequestService {
     );
   }
 
-  //reject request
-  rejectRequest(id: number): Observable<boolean> {
+  rejectRequest(id: number, remarks: string = ''): Observable<boolean> {
     return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, {});
   }
 
-   
+  divisionHeadReview(id: number, approve: boolean, remarks: string = ''): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/requests/${id}/division-head-review`, {
+      id,
+      approve,
+      remarks,
+    });
+  }
+
+  getSuggestedAssetsForRequest(id: number): Observable<SuggestedAsset[]> {
+    return this.http.get<SuggestedAsset[]>(`${this.baseUrl}/requests/${id}/suggested-assets`);
+  }
+
+  processByStorekeeper(id: number, isInStock: boolean, assetId?: number, remarks?: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/requests/${id}/process`, {
+      id,
+      isInStock,
+      assetId,
+      remarks,
+    });
+  }
+
+  confirmTemporaryAssignment(id: number, remarks?: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/requests/${id}/confirm-temporary-assignment`, {
+      id,
+      remarks,
+    });
+  }
+
+
+  getAllAssetRequests(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/assetrequests`);
+  }
 
   //get approved transfer requests
  getApprovedTransferRequests(headId?: number): Observable<any[]> {

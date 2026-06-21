@@ -1,0 +1,74 @@
+<div class="hr-shell">
+  <section class="pending-page" aria-labelledby="pending-title">
+    <div class="content-shell">
+      <h1 id="pending-title" class="page-title">Pending to Assign Roles</h1>
+
+      <div class="table-panel">
+        <table>
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Name</th>
+              <th>Joined Date</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (user of pendingUsers(); track user.id) {
+            <tr tabindex="0" [class.show-details]="activeUserIdNum === user.id" (mouseenter)="showDetails(user.id)"
+              (mouseleave)="hideDetails()" (focusin)="showDetails(user.id)" (focusout)="hideDetails()"
+              (click)="openAssignForm(user.id)">
+              <td>{{ user.userId }}</td>
+              <td>
+                <span class="name-popover">
+                  <span class="name-trigger">{{ user.name }}</span>
+
+                  <span class="detail-card" role="tooltip">
+                    <span class="detail-header">
+                      <span class="detail-avatar">{{ user.name.charAt(0) }}</span>
+                      <span>
+                        <strong>{{ user.name }}</strong>
+                        <small>{{ user.userId }}</small>
+                      </span>
+                    </span>
+
+                    <span class="detail-grid">
+                      <span>
+                        <b>Email</b>
+                        {{ user.email }}
+                      </span>
+                      <span>
+                        <b>Division</b>
+                        {{ user.department }}
+                      </span>
+                      <span>
+                        <b>Requested Role</b>
+                        {{ user.requestedRole }}
+                      </span>
+                      <span>
+                        <b>Phone</b>
+                        {{ user.phone }}
+                      </span>
+                      <span>
+                        <b>Status</b>
+                        {{ user.status }}
+                      </span>
+                    </span>
+                  </span>
+                </span>
+              </td>
+              <td>{{ user.joinedDate }}</td>
+            </tr>
+            } @empty {
+            <tr>
+              <td class="empty-state" colspan="3" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                No pending users found
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

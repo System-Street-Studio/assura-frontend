@@ -27,12 +27,13 @@ export class RequestsPageComponent implements OnInit {
   // --- STATE SIGNALS ---
   activeTab = signal<'new' | 'transfer' | 'maintenance' | 'discard'>('new');
   searchQuery = signal<string>('');
-  
+
   // Filter state
   selectedFilters = signal<Record<string, string[]>>({
     priority: [],
     category: [],
-    status: []
+    status: [],
+    division: []
   });
 
   // --- DATA SIGNALS ---
@@ -54,7 +55,20 @@ export class RequestsPageComponent implements OnInit {
   // --- FILTER CONFIG ---
   filterConfig = [
     { label: 'Priority', key: 'priority', options: ['High', 'Normal', 'Low'] },
-    { label: 'Status', key: 'status', options: ['Pending', 'Approved', 'Rejected', 'In Progress'] },
+    {
+      label: 'Status',
+      key: 'status',
+      options: [
+        'Pending',
+        'PendingDivisionHeadApproval',
+        'PendingStorekeeperReview',
+        'TemporaryAssigned',
+        'PendingProcurement',
+        'Approved',
+        'Rejected'
+      ]
+    },
+    { label: 'Division', key: 'division', options: [] },
     { label: 'Asset Category', key: 'category', options: ['Laptop', 'Furniture', 'Electronics', 'Network'] },
   ];
 
@@ -73,34 +87,26 @@ ngOnInit() {
   });
 }
 
-  
+
 
   // 1. Service Call
   loadData() {
-    Promise.resolve().then(() => this.isLoading.set(true));
-   const isDivisionHead = true; 
+   Promise.resolve().then(() => this.isLoading.set(true));
+    this.isLoading.set(true);
 
-   this.requestService.getAllRequests(isDivisionHead).subscribe({
-      next: (allData: any[]) => { 
-      
-      // Use the data directly from service since it's already mapped correctly
-      const mappedData: RequestItem[] = allData;
+    const isDivisionHead = true;
+    this.requestService.getAllRequests(isDivisionHead).subscribe({
+      next: (allData: any[]) => {
+        // Ensure data is mapped to RequestItem structure
+        const mappedData: RequestItem[] = allData;
 
-      
-      
-      const newAssetFiltered = mappedData.filter(r => r.type?.toLowerCase().replace(/\s/g, '') === 'newasset');
-      const transferFiltered = mappedData.filter(r => r.type?.toLowerCase() === 'transfer');
-      const maintenanceFiltered = mappedData.filter(r => r.type?.toLowerCase() === 'maintenance');
-      const discardFiltered = mappedData.filter(r => r.type?.toLowerCase() === 'discard');
-      
-      
-      
-      this.requests.set(newAssetFiltered);
-      this.transferRequests.set(transferFiltered);
-      this.maintenanceRequests.set(maintenanceFiltered);
-      this.discardRequests.set(discardFiltered);
+        const divs = new Set(mappedData.map(r => r.division).filter(Boolean));
+        this.filterConfig[2].options = Array.from(divs).sort() as string[];
 
-      
+        this.requests.set(mappedData.filter(r => r.type?.toLowerCase().replace(/\s/g, '') === 'asset' || r.type?.toLowerCase().replace(/\s/g, '') === 'newasset'));
+        this.transferRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'transfer'));
+        this.maintenanceRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'maintenance'));
+        this.discardRequests.set(mappedData.filter(r => r.type?.toLowerCase() === 'discard'));
 
         this.newAssetCount.set(this.requests().length);
         this.transferCount.set(this.transferRequests().length);
@@ -108,7 +114,6 @@ ngOnInit() {
         this.discardCount.set(this.discardRequests().length);
         this.isLoading.set(false);
       },
-      
     });
   }
 
@@ -129,22 +134,37 @@ ngOnInit() {
 
           return sourceList.filter(item => {
             const personName = (item.name || item.employee || '').toLowerCase();
-            const assetName = item.assetName.toLowerCase();
+            const assetName = (item.assetName || '').toLowerCase();
             
             const matchesSearch = !query || personName.includes(query) || assetName.includes(query);
-            const matchesPriority = filters['priority'].length === 0 || filters['priority'].includes(item.priority);
-            const matchesStatus = filters['status'].length === 0 || filters['status'].includes(item.status);
-            const matchesCategory = filters['category'].length === 0 || 
+            const matchesPriority = filters['priority']?.length === 0 || filters['priority']?.includes(item.priority);
+            const matchesStatus = filters['status']?.length === 0 || filters['status']?.includes(item.status);
+            const matchesCategory = filters['category']?.length === 0 || 
                                   (item.category && filters['category'].includes(item.category)) ||
-                                  filters['category'].some(cat => assetName.includes(cat.toLowerCase()));
+                                  filters['category']?.some(cat => assetName.includes(cat.toLowerCase()));
+            const matchesDivision = !filters['division'] || filters['division'].length === 0 || (item.division && filters['division'].includes(item.division));
 
-            return matchesSearch && matchesPriority && matchesStatus && matchesCategory;
+            return matchesSearch && matchesPriority && matchesStatus && matchesCategory && matchesDivision;
           });
         });
 
         filterCount = computed(() => {
           return Object.values(this.selectedFilters()).reduce((acc, curr) => acc + curr.length, 0);
         });
+
+        //  PAGINATION ENGINE 
+        totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));
+
+        paginatedRequests = computed(() => {
+          const start = (this.currentPage() - 1) * this.pageSize;
+          return this.filteredResults().slice(start, start + this.pageSize);
+        });
+
+        pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+
+        onPageChange(page: number) {
+          this.currentPage.set(page);
+        }
 
         // --- ACTIONS ---
         setTab(tab: 'new' | 'transfer' | 'maintenance' | 'discard') {
@@ -172,7 +192,7 @@ ngOnInit() {
         }
 
         resetFilters() {
-          this.selectedFilters.set({ priority: [], category: [], status: [] });
+          this.selectedFilters.set({ priority: [], category: [], status: [], division: [] });
           this.searchQuery.set('');
           this.currentPage.set(1);
         }
@@ -187,55 +207,38 @@ ngOnInit() {
         }
 
         viewDetails(item: RequestItem) {
-        this.requestService.selectedRequest = item;
-        const tab = this.activeTab();
-        let routePath = '';
+          this.requestService.selectedRequest = item;
+          console.log("sending data:", item);
+          const tab = this.activeTab();
+          let routePath = '';
 
-      
-        switch (tab) {
-          case 'new': routePath = '/approvals/new-asset-req'; break;
-          case 'transfer': routePath = '/approvals/transfer-req'; break;
-          case 'maintenance': routePath = '/approvals/maintenance-req'; break;
-          case 'discard': routePath = '/approvals/discard-req'; break;
+          switch (tab) {
+            case 'new': routePath = '/approvals/new-asset-req'; break;
+            case 'transfer': routePath = '/approvals/transfer-req'; break;
+            case 'maintenance': routePath = '/approvals/maintenance-req'; break;
+            case 'discard': routePath = '/approvals/discard-req'; break;
+          }
+
+          this.router.navigate([routePath, item.id], {
+            queryParams: { tab: tab }
+          });
         }
 
+        checkDetails(item: RequestItem) {
+          this.requestService.selectedRequest = item;
+          console.log("Checking data:", item);
+          const tab = this.activeTab();
+          let routePath = '';
 
-        this.router.navigate([routePath, item.id], { 
-        
-          queryParams: { tab: tab } 
-        });
-      }
+          switch (tab) {
+            case 'new': routePath = '/approvals/new-asset-req'; break;
+            case 'transfer': routePath = '/approvals/transfer-req'; break;
+            case 'maintenance': routePath = '/approvals/maintenance-req'; break;
+            case 'discard': routePath = '/approvals/discard-req'; break;
+          }
 
-
-      checkDetails(item: RequestItem) {
-        this.requestService.selectedRequest = item;
-        
-        const tab = this.activeTab();
-        let routePath = '';
-
-        switch (tab) {
-          case 'new': routePath = '/approvals/new-asset-req'; break;
-          case 'transfer': routePath = '/approvals/transfer-req'; break;
-          case 'maintenance': routePath = '/approvals/maintenance-req'; break;
-          case 'discard': routePath = '/approvals/discard-req'; break;
+          this.router.navigate([routePath, item.id], { 
+            queryParams: { tab: tab, readOnly: true } 
+          });
         }
-
-        this.router.navigate([routePath, item.id], { 
-          queryParams: { tab: tab, readOnly: true } 
-        });
-      }
-
-      //  PAGINATION ENGINE 
-    totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));
-
-    paginatedRequests = computed(() => {
-      const start = (this.currentPage() - 1) * this.pageSize;
-      return this.filteredResults().slice(start, start + this.pageSize);
-    });
-
-    pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
-
-    onPageChange(page: number) {
-      this.currentPage.set(page);
-    }
 }

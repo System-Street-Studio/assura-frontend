@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ProcurementService } from '../../services/procurement.service';
@@ -13,6 +13,7 @@ import { ProcurementService } from '../../services/procurement.service';
 export class OverviewComponent implements OnInit {
     private authService = inject(AuthService);
     private procurementService = inject(ProcurementService);
+    private cdr = inject(ChangeDetectorRef);
 
     greeting = '';
     firstName = '';
@@ -35,13 +36,17 @@ export class OverviewComponent implements OnInit {
     private loadStats(): void {
         this.procurementService.getProcurementStats().subscribe({
             next: (data) => {
+                console.log('[DEBUG] OverviewComponent: Received stats data:', data);
+                // Using defensive mapping to handle both camelCase and PascalCase
                 this.stats = {
-                    totalSuppliers: data.totalSuppliers,
-                    posNotCompleted: data.posNotCompleted,
-                    posCompleted: data.posCompleted,
-                    repairsNotCompleted: data.repairsNotCompleted,
-                    repairsCompleted: data.repairsCompleted
+                    totalSuppliers: data.totalSuppliers ?? data.TotalSuppliers ?? 0,
+                    posNotCompleted: data.posNotCompleted ?? data.PosNotCompleted ?? 0,
+                    posCompleted: data.posCompleted ?? data.PosCompleted ?? 0,
+                    repairsNotCompleted: data.repairsNotCompleted ?? data.RepairsNotCompleted ?? data.repairsNoCompleted ?? 0,
+                    repairsCompleted: data.repairsCompleted ?? data.RepairsCompleted ?? 0
                 };
+                console.log('[DEBUG] OverviewComponent: Updated stats object:', this.stats);
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Error loading procurement stats', err);

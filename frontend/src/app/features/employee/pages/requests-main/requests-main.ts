@@ -66,8 +66,10 @@ export class RequestsMainComponent implements OnInit {
     this.recentRequests().filter(r => r.status === 'Rejected').length
   );
   
+  
+
   constructor(private assetService: AssetService, private cdr: ChangeDetectorRef, private router: Router, private authService: AuthService) {}
-  isLoading = signal(false);
+isLoading = signal(false);
 
   ngOnInit() {
     const empId = this.authService.getUserId();
@@ -80,16 +82,17 @@ export class RequestsMainComponent implements OnInit {
 
     this.assetService.getEmployeeRequests(empId).subscribe({
       next: (data: AssetRequest[]) => {
-        // Keep only the latest 20 requests
+
+          // // Keep only the latest 20 requests
         const limitedData = data.slice(0, this.maxRequests);
         this.recentRequests.set(limitedData);
-        this.currentPage.set(1); // Reset to first page
+        this.currentPage.set(1);
         this.isLoading.set(false);
-        this.cdr.detectChanges(); 
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching employee requests:', err);
-        this.isLoading.set(false); 
+        this.isLoading.set(false);
       }
     });
   }

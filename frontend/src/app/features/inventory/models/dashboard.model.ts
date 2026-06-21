@@ -5,13 +5,16 @@ export interface Kpi {
   totalAssetValue: string;
   pendingRequests: number;
   maintenanceDue: number;
+  temporaryAssignedAssets: number;
+  awaitingPickupConfirmations: number;
+  procurementEscalations: number;
 }
 
 export interface RecentActivity {
   id: string;
   action: 'checked_out' | 'checked_in' | 'registered' | 'maintenance' | 'disposed' | 'transferred';
   assetName: string;
-  assetId: string;
+  assetCode: string;
   user: string;
   timestamp: Date;
   icon: string;
@@ -30,7 +33,7 @@ export interface WarrantyAlert {
 export interface ChartDatasets {
   assetsByCategory: { labels: string[]; data: number[]; colors: string[] };
   assetsByStatus: { labels: string[]; data: number[]; colors: string[] };
-  assetsByDepartment: { labels: string[]; data: number[]; colors: string[] };
+  assetsByDivision: { labels: string[]; data: number[]; colors: string[] };
   checkoutTrend: { labels: string[]; data: number[] };
   anomalies: { ghostAssets: number; missingAssets: number; maintenanceDue: number };
 }

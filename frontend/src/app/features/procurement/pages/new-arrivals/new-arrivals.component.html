@@ -7,8 +7,14 @@
         <form class="arrival-form" [formGroup]="arrivalForm" (ngSubmit)="onSubmit()">
             <!-- Item Name -->
             <div class="form-group full-width">
-                <label for="itemName">Item Name:</label>
-                <input type="text" id="itemName" formControlName="itemName" placeholder="">
+                <label for="purchasingOrderId">Purchasing Order (Item Name):</label>
+                <select id="purchasingOrderId" formControlName="purchasingOrderId" class="custom-select">
+                    <option [ngValue]="null">Select Purchasing Order</option>
+                    <option *ngFor="let po of purchasingOrders" [value]="po.id">{{ po.orderNumber }} - {{ po.supplierName }}</option>
+                </select>
+                <div *ngIf="f['purchasingOrderId'].invalid && f['purchasingOrderId'].touched" class="error-message">
+                    Purchasing Order is required
+                </div>
             </div>
 
             <!-- Model -->
@@ -41,6 +47,9 @@
             <div class="form-group small-width">
                 <label for="quantity">Quantity:</label>
                 <input type="number" id="quantity" formControlName="quantity">
+                <div *ngIf="f['quantity'].invalid && f['quantity'].touched" class="error-message">
+                    Quantity must be at least 1
+                </div>
             </div>
 
             <!-- Purchased Date & Division -->
@@ -50,6 +59,9 @@
                     <div class="date-input-wrapper">
                         <input type="date" id="purchasedDate" formControlName="purchasedDate">
                     </div>
+                    <div *ngIf="f['purchasedDate'].invalid && f['purchasedDate'].touched" class="error-message">
+                        Purchased Date is required
+                    </div>
                 </div>
                 <div class="form-group half-width">
                     <label for="divisionId">Division</label>
@@ -57,6 +69,9 @@
                         <option [ngValue]="null">Select Division</option>
                         <option *ngFor="let division of divisions" [value]="division.id">{{ division.name }}</option>
                     </select>
+                    <div *ngIf="f['divisionId'].invalid && f['divisionId'].touched" class="error-message">
+                        Please select a division
+                    </div>
                 </div>
             </div>
 
@@ -64,6 +79,9 @@
             <div class="form-group half-width">
                 <label for="purchasedPrice">Purchased Price (LKR)</label>
                 <input type="number" id="purchasedPrice" formControlName="purchasedPrice">
+                <div *ngIf="f['purchasedPrice'].invalid && f['purchasedPrice'].touched" class="error-message">
+                    Valid purchased price is required
+                </div>
             </div>
 
             <!-- Buttons -->
@@ -113,9 +131,9 @@
         </div>
     </section>
 
-    <!-- Success Overlay -->
-    <div class="success-overlay" *ngIf="showSuccess">
-        <app-status-card label="Informed Stores Successfully" icon="check_box" color="#00AFB5">
+    <!-- Success Toast -->
+    <div class="global-toast-container" *ngIf="showSuccess">
+        <app-status-card label="Informed Stores Successfully" icon="check_box" color="#10b981">
         </app-status-card>
     </div>
 </div>

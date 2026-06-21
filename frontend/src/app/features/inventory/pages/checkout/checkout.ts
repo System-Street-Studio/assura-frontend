@@ -1,10 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { catchError, finalize, of, throwError, timeout } from 'rxjs';
 import { CheckoutService } from '../../services/checkout.service';
-import { CheckoutRecord, CheckoutFormData } from '../../models/checkout.model';
+import { CheckoutRecord, CheckoutFormData, CheckoutEmployee } from '../../models/checkout.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
@@ -20,15 +21,17 @@ export class CheckoutComponent implements OnInit {
     private svc = inject(CheckoutService);
     private router = inject(Router);
     private toast = inject(ToastService);
+    private cdr = inject(ChangeDetectorRef);
 
     allRecords: CheckoutRecord[] = [];
     filteredRecords: CheckoutRecord[] = [];
     viewRecords: CheckoutRecord[] = [];
     loading = true;
+    loadError = false;
 
     searchTerm = '';
     filterStatus = '';
-    filterDepartment = '';
+    filterDivision = '';
 
     currentPage = 1;
     pageSize = 10;
@@ -41,12 +44,13 @@ export class CheckoutComponent implements OnInit {
     checkoutProcessing = false;
     submitted = false;
     availableAssets: { id: string; name: string; serial: string; category: string }[] = [];
-    employees: { name: string; department: string; email: string }[] = [];
+    employees: CheckoutEmployee[] = [];
 
     checkoutForm: CheckoutFormData = {
         assetId: '',
+        checkedOutToUserId: '',
         checkedOutTo: '',
-        department: '',
+        division: '',
         email: '',
         dueDate: '',
         notes: '',
@@ -87,8 +91,8 @@ export class CheckoutComponent implements OnInit {
         ).length;
     }
 
-    get departments(): string[] {
-        const depts = new Set(this.allRecords.map((r) => r.department));
+    get divisions(): string[] {
+        const depts = new Set(this.allRecords.map((r) => r.division));
         return Array.from(depts).sort();
     }
 
@@ -118,23 +122,65 @@ export class CheckoutComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadData();
-        this.svc.getAvailableAssets().subscribe((a) => (this.availableAssets = a));
-        this.svc.getEmployees().subscribe((e) => (this.employees = e));
+        this.svc.getAvailableAssets().subscribe({
+            next: (a) => {
+                this.availableAssets = a;
+            },
+            error: () => {
+                this.availableAssets = [];
+                this.toast.error('Failed to load available assets');
+            },
+        });
+        this.svc.getEmployees().subscribe({
+            next: (e) => {
+                this.employees = e;
+            },
+            error: () => {
+                this.employees = [];
+            },
+        });
     }
 
     loadData(): void {
         this.loading = true;
-        this.svc.getAll().subscribe({
+        this.loadError = false;
+        this.svc.getAll().pipe(
+            timeout(10000),
+            catchError((err) => {
+                if (err?.name === 'TimeoutError') {
+                    this.toast.error('Checkout data request timed out. Please try again.');
+                }
+                return throwError(() => err);
+            })
+        ).subscribe({
             next: (data: CheckoutRecord[]) => {
-                this.allRecords = data;
-                this.applyFilters();
-                this.loading = false;
+                setTimeout(() => {
+                    try {
+                        this.allRecords = Array.isArray(data) ? data : [];
+                        this.applyFilters();
+                    } catch {
+                        this.allRecords = [];
+                        this.filteredRecords = [];
+                        this.viewRecords = [];
+                    }
+                    this.loading = false;
+                    setTimeout(() => this.cdr.detectChanges(), 0);
+                }, 0);
             },
             error: () => {
-                this.toast.error('Failed to load checkout records');
+                this.loadError = true;
+                this.toast.error('Failed to load checkout records.');
+                this.allRecords = [];
+                this.filteredRecords = [];
+                this.viewRecords = [];
                 this.loading = false;
+                setTimeout(() => this.cdr.detectChanges(), 0);
             },
         });
+    }
+
+    retryLoad(): void {
+        this.loadData();
     }
 
     setView(view: 'active' | 'history'): void {
@@ -162,10 +208,10 @@ export class CheckoutComponent implements OnInit {
                 r.assetId.toLowerCase().includes(term) ||
                 r.checkedOutTo.toLowerCase().includes(term) ||
                 r.serial.toLowerCase().includes(term) ||
-                r.department.toLowerCase().includes(term);
+                r.division.toLowerCase().includes(term);
 
             const matchesStatus = !this.filterStatus || r.status === this.filterStatus;
-            const matchesDept = !this.filterDepartment || r.department === this.filterDepartment;
+            const matchesDept = !this.filterDivision || r.division === this.filterDivision;
 
             return matchesSearch && matchesStatus && matchesDept;
         });
@@ -177,12 +223,12 @@ export class CheckoutComponent implements OnInit {
     clearFilters(): void {
         this.searchTerm = '';
         this.filterStatus = '';
-        this.filterDepartment = '';
+        this.filterDivision = '';
         this.applyFilters();
     }
 
     get hasActiveFilters(): boolean {
-        return !!this.searchTerm || !!this.filterStatus || !!this.filterDepartment;
+        return !!this.searchTerm || !!this.filterStatus || !!this.filterDivision;
     }
 
     /* ── Pagination ── */
@@ -215,19 +261,28 @@ export class CheckoutComponent implements OnInit {
     /* ── New Checkout ── */
     openCheckoutModal(): void {
         this.submitted = false;
-        this.checkoutForm = { assetId: '', checkedOutTo: '', department: '', email: '', dueDate: '', notes: '' };
+        this.checkoutProcessing = false;
+        this.checkoutForm = { assetId: '', checkedOutToUserId: '', checkedOutTo: '', division: '', email: '', dueDate: '', notes: '' };
         this.showCheckoutModal = true;
     }
 
     cancelCheckout(): void {
+        if (this.checkoutProcessing) {
+            return;
+        }
         this.showCheckoutModal = false;
     }
 
     onEmployeeChange(): void {
-        const emp = this.employees.find((e) => e.name === this.checkoutForm.checkedOutTo);
+        const emp = this.employees.find((e) => e.id === this.checkoutForm.checkedOutToUserId);
         if (emp) {
-            this.checkoutForm.department = emp.department;
+            this.checkoutForm.checkedOutTo = emp.name;
+            this.checkoutForm.division = emp.division;
             this.checkoutForm.email = emp.email;
+        } else {
+            this.checkoutForm.checkedOutTo = '';
+            this.checkoutForm.division = '';
+            this.checkoutForm.email = '';
         }
     }
 
@@ -235,17 +290,33 @@ export class CheckoutComponent implements OnInit {
         this.submitted = true;
         if (
             !this.checkoutForm.assetId ||
-            !this.checkoutForm.checkedOutTo ||
+            !this.checkoutForm.checkedOutToUserId ||
             !this.checkoutForm.dueDate
         ) {
             return;
         }
 
+        const selectedAsset = this.availableAssets.find((a) => a.id === this.checkoutForm.assetId);
+        if (!selectedAsset) {
+            this.toast.warning('Selected asset is no longer available for checkout. Please choose another asset.');
+            return;
+        }
+
         this.checkoutProcessing = true;
-        this.svc.checkout(this.checkoutForm).subscribe({
+        this.svc.checkout(this.checkoutForm).pipe(
+            timeout(15000),
+            catchError((err) => {
+                if (err?.name === 'TimeoutError') {
+                    this.toast.error('Checkout request timed out. Please try again.');
+                }
+                return throwError(() => err);
+            }),
+            finalize(() => {
+                this.checkoutProcessing = false;
+            })
+        ).subscribe({
             next: (record: CheckoutRecord) => {
                 this.showCheckoutModal = false;
-                this.checkoutProcessing = false;
                 this.resultType = 'success';
                 this.resultTitle = 'Checked Out!';
                 this.resultMessage = `"${record.assetName}" has been checked out to ${record.checkedOutTo}.`;
@@ -253,14 +324,17 @@ export class CheckoutComponent implements OnInit {
                 this.loadData();
             },
             error: () => {
-                this.checkoutProcessing = false;
                 this.toast.error('Checkout failed. Please try again.');
             },
         });
     }
 
     /* ── Checkin action ── */
-    onCheckin(record: CheckoutRecord): void {
+    onCheckin(record: CheckoutRecord | null): void {
+        if (!record) {
+            this.toast.warning('Checkout record is no longer available. Please select it again.');
+            return;
+        }
         this.router.navigate(['/inventory/check-in'], { queryParams: { id: record.id } });
     }
 

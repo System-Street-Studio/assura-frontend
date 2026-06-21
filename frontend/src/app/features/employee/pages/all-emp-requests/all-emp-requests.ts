@@ -19,9 +19,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
 export class AllRequestsComponent implements OnInit {
   searchQuery = signal('');
   requests = signal<AssetRequest[]>([]);
-  
-  // 🌟 HTML එකට අත්‍යවශ්‍ය වන isLoading signal එක එකතු කළා
   isLoading = signal(false);
+  error = signal<string | null>(null);
 
   // Pagination
   pageSize = 10;
@@ -47,20 +46,20 @@ export class AllRequestsComponent implements OnInit {
     }
   }
   
-  ngOnInit() {
+    ngOnInit() {
     const userId = this.authService.getUserId();
     if (userId) {
-      // 🌟 API Call එක පටන් ගන්න කලින් loading true කරනවා
+     
       this.isLoading.set(true);
       
       this.assetService.getEmployeeRequests(userId).subscribe({
         next: (data: AssetRequest[]) => {
           this.requests.set(data);
-          this.isLoading.set(false); // 🌟 දත්ත ආවට පස්සේ loading false කළා
+          this.isLoading.set(false); 
         },
         error: (err) => {
           console.error('Error fetching requests:', err);
-          this.isLoading.set(false); // 🌟 Error එකක් ආවත් loading false කළා
+          this.isLoading.set(false);
         }
       });
     }
@@ -94,7 +93,6 @@ export class AllRequestsComponent implements OnInit {
     return this.filteredRequests().slice(start, start + this.pageSize);
   });
 
-  // 🌟 Pagination Numbers array එක dynamic කලා total pages ගණනට අනුව
   pageNumbers = computed(() => {
     const pages = [];
     for (let i = 1; i <= this.totalPages(); i++) {

@@ -53,11 +53,14 @@ export class AuthService {
     if (!token) return false;
     try {
       const decoded: unknown = jwtDecode(token);
-      // Check for expiration
-      const payload = decoded as { exp: number };
-      const isExpired = payload.exp && payload.exp * 1000 < Date.now();
-      return !isExpired;
+      const payload = decoded as { exp?: number };
+      // If token has no exp claim, treat as expired (not authenticated)
+      if (!payload.exp) return false;
+      // Check if token is expired
+      return payload.exp * 1000 > Date.now();
     } catch {
+      // Malformed token — clear it and return false
+      localStorage.removeItem(this.TOKEN_KEY);
       return false;
     }
   }
@@ -183,8 +186,9 @@ export class AuthService {
     const roles = this.getRoles();
     if (roles.includes('Admin')) return '/admin/overview';
     if (roles.includes('Procurement')) return '/procurement/overview';
-    if (roles.includes('Storekeeper') || roles.includes('Auditor')) return '/inventory/assets';
-    if (roles.includes('HR')) return '/hr/pending';
+    if (roles.includes('Storekeeper')) return '/inventory/dashboard';
+    if (roles.includes('Auditor')) return '/reporting/dashboard';
+    if (roles.includes('HR')) return '/hr/overview';
     if (roles.includes('Accountant')) return '/accountant/discarded';
     if (roles.includes('Superintendent')) return '/superintendent/overview';
     if (roles.includes('DivisionHead')) return '/approvals/overview';

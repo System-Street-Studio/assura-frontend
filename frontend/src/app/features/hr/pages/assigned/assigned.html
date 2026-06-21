@@ -1,0 +1,37 @@
+<div class="hr-shell">
+  <section class="assigned-page" aria-labelledby="assigned-title">
+    <div class="content-shell">
+      <h1 id="assigned-title" class="page-title">Assigned</h1>
+
+      <div class="table-panel">
+        <table>
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Division</th>
+              <th>Joined Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (user of assignedUsers(); track user.id) {
+            <tr>
+              <td>{{ user.userId }}</td>
+              <td>{{ user.name }}</td>
+              <td>{{ user.role }}</td>
+              <td>{{ user.division }}</td>
+              <td>{{ user.joinedDate }}</td>
+              <td>
+                <button class="edit-btn" (click)="openEditForm(user.id)">Edit</button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

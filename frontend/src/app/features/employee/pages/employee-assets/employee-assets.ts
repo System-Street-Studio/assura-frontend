@@ -35,24 +35,24 @@ export class EmployeeAssetsComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    
+
     // Check if click is inside status filter container
     const inStatusFilter = target.closest('[data-filter="status-filter"]') !== null;
-    
+
     // Check if click is inside category filter container
     const inCategoryFilter = target.closest('[data-filter="category-filter"]') !== null;
-    
+
     // Close status menu if clicking outside
     if (this.statusMenuOpen() && !inStatusFilter) {
       this.statusMenuOpen.set(false);
     }
-    
+
     // Close category menu if clicking outside
     if (this.categoryMenuOpen() && !inCategoryFilter) {
       this.categoryMenuOpen.set(false);
     }
   }
-  
+
   searchTerm = signal('');
   isLoading = signal(true);
   statusMenuOpen = signal(false);
@@ -124,19 +124,19 @@ export class EmployeeAssetsComponent implements OnInit {
 
   totalAssets = computed(() => this.assets().length);
 
-  assetsInUse = computed(() => 
+  assetsInUse = computed(() =>
     this.assets().filter(a => a.status === 'In Use').length
   );
 
-  assetsInMaintenance = computed(() => 
+  assetsInMaintenance = computed(() =>
     this.assets().filter(a => a.status === 'Maintenance').length
   );
 
-  assetsTransferred = computed(() => 
+  assetsTransferred = computed(() =>
     this.assets().filter(a => a.status === 'Transferred').length
   );
 
-  assetsDiscarded = computed(() => 
+  assetsDiscarded = computed(() =>
     this.assets().filter(a => a.status === 'Discarded').length
   );
 

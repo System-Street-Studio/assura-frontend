@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable,map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-
 
 export interface AttachmentFile {
   id?: string;
@@ -15,7 +14,7 @@ export interface AttachmentFile {
 }
 
 export interface AssetRequest {
-  id: number;         
+  id: number;
   employeeId: string;
   submittedBy: string;
   assetName: string;
@@ -26,8 +25,8 @@ export interface AssetRequest {
   description?: string;
   status: string;
   submittedDate: string;
-  requestType: string;  
-  attachments?: AttachmentFile[];     
+  requestType: string;
+  attachments?: AttachmentFile[];
 }
 
 
@@ -36,17 +35,14 @@ export interface AssetRequest {
 @Injectable({ providedIn: 'root' })
 export class AssetService {
   private apiUrl = `${environment.apiUrl}/AssetRequests`;
+  private unifiedApiUrl = `${environment.apiUrl}/requests`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  /*createRequest(data: any): Observable<AssetRequest> {
-    return this.http.post<AssetRequest>(this.apiUrl, data);
-  }*/
-
-    //create request with file attachments
-    createRequest(data: any, files?: File[]): Observable<AssetRequest> {
+  //create request with file attachments
+  createRequest(data: any, files?: File[]): Observable<AssetRequest> {
     const formData = new FormData();
-    
+
     Object.keys(data).forEach(key => {
       const value = data[key];
       if (value !== null && value !== undefined) {
@@ -57,33 +53,34 @@ export class AssetService {
         }
       }
     });
-    
+
     if (files && files.length > 0) {
       files.forEach((file) => {
         formData.append('files', file, file.name);
       });
     }
-    
+
     // Debug: Log FormData contents
     console.log('FormData contents:');
     (formData as any).forEach((value: any, key: string) => {
       console.log(`${key}:`, value instanceof File ? `${value.name} (${value.size} bytes)` : value);
     });
-    
+
     return this.http.post<AssetRequest>(this.apiUrl, formData);
   }
 
+  /** Posts to the unified /api/requests endpoint which Division Heads can see and approve */
+  createUnifiedRequest(payload: { type: number; priority: number; description?: string; assetId?: number }): Observable<number> {
+    return this.http.post<number>(this.unifiedApiUrl, payload);
+  }
 
-
-
-  getEmployeeRequests(empId: string): Observable<AssetRequest[]> {
+ getEmployeeRequests(empId: string): Observable<AssetRequest[]> {
     return this.http.get<any[]>(`${this.apiUrl}/employee/${empId}`).pipe(
       map((apiData: any[]) => apiData.map(item => ({
         ...item
       }) as AssetRequest))
     );
   }
-
   getPendingRequests(): Observable<AssetRequest[]> {
     return this.http.get<any[]>(`${this.apiUrl}/pending`).pipe(
       map((apiData: any[]) => apiData.map(item => ({
@@ -98,5 +95,45 @@ export class AssetService {
         ...item
       }) as AssetRequest)
     );
+  }
+
+  normalizeStatus(status: string): string {
+    switch (status) {
+      case 'PendingDivisionHeadApproval':
+      case 'PendingStorekeeperReview':
+      case 'PendingProcurement':
+        return 'Pending';
+      case 'TemporaryAssigned':
+        return 'Approved';
+      default:
+        return status;
+    }
+  }
+
+  private normalizePriority(priority: any): string {
+    const priorityMap: Record<string, string> = {
+      1: 'Low',
+      2: 'Normal',
+      3: 'Medium',
+      4: 'High',
+      5: 'Urgent',
+    };
+
+    return priorityMap[String(priority)] || priority || 'Normal';
+  }
+
+  private normalizeRequestType(type: any): string {
+    if (typeof type === 'string') {
+      return type;
+    }
+
+    const requestTypeMap: Record<string, string> = {
+      1: 'New Asset',
+      2: 'Maintenance',
+      3: 'Discard',
+      4: 'Transfer',
+    };
+
+    return requestTypeMap[String(type)] || 'Request';
   }
 }

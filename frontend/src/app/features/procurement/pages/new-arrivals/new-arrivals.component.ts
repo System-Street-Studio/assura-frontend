@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
 import { ProcurementService } from '../../services/procurement.service';
 import { AssetInformingDto, InformStoresRequest } from '../../models/arrival.model';
+import { PurchasingOrderSummaryDto } from '../../models/purchase-order.model';
 
 @Component({
   selector: 'app-new-arrivals',
@@ -20,9 +21,10 @@ export class NewArrivalsComponent implements OnInit {
   isSubmitting = false;
   divisions: any[] = [];
   history: AssetInformingDto[] = [];
+  purchasingOrders: PurchasingOrderSummaryDto[] = [];
 
   arrivalForm: FormGroup = this.fb.group({
-    itemName: ['', Validators.required],
+    purchasingOrderId: [null, Validators.required],
     model: [''],
     warranty: [null],
     isYears: [false],
@@ -33,9 +35,22 @@ export class NewArrivalsComponent implements OnInit {
     purchasedPrice: [null, [Validators.required, Validators.min(0)]]
   });
 
+  // පාලකයන් (controls) වෙත පහසුවෙන් පිවිසීමට getter එකක්
+  get f() {
+    return this.arrivalForm.controls;
+  }
+
   ngOnInit() {
     this.loadDivisions();
     this.loadHistory();
+    this.loadOrders();
+  }
+
+  loadOrders() {
+    this.procurementService.getOrders().subscribe({
+      next: (data) => this.purchasingOrders = data.filter((po) => po.status !== 'Completed'),
+      error: (err) => console.error('Error loading orders', err)
+    });
   }
 
   loadDivisions() {
@@ -57,7 +72,12 @@ export class NewArrivalsComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.arrivalForm.valid && !this.isSubmitting) {
+    if (this.arrivalForm.invalid) {
+      this.arrivalForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.isSubmitting) {
       this.isSubmitting = true;
       const formValue = this.arrivalForm.value;
 
@@ -66,8 +86,12 @@ export class NewArrivalsComponent implements OnInit {
         warrantyStr = `${formValue.warranty} ${formValue.isYears ? 'Years' : formValue.isMonths ? 'Months' : ''}`.trim();
       }
 
+      const selectedPo = this.purchasingOrders.find(po => po.id === Number(formValue.purchasingOrderId));
+      const poOrderNumber = selectedPo ? selectedPo.orderNumber : 'Unknown PO';
+
       const request: InformStoresRequest = {
-        itemName: formValue.itemName,
+        itemName: poOrderNumber,
+        purchasingOrderId: Number(formValue.purchasingOrderId),
         model: formValue.model,
         warranty: warrantyStr,
         quantity: formValue.quantity,

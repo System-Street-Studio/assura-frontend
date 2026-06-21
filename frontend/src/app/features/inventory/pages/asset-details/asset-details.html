@@ -1,5 +1,11 @@
-<div class="asset-detail-page" *ngIf="asset">
-  <!-- Back link -->
+<div class="loading-state" *ngIf="loading">
+  <!-- Displays a spinning loading indicator until asset data is fully fetched -->
+  <mat-icon class="loading-spinner rotating">autorenew</mat-icon>
+  <p>Loading Asset Details...</p>
+</div>
+
+<div class="asset-detail-page" *ngIf="!loading && asset">
+  <!-- Navigation link to return to the main inventory table -->
   <button class="back-link" (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
     Back to Assets
@@ -43,14 +49,14 @@
     </div>
   </div>
 
-  <!-- Content grid -->
+  <!-- Content grid: Splits the page into a main details section (left) and a status sidebar (right) -->
   <div class="content-grid">
     <div class="main-col">
       <!-- About / QR section -->
       <section class="about" *ngIf="activeTab === 'about'">
         <div class="about-grid">
           <div class="qr-block">
-            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" class="qr-image" />
+            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" class="qr-image" (error)="onQrImageError()" />
             <div class="qr-placeholder" *ngIf="!qrDataUrl">
               <mat-icon class="qr-icon">qr_code_2</mat-icon>
             </div>
@@ -160,6 +166,7 @@
   </div>
 
   <!-- ═══ CHECK-IN MODAL ═══ -->
+  <!-- Opens as an overlay allowing users to return a deployed asset and log its condition -->
   <div class="overlay" *ngIf="showCheckinModal" (click)="cancelCheckin()">
     <div class="checkin-dialog" (click)="$event.stopPropagation()">
       <div class="checkin-icon-wrap">
@@ -199,6 +206,7 @@
   </div>
 
   <!-- Delete Confirmation -->
+  <!-- Prompt to prevent accidental permanent deletion of an asset -->
   <div class="overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()">
     <div class="confirm-dialog" (click)="$event.stopPropagation()">
       <h3>Delete Asset?</h3>
@@ -213,4 +221,10 @@
   <!-- Result Overlay -->
   <app-result-overlay *ngIf="showResult" [type]="resultType" [title]="resultTitle" [message]="resultMessage"
     (closed)="onResultClosed()"></app-result-overlay>
+
+  <!-- Print-only container to output only QR code and Asset ID on paper -->
+  <div class="print-only-label" *ngIf="qrDataUrl">
+    <img [src]="qrDataUrl" alt="QR Code Label" />
+    <div class="print-asset-id">{{ asset.assetCode }}</div>
+  </div>
 </div>

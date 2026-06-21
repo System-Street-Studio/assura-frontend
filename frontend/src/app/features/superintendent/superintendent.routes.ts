@@ -1,13 +1,21 @@
 import { Routes } from '@angular/router';
-import { OverviewComponent } from '../overview/overview';
-import { MyAssetsComponent } from '../my-assets/my-assets';
-import { DiscardedNotesComponent } from '../discarded-notes/discarded-notes';
-import { BuyerComponent } from '../buyer/buyer';
 
 export const superintendentRoutes: Routes = [
-    { path: 'overview', component: OverviewComponent },
-    { path: 'my-assets', component: MyAssetsComponent },
-    { path: 'discarded-notes', component: DiscardedNotesComponent },
-    { path: 'buyer', component: BuyerComponent },
-    { path: '', redirectTo: 'overview', pathMatch: 'full' }
+    {
+        path: 'overview',
+        loadComponent: () => import('../overview/overview').then(m => m.OverviewComponent)
+    },
+    {
+        path: 'my-assets',
+        loadComponent: () => import('../my-assets/my-assets').then(m => m.MyAssetsComponent)
+    },
+    {
+        path: 'discarded-notes',
+        loadChildren: () => import('../discarded-notes/discarded-notes.routes').then(m => m.discardedNotesRoutes)
+    },
+    {
+        path: 'buyer',
+        loadComponent: () => import('../buyer/buyer').then(m => m.BuyerComponent)
+    },
+    { path: '', redirectTo: 'discarded-notes', pathMatch: 'full' }
 ];

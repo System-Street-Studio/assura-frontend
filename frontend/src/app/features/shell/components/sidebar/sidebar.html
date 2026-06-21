@@ -17,13 +17,22 @@
   </div>
 
   <nav class="sidebar-nav">
-    @for (item of filteredMenuItems; track item.link; let i = $index) {
-    <a class="nav-item" [routerLink]="item.link" routerLinkActive="active" [title]="item.label">
-      <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
-      @if (!isCollapsed) {
-      <span class="nav-label">{{ item.label }}</span>
-      }
-    </a>
+    @for (item of filteredMenuItems; track item.link) {
+      <a class="nav-item" [routerLink]="item.link" routerLinkActive="active" [title]="item.label">
+        <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+        @if (!isCollapsed) {
+          <span class="nav-label">{{ item.label }}</span>
+        }
+      </a>
     }
   </nav>
+
+  <div class="sidebar-footer">
+    <a class="nav-item logout" (click)="logout()">
+      <mat-icon class="nav-icon">logout</mat-icon>
+      @if (!isCollapsed) {
+        <span class="nav-label">Sign Out</span>
+      }
+    </a>
+  </div>
 </aside>

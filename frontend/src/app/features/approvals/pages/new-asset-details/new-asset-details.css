@@ -1,15 +1,17 @@
 /* Animation for Modal Entrance */
 @keyframes slideUp {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px); 
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
-.container{
+
+.container {
   margin: 0px;
   padding: 10px;
   font-family: 'jost';
@@ -19,12 +21,12 @@
 .page-title {
   font-size: 30px;
   font-weight: 700;
-  margin:5px 35px 40px 5px ;
+  margin: 5px 35px 40px 5px;
   color: #333;
 }
 
-.header-section p{
-  margin:10px 100px 0px 120px;
+.header-section p {
+  margin: 10px 100px 0px 120px;
   font-size: 20px;
   font-weight: 700;
 }
@@ -171,6 +173,16 @@ label {
   border-left: 4px solid #00afb5;
 }
 
+.priority-text {
+  font-weight: 700;
+  margin-left: 50px;
+}
+
+.status-badge.temporary {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
 .action-buttons {
   display: flex;
   gap: 15px;
@@ -207,6 +219,86 @@ label {
 .btn-approve:hover,
 .btn-reject:hover {
   opacity: 0.9;
+}
+
+.btn-approve:disabled,
+.btn-reject:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.suggestion-panel {
+  flex: 1 1 100%;
+  margin-bottom: 14px;
+}
+
+.suggestion-title {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #445457;
+}
+
+.suggestion-list {
+  display: grid;
+  gap: 8px;
+}
+
+.suggestion-item {
+  width: 100%;
+  border: 1px solid #dbe6e8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #f9fbfb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.suggestion-item.selected {
+  border-color: #00a9b5;
+  background: #edf9fa;
+}
+
+.suggestion-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.suggestion-main strong {
+  color: #1f2f31;
+  font-size: 13px;
+}
+
+.suggestion-main span {
+  color: #637578;
+  font-size: 12px;
+}
+
+.suggestion-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.suggestion-side .score {
+  background: #e0f2f4;
+  color: #0b6c78;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.suggestion-side small {
+  color: #6f8285;
+  font-size: 11px;
 }
 
 
@@ -269,8 +361,17 @@ label {
   opacity: 0;
 }
 
-.r1 { width: 80px; height: 80px; animation: ripple 2s infinite; }
-.r2 { width: 110px; height: 110px; animation: ripple 2s infinite 0.6s; }
+.r1 {
+  width: 80px;
+  height: 80px;
+  animation: ripple 2s infinite;
+}
+
+.r2 {
+  width: 110px;
+  height: 110px;
+  animation: ripple 2s infinite 0.6s;
+}
 
 /* --- Right Content Section --- */
 .content-container {
@@ -285,6 +386,7 @@ label {
   background: linear-gradient(90deg, #004777, #00a9b5);
   background-clip: text;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 26px;
   font-weight: 800;
@@ -316,8 +418,8 @@ label {
 }
 
 .btn-done:hover {
- background: #0b6c78; 
-  transform: translateY(-2px) scale(1.02); 
+  background: #0b6c78;
+  transform: translateY(-2px) scale(1.02);
   box-shadow: 0 10px 20px rgba(0, 169, 181, 0.25);
 }
 
@@ -338,7 +440,10 @@ label {
   transition: 0.2s;
 }
 
-.btn-close:hover { background: #eee; color: #333; }
+.btn-close:hover {
+  background: #eee;
+  color: #333;
+}
 
 .btn-done:active {
   transform: scale(0.98);
@@ -349,7 +454,7 @@ label {
 }
 
 .btn-done:hover svg {
-  transform: translateX(4px); 
+  transform: translateX(4px);
 }
 
 /* Progress Bar at the bottom */
@@ -378,6 +483,7 @@ label {
   background: linear-gradient(90deg, #b71c1c, #e53935);
   background-clip: text;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -396,19 +502,41 @@ label {
 
 /* --- Animations --- */
 @keyframes ripple {
-  0% { transform: scale(0.8); opacity: 0; }
-  50% { opacity: 0.3; }
-  100% { transform: scale(1.3); opacity: 0; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
 }
 
 @keyframes entry {
-  from { opacity: 0; transform: scale(0.9) translateY(30px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes progress {
-  from { transform: scaleX(1); }
-  to { transform: scaleX(0); }
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
 }
 
 .checkmark-path {
@@ -420,4 +548,8 @@ label {
   animation: draw 0.6s ease-out 0.4s forwards;
 }
 
-@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

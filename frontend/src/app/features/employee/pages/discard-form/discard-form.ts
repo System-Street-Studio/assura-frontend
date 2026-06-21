@@ -33,7 +33,7 @@ export class DiscardFormComponent implements OnInit {
     this.assetService.getAll().subscribe({
       next: (assets) => {
         this.assignedAssets.set(assets);
-        
+
         // Auto-select asset from route state
         const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state.assetName;
         if (passedAssetName) {
@@ -56,23 +56,26 @@ export class DiscardFormComponent implements OnInit {
       return;
     }
     this.isSubmitting.set(true);
-    const requestPayload = {
-      employeeId: this.authService.getUserId() || '',
-      submittedBy: this.authService.getUserName() || 'Employee',
-      assetCategory: 'N/A',
+
+    const userId = this.authService.getUserId();
+    const userName = this.authService.getUserName();
+
+    const requestData = {
+      employeeId: userId ? userId.toString() : '',
+      submittedBy: userName || '',
       assetName: this.asset(),
-      description: 'Discard Request',
-      reason: this.reason(),
-      quantity: 1,
+      assetCategory: 'General',
       priority: 'Normal',
       requestType: 'Discard',
-      submittedDate: new Date().toISOString()
+      reason: this.reason(),
+      description: `Discard Request for ${this.asset()}`,
+      quantity: 1
     };
 
-    this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
-      next: () => {
+    this.assetRequestService.createRequest(requestData, this.selectedFiles()).subscribe({
+      next: (res: any) => {
         this.isSubmitting.set(false);
-        alert('Discard Request Submitted Successfully!');
+        alert(res?.message || 'Discard Request Submitted Successfully!');
         this.location.back();
       },
       error: (err) => {

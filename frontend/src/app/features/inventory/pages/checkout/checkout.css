@@ -929,79 +929,7 @@
     height: 18px;
 }
 
-/* ===== OVERLAY & MODAL ===== */
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: overlayIn 0.2s ease-out;
-}
 
-@keyframes overlayIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-.checkout-dialog {
-    background: #fff;
-    border-radius: 20px;
-    padding: 36px 32px 28px;
-    width: 520px;
-    max-width: 94vw;
-    max-height: 90vh;
-    overflow-y: auto;
-    text-align: center;
-    animation: popIn 0.25s ease-out;
-}
-
-@keyframes popIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(6px);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.modal-icon-wrap {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 14px;
-}
-
-.checkout-icon-bg {
-    background: #e0f2fe;
-    color: #0369a1;
-}
-
-.modal-icon {
-    font-size: 28px;
-    width: 28px;
-    height: 28px;
-}
-
-.checkout-dialog h3 {
-    font-size: 1.22rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 4px;
-}
 
 .modal-subtitle {
     font-size: 0.88rem;

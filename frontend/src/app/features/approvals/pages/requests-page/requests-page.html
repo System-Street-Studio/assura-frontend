@@ -9,9 +9,12 @@
 
   <div class="request-tabs">
     <button class="tab-btn" [class.active]="activeTab() === 'new'" (click)="setTab('new')">New Asset Requests</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'transfer'" (click)="setTab('transfer')">Transfer Requests</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'maintenance'" (click)="setTab('maintenance')">Maintenance</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'discard'" (click)="setTab('discard')">Discard Requests</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'transfer'" (click)="setTab('transfer')">Transfer
+      Requests</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'maintenance'"
+      (click)="setTab('maintenance')">Maintenance</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'discard'" (click)="setTab('discard')">Discard
+      Requests</button>
   </div>
 
   <div class="stats-grid">
@@ -72,7 +75,7 @@
           <div class="input-wrapper">
             <mat-icon class="search-icon">search</mat-icon>
             <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
-                   placeholder="Search by Employee / Asset..." class="search-bar">
+              placeholder="Search by Employee / Asset..." class="search-bar">
           </div>
         </div>
 
@@ -98,8 +101,7 @@
               <span class="section-title">{{ group.label }}</span>
               <div class="chips-grid">
                 <div *ngFor="let opt of group.options" class="filter-chip"
-                     [class.active]="selectedFilters()[group.key].includes(opt)"
-                     (click)="toggleFilter(group.key, opt)">
+                  [class.active]="selectedFilters()[group.key].includes(opt)" (click)="toggleFilter(group.key, opt)">
                   <mat-icon *ngIf="selectedFilters()[group.key].includes(opt)">check</mat-icon>
                   {{ opt }}
                 </div>
@@ -127,7 +129,6 @@
             <th>Submit Date</th>
             <th>Asset / Category</th>
             <th>Emp Id</th>
-            
           }
           <th>Status</th>
           <th>Priority</th>
@@ -167,7 +168,7 @@
               }
             </td>
           </tr>
-        } 
+        }
       </tbody>
     </table>
 

@@ -3,11 +3,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError, forkJoin, of, timeout } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../core/auth/auth.service';
 
 
 @Injectable({ providedIn: 'root' })
 export class HeadTransferService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private baseUrl = environment.apiUrl;
 
 
@@ -39,11 +41,10 @@ export class HeadTransferService {
       })
     );
   }
- 
-  getTransferCounts(userId: number): Observable<any> {
-  return this.http.get<any>(`${this.baseUrl}/transfers/counts?userId=${userId}`);
-  }
   
+  getTransferCounts(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/transfers/counts?userId=${userId}`);
+  }
   getDivisionHeadTransfers(tab: string): Observable<any[]> {
     const cacheBuster = new Date().getTime().toString();
     const params = new HttpParams().set('tab', tab).set('_', cacheBuster); 
@@ -69,8 +70,7 @@ export class HeadTransferService {
     return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject`, { reason });
   }
 
- returnActiveTransfer(transferId: number): Observable<any> {
+  returnActiveTransfer(transferId: number): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/transfers/${transferId}/return`, {});
   }
-
 }

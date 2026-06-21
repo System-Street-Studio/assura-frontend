@@ -45,9 +45,12 @@ export class ProfileComponent implements OnInit {
 
     constructor() {
         this.profileForm = this.fb.group({
+            username: ['', [Validators.required]],
             firstName: ['', [Validators.required]],
             lastName: ['', [Validators.required]],
-            email: ['', [Validators.required, Validators.email]]
+            email: ['', [Validators.required, Validators.email]],
+            phoneNumber: [''],
+            password: ['']
         });
 
         // Update form when profile data changes
@@ -55,9 +58,12 @@ export class ProfileComponent implements OnInit {
             const data = this.profile();
             if (data && !this.isEditing) {
                 this.profileForm.patchValue({
+                    username: data.username,
                     firstName: data.firstName,
                     lastName: data.lastName,
-                    email: data.email
+                    email: data.email,
+                    phoneNumber: data.phoneNumber,
+                    password: ''
                 });
             }
         });
@@ -86,9 +92,12 @@ export class ProfileComponent implements OnInit {
         if (!this.isEditing && this.profile()) {
             const data = this.profile()!;
             this.profileForm.patchValue({
+                username: data.username,
                 firstName: data.firstName,
                 lastName: data.lastName,
-                email: data.email
+                email: data.email,
+                phoneNumber: data.phoneNumber,
+                password: ''
             });
         }
     }

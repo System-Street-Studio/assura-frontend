@@ -194,6 +194,22 @@
     opacity: 0.9;
 }
 
+.btn-maintenance {
+    background-color: #00AFB5;
+    color: white;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-right: 20px;
+}
+
+.btn-maintenance:hover {
+    opacity: 0.9;
+}
+
 @media (max-width: 768px) {
 
     .info-grid,

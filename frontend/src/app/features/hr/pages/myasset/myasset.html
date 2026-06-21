@@ -1,0 +1,57 @@
+<div class="hr-shell">
+  <section class="audit-page" aria-labelledby="audit-title">
+    <div class="audit-shell">
+      <h1 id="audit-title" class="page-title">HR Activity Logs</h1>
+
+      <label class="search-field" aria-label="Search audit logs">
+        <input type="search" placeholder="Search by HR Officer, Employee, or Status" [value]="searchTerm()"
+          (input)="updateSearch($event)" />
+      </label>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>HR Officer</th>
+              <th>Action</th>
+              <th>Employee</th>
+              <th>Department</th>
+              <th>Role</th>
+              <th>IP / Device</th>
+              <th>Notes</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (entry of filteredAuditLogs(); track $index) {
+            <tr>
+              <td>
+                <span>{{ entry.date }}</span>
+                <span>{{ entry.time }}</span>
+              </td>
+              <td>{{ entry.officer }}</td>
+              <td>{{ entry.action }}</td>
+              <td>{{ entry.employee }}</td>
+              <td>{{ entry.department }}</td>
+              <td>{{ entry.role }}</td>
+              <td>{{ entry.device }}</td>
+              <td>{{ entry.notes }}</td>
+              <td>
+                <span class="result-badge" [class]="entry.result.toLowerCase()">
+                  {{ entry.result }}
+                </span>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td class="empty-state" colspan="9">No audit records found</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

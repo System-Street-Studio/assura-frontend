@@ -1,3 +1,11 @@
+/**
+ * Styles for the Asset Details page component.
+ * 
+ * Layout Strategy:
+ * - Uses a CSS Grid for the primary content division (.content-grid) separating details from status.
+ * - Utilizes Flexbox extensively for inner component alignment (headers, tabs, detail fields).
+ * - Implements custom fixed overlays with CSS animations (fadeIn, popIn) for modal dialogs.
+ */
 :host {
   display: block;
 }
@@ -752,4 +760,70 @@
 .checkin-actions .btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+/* ── Loading state ── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
+  color: #7d8b8c;
+}
+
+.loading-spinner.rotating {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: #0b6c78;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+/* ── Print Label Custom Styles ── */
+.print-only-label {
+  display: none;
+}
+
+@media print {
+  /* Hide all web components/layouts except the print label */
+  .asset-detail-page > *:not(.print-only-label) {
+    display: none !important;
+  }
+  
+  .asset-detail-page {
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    background: transparent !important;
+  }
+  
+  /* Layout label center page or top left depending on standard label printer settings */
+  .print-only-label {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    page-break-inside: avoid;
+  }
+  
+  .print-only-label img {
+    width: 260px !important;
+    height: 260px !important;
+    margin-bottom: 16px !important;
+    border: none !important;
+  }
+  
+  .print-only-label .print-asset-id {
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    font-family: 'Jost', sans-serif !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+  }
 }

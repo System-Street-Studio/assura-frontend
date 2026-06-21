@@ -102,13 +102,12 @@ export class TransferPageComponent implements OnInit, OnDestroy {
  loadTransfers() {
   this.isLoading.set(true);
   const userDivisionId = Number(this.authService.getDivisionId());
-  const rawDivId = this.authService.getDivisionId();
-console.log('Raw Division ID from Auth:', rawDivId);
 
   this.transferService.getDivisionHeadTransfers(this.activeTab()).subscribe({
-    next: (data) => {
+     next: (data) => {
       
       const mapped = data.map(item => {
+       
        
         let assignedType: 'Incoming Active' | 'Outgoing Active';
 

@@ -1,16 +1,19 @@
 export interface RequestItem {
   id: number;
+  requestNumber?: string;
   name?: string;
   employee?: string;
   requesterId?: string;
   employeeId?: string;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'In Progress';
+  status: string; // Using string to allow all workflow statuses like PendingDivisionHeadApproval, etc.
   assetName: string;
   category?: string;
+  division?: string;
   date: string;
   reason?: string;
   quantity?: number;
   description?: string;
-  priority: 'High' | 'Normal' | 'Low';
-  type: 'NewAsset' | 'Transfer' | 'Maintenance' | 'Discard'; 
+  priority: string;
+  type: string;
 }
+

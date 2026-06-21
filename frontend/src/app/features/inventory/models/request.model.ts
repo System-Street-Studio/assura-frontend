@@ -3,7 +3,7 @@ export interface AssetRequest {
   requestNumber?: string;
   requestedBy: string;
   requesterName?: string;
-  department: string;
+  division: string;
   email: string;
   assetName: string;
   category?: string;
@@ -23,4 +23,12 @@ export interface AssetRequest {
 
 export type RequestPriority = 'Urgent' | 'High' | 'Medium' | 'Normal' | 'Low';
 
-export type RequestStatus = 'Pending' | 'Approved' | 'Rejected' | 'Fulfilled' | 'Cancelled';
+export type RequestStatus =
+  | 'Pending'
+  | 'PendingStorekeeperReview'
+  | 'TemporaryAssigned'
+  | 'PendingProcurement'
+  | 'Approved'
+  | 'Rejected'
+  | 'Fulfilled'
+  | 'Cancelled';

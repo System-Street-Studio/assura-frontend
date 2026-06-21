@@ -1,0 +1,21 @@
+/* Global Print Reset Rules */
+@media print {
+  /* Hide core shell components */
+  app-shared-sidebar, 
+  app-shared-navbar, 
+  app-toast {
+    display: none !important;
+  }
+
+  /* Reset layout constraints to support multi-page printing */
+  html, body, .shell-layout, .main-area, .content {
+    height: auto !important;
+    min-height: initial !important;
+    max-height: initial !important;
+    overflow: visible !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+}

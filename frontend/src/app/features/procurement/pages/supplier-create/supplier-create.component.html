@@ -6,62 +6,82 @@
 
         <h2 class="form-heading">Add New Supplier</h2>
 
-        <div class="form-body">
-
-            <!-- Supplier Name spans full width at the top -->
-            <div class="full-row">
-                <label class="field-label">Supplier Name:</label>
-                <input class="input-wide" type="text" [(ngModel)]="form.name" />
-            </div>
-
-            <!-- Two-column section -->
-            <div class="two-col">
-
-                <!-- Left Column -->
-                <div class="left-col">
-                    <div class="field-row">
-                        <label class="field-label">Contact No:</label>
-                        <input class="input-short" type="text" [(ngModel)]="form.contactNo" />
-                    </div>
-                    <div class="field-row">
-                        <label class="field-label">URL:</label>
-                        <input class="input-short" type="text" [(ngModel)]="form.url" />
-                    </div>
-                    <div class="field-row">
-                        <label class="field-label">email:</label>
-                        <input class="input-short" type="email" [(ngModel)]="form.email" />
+        <form [formGroup]="supplierForm" (ngSubmit)="saveAndExit()">
+            <div class="form-body">
+                <!-- Supplier Name spans full width at the top -->
+                <div class="full-row">
+                    <label class="field-label">Supplier Name:</label>
+                    <input class="input-wide" type="text" formControlName="name" />
+                    <div *ngIf="f['name'].invalid && f['name'].touched" class="error-message">
+                        Supplier Name is required
                     </div>
                 </div>
 
-                <!-- Right Column -->
-                <div class="right-col">
-                    <h3 class="address-heading">Address</h3>
-                    <div class="field-row">
-                        <label class="field-label">Address Line1:</label>
-                        <input class="input-short" type="text" [(ngModel)]="form.addressLine1" />
+                <!-- Two-column section -->
+                <div class="two-col">
+                    <!-- Left Column -->
+                    <div class="left-col">
+                        <div class="field-row">
+                            <label class="field-label">Contact No:</label>
+                            <input class="input-short" type="text" formControlName="contactNo" />
+                            <div *ngIf="f['contactNo'].invalid && f['contactNo'].touched" class="error-message">
+                                Valid 10-digit contact number is required
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">URL:</label>
+                            <input class="input-short" type="text" formControlName="url" />
+                            <div *ngIf="f['url'].invalid && f['url'].touched" class="error-message">
+                                Please enter a valid URL
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">email:</label>
+                            <input class="input-short" type="email" formControlName="email" />
+                            <div *ngIf="f['email'].invalid && f['email'].touched" class="error-message">
+                                Valid email is required
+                            </div>
+                        </div>
                     </div>
-                    <div class="field-row">
-                        <label class="field-label">Address Line2:</label>
-                        <input class="input-short" type="text" [(ngModel)]="form.addressLine2" />
-                    </div>
-                    <div class="field-row">
-                        <label class="field-label">City:</label>
-                        <input class="input-short" type="text" [(ngModel)]="form.city" />
-                    </div>
-                    <div class="field-row">
-                        <label class="field-label">Postal Code:</label>
-                        <input class="input-short" type="text" [(ngModel)]="form.postalCode" />
+
+                    <!-- Right Column -->
+                    <div class="right-col">
+                        <h3 class="address-heading">Address</h3>
+                        <div class="field-row">
+                            <label class="field-label">Address Line1:</label>
+                            <input class="input-short" type="text" formControlName="addressLine1" />
+                            <div *ngIf="f['addressLine1'].invalid && f['addressLine1'].touched" class="error-message">
+                                Address Line 1 is required
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Address Line2:</label>
+                            <input class="input-short" type="text" formControlName="addressLine2" />
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">City:</label>
+                            <input class="input-short" type="text" formControlName="city" />
+                            <div *ngIf="f['city'].invalid && f['city'].touched" class="error-message">
+                                City is required
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Postal Code:</label>
+                            <input class="input-short" type="text" formControlName="postalCode" />
+                            <div *ngIf="f['postalCode'].invalid && f['postalCode'].touched" class="error-message">
+                                Postal Code is required
+                            </div>
+                        </div>
                     </div>
                 </div>
-
             </div>
-        </div>
 
-        <!-- Footer Buttons -->
-        <div class="form-footer">
-            <button class="close-btn" (click)="close()">Cancel</button>
-            <button class="save-btn" (click)="saveAndExit()">Save &amp; Exit</button>
-        </div>
+            <!-- Footer Buttons -->
+            <div class="form-footer">
+                <button type="button" class="close-btn" (click)="close()">Cancel</button>
+                <button type="submit" class="save-btn" [disabled]="supplierForm.invalid">Save & Exit</button>
+            </div>
+        </form>
 
     </div>
 

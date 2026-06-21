@@ -42,6 +42,18 @@ export const inventoryRoutes: Routes = [
       import('./pages/products/products').then((m) => m.ProductsComponent),
   },
   {
+    path: 'products/new',
+    loadComponent: () =>
+      import('./pages/product-form/product-form').then((m) => m.ProductFormComponent),
+    data: { mode: 'create' },
+  },
+  {
+    path: 'products/:id/edit',
+    loadComponent: () =>
+      import('./pages/product-form/product-form').then((m) => m.ProductFormComponent),
+    data: { mode: 'edit' },
+  },
+  {
     path: 'asset-requests',
     loadComponent: () =>
       import('./pages/asset-requests/asset-requests').then((m) => m.AssetRequestsComponent),
@@ -60,5 +72,10 @@ export const inventoryRoutes: Routes = [
     path: 'check-in',
     loadComponent: () =>
       import('./pages/checkin/checkin').then((m) => m.CheckinComponent),
+  },
+  {
+    path: 'informed-arrivals',
+    loadComponent: () =>
+      import('./pages/informed-arrivals/informed-arrivals').then((m) => m.InformedArrivalsComponent),
   },
 ];

@@ -1,0 +1,88 @@
+<section class="reporting-dashboard">
+  <header class="dashboard-header">
+    <h1>Reporting &amp; Analytics Dashboard</h1>
+  </header>
+
+  <div class="metrics-grid">
+    @for (metric of metrics(); track metric.label) {
+      <article class="metric-card">
+        <span>{{ metric.label }}</span>
+        <strong>{{ metric.value }}</strong>
+        @if (metric.accent) {
+          <i class="metric-accent" aria-hidden="true"></i>
+        }
+      </article>
+    }
+  </div>
+
+  <div class="analytics-grid">
+    <article class="panel category-panel">
+      <h2>Assets by Category</h2>
+      <div class="donut-row">
+        <div class="donut-chart" aria-label="Assets by category donut chart"></div>
+        <ul class="legend-list">
+          @for (item of categoryLegend(); track item.label) {
+            <li>
+              <span [style.background]="item.color"></span>
+              {{ item.label }}
+            </li>
+          }
+        </ul>
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Assets by Status</h2>
+      <div class="bar-chart status-chart">
+        @for (bar of statusBars(); track bar.label) {
+          <div class="bar-item">
+            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
+            <small>{{ bar.label }}</small>
+          </div>
+        }
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Assets by Division</h2>
+      <div class="bar-chart division-chart">
+        @for (bar of divisionBars(); track bar.label) {
+          <div class="bar-item">
+            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
+            <small>{{ bar.label }}</small>
+          </div>
+        }
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Asset Value by Category</h2>
+      <div class="bar-chart value-chart">
+        @for (bar of valueBars(); track bar.label) {
+          <div class="bar-item">
+            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
+            <small>{{ bar.label }}</small>
+          </div>
+        }
+      </div>
+    </article>
+  </div>
+
+  <section class="anomalies-section">
+    <h2>Asset Anomalies</h2>
+    <div class="anomaly-grid">
+      <article class="anomaly-card info">
+        <span aria-hidden="true">△</span>
+        <strong>{{ anomalies().ghostAssetsDetected }} Ghost assets detected during audit</strong>
+      </article>
+      <article class="anomaly-card danger">
+        <span aria-hidden="true">△</span>
+        <strong>{{ anomalies().missingPhysicalVerification }} Assets missing physical verification</strong>
+      </article>
+    </div>
+  </section>
+
+  <button class="help-button" type="button" aria-label="Open help">
+    <span aria-hidden="true">?</span>
+  </button>
+</section>

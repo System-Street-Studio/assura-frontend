@@ -6,3 +6,14 @@ export interface Product {
   description?: string;
   selected?: boolean;
 }
+
+export interface ProductCreateRequest {
+  name: string;
+  manufacturer?: string;
+  modelNumber?: string;
+  description?: string;
+}
+
+export interface ProductUpdateRequest extends ProductCreateRequest {
+  id: number;
+}

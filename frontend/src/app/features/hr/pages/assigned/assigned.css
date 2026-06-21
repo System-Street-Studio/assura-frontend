@@ -1,0 +1,86 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f5f7f8;
+  color: #1a1a1a;
+  font-family: 'Jost', sans-serif;
+}
+
+.hr-shell {
+  padding: 28px 32px;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 24px;
+}
+
+.table-panel {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(9, 61, 54, 0.04), 0 4px 12px rgba(9, 61, 54, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #fafcfc;
+  padding: 16px 24px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #eef3f3;
+}
+
+td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f3f7f7;
+  font-size: 0.9rem;
+  color: #334155;
+  transition: background 0.15s;
+}
+
+tbody tr:hover td {
+  background: #f8fafc;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.edit-btn {
+  background: #0b6c78;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-btn:hover {
+  background: #095a64;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .hr-shell {
+    padding: 20px;
+  }
+
+  .table-panel {
+    border-radius: 10px;
+  }
+}

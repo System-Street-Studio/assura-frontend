@@ -159,6 +159,18 @@
     text-align: left;
 }
 
+/* Alert box style for the main login error */
+.auth-card>.error-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    color: #842029;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
 /* Loading Overlay Styles */
 .loading-overlay {
     position: fixed;

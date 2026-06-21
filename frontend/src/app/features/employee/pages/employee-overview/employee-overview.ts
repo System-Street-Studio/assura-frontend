@@ -51,7 +51,7 @@ export class EmployeeOverviewComponent implements OnInit {
       next: (data: AssetRequest[]) => {
         const pending = data
           .filter(r => r.status === 'Pending')
-          .slice(0, 5)
+          .slice(0, 10) // Limit to latest 10 pending requests
           .map(r => ({
             id: r.id,
             item: r.assetName,
@@ -62,20 +62,20 @@ export class EmployeeOverviewComponent implements OnInit {
             priority: (r.priority as any) || 'Medium'
           }));
         this.pendingRequests.set(pending);
-        this.isLoading.set(false); 
+         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
     });
 
-    /*// Fetch Dashboard Activity
-    this.dashboardService.getDashboardData().subscribe({
+    // Fetch Dashboard Activity
+  /*  this.dashboardService.getDashboardData().subscribe({
       next: (data: DashboardData) => {
         const activities = data.recentActivity.map(a => ({
-          description: `${a.assetName} (${a.assetId}) - ${a.action}`,
+          description: `${a.assetName} (${a.assetCode}) - ${a.action}`,
           timestamp: this.formatTimeAgo(new Date(a.timestamp))
         }));
         this.recentActivities.set(activities);
-      
+        this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
     });*/

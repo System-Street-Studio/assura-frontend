@@ -851,6 +851,74 @@
 
 .action-textarea::placeholder { color: #a0b0b0; }
 
+.action-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #dce6e6;
+  border-radius: 10px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.action-input:focus {
+  border-color: #0b6c78;
+  box-shadow: 0 0 0 3px rgba(11, 108, 120, 0.08);
+}
+
+.action-btn.confirm {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.action-btn.confirm:hover {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+.suggested-asset-card {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f6fbfb;
+  border: 1px solid #d8eeee;
+}
+
+.asset-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.asset-score {
+  font-size: 0.75rem;
+  color: #0b6c78;
+  background: #e8f5f5;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-weight: 600;
+}
+
+.asset-meta {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #587172;
+}
+
+.manual-entry {
+  margin-top: 10px;
+}
+
+.input-help {
+  margin: 0 0 8px 0;
+  font-size: 0.8rem;
+  color: #6f7f80;
+}
+
 .action-buttons {
   display: flex;
   gap: 10px;
