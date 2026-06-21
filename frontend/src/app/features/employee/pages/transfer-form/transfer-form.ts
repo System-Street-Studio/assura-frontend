@@ -11,6 +11,7 @@ import { AssetService as AssetRequestService } from '../../services/asset-reques
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CategoryService } from '../../../inventory/services/category.service';
 import { Category } from '../../../inventory/models/category.model';
+import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 
 @Component({
   selector: 'app-transfer-form',
@@ -23,7 +24,8 @@ import { Category } from '../../../inventory/models/category.model';
     MatDatepickerModule,
     MatNativeDateModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    ResultOverlayComponent
   ],
   templateUrl: './transfer-form.html',
   styleUrl: './transfer-form.css',
@@ -42,6 +44,13 @@ export class TransferFormComponent implements OnInit {
     selectedFiles = signal<File[]>([]);
     isSubmitting = signal(false);
 
+      // Result overlay signals
+    showResult = signal(false);
+    resultType = signal<'success' | 'error'>('success');
+    resultTitle = signal('');
+    resultMessage = signal('');
+
+    // Services
     ngOnInit(): void {
       this.categoryService.getAll().subscribe({
         next: (cats) => this.categories.set(cats),
@@ -53,6 +62,7 @@ export class TransferFormComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
 
+  // Methods
   onSubmit() {
     if (!this.assetName() || !this.category() || !this.reason()) {
       alert('Failed to create transfer request. Please fill all required fields.');
@@ -72,24 +82,42 @@ export class TransferFormComponent implements OnInit {
       submittedDate: new Date().toISOString()
     };
 
+    // Call the service to create the transfer request
     this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
       next: () => {
         this.isSubmitting.set(false);
-        alert('Transfer Request Submitted Successfully!');
+        this.showResult.set(true);
+        this.resultType.set('success');
+        this.resultTitle.set('Transfer Request Submitted');
+        this.resultMessage.set('Your transfer request has been submitted successfully.');
         this.location.back();
       },
       error: (err) => {
         this.isSubmitting.set(false);
         console.error('Submission failed', err);
-        alert('Failed to submit request. Please try again.');
+        this.showResult.set(true);
+        this.resultType.set('error');
+        this.resultTitle.set('Failed to Submit Request');
+        this.resultMessage.set('Failed to submit request. Please try again.');
       }
     });
   }
 
+  // Cancel button logic
   onCancel() {
     this.location.back();
   }
 
+  // Handle result overlay close
+  onResultClosed(): void {
+  this.showResult.set(false);
+
+  if (this.resultType() === 'success') {
+    this.location.back();
+  }
+}
+
+// File attachment methods
   onFileSelected(event: any): void {
     const files = event.target.files;
     if (files) {
@@ -98,6 +126,7 @@ export class TransferFormComponent implements OnInit {
     }
   }
 
+  // Remove selected file
   removeFile(index: number): void {
     this.selectedFiles.update(files => {
       const updated = [...files];
@@ -106,6 +135,7 @@ export class TransferFormComponent implements OnInit {
     });
   }
 
+  // Open file browser
   browseFiles(): void {
     const input = document.createElement('input');
     input.type = 'file';

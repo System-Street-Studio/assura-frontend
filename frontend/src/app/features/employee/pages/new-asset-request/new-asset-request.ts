@@ -7,12 +7,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CategoryService } from '../../../inventory/services/category.service';
 import { Category } from '../../../inventory/models/category.model';
+import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 
 
 @Component({
   selector: 'app-new-asset-request',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MatIconModule],
+  imports: [CommonModule, FormsModule, RouterModule, MatIconModule, ResultOverlayComponent],
   templateUrl: './new-asset-request.html',
   styleUrl: './new-asset-request.css',
 })
@@ -26,6 +27,13 @@ export class NewAssetRequestComponent implements OnInit {
   isSubmitting = signal(false);
   fileInput: HTMLInputElement | null = null;
 
+  // Result overlay signals
+  showResult = signal(false);
+  resultType = signal<'success' | 'error'>('success');
+  resultTitle = signal('');
+  resultMessage = signal('');
+
+  // Form data model
   requestData = {
     id: 0,
     employeeId: this.authService.getUserId() || '',
@@ -51,6 +59,16 @@ export class NewAssetRequestComponent implements OnInit {
     });
   }
 
+  // Handle result overlay close
+  onResultClosed(): void {
+  this.showResult.set(false);
+
+  if (this.resultType() === 'success') {
+    this.location.back();
+  }
+}
+
+  // Handle form submission
   onSubmit(): void {
     this.isSubmitting.set(true);
 
@@ -67,16 +85,26 @@ export class NewAssetRequestComponent implements OnInit {
       submittedDate: this.requestData.submittedDate
     };
 
+    // Call service to create request with attachments
     this.assetService.createRequest(requestPayload, this.selectedFiles()).subscribe({
       next: (res: any) => {
         this.isSubmitting.set(false);
-        alert(res?.message || 'Request submitted successfully!');
-        this.location.back();
+        this.resultType.set('success');
+        this.resultTitle.set('Request Submitted');
+        this.resultMessage.set(
+          res?.message || 'Asset request submitted successfully.'
+        );
+        this.showResult.set(true);
       },
       error: (err: any) => {
         this.isSubmitting.set(false);
         console.error('Save failed', err);
-        alert('Error submitting request. Please try again.');
+        this.resultType.set('error');
+        this.resultTitle.set('Submission Failed');
+        this.resultMessage.set(
+          err?.error?.message || 'Error submitting request. Please try again.'
+        );
+        this.showResult.set(true);
       }
     });
   }

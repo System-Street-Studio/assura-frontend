@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
+// Define the AttachmentFile interface
 export interface AttachmentFile {
   id?: string;
   fileName: string;
@@ -13,6 +14,7 @@ export interface AttachmentFile {
   file?: File;
 }
 
+// Define the AssetRequest interface
 export interface AssetRequest {
   id: number;
   employeeId: string;
@@ -31,7 +33,7 @@ export interface AssetRequest {
 
 
 
-
+// Service to handle asset requests
 @Injectable({ providedIn: 'root' })
 export class AssetService {
   private apiUrl = `${environment.apiUrl}/AssetRequests`;
@@ -69,11 +71,12 @@ export class AssetService {
     return this.http.post<AssetRequest>(this.apiUrl, formData);
   }
 
-  /** Posts to the unified /api/requests endpoint which Division Heads can see and approve */
+  //Posts to the unified /api/requests endpoint which Division Heads can see and approve 
   createUnifiedRequest(payload: { type: number; priority: number; description?: string; assetId?: number }): Observable<number> {
     return this.http.post<number>(this.unifiedApiUrl, payload);
   }
 
+  // Get requests for a specific employee
  getEmployeeRequests(empId: string): Observable<AssetRequest[]> {
     return this.http.get<any[]>(`${this.apiUrl}/employee/${empId}`).pipe(
       map((apiData: any[]) => apiData.map(item => ({
@@ -81,6 +84,8 @@ export class AssetService {
       }) as AssetRequest))
     );
   }
+
+  // Get pending requests for the logged-in employee
   getPendingRequests(): Observable<AssetRequest[]> {
     return this.http.get<any[]>(`${this.apiUrl}/pending`).pipe(
       map((apiData: any[]) => apiData.map(item => ({
@@ -89,6 +94,7 @@ export class AssetService {
     );
   }
 
+  // Get request details by ID
   getRequestById(requestId: number): Observable<AssetRequest> {
     return this.http.get<any>(`${this.apiUrl}/${requestId}`).pipe(
       map((item: any) => ({
@@ -97,6 +103,7 @@ export class AssetService {
     );
   }
 
+  
   normalizeStatus(status: string): string {
     switch (status) {
       case 'PendingDivisionHeadApproval':

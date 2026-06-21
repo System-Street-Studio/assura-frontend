@@ -1,6 +1,7 @@
 <div class="container">
   <div class="content-padding">
 
+    <!-- Page Title -->
     <h1 class="section-label">Requests</h1>
     <a (click)="onCancel()" class="back-link">←</a>
     <h2 class="page-title">Discard Requests</h2>
@@ -11,6 +12,7 @@
         <p>Please provide details about the asset you want to discard</p>
       </header>
 
+      <!-- asset name-->
       <form (ngSubmit)="onSubmit()">
         <div class="field">
           <label>Select Asset <span class="required" >*</span></label>
@@ -24,6 +26,7 @@
           </select>
         </div>
 
+        <!-- Reason for Discard -->
         <div class="field">
           <label>Reason for Discard</label>
           <textarea [ngModel]="reason()" (ngModelChange)="reason.set($event)" name="reason"
@@ -31,6 +34,7 @@
           </textarea>
         </div>
 
+        <!-- File Upload Section -->
         <div class="field">
           <label>Attachment (Optional)</label>
           @if (selectedFiles().length === 0) {
@@ -62,6 +66,7 @@
           }
         </div>
 
+        <!-- Form Actions -->
         <div class="actions">
           <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">Cancel</button>
           <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
@@ -77,3 +82,13 @@
     </div>
   </div>
 </div>
+
+// Result Overlay
+@if(showResult()){
+  <app-result-overlay
+    [type]="resultType()"
+    [title]="resultTitle()"
+    [message]="resultMessage()"
+    (closed)="onResultClosed()">
+  </app-result-overlay>
+}
