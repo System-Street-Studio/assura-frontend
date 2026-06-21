@@ -46,6 +46,7 @@ export class AllRequestsComponent implements OnInit {
     }
   }
   
+  //get employee requests
     ngOnInit() {
     const userId = this.authService.getUserId();
     if (userId) {
@@ -65,14 +66,17 @@ export class AllRequestsComponent implements OnInit {
     }
   }
 
+  //get priorities
   getPriorityClass(priority: string): string {
     return `priority-${priority.toLowerCase().replace(' ', '-')}`;
   }
 
+  //get status
   getStatusClass(status: string): string {
     return `status-${status.toLowerCase().replace(' ', '-')}`;
   }
 
+  //filter requests
   filteredRequests = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
     const status = this.filterStatus();
@@ -86,6 +90,7 @@ export class AllRequestsComponent implements OnInit {
     });
   });
 
+  //pagination
   totalPages = computed(() => Math.max(1, Math.ceil(this.filteredRequests().length / this.pageSize)));
 
   paginatedRequests = computed(() => {
@@ -105,16 +110,19 @@ export class AllRequestsComponent implements OnInit {
     this.currentPage.set(page);
   }
 
+  //view mode
   toggleMenu() {
     this.isMenuOpen.update(v => !v);
   }
 
+  //filter by status 
   setStatus(status: 'All Types' | 'Pending' | 'Approved' | 'Rejected') {
     this.filterStatus.set(status);
     this.currentPage.set(1);
     this.isMenuOpen.set(false);
   }
   
+  //cancel request
   cancelRequest(requestId: number) {
     console.log('Cancelling request with ID:', requestId);
     this.requests.update(reqs => reqs.map(r => r.id === requestId ? { ...r, status: 'Cancelled' } : r));

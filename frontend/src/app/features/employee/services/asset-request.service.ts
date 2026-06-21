@@ -94,6 +94,11 @@ export class AssetService {
     );
   }
 
+  //cancel request by employee
+  cancelRequest(requestId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${requestId}/cancel`, {});
+  }
+
   // Get request details by ID
   getRequestById(requestId: number): Observable<AssetRequest> {
     return this.http.get<any>(`${this.apiUrl}/${requestId}`).pipe(

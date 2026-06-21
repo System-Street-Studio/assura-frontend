@@ -17,6 +17,7 @@
     <button class="tab-btn" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">Completed</button>
   </div>
 
+  <!--cards-->
   <div class="stats-grid">
     <div class="card blue-border" [class.highlight]="activeTab() === 'incoming'">
       <div class="card-content">
@@ -54,6 +55,7 @@
       </h2>
     </div>
 
+    <!--search and filter bar-->
     @if (activeTab() === 'active' || activeTab() === 'completed') {
       <div class="table-actions">
         <div class="input-wrapper">
@@ -84,6 +86,7 @@
     }
 
     <div class="list-wrapper">
+      <!--loading state-->
       @if (isLoading()) {
         <div class="loading-state">
           <mat-icon class="spin-animation">sync</mat-icon>
@@ -94,6 +97,7 @@
         
         @for (item of paginatedRequests(); track item.id) {
           
+          <!--incoming and pending tabs-->
           @if (activeTab() === 'incoming' || activeTab() === 'pending') {
             <div class="asset-item-card">
               <div class="card-badge-row">
@@ -127,6 +131,7 @@
             </div>
           }
 
+            <!--active and conpleted tabs-->
           @if (activeTab() === 'active' || activeTab() === 'completed') {
             <div class="asset-item-card" [class.expanded]="expandedItemId() === item.id"> 
               <div class="card-badge-row">
@@ -209,6 +214,7 @@
           }
 
         } @empty {
+          <!--Empty state-->
           <div class="empty-state">
             <mat-icon class="empty-icon">layers_clear</mat-icon>
             <h3>No Records Found</h3>
@@ -218,6 +224,7 @@
       }
     </div>
 
+      <!--pagination-->
     @if (filteredResults().length > 0) {
       <app-pagination 
         [currentPage]="currentPage()" 

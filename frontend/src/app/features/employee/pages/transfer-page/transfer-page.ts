@@ -6,6 +6,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { EmployeeTransferService } from '../../services/asset-transfer.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
+
 interface TransferData {
   id: string;
   transferNumber: string;
@@ -104,10 +105,12 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     }, 300000);
   }
 
+  //refresh
   ngOnDestroy(): void {
     if (this.refreshInterval) clearInterval(this.refreshInterval);
   }
 
+  //expand item
   toggleDetails(id: string) {
     if (this.expandedItemId() === id) {
       this.expandedItemId.set(null); 
@@ -116,6 +119,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  //return transfered assets 
   returnAsset(id: string) {
     if (confirm('Are you sure you want to return this asset? This will change asset status to "In Use" and complete the transfer.')) {
       this.employeeTransferService.returnActiveTransfer(Number(id)).subscribe({
@@ -129,6 +133,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  //set tabs 
   setTab(tab: 'incoming' | 'pending' | 'active' | 'completed') {
     this.activeTab.set(tab);
     this.filterType.set('all');
@@ -146,6 +151,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     }
   }
 
+
   loadTransfers() {
     this.isLoading.set(true);
     const currentUserId = this.authService.getUserId();
@@ -155,6 +161,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
       return;
     }
 
+    //get employee transfer records
     this.employeeTransferService.getTransfers(this.activeTab()).subscribe({
       next: (data: TransferData[]) => {
         const mappedData = data.map(item => this.mapToLocal(item, Number(currentUserId)));
@@ -168,6 +175,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  //active transfer records  filter
   private mapToLocal(item: TransferData, loginUserId: number): TransferDataLocal {
    
     let userType: 'IncomingActive' | 'OutgoingActive' | undefined;
@@ -249,12 +257,14 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     return results;
   });
 
+  //search option
   onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchQuery.set(input.value);
     this.currentPage.set(1);
   }
 
+  //active transfers filter by IncomingActive and OutgoingActive
   setFilterType(type: 'all' | 'IncomingActive' | 'OutgoingActive'): void {
     this.filterType.set(type);
     this.showMenu.set(false);
@@ -329,6 +339,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     return `${diffDays} days left`;
   }
 
+  //pagination activate
       pageSize = 10;
       currentPage = signal(1);
 

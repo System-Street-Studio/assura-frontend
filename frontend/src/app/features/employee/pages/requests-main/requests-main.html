@@ -46,6 +46,7 @@
 
       <div class="request-list">
         
+        <!-- Loading state -->
         @if (isLoading()) {
           <div class="loading-state">
             <mat-icon class="spin-animation">sync</mat-icon>
@@ -53,6 +54,7 @@
           </div>
         } @else {
 
+          <!-- List of recent requests -->
           @for (req of paginatedRequests(); track req.id) {
             <div class="request-item">
               <div class="req-info">
@@ -72,6 +74,7 @@
               </div>
             </div>
           } @empty {
+            <!-- No requests state -->
             <div class="empty-state">
               <mat-icon class="empty-icon">layers_clear</mat-icon>
               <h3>No Requests Found</h3>

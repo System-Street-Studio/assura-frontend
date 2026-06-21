@@ -135,7 +135,7 @@
 
     </div>
 
-
+    <!--Loading state-->
     @if (isLoading()) {
       <div class="loading-state">
         <mat-icon class="spin-animation">sync</mat-icon>
@@ -163,6 +163,7 @@
           </div>
           
       } @empty {
+        <!--empty state-->
         <div class="assets-empty-state">
           <mat-icon class="empty-icon">layers_clear</mat-icon>
           <h3>No Assets Found</h3>
@@ -172,7 +173,7 @@
     </div>
 
 
-
+        <!--pagination-->
         @if (!isLoading() && paginatedAssets().length > 0) {
           <app-pagination 
             [currentPage]="currentPage()" 
@@ -206,6 +207,7 @@
 
         <div class="info-body">
 
+          <!--Asset Details-->
           <div class="info-row">
             <span class="label">Asset Specifications :</span>
             <div class="val">
