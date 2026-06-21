@@ -50,7 +50,7 @@
     <!--Pending requests -->
     <div class="details-layout">
       <div class="white-panel">
-        <h3>Pending Requests</h3>
+        <h3>Pending Requests  ({{ pendingRequests().length }})</h3>
         
         @if (pendingRequests().length > 0) {
           <table class="data-table">

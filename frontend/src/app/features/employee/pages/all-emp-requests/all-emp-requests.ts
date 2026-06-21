@@ -46,28 +46,23 @@ export class AllRequestsComponent implements OnInit {
     }
   }
   
-  ngOnInit() {
+    ngOnInit() {
     const userId = this.authService.getUserId();
     if (userId) {
-      this.loadRequests(userId);
+     
+      this.isLoading.set(true);
+      
+      this.assetService.getEmployeeRequests(userId).subscribe({
+        next: (data: AssetRequest[]) => {
+          this.requests.set(data);
+          this.isLoading.set(false); 
+        },
+        error: (err) => {
+          console.error('Error fetching requests:', err);
+          this.isLoading.set(false);
+        }
+      });
     }
-  }
-
-  private loadRequests(userId: string) {
-    this.isLoading.set(true);
-    this.error.set(null);
-    
-    this.assetService.getEmployeeRequests(userId).subscribe({
-      next: (data: AssetRequest[]) => {
-        this.requests.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.error.set(err.message || 'Failed to load requests');
-        this.isLoading.set(false);
-        console.error('Error loading requests:', err);
-      }
-    });
   }
 
   getPriorityClass(priority: string): string {

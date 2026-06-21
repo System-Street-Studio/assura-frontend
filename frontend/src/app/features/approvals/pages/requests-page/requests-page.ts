@@ -91,6 +91,7 @@ ngOnInit() {
 
   // 1. Service Call
   loadData() {
+   Promise.resolve().then(() => this.isLoading.set(true));
     this.isLoading.set(true);
 
     const isDivisionHead = true;

@@ -113,38 +113,6 @@ export class RequestService {
     });
   }
 
-  getApprovedTransferRequestsForDropdown(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/assetrequests`).pipe(
-      map((requests: any[]) => {
-        if (!requests || requests.length === 0) return [];
-        return requests.filter(request => request.requestType === 'Transfer' && request.status === 'Approved');
-      })
-    );
-  }
-
-  getApprovedTransferRequestsFromAllData(): Observable<any[]> {
-    const isDivisionHead = true;
-    return this.getAllRequests(isDivisionHead).pipe(
-      map((allData: RequestItem[]) => {
-        const transferFiltered = allData.filter(r => r.type?.toLowerCase() === 'transfer');
-        const approvedTransferRequests = transferFiltered.filter(r => r.status === 'Approved');
-        return approvedTransferRequests.map(request => ({
-          id: request.id,
-          requesterName: request.name,
-          requesterId: request.requesterId,
-          assetName: request.assetName,
-          requestType: request.type,
-          status: request.status,
-          reason: request.reason,
-          submittedDate: request.date
-        }));
-      })
-    );
-  }
-
-  getAllTransferRequests(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/assetrequests?requestType=Transfer`);
-  }
 
   getAllAssetRequests(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/assetrequests`);

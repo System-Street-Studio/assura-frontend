@@ -74,26 +74,13 @@ export class AssetService {
     return this.http.post<number>(this.unifiedApiUrl, payload);
   }
 
-  getEmployeeRequests(empId: string): Observable<AssetRequest[]> {
-    return this.http.get<any[]>(this.unifiedApiUrl).pipe(
-      map(requests => requests.map(request => ({
-          id: request.id,
-          employeeId: String(request.requesterId || empId),
-          submittedBy: request.requesterName || 'Employee',
-          assetName: request.assetName || request.assetCode || 'N/A',
-          assetCategory: request.assetDivisionName || request.department || 'N/A',
-          quantity: request.quantity || 1,
-          priority: this.normalizePriority(request.priority),
-          reason: request.description || '',
-          description: request.description || '',
-          status: this.normalizeStatus(request.status),
-          submittedDate: request.createdAt || new Date().toISOString(),
-          requestType: this.normalizeRequestType(request.type),
-        } as AssetRequest))
-      )
+ getEmployeeRequests(empId: string): Observable<AssetRequest[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/employee/${empId}`).pipe(
+      map((apiData: any[]) => apiData.map(item => ({
+        ...item
+      }) as AssetRequest))
     );
   }
-
   getPendingRequests(): Observable<AssetRequest[]> {
     return this.http.get<any[]>(`${this.apiUrl}/pending`).pipe(
       map((apiData: any[]) => apiData.map(item => ({

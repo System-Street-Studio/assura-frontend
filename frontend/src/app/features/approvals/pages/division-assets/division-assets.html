@@ -3,118 +3,89 @@
 
     <div class="header-section">
       <h1 class="page-title">Division Assets</h1>
-      @if (selectedAsset()) {
-      <div class="back-btn" (click)="selectedAsset.set(null)">
-        <mat-icon>arrow_back</mat-icon>
-      </div>
-      }
     </div>
 
-    @if (selectedAsset(); as asset) {
-    <div class="details-view-container">
-      <h3 class="section-label">Asset Details: {{ asset.name }}</h3>
 
-      <div class="details-layout">
-        <div class="card-panel main-info">
-          <h3>General Information</h3>
-          <div class="asset-identity">
-            @if (asset.image) {
-              <img [src]="asset.image" alt="Asset" class="detail-img">
-            } @else {
-              <div class="detail-img" style="display: flex; align-items: center; justify-content: center; background: #f5f6fa; border-radius: 12px; border: 1px dashed #dcdde1; width: 80px; height: 80px;">
-                <mat-icon style="color: #a4b0be; font-size: 32px; width: 32px; height: 32px;">image</mat-icon>
-              </div>
-            }
-            <div class="identity-text">
-              <p class="name-bold">{{ asset.name }}</p>
-              <p class="id-sub">ID: {{ asset.id }}</p>
-              <p class="type-sub">{{ asset.type || asset.category }}</p>
+    <!--Display asset details if an asset is selected, otherwise show the overview and list-->
+    @if (selectedAsset(); as asset) {
+
+      <!--asset details section-->
+    <div class="details-view">
+      <button (click)="goBack()" class="back-link">
+        <mat-icon>arrow_back</mat-icon> Back to Assets
+      </button>
+
+      <div class="info-card">
+        <div class="title">
+          <h2>General Information</h2>
+        </div>
+        <div class="info-header">
+         <!-- <img [src]="selectedAsset()?.image" class="info-img"> -->
+          <div class="info-title">
+            <h2>{{asset.name }}</h2>
+            <p><strong>Asset ID: #{{ asset.id }}</strong></p>
+          </div>
+        </div>
+
+        <div class="info-body">
+
+          <div class="info-row">
+            <span class="label">Asset Specifications :</span>
+            <div class="val">
+              <p> {{ asset.specs}}</p>
             </div>
           </div>
-          <hr class="divider">
 
-          <div class="detail-info-grid">
-            <div class="detail-row">
-              <span class="label">Serial Number :</span>
-              <span class="value">{{ asset.serialNumber }}</span>
-            </div>
+          <div class="info-row">
+            <span class="label">Assigned Employee :</span>
+            <span class="val">{{ asset.assignedUserName }}</span>
+          </div>
 
-            <div class="detail-row">
-              <span class="label">Assigned Employee :</span>
-              <span class="value">{{ asset.assignedUserName || asset.assignedTo }}</span>
-            </div>
+          <div class="info-row">
+            <span class="label">Assigned Employee ID :</span>
+            <span class="val">#{{ asset.assignedUserId }}</span>
+          </div>
 
-            @if (asset.assignedUserId) {
-            <div class="detail-row">
-              <span class="label">Assigned User ID :</span>
-              <span class="value">{{ asset.assignedUserId }}</span>
-            </div>
-            }
+          <div class="info-row">
+            <span class="label">Asset Category:</span>
+            <span class="val">{{ asset.category }}</span>
+          </div>
 
-                        <div class="detail-row">
-                          <span class="label">Asset Category :</span>
-                          <span class="value">{{ asset.category }}</span>
-                        </div>
+           <div class="info-row">
+            <span class="label">Serial Number:</span>
+            <span class="val">{{ asset.serialNumber }}</span>
+          </div>
 
-                        <div class="detail-row">
-                          <span class="label">Owned Division :</span>
-                          <span class="value">{{ asset.division }}</span>
-                        </div>
+          <!--
+          <div class="info-row">
+            <span class="label">Assigned Date :</span>
+            <span class="val">{{ asset.assignedDate | date:'yyyy-MM-dd' }}</span>
+          </div>-->
 
-                        <div class="detail-row">
-                          <span class="label">Status :</span>
-                          <span class="status-badge" [ngClass]="getAssetStatusClass(asset.status)">
-                            {{ asset.status }}
-                          </span>
-                        </div>
+          <div class="info-row">
+            <span class="label">Status :</span>
+            <span class="status-badge" [ngClass]="asset.status.toLowerCase().replace(' ', '-')">{{ asset.status }}</span>
+          </div>
 
-                        <div class="detail-row">
-                          <span class="label">Specifications :</span>
-                          <span class="value">{{ asset.specs || 'No specifications provided' }}</span>
-                        </div>
-                      </div>
-                    </div>
+          <!--
+          <div class="info-row">
+            <span class="label">Condition :</span>
+            <span class="val">{{asset.conditionStatus }}</span>
+          </div>-->
 
-                    <div class="side-column">
-                      <div class="card-panel">
-                        <h3>Asset Lifecycle</h3>
-                        <div class="timeline">
-                          <div class="timeline-item">
-                            <span class="date">2022-01-10</span>
-                            <p class="event">Purchased: Acquired new device</p>
-                          </div>
-                          <div class="timeline-item">
-                            <span class="date">2022-01-20</span>
-                            <p class="event">Assigned: Given to {{ asset.assignedUserName }}</p>
-                          </div>
-                        </div>
+        </div>
 
-                        <div class="detail-row">
-                          <span class="label">Purchased Date:</span>
-                          <span class="value">{{ asset.purchasedDate || 'N/A' }}</span>
-                        </div>
+       
 
-                        <div class="detail-row">
-                          <span class="label">Last Inspected:</span>
-                          <span class="value">{{ asset.lastInspected || 'N/A' }}</span>
-                        </div>
-                      </div>
+      </div>
 
-                      <div class="card-panel mt-20">
-                        <h3>Condition Monitor</h3>
-                        <div class="detail-row">
-                          <span class="label">Health Indicator:</span>
-                          <span class="health-pill">{{ asset.condition }}</span>
-                        </div>
-                      </div>
+    </div>
 
-                      <button class="transfer-btn">Transfer</button>
-                    </div>
-                  </div>
-                </div>
 
 
     } @else {
+
+      <!-- Overview and list of assets -->
       <section class="overview-section">
       <h3 class="section-label">Overview</h3>
       <div class="stat-grid">
@@ -149,6 +120,7 @@
       </div>
     </section>
 
+      <!-- List of assets with search and filter options -->
       <section class="assets-list-section">
       <h3 class="section-label">Division Assets</h3>
       
@@ -161,7 +133,7 @@
           </div>
         </div>
         
-        <div class="selected-filters">
+      <div class="selected-filters">
     <div class="styled-select" data-filter="category">
       <button class="filter-btn" (click)="toggleCategoryMenu($event)">
         <div class="filter-icon">
@@ -245,8 +217,9 @@
           <mat-icon style="font-size: 48px; width: 48px; height: 48px;">inventory_2</mat-icon>
           <p>No assets match your search or filter criteria.</p>
         </div>
-}
-
+          }
+          
+        <!-- Pagination -->
        @if (filteredAssets().length > 0) {
         <app-pagination 
           [currentPage]="currentPage()" 

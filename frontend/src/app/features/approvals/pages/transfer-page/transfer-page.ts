@@ -102,19 +102,12 @@ export class TransferPageComponent implements OnInit, OnDestroy {
  loadTransfers() {
   this.isLoading.set(true);
   const userDivisionId = Number(this.authService.getDivisionId());
-  const rawDivId = this.authService.getDivisionId();
-console.log('Raw Division ID from Auth:', rawDivId);
 
   this.transferService.getDivisionHeadTransfers(this.activeTab()).subscribe({
-    next: (response) => {
-      // Safely extract the array whether it's wrapped in { data: [...] } or just [...]
-      let dataArray = Array.isArray(response) ? response : (response as any)?.data;
-      if (!Array.isArray(dataArray)) {
-          console.warn("API did not return an array. Defaulting to empty array.", response);
-          dataArray = [];
-      }
-
-      const mapped = dataArray.map((item: any) => {
+     next: (data) => {
+      
+      const mapped = data.map(item => {
+       
        
         let assignedType: 'Incoming Active' | 'Outgoing Active';
 

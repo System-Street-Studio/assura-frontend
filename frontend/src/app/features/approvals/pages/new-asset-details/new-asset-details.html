@@ -6,7 +6,7 @@
   <div class="modal-overlay">
     <div class="modal-container">
       <div class="modal-header">
-        <h2>New Asset Request Details</h2>
+        <h2>New Asset Request Details ( id: #{{ request().id }} )</h2>
         <button class="close-btn" (click)="close()">
           <mat-icon>close</mat-icon>
         </button>
@@ -34,6 +34,11 @@
         </div>
 
         <div class="info-group">
+        <label>Asset Category</label>
+        <p class="bold-text">{{ request().category }}</p>
+      </div>
+
+        <div class="info-group">
           <label>Requested Date</label>
           <p class="bold-text">{{ request().date | date:'medium' }}</p>
         </div>
@@ -50,20 +55,21 @@
           </p>
         </div>
 
-        <div class="info-group">
-          <label>Status</label>
-          <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
-        </div>
-
         <div class="info-group full-width">
           <label>Specifications</label>
-          <p class="specs-text">{{ request().specs || request().description || 'N/A' }}</p>
+          <p class="bold-text">{{ request().specs || request().description || 'N/A' }}</p>
         </div>
 
         <div class="info-group full-width">
           <label>Justification</label>
-          <p class="justification-text">{{ request().justification || request().reason || 'N/A' }}</p>
+          <p class="bold-text">{{ request().justification || request().reason || 'N/A' }}</p>
         </div>
+
+         <div class="info-group" full-width>
+          <label>Status</label>
+          <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>
+        </div>
+
       </div>
 
       <hr />

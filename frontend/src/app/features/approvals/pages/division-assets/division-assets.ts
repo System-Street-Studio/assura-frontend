@@ -26,6 +26,8 @@ interface Asset {
   purchasedDate?: string;
   lastInspected?: string;
   serialNumber?: string;
+  //conditionStatus?: string; 
+  //assignedDate?: string;
 }
 
 @Component({
@@ -147,12 +149,6 @@ export class DivisionAssetsComponent implements OnInit, OnDestroy {
     return 'In Use';
   }
 
-  private getDefaultImage(category?: string): string {
-    if (!category) return '';
-    if (category.toLowerCase().includes('laptop')) return 'https://tse2.mm.bing.net/th/id/OIP.7L_Ho2CVPF-m88H7_UoM3AHaFS?pid=Api&P=0&h=220';
-    if (category.toLowerCase().includes('device')) return 'https://tse4.mm.bing.net/th/id/OIP.sJPzc8VZD1qRzKUvudISdwHaFj?pid=Api&P=0&h=220';
-    return 'https://tse3.mm.bing.net/th/id/OIP.n1PgBAsks9Nsp78Q3NvXngHaHa?pid=Api&P=0&h=220';
-  }
 
   selectAsset(asset: Asset): void {
     

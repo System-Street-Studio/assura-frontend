@@ -11,6 +11,7 @@
   --status-green: #2ecc71;
   --status-red: #c0392b;
   --status-teal: #00afb5;
+  --teal: #00afb5;
 
 }
 
@@ -227,6 +228,7 @@ mat-icon {
   align-items: flex-end;
   gap: 16px;
   padding: 10px 0;
+  margin-bottom: 20px;
 }
 .action-group {
   display: flex;
@@ -401,123 +403,247 @@ mat-icon {
 }
 
 
+/* --- View Toggle --- */
 
-
-
-
-
-
-/* --- Asset Grid and Cards --- */
-.assets-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 50px;
-  margin-top: 20px;
+.view-toggle {
+  display: flex;
+  gap: 15px;
+  align-items: right;
+  margin-left: 300px;
+  padding-left: 15px;
+  border-left: 1px solid #e2e8f0;
 }
+
+.view-toggle mat-icon {
+  font-size: 22px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.view-toggle mat-icon:hover {
+  color: #16a34a;
+}
+
+.view-toggle .active {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+
+/* ASSET GRID */
+
+.asset-grid {
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.asset-grid.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Grid Card Styles */
+.asset-grid.grid .asset-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.asset-grid.grid .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.asset-grid.grid .view-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.asset-grid.grid .view-btn:hover{
+  background-color: #008296;
+} 
+
+.asset-grid.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.asset-grid.list .asset-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  padding: 16px 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.asset-grid.list .card-body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+
+.asset-grid.list .asset-name { 
+  margin: 0; 
+  flex: 2; 
+  min-width: 180px; 
+}
+.asset-grid.list .asset-id { 
+  margin: 0; 
+  flex: 1.5; 
+  min-width: 140px; 
+}
+.asset-id-only {
+  flex: 1; 
+}
+
+.asset-cat-only {
+  flex: 1;
+  color: #888; 
+}
+
+.asset-grid.list .status-badge { 
+  margin: 0; 
+  flex: 1; 
+  max-width: 100px; 
+  text-align: center;
+ }
+.asset-grid.list .assigned-text { 
+  margin: 0; 
+  flex: 2; 
+  min-width: 180px; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+.asset-grid.list .view-btn { 
+  margin: 0; 
+  padding: 10px 20px; 
+  flex: 1; 
+  max-width: 160px; 
+  min-width: 140px; 
+  width: auto; 
+}
+.asset-grid.list .view-btn:hover {
+  background-color: #008296;
+}
+
 
 .asset-card {
   background: white;
-  border-radius: 15px;
-  padding:20px;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: all 0.1s ease;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; 
-  height: 100%;
-  box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6);
 }
 
 .asset-card:hover {
- box-shadow: 10px 10px 32px 10px rgba(195, 195, 198, 0.6);
+  box-shadow: 2px 5px 16px 2px rgba(195, 195, 198, 0.6);
+}
+.img-container {
+  padding: 20px;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.img-container img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
 }
 
-.card-header {  margin-bottom: 15px;text-align:center; }
-.asset-id-info label { font-size: 11px; color: #64748b; display: block;}
-.id-val { font-weight: 600; display: block;margin-top: 5px; }
-.name-val { font-weight: 800; color: #0369a1; font-size: 20px; margin-bottom: 25px; margin-left: 25px; }
-
-.card-details {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 15px;
-  margin-bottom: 15px;
- 
+.card-body { 
+  padding: 15px; 
+  flex-grow: 1; 
 }
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  width: 48%;
-} 
-
-
-.detail-item label { font-size: 11px; color: #64748b; display: block; }
-.detail-val { font-weight: 600; font-size: 13px; }
-
-.detail-item:last-child {
-  text-align: right;
-} 
+.asset-name { 
+  font-weight: 700; 
+  margin-bottom: 5px; 
+  font-size: 19px; 
+}
+.asset-id { 
+  font-size: 11px;  
+  font-weight: 600;
+  color: #888; 
+  margin-bottom: 12px; 
+}
 
 .status-badge {
+  padding: 1px 4px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600  ;
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin: 10px 10px;
-  background: #fffbe6;
-  align-self: flex-start;
 }
 
-/* Default (In Use - Yellow) */
-.status-badge.in-use {
-  background: #fffbe6;
-  border: 2px solid #eac13a;
-  color: #d59e12;
+.status-badge.maintenance { color: #c616ed; background: #fdf2ff; border: 1px solid #c616ed ;}
+.status-badge.in-use {  color: #b7950b; background: #feffd5; border: 1px solid #b7950b ;}
+.status-badge.transferred {  color: #20bf6b; background: #e8fff3; border: 1px solid #20bf6b ; }
+.status-badge.stored {  color: #5b5b5b; background: #e8e8e8; border: 1px solid #5c5c5c ; }
+
+.assigned-text { font-size: 12px; color: #666; margin: 8px 0 0 0; }
+
+.asset-tag {
+  font-size: 11px;
+  color: #888;
+  margin: 4px 0;
+  font-weight: 500;
 }
 
-/* Transferred - Green */
-.status-badge.transferred {
-  background: #dcfce7;
-  border: 2px solid #16a34a;
-  color: #15803d;
+.asset-category {
+  font-size: 11px;
+  color: #888;
+  margin: 4px 0;
+  font-weight: 500;
 }
 
-/* Maintenance - Red */
-.status-badge.maintenance {
-  background: #fee2e2;
-  border: 2px solid #dc2626;
-  color: #991b1b;
+.assigned-id {
+  font-size: 10px;
+  color: #999;
+  margin: 2px 0;
+  font-style: italic;
 }
 
-/* Discarded - Orange */
-.status-badge.discarded {
-  background: #f6eadd;
-  border: 2px solid #fc974e;
-  color: #d46414;
-}
-
-/* Stored - Gray */
-.status-badge.stored {
-  background: #f3f4f6;
-  border: 2px solid #9ca3af;
-  color: #4b5563;
+.division-text {
+  font-size: 11px;
+  color: #777;
+  margin: 4px 0 0 0;
+  font-weight: 500;
 }
 
 .view-btn {
-  width: 100%;
-  padding: 10px;
-  background-color:#00afb5;
+  background: #00afb5;
   color: white;
   border: none;
+  padding: 12px;
+  width: 90%;
+  margin: 0 auto 15px;
   border-radius: 8px;
-  cursor: pointer;
+  font-size: 12px;
   font-weight: 600;
-  margin-top:auto;
-
+  cursor: pointer;
 }
-
 
 
 /*assets more details*/

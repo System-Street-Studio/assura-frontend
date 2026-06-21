@@ -126,6 +126,13 @@
           </div>
         }
       </div>
+
+      
+        <div class="view-toggle">
+        <mat-icon [class.active]="viewMode() === 'list'" (click)="setViewMode('list')">reorder</mat-icon>
+        <mat-icon [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')">grid_view</mat-icon>
+      </div>
+
     </div>
 
 
@@ -137,34 +144,24 @@
     } @else {
 
     <!--assets cards section-->
-    <div class="assets-grid">
+    <div class="asset-grid" [ngClass]="viewMode()">
       @for (asset of paginatedAssets(); track asset.assetId) {
 
       <div class="asset-card">
-        <div class="card-header">
-
-            <span class="name-val">{{ asset.assetName }}</span>        
-            <span class="id-val">Code: {{ asset.assetCode }}</span>
-
-        </div>
-
-        <div class="card-details">
-          <div class="detail-item">
-            <label>Condition</label>
-            <span class="detail-val">{{ asset.conditionStatus }}</span>
+            <div class="card-body">
+              <h4 class="asset-name">{{ asset.assetName }}</h4>
+              <span class="asset-id-only">Code: {{  asset.assetCode }}</span>
+              <span class="asset-cat-only"> {{ asset.category }}</span>
+              
+              <div class="status-badge" [ngClass]="asset.status.replace(' ', '-').toLowerCase()">
+                {{ asset.status }}
+              </div>
+              
+             
+            <button class="view-btn" (click)="viewDetails(asset)">View Asset Details</button>
+            </div>
           </div>
-          <div class="detail-item text-right">
-            <label>Assigned Date :</label>
-            <span class="detail-val">{{ asset.assignedDate | date:'yyyy-MM-dd'}}</span>
-          </div>
-        </div>
-
-        <div class="status-badge" [ngClass]="asset.status.replace(' ', '-').toLowerCase()">
-          {{asset.status}}
-        </div>
-
-        <button class="view-btn" (click)="viewDetails(asset)">View Asset Details</button>
-      </div>
+          
       } @empty {
         <div class="assets-empty-state">
           <mat-icon class="empty-icon">layers_clear</mat-icon>
@@ -173,6 +170,8 @@
         </div>
       }
     </div>
+
+
 
         @if (!isLoading() && paginatedAssets().length > 0) {
           <app-pagination 
@@ -229,16 +228,18 @@
             <span class="val">{{ selectedAsset()?.serialNumber }}</span>
           </div>
 
+          <!--
           <div class="info-row">
             <span class="label">Assigned Date :</span>
             <span class="val">{{ selectedAsset()?.assignedDate | date:'yyyy-MM-dd' }}</span>
-          </div>
+          </div>-->
 
           <div class="info-row">
             <span class="label">Status :</span>
             <span class="status-badge" [ngClass]="getStatusBadgeClass(selectedAsset()?.status)">{{ selectedAsset()?.status }}</span>
           </div>
 
+         
           <div class="info-row">
             <span class="label">Condition :</span>
             <span class="val">{{ selectedAsset()?.conditionStatus }}</span>
