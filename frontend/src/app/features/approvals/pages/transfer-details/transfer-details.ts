@@ -331,8 +331,47 @@ export class TransferDetailsComponent implements OnInit {
       justification: data.description ?? data.justification,
       reason: data.description ?? data.reason,
       type: data.type ?? 'Transfer',
-      category: data.type ?? 'Transfer'
+      category: data.type ?? 'Transfer',
+      attachments: data.attachments?.length ? data.attachments : []
     };
   }
+
+  //format file sizes
+  formatFileSize(bytes?: number): string {
+    if (!bytes) return '0 KB';
+    const kb = bytes / 1024;
+    if (kb < 1024) return `${kb.toFixed(2)} KB`;
+    return `${(kb / 1024).toFixed(2)} MB`;
+  }
+
+  //downloard files
+  downloadFile(attachment: any): void {
+    if (attachment.fileUrl) {
+      const link = document.createElement('a');
+      link.href = attachment.fileUrl;
+      link.download = attachment.fileName;
+      link.click();
+    }
+  }
+
+  //get file types
+  getFileIcon(fileName: string): string {
+    const ext = fileName.split('.').pop()?.toLowerCase() || '';
+    
+    const iconMap: { [key: string]: string } = {
+      'pdf': 'picture_as_pdf',
+      'doc': 'description',
+      'docx': 'description',
+      'xls': 'table_chart',
+      'xlsx': 'table_chart',
+      'jpg': 'image',
+      'jpeg': 'image',
+      'png': 'image',
+      'gif': 'image'
+    };
+    
+    return iconMap[ext] || 'attach_file';
+  }
+
 }
 

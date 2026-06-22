@@ -79,12 +79,52 @@ export class DiscardDetailsComponent implements OnInit {
     });
   }
 
-  close() {
-    this.router.navigate(['approvals/requests']); // navigate to the requests page
+   close() {
+    const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'discard';
+    this.router.navigate(['/approvals/requests'], { queryParams: { tab: returnTab } });
   }
 
   closePopup() {
     this.showPopup.set(false);
-    this.router.navigate(['approvals/requests']);
+    const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'discard';
+    this.router.navigate(['approvals/requests'], { queryParams: { tab: returnTab } });
   }
+
+  //format file sizes
+  formatFileSize(bytes?: number): string {
+    if (!bytes) return '0 KB';
+    const kb = bytes / 1024;
+    if (kb < 1024) return `${kb.toFixed(2)} KB`;
+    return `${(kb / 1024).toFixed(2)} MB`;
+  }
+
+  //downloard files
+  downloadFile(attachment: any): void {
+    if (attachment.fileUrl) {
+      const link = document.createElement('a');
+      link.href = attachment.fileUrl;
+      link.download = attachment.fileName;
+      link.click();
+    }
+  }
+
+  //get file types
+  getFileIcon(fileName: string): string {
+    const ext = fileName.split('.').pop()?.toLowerCase() || '';
+    
+    const iconMap: { [key: string]: string } = {
+      'pdf': 'picture_as_pdf',
+      'doc': 'description',
+      'docx': 'description',
+      'xls': 'table_chart',
+      'xlsx': 'table_chart',
+      'jpg': 'image',
+      'jpeg': 'image',
+      'png': 'image',
+      'gif': 'image'
+    };
+    
+    return iconMap[ext] || 'attach_file';
+  }
+
 }

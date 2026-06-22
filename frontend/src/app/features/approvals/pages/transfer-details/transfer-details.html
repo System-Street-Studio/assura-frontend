@@ -73,6 +73,48 @@
           <p class="bold-text">{{ getCleanReason() }}</p>
         </div>
 
+        
+       <!-- Attachments Section -->
+      @if (request()!.attachments && (request()!.attachments?.length ?? 0) > 0) {
+        <div class="info-group full-width">
+          <label>Attachments</label>
+        <div class="card full-width attachments-section">
+          <h5 class="section-title">
+            <mat-icon>attach_file</mat-icon>
+            Attached Files ({{ request()!.attachments?.length ?? 0 }})
+          </h5>
+          <div class="attachments-list">
+            @for (attachment of request()!.attachments; track attachment.id) {
+              <div class="attachment-item">
+                <div class="attachment-info">
+                  <mat-icon class="file-type-icon">{{ getFileIcon(attachment.fileName) }}</mat-icon>
+                  <div class="file-details">
+                    <p class="file-name">{{ attachment.fileName }}</p>
+                    <div class="file-meta">
+                      <span class="file-size">{{ formatFileSize(attachment.fileSize) }}</span>
+                      @if (attachment.uploadedDate) {
+                        <span class="file-date">
+                          {{ attachment.uploadedDate | date:'short' }}
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  class="download-btn" 
+                  (click)="downloadFile(attachment)"
+                  title="Download file"
+                >
+                  <mat-icon>download</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+        </div>
+      }        
+    
+
         <div class="info-group full-width">
           <label>Status</label>
           <span class="status-badge" [ngClass]="getStatusClass(requestStatus)">{{ request().status || 'N/A' }}</span>

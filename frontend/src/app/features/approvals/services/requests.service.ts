@@ -15,6 +15,18 @@ export interface SuggestedAsset {
   score: number;
 }
 
+// Define the AttachmentFile interface
+export interface AttachmentFile {
+  id?: string;
+  fileName: string;
+  fileSize?: number;
+  fileType?: string;
+  uploadedDate?: string;
+  fileUrl?: string;
+  file?: File;
+}
+
+
 
 @Injectable({ providedIn: 'root' })
 export class RequestService {
@@ -43,6 +55,7 @@ export class RequestService {
         reason: item.reason,
         specs: item.description,
         justification: item.reason,
+        attachments: item.attachments || []
         
       } as RequestItem)))
     );
@@ -67,7 +80,8 @@ export class RequestService {
         description: apiData.description,
         reason: apiData.description,
         specs: apiData.description,
-        justification: apiData.reason || apiData.description
+        justification: apiData.reason || apiData.description,
+        attachments: apiData.attachments || []
       } as RequestItem))
     );
   }
