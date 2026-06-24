@@ -57,11 +57,6 @@
         </div>
     </section>
 
-    <!-- Create Button -->
-    <div class="action-row">
-        <button class="create-po-btn" (click)="navigateToCreate()">Create New PO</button>
-    </div>
-
     <!-- Section 2: Requests Area -->
     <section class="requests-section">
         <h2 class="section-title">Purchasing Order Requests</h2>
@@ -101,6 +96,10 @@
                         <label>Request Type</label>
                         <div class="value">{{ selectedRequest.type || 'N/A' }}</div>
                     </div>
+                    <div class="detail-field full-width">
+                        <label>Requested Item</label>
+                        <div class="value" style="font-weight: 600; color: #00AFB5; font-size: 16px;">{{ selectedRequest.assetName || 'N/A' }}</div>
+                    </div>
                     <div class="detail-field">
                         <label>Division</label>
                         <div class="value">{{ selectedRequest.divisionName }}</div>
@@ -124,6 +123,11 @@
                     <div class="note-box">
                         {{ selectedRequest.specialNote || 'No special note.' }}
                     </div>
+                </div>
+
+                <!-- Create PO Button inside the details box -->
+                <div class="details-action-row" style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                    <button class="create-po-btn" (click)="navigateToCreate(selectedRequest)">Create PO</button>
                 </div>
 
             </div>

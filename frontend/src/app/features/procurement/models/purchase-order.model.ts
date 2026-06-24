@@ -78,4 +78,5 @@ export interface AssetRequestDto {
     type?: string;
     description?: string;
     assetId?: number;
+    assetName?: string;
 }

@@ -101,8 +101,12 @@ export class PurchaseOrdersComponent implements OnInit {
         this.router.navigate(['procurement', 'purchase-orders', id]);
     }
 
-    navigateToCreate() {
-        this.router.navigate(['procurement', 'purchase-orders', 'create']);
+    navigateToCreate(request?: AssetRequestDto) {
+        if (request) {
+            this.router.navigate(['procurement', 'purchase-orders', 'create'], { state: { request } });
+        } else {
+            this.router.navigate(['procurement', 'purchase-orders', 'create']);
+        }
     }
 
     // Requests list pagination

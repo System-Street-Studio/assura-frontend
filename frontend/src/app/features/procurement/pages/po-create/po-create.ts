@@ -49,6 +49,16 @@ export class PoCreate {
 
     this.itemForm = this.initItemForm();
     this.setupCalculation();
+
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state && navigation.extras.state['request']) {
+      const req = navigation.extras.state['request'];
+      this.itemForm.patchValue({
+        itemName: req.assetName || req.description || req.specifications || '',
+        specialNote: req.specialNote || '',
+        quantity: 1
+      });
+    }
   }
 
   private initItemForm(): FormGroup {
