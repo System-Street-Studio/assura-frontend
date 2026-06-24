@@ -162,6 +162,16 @@ export class ProcurementService {
         );
     }
 
+    getRepairingFirmById(id: number): Observable<RepairingFirmDto> {
+        console.log(`[DEBUG] ProcurementService: Fetching repairing firm ${id}`);
+        return this.http.get<RepairingFirmDto>(`${this.repairingFirmsUrl}/${id}`);
+    }
+
+    updateRepairingFirm(id: number, data: any): Observable<void> {
+        console.log(`[DEBUG] ProcurementService: Updating repairing firm ${id}`, data);
+        return this.http.put<void>(`${this.repairingFirmsUrl}/${id}`, { id, ...data });
+    }
+
     /**
      * Get New Arrivals history
      */

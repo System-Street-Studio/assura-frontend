@@ -46,7 +46,7 @@ export class MaintenanceNoteCreateComponent implements OnInit {
             assetId: [null, Validators.required],
             date: ['', Validators.required],
             repairingFirmId: [null],
-            cost: [0, Validators.required],
+            cost: [0, [Validators.required, Validators.min(0)]],
             description: ['', Validators.required],
             status: ['Scheduled', Validators.required]
         })
@@ -60,6 +60,12 @@ export class MaintenanceNoteCreateComponent implements OnInit {
         const mtnNumber = 'MTN-' + Math.floor(1000 + Math.random() * 9000);
         this.noteData.maintenanceNumber = mtnNumber;
         this.noteForm.patchValue({ maintenanceNumber: mtnNumber });
+    }
+
+    preventNegative(event: KeyboardEvent): void {
+        if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
+            event.preventDefault();
+        }
     }
 
     loadInitialData(): void {

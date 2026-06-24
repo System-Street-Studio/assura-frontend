@@ -26,6 +26,10 @@ export const procurementRoutes: Routes = [
         loadComponent: () => import('./pages/supplier-create/supplier-create.component').then(m => m.SupplierCreateComponent)
     },
     {
+        path: 'suppliers/edit/:id',
+        loadComponent: () => import('./pages/supplier-create/supplier-create.component').then(m => m.SupplierCreateComponent)
+    },
+    {
         path: 'suppliers/:id',
         loadComponent: () => import('./pages/supplier-details/supplier-details.component').then(m => m.SupplierDetailsComponent)
     },
@@ -47,6 +51,10 @@ export const procurementRoutes: Routes = [
     },
     {
         path: 'maintenance/repairing-firms/create',
+        loadComponent: () => import('./pages/repairing-firm-create/repairing-firm-create.component').then(m => m.RepairingFirmCreateComponent)
+    },
+    {
+        path: 'maintenance/repairing-firms/edit/:id',
         loadComponent: () => import('./pages/repairing-firm-create/repairing-firm-create.component').then(m => m.RepairingFirmCreateComponent)
     },
     {

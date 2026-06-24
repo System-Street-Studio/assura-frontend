@@ -71,9 +71,10 @@
                 </div>
                 <div class="note-item">
                     <label for="cost">Cost (LKR):</label>
-                    <input type="number" id="cost" formControlName="cost" class="form-control">
+                    <input type="number" id="cost" formControlName="cost" class="form-control" min="0" (keydown)="preventNegative($event)">
                     <div *ngIf="f['cost'].invalid && f['cost'].touched" class="error-message">
-                        Cost is required and must be valid
+                        <span *ngIf="f['cost'].errors?.['required']">Cost is required</span>
+                        <span *ngIf="f['cost'].errors?.['min']">Cost cannot be negative</span>
                     </div>
                 </div>
                 <div class="note-item full-width">

@@ -110,3 +110,21 @@
     color: #888;
     font-size: 15px;
 }
+
+.edit-btn {
+    background-color: #00AFB5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 2.5rem;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Jost', sans-serif;
+    cursor: pointer;
+    margin-right: 1.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.edit-btn:hover {
+    background-color: #008e92;
+}

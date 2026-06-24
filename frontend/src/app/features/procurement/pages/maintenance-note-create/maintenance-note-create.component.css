@@ -159,3 +159,10 @@
     background-color: #fff;
     cursor: pointer;
 }
+
+.error-message {
+    color: #e11d48;
+    font-size: 14px;
+    margin-top: 6px;
+    font-weight: 500;
+}

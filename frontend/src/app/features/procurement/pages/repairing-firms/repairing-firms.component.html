@@ -24,16 +24,17 @@
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Address</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngIf="isLoading">
-                    <td colspan="5" class="empty-state">
+                    <td colspan="6" class="empty-state">
                         <div>Loading firms...</div>
                     </td>
                 </tr>
                 <tr *ngIf="!isLoading && pagedFirms.length === 0">
-                    <td colspan="5" class="empty-state">
+                    <td colspan="6" class="empty-state">
                         <div>No repairing firms found.</div>
                     </td>
                 </tr>
@@ -43,6 +44,11 @@
                     <td>{{ firm.email || '-' }}</td>
                     <td>{{ firm.phone || '-' }}</td>
                     <td>{{ firm.address || '-' }}</td>
+                    <td>
+                        <button class="edit-action-btn" (click)="editFirm(firm.id)">
+                            <span class="material-icons" style="font-size: 18px;">edit</span>
+                        </button>
+                    </td>
                 </tr>
             </tbody>
         </table>

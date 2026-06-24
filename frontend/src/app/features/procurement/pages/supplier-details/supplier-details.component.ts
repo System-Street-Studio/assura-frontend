@@ -56,6 +56,12 @@ export class SupplierDetailsComponent implements OnInit {
         });
     }
 
+    goToEdit() {
+        if (this.supplier) {
+            this.router.navigate(['procurement', 'suppliers', 'edit', this.supplier.id]);
+        }
+    }
+
     goBack() {
         this.router.navigate(['procurement', 'suppliers']);
     }

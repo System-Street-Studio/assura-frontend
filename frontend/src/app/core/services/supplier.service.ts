@@ -20,4 +20,8 @@ export class SupplierService {
     createSupplier(supplier: CreateSupplierRequest): Observable<number> {
         return this.apiService.post<number>('Suppliers', supplier);
     }
+
+    updateSupplier(id: number, supplier: any): Observable<any> {
+        return this.apiService.put<any>(`Suppliers/${id}`, supplier);
+    }
 }

@@ -81,6 +81,10 @@ export class RepairingFirmsComponent implements OnInit {
         }
     }
 
+    editFirm(id: number): void {
+        this.router.navigate(['/procurement/maintenance/repairing-firms/edit', id]);
+    }
+
     navigateToCreate(): void {
         this.router.navigate(['/procurement/maintenance/repairing-firms/create']);
     }

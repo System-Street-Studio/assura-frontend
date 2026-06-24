@@ -1,9 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { SupplierService } from '../../../../core/services/supplier.service';
-import { CreateSupplierRequest } from '../../../../core/models/supplier.model';
 
 @Component({
     selector: 'app-supplier-create',
@@ -12,12 +11,15 @@ import { CreateSupplierRequest } from '../../../../core/models/supplier.model';
     templateUrl: './supplier-create.component.html',
     styleUrls: ['./supplier-create.component.css']
 })
-export class SupplierCreateComponent {
+export class SupplierCreateComponent implements OnInit {
     private router = inject(Router);
+    private route = inject(ActivatedRoute);
     private supplierService = inject(SupplierService);
-
     private fb = inject(FormBuilder);
+
     supplierForm: FormGroup;
+    isEdit = false;
+    supplierId: number | null = null;
 
     constructor() {
         this.supplierForm = this.fb.group({
@@ -29,6 +31,54 @@ export class SupplierCreateComponent {
             addressLine2: [''],
             city: ['', Validators.required],
             postalCode: ['', Validators.required]
+        });
+    }
+
+    ngOnInit(): void {
+        const idParam = this.route.snapshot.paramMap.get('id');
+        if (idParam) {
+            this.isEdit = true;
+            this.supplierId = Number(idParam);
+            this.loadSupplierData(this.supplierId);
+        }
+    }
+
+    loadSupplierData(id: number): void {
+        this.supplierService.getSupplierById(id).subscribe({
+            next: (data) => {
+                let addressLine1 = data.address || '';
+                let addressLine2 = '';
+                let city = '';
+                let postalCode = '';
+
+                if (data.address && data.address.includes(',')) {
+                    const parts = data.address.split(',');
+                    if (parts.length >= 3) {
+                        addressLine1 = parts[0].trim();
+                        city = parts[1].trim();
+                        postalCode = parts[2].trim();
+                    } else if (parts.length === 2) {
+                        addressLine1 = parts[0].trim();
+                        city = parts[1].trim();
+                    }
+                }
+
+                this.supplierForm.patchValue({
+                    name: data.name,
+                    contactNo: data.phone || data.contactNumber || '',
+                    email: data.email,
+                    url: data.website || data.url || '',
+                    addressLine1: addressLine1,
+                    addressLine2: addressLine2,
+                    city: city,
+                    postalCode: postalCode
+                });
+            },
+            error: (err) => {
+                console.error('[ERROR] Error loading supplier details for edit:', err);
+                alert('Failed to load supplier details.');
+                this.close();
+            }
         });
     }
 
@@ -46,6 +96,7 @@ export class SupplierCreateComponent {
         const formValue = this.supplierForm.getRawValue();
 
         const supplierData = {
+            Id: this.isEdit ? this.supplierId : undefined,
             Name: formValue.name,
             Phone: formValue.contactNo,
             Email: formValue.email,
@@ -55,17 +106,31 @@ export class SupplierCreateComponent {
 
         console.log('[DEBUG] Sending supplier data:', supplierData);
 
-        this.supplierService.createSupplier(supplierData).subscribe({
-            next: (id) => {
-                console.log('[DEBUG] Supplier created successfully with ID:', id);
-                alert('Supplier created successfully!');
-                this.router.navigate(['procurement', 'suppliers']);
-            },
-            error: (err: any) => {
-                console.error('[ERROR] Error creating supplier:', err);
-                alert('Failed to create supplier. Please check the console for details.');
-            }
-        });
+        if (this.isEdit && this.supplierId !== null) {
+            this.supplierService.updateSupplier(this.supplierId, supplierData).subscribe({
+                next: () => {
+                    console.log('[DEBUG] Supplier updated successfully');
+                    alert('Supplier updated successfully!');
+                    this.router.navigate(['procurement', 'suppliers']);
+                },
+                error: (err: any) => {
+                    console.error('[ERROR] Error updating supplier:', err);
+                    alert('Failed to update supplier.');
+                }
+            });
+        } else {
+            this.supplierService.createSupplier(supplierData).subscribe({
+                next: (id) => {
+                    console.log('[DEBUG] Supplier created successfully with ID:', id);
+                    alert('Supplier created successfully!');
+                    this.router.navigate(['procurement', 'suppliers']);
+                },
+                error: (err: any) => {
+                    console.error('[ERROR] Error creating supplier:', err);
+                    alert('Failed to create supplier.');
+                }
+            });
+        }
     }
 
     close() {

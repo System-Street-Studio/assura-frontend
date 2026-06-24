@@ -1,42 +1,46 @@
 <div class="modal-overlay">
     <div class="create-note-container">
         <div class="note-header">
-            <h1>Add New Repairing Firm</h1>
+            <h1>{{ isEdit ? 'Edit Repairing Firm' : 'Add New Repairing Firm' }}</h1>
             <button class="close-btn" (click)="close()">×</button>
         </div>
 
-        <form (ngSubmit)="save()" #firmForm="ngForm">
+        <form [formGroup]="firmForm" (ngSubmit)="save()">
             <div class="note-grid">
                 <div class="note-item full-width">
                     <label for="name">Firm Name:</label>
-                    <input type="text" id="name" name="name" [(ngModel)]="formData.name" required
-                        placeholder="Enter firm name">
+                    <input type="text" id="name" formControlName="name" placeholder="Enter firm name">
+                    <div *ngIf="f['name'].invalid && f['name'].touched" class="error-message">
+                        Firm Name is required
+                    </div>
                 </div>
                 <div class="note-item">
                     <label for="contactPerson">Contact Person:</label>
-                    <input type="text" id="contactPerson" name="contactPerson" [(ngModel)]="formData.contactPerson"
-                        placeholder="Enter contact name">
+                    <input type="text" id="contactPerson" formControlName="contactPerson" placeholder="Enter contact name">
                 </div>
                 <div class="note-item">
                     <label for="phone">Phone Number:</label>
-                    <input type="text" id="phone" name="phone" [(ngModel)]="formData.phone"
-                        placeholder="Enter phone number">
+                    <input type="text" id="phone" formControlName="phone" placeholder="Enter phone number">
+                    <div *ngIf="f['phone'].invalid && f['phone'].touched" class="error-message">
+                        Valid 10-digit phone number is required
+                    </div>
                 </div>
                 <div class="note-item">
                     <label for="email">Email Address:</label>
-                    <input type="email" id="email" name="email" [(ngModel)]="formData.email"
-                        placeholder="Enter email address">
+                    <input type="email" id="email" formControlName="email" placeholder="Enter email address">
+                    <div *ngIf="f['email'].invalid && f['email'].touched" class="error-message">
+                        Valid email address is required
+                    </div>
                 </div>
                 <div class="note-item full-width">
                     <label for="address">Address:</label>
-                    <textarea id="address" name="address" [(ngModel)]="formData.address"
-                        placeholder="Enter firm address"></textarea>
+                    <textarea id="address" formControlName="address" placeholder="Enter firm address"></textarea>
                 </div>
             </div>
 
             <div class="note-footer">
                 <button type="button" class="cancel-btn" (click)="close()">Cancel</button>
-                <button type="submit" class="save-btn" [disabled]="!firmForm.form.valid || isSaving">
+                <button type="submit" class="save-btn" [disabled]="firmForm.invalid || isSaving">
                     {{ isSaving ? 'Saving...' : 'Save Firm' }}
                 </button>
             </div>
@@ -45,6 +49,6 @@
 </div>
 
 <div class="global-toast-container" *ngIf="showSuccessPopup">
-    <app-status-card label="Repairing firm added successfully!" icon="check_box" color="#10b981">
+    <app-status-card [label]="isEdit ? 'Repairing firm updated successfully!' : 'Repairing firm added successfully!'" icon="check_box" color="#10b981">
     </app-status-card>
 </div>
