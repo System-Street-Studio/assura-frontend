@@ -59,6 +59,22 @@ export class MaintenanceFormComponent implements OnInit {
     });
   }
 
+  onAssetSelected(selectedValue: string) {
+    this.asset.set(selectedValue);
+    if (!selectedValue) {
+      this.selectedAssetId.set(null);
+      return;
+    }
+    const matchedAsset = this.assignedAssets().find(
+      a => (a.productName + ' (' + a.assetCode + ')') === selectedValue
+    );
+    if (matchedAsset) {
+      this.selectedAssetId.set(Number(matchedAsset.id));
+    } else {
+      this.selectedAssetId.set(null);
+    }
+  }
+
   // Submit logic
   onSubmit() {
     // Validate required fields
@@ -80,7 +96,8 @@ export class MaintenanceFormComponent implements OnInit {
       requestType: 'Maintenance',
       reason: this.issueType(),
       description: `Maintenance Request for ${this.asset()}: ${this.description()}`,
-      quantity: 1
+      quantity: 1,
+      assetId: this.selectedAssetId()
     };
 
     // Call service to create request with attachments

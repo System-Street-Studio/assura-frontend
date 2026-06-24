@@ -76,9 +76,35 @@ export class MaintenanceNoteCreateComponent implements OnInit {
             const description = params['description'];
             const date = params['date'];
 
+            let foundAssetId: number | null = null;
+
             if (assetId) {
-                const id = Number(assetId);
-                this.noteForm.patchValue({ assetId: id });
+                foundAssetId = Number(assetId);
+            }
+
+            // Fallback: If assetId is not found, try to match by assetCode or name in the description/params
+            if (!foundAssetId && description) {
+                const descLower = description.toLowerCase();
+                // Try to find an asset where assetCode is contained in the description (case-insensitive)
+                const matchedByCode = this.assets.find(a => 
+                    a.assetCode && descLower.includes(a.assetCode.toLowerCase())
+                );
+                if (matchedByCode) {
+                    foundAssetId = matchedByCode.id;
+                } else {
+                    // Try to find by productName or assetName contained in the description
+                    const matchedByName = this.assets.find(a => 
+                        (a.assetName && descLower.includes(a.assetName.toLowerCase())) ||
+                        (a.productName && descLower.includes(a.productName.toLowerCase()))
+                    );
+                    if (matchedByName) {
+                        foundAssetId = matchedByName.id;
+                    }
+                }
+            }
+
+            if (foundAssetId) {
+                this.noteForm.patchValue({ assetId: foundAssetId });
                 this.onAssetChange();
             }
             if (description) {

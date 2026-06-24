@@ -16,7 +16,7 @@
       <form (ngSubmit)="onSubmit()">
         <div class="field">
           <label>Select Asset <span class="required" >*</span></label>
-          <select [ngModel]="asset()" (ngModelChange)="asset.set($event)" name="asset" required>
+          <select [ngModel]="asset()" (ngModelChange)="onAssetSelected($event)" name="asset" required>
             <option value="" disabled selected>Select an asset</option>
             @for (a of assignedAssets(); track a.id) {
             <option [value]="a.productName + ' (' + a.assetCode + ')'">

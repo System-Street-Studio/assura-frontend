@@ -32,6 +32,7 @@ export class DiscardFormComponent implements OnInit {
   // Form Signals
   assignedAssets = signal<AssetDetail[]>([]);
   asset = signal('');
+  selectedAssetId = signal<number | null>(null);
   reason = signal('');
   selectedFiles = signal<File[]>([]);
   isSubmitting = signal(false);
@@ -49,11 +50,28 @@ export class DiscardFormComponent implements OnInit {
           const matchedAsset = assets.find(a => a.productName === passedAssetName);
           if (matchedAsset) {
             this.asset.set(matchedAsset.productName + ' (' + matchedAsset.assetCode + ')');
+            this.selectedAssetId.set(Number(matchedAsset.id));
           }
         }
       },
       error: (err) => console.error('Failed to load assigned assets', err)
     });
+  }
+
+  onAssetSelected(selectedValue: string) {
+    this.asset.set(selectedValue);
+    if (!selectedValue) {
+      this.selectedAssetId.set(null);
+      return;
+    }
+    const matchedAsset = this.assignedAssets().find(
+      a => (a.productName + ' (' + a.assetCode + ')') === selectedValue
+    );
+    if (matchedAsset) {
+      this.selectedAssetId.set(Number(matchedAsset.id));
+    } else {
+      this.selectedAssetId.set(null);
+    }
   }
 
   // Submit logic
@@ -77,7 +95,8 @@ export class DiscardFormComponent implements OnInit {
       requestType: 'Discard',
       reason: this.reason(),
       description: `Discard Request for ${this.asset()}`,
-      quantity: 1
+      quantity: 1,
+      assetId: this.selectedAssetId()
     };
 
     // Call the service to create the discard request
