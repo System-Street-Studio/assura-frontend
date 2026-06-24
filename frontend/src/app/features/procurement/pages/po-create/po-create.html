@@ -11,8 +11,10 @@
                 <h3 class="section-title">Order Information</h3>
                 <div class="form-group full-width">
                     <label>Supplier Name:</label>
-                    <input type="text" class="form-control" formControlName="supplierName"
-                        placeholder="Enter supplier name">
+                    <select class="form-control" formControlName="supplierName">
+                        <option value="" disabled selected>Select supplier</option>
+                        <option *ngFor="let s of suppliers" [value]="s.name">{{ s.name }}</option>
+                    </select>
                     <div *ngIf="poForm.get('supplierName')?.invalid && poForm.get('supplierName')?.touched"
                         class="error-message">
                         Supplier Name is required
@@ -45,19 +47,23 @@
                 <div class="form-group full-width warranty-group">
                     <label>Warranty:</label>
                     <div class="warranty-controls">
-                        <input type="number" class="form-control short-input warranty-input"
+                        <input type="number" min="0" (keydown)="preventNegative($event)" class="form-control short-input warranty-input"
                             formControlName="warrantyDuration" placeholder="Duration">
                         <select class="custom-select short-input" formControlName="warrantyUnit">
                             <option value="Years">Years</option>
                             <option value="Months">Months</option>
                         </select>
+                        <div *ngIf="itemForm.get('warrantyDuration')?.invalid && itemForm.get('warrantyDuration')?.touched"
+                            class="error-message">
+                            Warranty cannot be negative
+                        </div>
                     </div>
                 </div>
 
                 <!-- Row 4 -->
                 <div class="form-group">
                     <label>Quantity:</label>
-                    <input type="number" class="form-control short-input" formControlName="quantity">
+                    <input type="number" min="1" (keydown)="preventNegative($event)" class="form-control short-input" formControlName="quantity">
                     <div *ngIf="itemForm.get('quantity')?.invalid && itemForm.get('quantity')?.touched"
                         class="error-message">
                         Min quantity is 1
@@ -66,11 +72,11 @@
                 <div class="form-group">
                     <!-- Spacer -->
                 </div>
-
+ 
                 <!-- Row 5 -->
                 <div class="form-group">
                     <label>Unit Price (LKR):</label>
-                    <input type="number" class="form-control medium-input" formControlName="unitPrice"
+                    <input type="number" min="0" (keydown)="preventNegative($event)" class="form-control medium-input" formControlName="unitPrice"
                         placeholder="0.00">
                     <div *ngIf="itemForm.get('unitPrice')?.invalid && itemForm.get('unitPrice')?.touched"
                         class="error-message">
@@ -93,18 +99,30 @@
                 <!-- Row 7 -->
                 <div class="form-group">
                     <label>Discount (%):</label>
-                    <input type="number" class="form-control short-input" formControlName="discount">
+                    <div style="display: flex; flex-direction: column;">
+                        <input type="number" min="0" max="100" (keydown)="preventNegative($event)" class="form-control short-input" formControlName="discount">
+                        <div *ngIf="itemForm.get('discount')?.invalid && itemForm.get('discount')?.touched"
+                            class="error-message">
+                            Must be 0-100
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group right-align">
                     <label>Discounted Price (LKR):</label>
                     <input type="text" class="form-control medium-input" readonly
                         [value]="discountedPrice | number:'1.2-2'">
                 </div>
-
+ 
                 <!-- Row 8 -->
                 <div class="form-group">
                     <label>VAT (%):</label>
-                    <input type="number" class="form-control short-input" formControlName="vat">
+                    <div style="display: flex; flex-direction: column;">
+                        <input type="number" min="0" max="100" (keydown)="preventNegative($event)" class="form-control short-input" formControlName="vat">
+                        <div *ngIf="itemForm.get('vat')?.invalid && itemForm.get('vat')?.touched"
+                            class="error-message">
+                            Must be 0-100
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group right-align">
                     <label>VAT Amount (LKR):</label>

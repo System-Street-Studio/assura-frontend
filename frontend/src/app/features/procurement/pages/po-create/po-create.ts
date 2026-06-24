@@ -6,6 +6,8 @@ import { ButtonComponent } from '../../../../shared/components/button/button';
 import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
 import { ProcurementService } from '../../services/procurement.service';
 import { CreatePurchasingOrderItemDto } from '../../models/purchase-order.model';
+import { SupplierService } from '../../../../core/services/supplier.service';
+import { Supplier } from '../../../../core/models/supplier.model';
 
 @Component({
   selector: 'app-po-create',
@@ -18,6 +20,8 @@ export class PoCreate {
   private router = inject(Router);
   private procurementService = inject(ProcurementService);
   private fb = inject(FormBuilder);
+  private supplierService = inject(SupplierService);
+  suppliers: Supplier[] = [];
 
   itemCount = 1;
   showSuccessPopup = false;
@@ -59,13 +63,31 @@ export class PoCreate {
         quantity: 1
       });
     }
+    this.loadSuppliers();
+  }
+
+  loadSuppliers() {
+    this.supplierService.getSuppliers().subscribe({
+      next: (suppliers) => {
+        this.suppliers = suppliers;
+      },
+      error: (err) => {
+        console.error('Error loading suppliers:', err);
+      }
+    });
+  }
+
+  preventNegative(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
+      event.preventDefault();
+    }
   }
 
   private initItemForm(): FormGroup {
     return this.fb.group({
       itemName: ['', Validators.required],
       model: [''],
-      warrantyDuration: [null],
+      warrantyDuration: [null, [Validators.min(0)]],
       warrantyUnit: ['Years'],
       quantity: [0, [Validators.required, Validators.min(1)]],
       unitPrice: [0, [Validators.required, Validators.min(0)]],
