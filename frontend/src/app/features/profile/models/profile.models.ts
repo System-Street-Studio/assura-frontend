@@ -17,5 +17,6 @@ export interface UpdateProfileRequest {
     lastName: string;
     email: string;
     phoneNumber?: string;
+    currentPassword?: string;
     password?: string;
 }

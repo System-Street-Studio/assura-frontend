@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -10,6 +10,52 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProfileService } from '../../core/services/profile.service';
 import { ToastService } from '../../shared/services/toast.service';
+
+function passwordValidator(group: AbstractControl): ValidationErrors | null {
+    const currentPasswordCtrl = group.get('currentPassword');
+    const passwordCtrl = group.get('password');
+    const confirmPasswordCtrl = group.get('confirmPassword');
+
+    const currentPassword = currentPasswordCtrl?.value;
+    const password = passwordCtrl?.value;
+    const confirmPassword = confirmPasswordCtrl?.value;
+
+    let hasError = false;
+
+    if (password || confirmPassword) {
+        if (!currentPassword) {
+            currentPasswordCtrl?.setErrors({ ...currentPasswordCtrl.errors, required: true });
+            hasError = true;
+        } else {
+            if (currentPasswordCtrl?.hasError('required')) {
+                const { required, ...otherErrors } = currentPasswordCtrl.errors || {};
+                currentPasswordCtrl.setErrors(Object.keys(otherErrors).length ? otherErrors : null);
+            }
+        }
+
+        if (password !== confirmPassword) {
+            confirmPasswordCtrl?.setErrors({ ...confirmPasswordCtrl.errors, mismatch: true });
+            hasError = true;
+        } else {
+            if (confirmPasswordCtrl?.hasError('mismatch')) {
+                const { mismatch, ...otherErrors } = confirmPasswordCtrl.errors || {};
+                confirmPasswordCtrl.setErrors(Object.keys(otherErrors).length ? otherErrors : null);
+            }
+        }
+    } else {
+        // Clear errors if neither password nor confirmPassword has a value
+        if (currentPasswordCtrl?.hasError('required')) {
+            const { required, ...otherErrors } = currentPasswordCtrl.errors || {};
+            currentPasswordCtrl.setErrors(Object.keys(otherErrors).length ? otherErrors : null);
+        }
+        if (confirmPasswordCtrl?.hasError('mismatch')) {
+            const { mismatch, ...otherErrors } = confirmPasswordCtrl.errors || {};
+            confirmPasswordCtrl.setErrors(Object.keys(otherErrors).length ? otherErrors : null);
+        }
+    }
+
+    return hasError ? { formError: true } : null;
+}
 
 @Component({
     selector: 'app-profile',
@@ -50,8 +96,10 @@ export class ProfileComponent implements OnInit {
             lastName: ['', [Validators.required]],
             email: ['', [Validators.required, Validators.email]],
             phoneNumber: [''],
-            password: ['']
-        });
+            currentPassword: [''],
+            password: [''],
+            confirmPassword: ['']
+        }, { validators: passwordValidator });
 
         // Update form when profile data changes
         effect(() => {
@@ -63,7 +111,9 @@ export class ProfileComponent implements OnInit {
                     lastName: data.lastName,
                     email: data.email,
                     phoneNumber: data.phoneNumber,
-                    password: ''
+                    currentPassword: '',
+                    password: '',
+                    confirmPassword: ''
                 });
             }
         });
@@ -97,7 +147,9 @@ export class ProfileComponent implements OnInit {
                 lastName: data.lastName,
                 email: data.email,
                 phoneNumber: data.phoneNumber,
-                password: ''
+                currentPassword: '',
+                password: '',
+                confirmPassword: ''
             });
         }
     }
@@ -120,7 +172,8 @@ export class ProfileComponent implements OnInit {
             },
             error: (err: any) => {
                 console.error('Error updating profile', err);
-                this.toastService.show('Failed to update profile', 'error');
+                const errorMessage = typeof err.error === 'string' ? err.error : 'Failed to update profile';
+                this.toastService.show(errorMessage, 'error');
                 this.saving = false;
             }
         });
