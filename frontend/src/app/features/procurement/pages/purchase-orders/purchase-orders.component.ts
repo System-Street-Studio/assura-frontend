@@ -28,6 +28,9 @@ export class PurchaseOrdersComponent implements OnInit {
     isLoading = false; // Start as false, let loadData handle it
     private loadedOnce = false;
 
+    // Search state
+    searchTerm = '';
+
     ngOnInit(): void {
         console.log(`[DEBUG] PurchaseOrdersComponent [${this.instanceId}]: ngOnInit called`);
         this.loadData();
@@ -81,8 +84,23 @@ export class PurchaseOrdersComponent implements OnInit {
     ordersPageSize = 5;
     ordersCurrentPage = 1;
 
+    get filteredOrders(): PurchasingOrderSummaryDto[] {
+        if (!this.searchTerm) {
+            return this.orders;
+        }
+        const term = this.searchTerm.toLowerCase();
+        return this.orders.filter(o => 
+            (o.orderNumber && o.orderNumber.toLowerCase().includes(term)) ||
+            (o.supplierName && o.supplierName.toLowerCase().includes(term))
+        );
+    }
+
+    onSearchChange() {
+        this.ordersCurrentPage = 1;
+    }
+
     get ordersTotalPages(): number {
-        return Math.max(1, Math.ceil(this.orders.length / this.ordersPageSize));
+        return Math.max(1, Math.ceil(this.filteredOrders.length / this.ordersPageSize));
     }
 
     get ordersPageNumbers(): number[] {
@@ -90,7 +108,7 @@ export class PurchaseOrdersComponent implements OnInit {
     }
 
     get pagedOrders() {
-        return this.orders.slice((this.ordersCurrentPage - 1) * this.ordersPageSize, this.ordersCurrentPage * this.ordersPageSize);
+        return this.filteredOrders.slice((this.ordersCurrentPage - 1) * this.ordersPageSize, this.ordersCurrentPage * this.ordersPageSize);
     }
 
     goToOrdersPage(page: number) {

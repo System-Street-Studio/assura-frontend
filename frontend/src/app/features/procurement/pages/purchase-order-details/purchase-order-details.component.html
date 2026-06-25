@@ -5,6 +5,10 @@
         </button>
         <h2 class="page-title">Purchasing Order #{{ order.orderNumber }}</h2>
     </div>
+    
+    <div class="order-summary" style="margin-left: 60px; margin-bottom: 20px; color: #666; font-size: 16px;">
+        <span style="font-weight: 600; color: #333;">Supplier:</span> {{ order.supplierName || 'Unknown' }}
+    </div>
 
     <div class="details-card-container">
         <div class="details-card" *ngFor="let item of order.items; let i = index">

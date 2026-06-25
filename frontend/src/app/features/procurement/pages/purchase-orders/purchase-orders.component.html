@@ -7,7 +7,7 @@
         <div class="controls-row">
             <div class="search-bar">
                 <mat-icon class="search-icon">search</mat-icon>
-                <input type="text" placeholder="Search" class="search-input">
+                <input type="text" placeholder="Search" class="search-input" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
             </div>
             <!-- <div class="filter-wrapper">
                 <button class="filter-btn" (click)="toggleFilter()">
@@ -20,7 +20,7 @@
 
         <div class="table-container">
             <ng-container *ngIf="!isLoading">
-                <table class="orders-table" *ngIf="orders.length > 0">
+                <table class="orders-table" *ngIf="filteredOrders.length > 0">
                     <thead>
                         <tr>
                             <th>PO ID</th>
@@ -32,19 +32,19 @@
                         <tr *ngFor="let order of pagedOrders">
                             <td (click)="navigateToDetails(order.id)"
                                 style="cursor: pointer; color: #000; font-weight: 500;">{{ order.orderNumber }}</td>
-                            <td>{{ order.divisionName }}</td>
+                            <td>{{ order.supplierName || 'Unknown' }}</td>
                             <td>{{ order.issuedDate | date:'dd MMM yyyy' }}</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <!-- Empty State -->
-                <div *ngIf="orders.length === 0" class="empty-state">
+                <div *ngIf="filteredOrders.length === 0" class="empty-state">
                     No purchasing orders found.
                 </div>
 
                 <!-- Orders Pagination -->
-                <app-pagination *ngIf="orders.length > 0" [currentPage]="ordersCurrentPage"
+                <app-pagination *ngIf="filteredOrders.length > 0" [currentPage]="ordersCurrentPage"
                     [totalPages]="ordersTotalPages" [pageNumbers]="ordersPageNumbers"
                     (pageChange)="goToOrdersPage($event)">
                 </app-pagination>
