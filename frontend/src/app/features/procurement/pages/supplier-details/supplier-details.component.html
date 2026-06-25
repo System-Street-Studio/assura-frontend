@@ -23,17 +23,6 @@
                     <span class="label">Address :</span>
                     <span class="value">{{ supplier.address || 'N/A' }}</span>
                 </div>
-                <div class="detail-row update-status-row">
-                    <span class="label">Update Status :</span>
-                    <label class="radio-label">
-                        <input type="radio" name="status" value="Active" [checked]="supplier.status === 'Active'" />
-                        Active
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="status" value="Inactive" [checked]="supplier.status === 'Inactive'" />
-                        Inactive
-                    </label>
-                </div>
             </div>
 
             <!-- Right Column -->
@@ -54,10 +43,6 @@
                     <span class="label">Date Registered :</span>
                     <span class="value">{{ supplier.dateRegistered || (supplier.createdAt | date:'yyyy MMM dd') || 'N/A'
                         }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="label">Status :</span>
-                    <span class="value">{{ supplier.status }}</span>
                 </div>
             </div>
         </div>
