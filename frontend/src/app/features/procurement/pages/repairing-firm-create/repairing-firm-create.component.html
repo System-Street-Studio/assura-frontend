@@ -20,7 +20,7 @@
                 </div>
                 <div class="note-item">
                     <label for="phone">Phone Number:</label>
-                    <input type="text" id="phone" formControlName="phone" placeholder="Enter phone number">
+                    <input type="text" id="phone" formControlName="phone" (keydown)="preventNonNumeric($event)" placeholder="Enter phone number">
                     <div *ngIf="f['phone'].invalid && f['phone'].touched" class="error-message">
                         Valid 10-digit phone number is required
                     </div>

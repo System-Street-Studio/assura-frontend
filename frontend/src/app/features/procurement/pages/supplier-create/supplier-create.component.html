@@ -23,7 +23,7 @@
                     <div class="left-col">
                         <div class="field-row">
                             <label class="field-label">Contact No:</label>
-                            <input class="input-short" type="text" formControlName="contactNo" />
+                            <input class="input-short" type="text" formControlName="contactNo" (keydown)="preventNonNumeric($event)" />
                             <div *ngIf="f['contactNo'].invalid && f['contactNo'].touched" class="error-message">
                                 Valid 10-digit contact number is required
                             </div>

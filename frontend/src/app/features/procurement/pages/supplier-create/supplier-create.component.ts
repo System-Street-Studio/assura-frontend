@@ -82,6 +82,16 @@ export class SupplierCreateComponent implements OnInit {
         });
     }
 
+    preventNonNumeric(event: KeyboardEvent): void {
+        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
+        if (allowedKeys.includes(event.key)) {
+            return;
+        }
+        if (!/^[0-9]$/.test(event.key)) {
+            event.preventDefault();
+        }
+    }
+
     // දත්ත ලබා ගැනීමට පහසු වීම සඳහා getters
     get f() {
         return this.supplierForm.controls;

@@ -61,6 +61,16 @@ export class RepairingFirmCreateComponent implements OnInit {
         });
     }
 
+    preventNonNumeric(event: KeyboardEvent): void {
+        const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'];
+        if (allowedKeys.includes(event.key)) {
+            return;
+        }
+        if (!/^[0-9]$/.test(event.key)) {
+            event.preventDefault();
+        }
+    }
+
     get f() {
         return this.firmForm.controls;
     }
