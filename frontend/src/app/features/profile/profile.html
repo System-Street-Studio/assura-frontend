@@ -35,7 +35,7 @@
       <mat-divider></mat-divider>
 
       <div class="card-body">
-        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" *ngIf="isEditing; else viewTemplate">
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" *ngIf="isEditing; else viewTemplate" autocomplete="off">
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>First Name</mat-label>
@@ -77,7 +77,7 @@
 
             <mat-form-field appearance="outline">
               <mat-label>Current Password</mat-label>
-              <input matInput formControlName="currentPassword" type="password" placeholder="Current Password">
+              <input matInput formControlName="currentPassword" type="password" placeholder="Current Password" autocomplete="new-password">
               <mat-icon matSuffix>lock</mat-icon>
               <mat-error *ngIf="profileForm.get('currentPassword')?.hasError('required')">Required when changing password</mat-error>
             </mat-form-field>
@@ -86,7 +86,7 @@
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>New Password</mat-label>
-              <input matInput formControlName="password" type="password" placeholder="Leave blank to keep current">
+              <input matInput formControlName="password" type="password" placeholder="Leave blank to keep current" autocomplete="new-password">
               <mat-icon matSuffix>lock</mat-icon>
               <mat-hint>Leave blank to keep your current password</mat-hint>
               <mat-error *ngIf="profileForm.get('password')?.hasError('pattern')">Must be at least 8 chars with uppercase, lowercase, number, and special char.</mat-error>
@@ -94,7 +94,7 @@
 
             <mat-form-field appearance="outline">
               <mat-label>Confirm New Password</mat-label>
-              <input matInput formControlName="confirmPassword" type="password" placeholder="Confirm New Password">
+              <input matInput formControlName="confirmPassword" type="password" placeholder="Confirm New Password" autocomplete="new-password">
               <mat-icon matSuffix>lock</mat-icon>
               <mat-error *ngIf="profileForm.get('confirmPassword')?.hasError('mismatch')">Passwords do not match</mat-error>
             </mat-form-field>
