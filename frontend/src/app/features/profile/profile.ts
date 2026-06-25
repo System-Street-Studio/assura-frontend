@@ -97,7 +97,7 @@ export class ProfileComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             phoneNumber: [''],
             currentPassword: [''],
-            password: [''],
+            password: ['', [Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)]],
             confirmPassword: ['']
         }, { validators: passwordValidator });
 

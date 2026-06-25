@@ -89,6 +89,7 @@
               <input matInput formControlName="password" type="password" placeholder="Leave blank to keep current">
               <mat-icon matSuffix>lock</mat-icon>
               <mat-hint>Leave blank to keep your current password</mat-hint>
+              <mat-error *ngIf="profileForm.get('password')?.hasError('pattern')">Must be at least 8 chars with uppercase, lowercase, number, and special char.</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
