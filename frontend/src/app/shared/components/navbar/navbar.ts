@@ -3,6 +3,8 @@ import { Component, HostListener, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
+import { NotificationService, AppNotification } from '../../services/notification.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-shared-navbar',
@@ -14,8 +16,13 @@ import { AuthService } from '../../../core/auth/auth.service';
 export class SharedNavbarComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
+  public notificationService = inject(NotificationService);
 
   showProfileMenu = false;
+  showNotificationMenu = false;
+
+  notifications$ = this.notificationService.getAll();
+  unreadCount$ = this.notificationService.getUnreadCount();
 
   get pageTitle(): string {
     const currentUrl = this.router.url;
@@ -34,11 +41,29 @@ export class SharedNavbarComponent {
   @HostListener('document:click')
   closeMenu(): void {
     this.showProfileMenu = false;
+    this.showNotificationMenu = false;
   }
 
   toggleProfileMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.showProfileMenu = !this.showProfileMenu;
+    this.showNotificationMenu = false;
+  }
+
+  toggleNotificationMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showNotificationMenu = !this.showNotificationMenu;
+    this.showProfileMenu = false;
+  }
+
+  markAsRead(id: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationService.markAsRead(id);
+  }
+
+  markAllAsRead(event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationService.markAllAsRead();
   }
 
   openProfile(): void {
