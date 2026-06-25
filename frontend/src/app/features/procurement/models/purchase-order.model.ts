@@ -4,6 +4,7 @@
 export interface CreatePurchasingOrderRequest {
     supplierName: string;
     items: CreatePurchasingOrderItemDto[];
+    requestId?: number;
 }
 
 /**

@@ -44,6 +44,76 @@ export class NewArrivalsComponent implements OnInit {
     this.loadDivisions();
     this.loadHistory();
     this.loadOrders();
+
+    this.arrivalForm.get('purchasingOrderId')?.valueChanges.subscribe(id => {
+      if (id) {
+        // Auto-select division and date based on PO summary
+        const summary = this.purchasingOrders.find(po => po.id === Number(id));
+        if (summary) {
+            if (summary.divisionName) {
+                const div = this.divisions.find(d => d.name === summary.divisionName);
+                if (div) {
+                    this.arrivalForm.patchValue({ divisionId: div.id }, { emitEvent: false });
+                }
+            }
+            if (summary.issuedDate) {
+                try {
+                    const dateStr = new Date(summary.issuedDate).toISOString().split('T')[0];
+                    this.arrivalForm.patchValue({ purchasedDate: dateStr }, { emitEvent: false });
+                } catch (e) {
+                    // ignore invalid date
+                }
+            }
+        }
+
+        // Fetch full PO details to auto-fill item fields
+        this.procurementService.getOrderById(Number(id)).subscribe({
+          next: (po) => {
+            if (po && po.items && po.items.length > 0) {
+              const item = po.items[0];
+              
+              let warrantyVal = null;
+              let isYears = false;
+              let isMonths = false;
+              
+              if (item.warranty) {
+                  const parts = item.warranty.trim().split(' ');
+                  if (parts.length > 0 && !isNaN(Number(parts[0]))) {
+                      warrantyVal = Number(parts[0]);
+                      if (parts.length > 1) {
+                          if (parts[1].toLowerCase().includes('year')) isYears = true;
+                          if (parts[1].toLowerCase().includes('month')) isMonths = true;
+                      } else {
+                          isYears = true; // Default
+                      }
+                  }
+              }
+
+              this.arrivalForm.patchValue({
+                model: item.model || '',
+                quantity: item.quantity || 1,
+                purchasedPrice: item.unitPrice || 0,
+                warranty: warrantyVal,
+                isYears: isYears,
+                isMonths: isMonths
+              });
+            }
+          },
+          error: (err) => console.error('Error fetching PO details:', err)
+        });
+      } else {
+          // Reset fields when no PO is selected
+          this.arrivalForm.patchValue({
+            model: '',
+            warranty: null,
+            isYears: false,
+            isMonths: false,
+            quantity: null,
+            divisionId: null,
+            purchasedPrice: null
+          });
+      }
+    });
   }
 
   loadOrders() {
