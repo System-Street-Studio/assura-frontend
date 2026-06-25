@@ -77,7 +77,7 @@ export class EmployeeAssetsComponent implements OnInit {
   //map asset details
   ngOnInit() {
     this.isLoading.set(true);
-    this.assetService.getAll().subscribe({
+    this.assetService.getAll(true).subscribe({
       next: (data: AssetDetail[]) => {
         const mapped = data.map(a => ({
           assetId: a.id.toString(),
