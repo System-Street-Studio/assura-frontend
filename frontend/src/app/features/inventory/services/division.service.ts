@@ -12,4 +12,16 @@ export class DivisionService {
     getAll(): Observable<Division[]> {
         return this.http.get<Division[]>(this.apiUrl);
     }
+
+    create(division: Partial<Division>): Observable<Division> {
+        return this.http.post<Division>(this.apiUrl, division);
+    }
+
+    update(id: number, division: Partial<Division>): Observable<Division> {
+        return this.http.put<Division>(`${this.apiUrl}/${id}`, { id, ...division });
+    }
+
+    delete(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
 }

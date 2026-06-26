@@ -5,10 +5,9 @@ export const systemAdminRoutes: Routes = [
         path: 'overview',
         loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.SystemAdminDashboardComponent)
     },
-    // Placeholders for the other sections. These can be implemented later.
     {
         path: 'master-data',
-        loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.SystemAdminDashboardComponent)
+        loadComponent: () => import('./pages/master-data/master-data.component').then(m => m.MasterDataComponent)
     },
     {
         path: 'security',
