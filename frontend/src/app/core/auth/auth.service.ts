@@ -184,6 +184,7 @@ export class AuthService {
 
   getDashboardUrl(): string {
     const roles = this.getRoles();
+    if (roles.includes('SystemAdmin')) return '/system-admin/overview';
     if (roles.includes('Admin')) return '/admin/overview';
     if (roles.includes('Procurement')) return '/procurement/overview';
     if (roles.includes('Storekeeper')) return '/inventory/dashboard';
