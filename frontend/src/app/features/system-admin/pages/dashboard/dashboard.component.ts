@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SystemAdminService, SystemAdminDashboardStats } from '../../services/system-admin.service';
 
 @Component({
     selector: 'app-system-admin-dashboard',
@@ -10,24 +11,36 @@ import { CommonModule } from '@angular/common';
 })
 export class SystemAdminDashboardComponent implements OnInit {
     private cdr = inject(ChangeDetectorRef);
-    loading = false;
+    private systemAdminService = inject(SystemAdminService);
+    
+    loading = true;
     errorMessage?: string;
 
-    // Dummy data for presentation, to be replaced with a real service later
-    stats = {
-        totalDepartments: 12,
-        activeCategories: 24,
-        recentLogins: 145,
-        activeSessions: 18,
-        errorLogsCount: 5,
-        auditLogsCount: 342,
-        systemHealth: 'Optimal'
+    stats: SystemAdminDashboardStats = {
+        totalDepartments: 0,
+        activeCategories: 0,
+        recentLogins: 0,
+        activeSessions: 0,
+        errorLogsCount: 0,
+        auditLogsCount: 0,
+        systemHealth: 'Loading...'
     };
 
     ngOnInit() {
-        console.log('[DEBUG] SystemAdminDashboardComponent: Initializing...');
-        // In a real scenario, fetch from a SystemAdminService
-        this.loading = false;
+        console.log('[DEBUG] SystemAdminDashboardComponent: Fetching real stats...');
+        this.systemAdminService.getDashboardStats().subscribe({
+            next: (data) => {
+                this.stats = data;
+                this.loading = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Failed to load dashboard stats', err);
+                this.errorMessage = 'Could not load statistics from the server.';
+                this.loading = false;
+                this.cdr.detectChanges();
+            }
+        });
     }
 
     get summaryStats() {
