@@ -6,6 +6,12 @@ import { ROLES } from '../../core/constants/roles';
 export const shellRoutes: Routes = [
   { path: 'overview', loadComponent: () => import('./pages/overview/overview').then(m => m.OverviewComponent) },
   {
+    path: 'system-admin',
+    canActivate: [roleGuard],
+    data: { roles: [ROLES.SYSTEM_ADMIN] },
+    loadChildren: () => import('../system-admin/system-admin.routes').then(m => m.systemAdminRoutes)
+  },
+  {
     path: 'admin',
     canActivate: [roleGuard],
     data: { roles: [ROLES.ADMIN] },

@@ -8,6 +8,7 @@ export const ROLES = {
   ACCOUNTANT: 'Accountant',
   EMPLOYEE: 'Employee',
   DIVISION_HEAD: 'DivisionHead',
+  SYSTEM_ADMIN: 'SystemAdmin',
 } as const;
 
 export type RoleKey = keyof typeof ROLES;

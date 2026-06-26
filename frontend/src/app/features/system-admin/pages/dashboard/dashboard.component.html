@@ -1,0 +1,91 @@
+<div class="dashboard-container">
+    <h1 class="statics-title">System Administrator Dashboard</h1>
+
+    <div *ngIf="errorMessage" class="error-alert"
+        style="color: red; padding: 10px; border: 1px solid red; margin-bottom: 20px;">
+        {{ errorMessage }}
+    </div>
+
+    <!-- Top Summary Cards -->
+    <div class="summary-cards-row">
+        <div *ngFor="let stat of summaryStats" class="summary-card" [class.highlighted]="stat.highlighted">
+            <span class="card-label">{{ stat.label }}</span>
+            <span class="card-value">{{ stat.value }}</span>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <!-- 2. System Configuration & Master Data Management -->
+        <div class="stats-card">
+            <h3 class="stats-card-title">Master Data Overview</h3>
+            <div class="stats-list">
+                <div class="stats-item">
+                    <span class="item-label">Total Departments</span>
+                    <span class="item-value">{{ stats.totalDepartments }}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="item-label">Active Categories</span>
+                    <span class="item-value">{{ stats.activeCategories }}</span>
+                </div>
+            </div>
+            <!-- Optional Actions -->
+            <div class="card-actions" style="margin-top: 15px; text-align: right;">
+                <button class="action-btn" style="padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Manage Data</button>
+            </div>
+        </div>
+
+        <!-- 3. Security & Data Management -->
+        <div class="stats-card division-card">
+            <h3 class="stats-card-title">Security Status</h3>
+            <div class="stats-list">
+                <div class="stats-item">
+                    <span class="item-label">Recent Login Attempts</span>
+                    <span class="item-value">{{ stats.recentLogins }}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="item-label">Active Sessions</span>
+                    <span class="item-value">{{ stats.activeSessions }}</span>
+                </div>
+            </div>
+             <div class="card-actions" style="margin-top: 15px; text-align: right;">
+                <button class="action-btn" style="padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">View Security Logs</button>
+            </div>
+        </div>
+
+        <!-- 4. Troubleshooting & System Maintenance -->
+        <div class="stats-card category-card">
+            <h3 class="stats-card-title">System Maintenance</h3>
+            <div class="stats-list">
+                <div class="stats-item">
+                    <span class="item-label">System Health</span>
+                    <span class="item-value" [style.color]="stats.systemHealth === 'Optimal' ? 'green' : 'red'">{{ stats.systemHealth }}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="item-label">Error Logs (24h)</span>
+                    <span class="item-value" [style.color]="stats.errorLogsCount > 0 ? 'orange' : 'black'">{{ stats.errorLogsCount }}</span>
+                </div>
+            </div>
+            <div class="card-actions" style="margin-top: 15px; text-align: right;">
+                <button class="action-btn" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Diagnose Errors</button>
+            </div>
+        </div>
+
+        <!-- 5. System Auditing -->
+        <div class="stats-card">
+            <h3 class="stats-card-title">System Auditing</h3>
+            <div class="stats-list">
+                <div class="stats-item">
+                    <span class="item-label">Recent Audit Logs</span>
+                    <span class="item-value">{{ stats.auditLogsCount }}</span>
+                </div>
+                <div class="stats-item">
+                    <span class="item-label">Critical Activities</span>
+                    <span class="item-value">0</span>
+                </div>
+            </div>
+            <div class="card-actions" style="margin-top: 15px; text-align: right;">
+                <button class="action-btn" style="padding: 5px 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">View Audit Trail</button>
+            </div>
+        </div>
+    </div>
+</div>
