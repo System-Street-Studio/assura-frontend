@@ -167,11 +167,11 @@ export class AuthService {
     if (!token) return null;
     try {
       const decoded: any = jwtDecode(token);
-      const divisionId = decoded.divisionId ?? 
-                        decoded.DivisionId ??
-                        decoded.division_id ?? 
-                        decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/divisionId'] ??
-                        null;
+      const divisionId = decoded.divisionId ??
+        decoded.DivisionId ??
+        decoded.division_id ??
+        decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/divisionId'] ??
+        null;
       return divisionId ? Number(divisionId) : null;
     } catch {
       return null;
