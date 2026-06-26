@@ -1,0 +1,94 @@
+<div class="dashboard-container">
+    <h1 class="statics-title">Security & Data Management</h1>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="setTab('users')">
+            User Access Control
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'logs'" (click)="setTab('logs')">
+            Security Logs
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+        <p>Loading data...</p>
+    </div>
+
+    <!-- Users Tab -->
+    <div *ngIf="activeTab === 'users' && !loading" class="tab-content">
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of users">
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td><span class="role-badge">{{ user.role || 'None' }}</span></td>
+                        <td>
+                            <span class="status-badge" [class.locked]="user.isLocked" [class.active]="!user.isLocked">
+                                {{ user.isLocked ? 'Locked' : 'Active' }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="action-btn" 
+                                    [class.btn-lock]="!user.isLocked" 
+                                    [class.btn-unlock]="user.isLocked"
+                                    (click)="toggleLock(user)"
+                                    [disabled]="user.username === 'sysadmin'">
+                                {{ user.isLocked ? 'Unlock' : 'Lock' }}
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="users.length === 0">
+                        <td colspan="6" class="no-data">No users found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Logs Tab -->
+    <div *ngIf="activeTab === 'logs' && !loading" class="tab-content">
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Entity</th>
+                        <th>Action</th>
+                        <th>IP Address</th>
+                        <th>User ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let log of logs">
+                        <td>{{ log.createdAt | date:'medium' }}</td>
+                        <td>{{ log.entityName }}</td>
+                        <td>
+                            <span class="action-badge" [ngClass]="log.action.toLowerCase()">
+                                {{ log.action }}
+                            </span>
+                        </td>
+                        <td>{{ log.ipAddress || 'N/A' }}</td>
+                        <td>{{ log.createdBy || 'System' }}</td>
+                    </tr>
+                    <tr *ngIf="logs.length === 0">
+                        <td colspan="5" class="no-data">No security logs found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,172 @@
+.dashboard-container {
+    padding: 30px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.statics-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+/* Tabs */
+.tabs-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 600;
+    color: #6c757d;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    color: #0056b3;
+    background: #f1f3f5;
+}
+
+.tab-btn.active {
+    color: #0056b3;
+    background: #e7f1ff;
+    border-bottom: 3px solid #0056b3;
+}
+
+/* Loading */
+.loading-state {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: #6c757d;
+}
+
+/* Tables */
+.table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    padding: 20px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.data-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+.no-data {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 30px !important;
+}
+
+/* Badges */
+.role-badge {
+    background: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.locked {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.action-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e9ecef;
+}
+
+.action-badge.error, .action-badge.delete {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.action-badge.login, .action-badge.create {
+    background: #d4edda;
+    color: #155724;
+}
+
+.action-badge.update {
+    background: #cce5ff;
+    color: #004085;
+}
+
+/* Buttons */
+.action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+    transition: background 0.3s ease;
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-lock {
+    background-color: #dc3545;
+}
+
+.btn-lock:hover:not(:disabled) {
+    background-color: #c82333;
+}
+
+.btn-unlock {
+    background-color: #28a745;
+}
+
+.btn-unlock:hover:not(:disabled) {
+    background-color: #218838;
+}

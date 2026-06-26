@@ -11,7 +11,7 @@ export const systemAdminRoutes: Routes = [
     },
     {
         path: 'security',
-        loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.SystemAdminDashboardComponent)
+        loadComponent: () => import('./pages/security/security.component').then(m => m.SecurityComponent)
     },
     {
         path: 'maintenance',
