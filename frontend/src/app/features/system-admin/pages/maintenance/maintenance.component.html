@@ -1,0 +1,24 @@
+<div class="dashboard-container">
+    <h1 class="statics-title">System Maintenance</h1>
+
+    <div class="stats-grid">
+        <div class="stats-card">
+            <h3 class="stats-card-title">Database Backup</h3>
+            <p class="description">
+                Generate a complete snapshot of the current live database. This includes all structural data, historical audit logs, user profiles, and operational information.
+            </p>
+            <p class="warning-text">
+                <strong>Note:</strong> Generating a backup may take a few moments depending on the size of the database. A <code>.sql</code> file will be downloaded to your computer which can be directly imported into a standard MariaDB/MySQL instance.
+            </p>
+            
+            <div class="card-actions" style="margin-top: 25px;">
+                <button class="action-btn btn-backup" 
+                        (click)="downloadBackup()" 
+                        [disabled]="isBackingUp">
+                    <span *ngIf="!isBackingUp">Download SQL Backup (.sql)</span>
+                    <span *ngIf="isBackingUp">Generating Backup...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

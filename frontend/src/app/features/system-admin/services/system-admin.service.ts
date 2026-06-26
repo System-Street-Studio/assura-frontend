@@ -54,4 +54,8 @@ export class SystemAdminService {
     toggleUserLock(userId: number): Observable<void> {
         return this.http.put<void>(`${this.apiUrl}/users/${userId}/toggle-lock`, {});
     }
+
+    downloadSqlBackup(): Observable<Blob> {
+        return this.http.get(`${this.apiUrl}/backup-sql`, { responseType: 'blob' });
+    }
 }
