@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
@@ -148,6 +148,7 @@ import { ToastService, Toast } from '../../services/toast.service';
 })
 export class ToastComponent implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
   private sub!: Subscription;
 
   toasts: (Toast & { leaving?: boolean })[] = [];
@@ -156,6 +157,7 @@ export class ToastComponent implements OnInit, OnDestroy {
     this.sub = this.toastService.toast$.subscribe((t) => {
       const toast = { ...t, leaving: false };
       this.toasts.push(toast);
+      this.cdr.detectChanges();
 
       setTimeout(() => this.dismiss(toast), t.duration);
     });
@@ -165,9 +167,13 @@ export class ToastComponent implements OnInit, OnDestroy {
     const idx = this.toasts.indexOf(toast);
     if (idx === -1) return;
     toast.leaving = true;
+    this.cdr.detectChanges();
     setTimeout(() => {
       const i = this.toasts.indexOf(toast);
-      if (i !== -1) this.toasts.splice(i, 1);
+      if (i !== -1) {
+        this.toasts.splice(i, 1);
+        this.cdr.detectChanges();
+      }
     }, 300);
   }
 
