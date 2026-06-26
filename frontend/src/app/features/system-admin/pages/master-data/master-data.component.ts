@@ -5,6 +5,7 @@ import { DivisionService } from '../../../inventory/services/division.service';
 import { CategoryService } from '../../../inventory/services/category.service';
 import { Division } from '../../../inventory/models/division.model';
 import { Category } from '../../../inventory/models/category.model';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-master-data',
@@ -16,6 +17,7 @@ import { Category } from '../../../inventory/models/category.model';
 export class MasterDataComponent implements OnInit {
   private divisionService = inject(DivisionService);
   private categoryService = inject(CategoryService);
+  private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
 
   activeTab: 'divisions' | 'categories' = 'divisions';
@@ -76,29 +78,58 @@ export class MasterDataComponent implements OnInit {
     if (this.form.invalid) return;
 
     const data = this.form.value;
+    const itemName = this.activeTab === 'divisions' ? 'Division' : 'Category';
 
     if (this.activeTab === 'divisions') {
       if (this.isEditing && this.editingId) {
-        this.divisionService.update(this.editingId, data).subscribe(() => {
-          this.closeForm();
-          this.loadData();
+        this.divisionService.update(this.editingId, data).subscribe({
+          next: () => {
+            this.toastService.show(`${itemName} updated successfully!`, 'success');
+            this.closeForm();
+            this.loadData();
+          },
+          error: (err) => {
+            console.error(err);
+            this.toastService.show(`Failed to update ${itemName}. Make sure backend is running.`, 'error');
+          }
         });
       } else {
-        this.divisionService.create(data).subscribe(() => {
-          this.closeForm();
-          this.loadData();
+        this.divisionService.create(data).subscribe({
+          next: () => {
+            this.toastService.show(`${itemName} added successfully!`, 'success');
+            this.closeForm();
+            this.loadData();
+          },
+          error: (err) => {
+            console.error(err);
+            this.toastService.show(`Failed to add ${itemName}. Make sure backend is running.`, 'error');
+          }
         });
       }
     } else {
       if (this.isEditing && this.editingId) {
-        this.categoryService.update(this.editingId, data).subscribe(() => {
-          this.closeForm();
-          this.loadData();
+        this.categoryService.update(this.editingId, data).subscribe({
+          next: () => {
+            this.toastService.show(`${itemName} updated successfully!`, 'success');
+            this.closeForm();
+            this.loadData();
+          },
+          error: (err) => {
+            console.error(err);
+            this.toastService.show(`Failed to update ${itemName}. Make sure backend is running.`, 'error');
+          }
         });
       } else {
-        this.categoryService.create(data).subscribe(() => {
-          this.closeForm();
-          this.loadData();
+        this.categoryService.create(data).subscribe({
+          next: () => {
+            this.toastService.show(`${itemName} added successfully!`, 'success');
+            this.closeForm();
+            this.loadData();
+          },
+          error: (err) => {
+            console.error(err);
+            this.toastService.show(`Failed to add ${itemName}. Make sure backend is running.`, 'error');
+          }
         });
       }
     }
@@ -106,11 +137,19 @@ export class MasterDataComponent implements OnInit {
 
   deleteItem(id: number) {
     if (!confirm('Are you sure you want to delete this item?')) return;
+    
+    const itemName = this.activeTab === 'divisions' ? 'Division' : 'Category';
 
     if (this.activeTab === 'divisions') {
-      this.divisionService.delete(id).subscribe(() => this.loadData());
+      this.divisionService.delete(id).subscribe(() => {
+        this.toastService.show(`${itemName} deleted successfully!`, 'success');
+        this.loadData();
+      });
     } else {
-      this.categoryService.delete(id).subscribe(() => this.loadData());
+      this.categoryService.delete(id).subscribe(() => {
+        this.toastService.show(`${itemName} deleted successfully!`, 'success');
+        this.loadData();
+      });
     }
   }
 }
