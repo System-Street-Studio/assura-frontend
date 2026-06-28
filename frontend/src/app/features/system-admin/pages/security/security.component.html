@@ -19,6 +19,15 @@
     <!-- Users Tab -->
     <div *ngIf="activeTab === 'users' && !loading" class="tab-content">
         <div class="table-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                    <h3 style="margin: 0; color: #495057;">User Access Control</h3>
+                    <p style="margin: 5px 0 0 0; color: #6c757d; font-size: 14px;">Manage system access and lock/unlock user accounts.</p>
+                </div>
+                <div class="search-bar">
+                    <input type="text" [(ngModel)]="searchTerm" placeholder="Search users..." class="form-control" style="width: 250px;">
+                </div>
+            </div>
             <table class="data-table">
                 <thead>
                     <tr>
@@ -31,7 +40,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let user of users">
+                    <tr *ngFor="let user of filteredUsers">
                         <td>{{ user.id }}</td>
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
@@ -51,8 +60,8 @@
                             </button>
                         </td>
                     </tr>
-                    <tr *ngIf="users.length === 0">
-                        <td colspan="6" class="no-data">No users found.</td>
+                    <tr *ngIf="filteredUsers.length === 0">
+                        <td colspan="6" class="no-data">No users match your search.</td>
                     </tr>
                 </tbody>
             </table>
@@ -62,6 +71,15 @@
     <!-- Logs Tab -->
     <div *ngIf="activeTab === 'logs' && !loading" class="tab-content">
         <div class="table-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                    <h3 style="margin: 0; color: #495057;">Security Audit Trail</h3>
+                    <p style="margin: 5px 0 0 0; color: #6c757d; font-size: 14px;">Review all security-related events and access logs.</p>
+                </div>
+                <div class="search-bar">
+                    <input type="text" [(ngModel)]="searchTerm" placeholder="Search logs..." class="form-control" style="width: 250px;">
+                </div>
+            </div>
             <table class="data-table">
                 <thead>
                     <tr>
@@ -73,7 +91,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let log of logs">
+                    <tr *ngFor="let log of filteredLogs">
                         <td>{{ log.createdAt | date:'medium' }}</td>
                         <td>{{ log.entityName }}</td>
                         <td>
@@ -84,8 +102,8 @@
                         <td>{{ log.ipAddress || 'N/A' }}</td>
                         <td>{{ log.createdBy || 'System' }}</td>
                     </tr>
-                    <tr *ngIf="logs.length === 0">
-                        <td colspan="5" class="no-data">No security logs found.</td>
+                    <tr *ngIf="filteredLogs.length === 0">
+                        <td colspan="5" class="no-data">No security logs match your search.</td>
                     </tr>
                 </tbody>
             </table>

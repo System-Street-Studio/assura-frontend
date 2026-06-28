@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SystemAdminService, SystemAdminUser, SystemAdminAuditLog } from '../../services/system-admin.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-maintenance',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './maintenance.component.html',
   styleUrls: ['./maintenance.component.css']
 })
@@ -17,15 +18,37 @@ export class MaintenanceComponent implements OnInit {
   activeTab: 'backup' | 'logs' | 'support' = 'backup';
   
   isBackingUp = false;
+  searchTerm = '';
   errorLogs: SystemAdminAuditLog[] = [];
   users: SystemAdminUser[] = [];
   
+  get filteredLogs(): SystemAdminAuditLog[] {
+    if (!this.searchTerm) return this.errorLogs;
+    const term = this.searchTerm.toLowerCase();
+    return this.errorLogs.filter(log => 
+      (log.entityName && log.entityName.toLowerCase().includes(term)) ||
+      (log.action && log.action.toLowerCase().includes(term)) ||
+      (log.createdBy && log.createdBy.toLowerCase().includes(term))
+    );
+  }
+
+  get filteredUsers(): SystemAdminUser[] {
+    if (!this.searchTerm) return this.users;
+    const term = this.searchTerm.toLowerCase();
+    return this.users.filter(user => 
+      (user.username && user.username.toLowerCase().includes(term)) ||
+      (user.email && user.email.toLowerCase().includes(term)) ||
+      (user.role && user.role.toLowerCase().includes(term))
+    );
+  }
+
   ngOnInit() {
     this.loadDataForActiveTab();
   }
 
   setActiveTab(tab: 'backup' | 'logs' | 'support') {
     this.activeTab = tab;
+    this.searchTerm = '';
     this.loadDataForActiveTab();
   }
 

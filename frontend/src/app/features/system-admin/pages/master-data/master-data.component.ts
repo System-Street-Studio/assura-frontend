@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DivisionService } from '../../../inventory/services/division.service';
 import { CategoryService } from '../../../inventory/services/category.service';
 import { Division } from '../../../inventory/models/division.model';
@@ -10,7 +10,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
 @Component({
   selector: 'app-master-data',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './master-data.component.html',
   styleUrls: ['./master-data.component.css']
 })
@@ -21,9 +21,28 @@ export class MasterDataComponent implements OnInit {
   private fb = inject(FormBuilder);
 
   activeTab: 'divisions' | 'categories' = 'divisions';
+  searchTerm = '';
   
   divisions: Division[] = [];
   categories: Category[] = [];
+
+  get filteredDivisions(): Division[] {
+    if (!this.searchTerm) return this.divisions;
+    const term = this.searchTerm.toLowerCase();
+    return this.divisions.filter(d => 
+      (d.name && d.name.toLowerCase().includes(term)) ||
+      (d.description && d.description.toLowerCase().includes(term))
+    );
+  }
+
+  get filteredCategories(): Category[] {
+    if (!this.searchTerm) return this.categories;
+    const term = this.searchTerm.toLowerCase();
+    return this.categories.filter(c => 
+      (c.name && c.name.toLowerCase().includes(term)) ||
+      (c.description && c.description.toLowerCase().includes(term))
+    );
+  }
 
   showForm = false;
   isEditing = false;
@@ -48,6 +67,7 @@ export class MasterDataComponent implements OnInit {
 
   switchTab(tab: 'divisions' | 'categories') {
     this.activeTab = tab;
+    this.searchTerm = '';
     this.closeForm();
     this.loadData();
   }

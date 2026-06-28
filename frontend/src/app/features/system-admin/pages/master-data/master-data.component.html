@@ -10,7 +10,10 @@
     </div>
 
     <!-- Action Bar -->
-    <div class="action-bar" *ngIf="!showForm">
+    <div class="action-bar" *ngIf="!showForm" style="display: flex; justify-content: space-between;">
+        <div class="search-bar">
+            <input type="text" [(ngModel)]="searchTerm" placeholder="Search..." class="form-control" style="width: 250px;">
+        </div>
         <button class="btn btn-primary" (click)="openAddForm()">
             <i class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 5px;">add</i>
             Add New {{ activeTab === 'divisions' ? 'Division' : 'Category' }}
@@ -52,7 +55,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of (activeTab === 'divisions' ? divisions : categories)">
+                <tr *ngFor="let item of (activeTab === 'divisions' ? filteredDivisions : filteredCategories)">
                     <td>{{ item.id }}</td>
                     <td><strong>{{ item.name }}</strong></td>
                     <td style="color: #666;">{{ item.description || '-' }}</td>
@@ -65,8 +68,8 @@
                         </button>
                     </td>
                 </tr>
-                <tr *ngIf="(activeTab === 'divisions' ? divisions : categories).length === 0">
-                    <td colspan="4" class="empty-state">No data found. Click 'Add New' to create one.</td>
+                <tr *ngIf="(activeTab === 'divisions' ? filteredDivisions : filteredCategories).length === 0">
+                    <td colspan="4" class="empty-state">No data match your search.</td>
                 </tr>
             </tbody>
         </table>

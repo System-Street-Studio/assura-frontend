@@ -31,8 +31,15 @@
 
     <!-- TAB 2: System Logs -->
     <div class="table-container" *ngIf="activeTab === 'logs'">
-        <h3 class="stats-card-title">System Error Logs</h3>
-        <p class="description">Review technical errors and exceptions logged by the system for troubleshooting bugs or slow-downs.</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div>
+                <h3 class="stats-card-title" style="margin-bottom: 5px;">System Error Logs</h3>
+                <p class="description" style="margin-bottom: 0;">Review technical errors and exceptions logged by the system.</p>
+            </div>
+            <div class="search-bar">
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Search logs..." class="form-control" style="width: 250px;">
+            </div>
+        </div>
         
         <table class="data-table">
             <thead>
@@ -44,14 +51,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let log of errorLogs">
+                <tr *ngFor="let log of filteredLogs">
                     <td>{{ log.createdAt | date:'medium' }}</td>
                     <td><span class="badge">{{ log.entityName }}</span></td>
                     <td class="error-text">{{ log.action }}</td>
                     <td>{{ log.createdBy || 'System' }}</td>
                 </tr>
-                <tr *ngIf="errorLogs.length === 0">
-                    <td colspan="4" class="text-center">No system errors found! The system is running optimally.</td>
+                <tr *ngIf="filteredLogs.length === 0">
+                    <td colspan="4" class="text-center">No logs match your search.</td>
                 </tr>
             </tbody>
         </table>
@@ -59,8 +66,15 @@
 
     <!-- TAB 3: Technical Support -->
     <div class="table-container" *ngIf="activeTab === 'support'">
-        <h3 class="stats-card-title">Technical Support (Help Desk)</h3>
-        <p class="description">Assist standard users with technical issues, such as resetting forgotten passwords.</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div>
+                <h3 class="stats-card-title" style="margin-bottom: 5px;">Technical Support (Help Desk)</h3>
+                <p class="description" style="margin-bottom: 0;">Assist standard users with technical issues.</p>
+            </div>
+            <div class="search-bar">
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Search users..." class="form-control" style="width: 250px;">
+            </div>
+        </div>
         
         <table class="data-table">
             <thead>
@@ -73,7 +87,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let user of users">
+                <tr *ngFor="let user of filteredUsers">
                     <td>{{ user.username }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.role }}</td>
@@ -87,6 +101,9 @@
                             Reset Password
                         </button>
                     </td>
+                </tr>
+                <tr *ngIf="filteredUsers.length === 0">
+                    <td colspan="5" class="text-center">No users match your search.</td>
                 </tr>
             </tbody>
         </table>

@@ -16,10 +16,31 @@ export class SecurityComponent implements OnInit {
   private toastService = inject(ToastService);
 
   activeTab: 'users' | 'logs' = 'users';
+  searchTerm = '';
   
   users: SystemAdminUser[] = [];
   logs: SystemAdminAuditLog[] = [];
   loading = false;
+
+  get filteredUsers(): SystemAdminUser[] {
+    if (!this.searchTerm) return this.users;
+    const term = this.searchTerm.toLowerCase();
+    return this.users.filter(u => 
+      (u.username && u.username.toLowerCase().includes(term)) ||
+      (u.email && u.email.toLowerCase().includes(term)) ||
+      (u.role && u.role.toLowerCase().includes(term))
+    );
+  }
+
+  get filteredLogs(): SystemAdminAuditLog[] {
+    if (!this.searchTerm) return this.logs;
+    const term = this.searchTerm.toLowerCase();
+    return this.logs.filter(l => 
+      (l.entityName && l.entityName.toLowerCase().includes(term)) ||
+      (l.action && l.action.toLowerCase().includes(term)) ||
+      (l.createdBy && l.createdBy.toLowerCase().includes(term))
+    );
+  }
 
   ngOnInit() {
     this.loadData();
@@ -27,6 +48,7 @@ export class SecurityComponent implements OnInit {
 
   setTab(tab: 'users' | 'logs') {
     this.activeTab = tab;
+    this.searchTerm = '';
     this.loadData();
   }
 
