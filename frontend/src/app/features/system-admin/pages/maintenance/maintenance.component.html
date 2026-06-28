@@ -1,7 +1,14 @@
 <div class="dashboard-container">
-    <h1 class="statics-title">System Maintenance</h1>
+    <h1 class="statics-title">Troubleshooting & System Maintenance</h1>
 
-    <div class="stats-grid">
+    <div class="tab-navigation">
+        <button class="tab-btn" [class.active]="activeTab === 'backup'" (click)="setActiveTab('backup')">Database Backup</button>
+        <button class="tab-btn" [class.active]="activeTab === 'logs'" (click)="setActiveTab('logs')">System Logs</button>
+        <button class="tab-btn" [class.active]="activeTab === 'support'" (click)="setActiveTab('support')">Technical Support</button>
+    </div>
+
+    <!-- TAB 1: Database Backup -->
+    <div class="stats-grid" *ngIf="activeTab === 'backup'">
         <div class="stats-card">
             <h3 class="stats-card-title">Database Backup</h3>
             <p class="description">
@@ -20,5 +27,68 @@
                 </button>
             </div>
         </div>
+    </div>
+
+    <!-- TAB 2: System Logs -->
+    <div class="table-container" *ngIf="activeTab === 'logs'">
+        <h3 class="stats-card-title">System Error Logs</h3>
+        <p class="description">Review technical errors and exceptions logged by the system for troubleshooting bugs or slow-downs.</p>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Entity</th>
+                    <th>Error Context</th>
+                    <th>User / System</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let log of errorLogs">
+                    <td>{{ log.createdAt | date:'medium' }}</td>
+                    <td><span class="badge">{{ log.entityName }}</span></td>
+                    <td class="error-text">{{ log.action }}</td>
+                    <td>{{ log.createdBy || 'System' }}</td>
+                </tr>
+                <tr *ngIf="errorLogs.length === 0">
+                    <td colspan="4" class="text-center">No system errors found! The system is running optimally.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- TAB 3: Technical Support -->
+    <div class="table-container" *ngIf="activeTab === 'support'">
+        <h3 class="stats-card-title">Technical Support (Help Desk)</h3>
+        <p class="description">Assist standard users with technical issues, such as resetting forgotten passwords.</p>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Support Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of users">
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>
+                        <span class="status-badge" [class.locked]="user.isLocked" [class.active]="!user.isLocked">
+                            {{ user.isLocked ? 'Locked' : 'Active' }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn btn-reset" (click)="resetPassword(user)">
+                            Reset Password
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

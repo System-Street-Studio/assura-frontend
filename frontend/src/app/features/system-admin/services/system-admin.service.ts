@@ -58,4 +58,12 @@ export class SystemAdminService {
     downloadSqlBackup(): Observable<Blob> {
         return this.http.get(`${this.apiUrl}/backup-sql`, { responseType: 'blob' });
     }
+
+    getSystemErrorLogs(): Observable<SystemAdminAuditLog[]> {
+        return this.http.get<SystemAdminAuditLog[]>(`${this.apiUrl}/error-logs`);
+    }
+
+    resetUserPassword(userId: number): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/users/${userId}/reset-password`, {});
+    }
 }
