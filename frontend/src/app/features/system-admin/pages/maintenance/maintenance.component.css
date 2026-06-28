@@ -12,34 +12,35 @@
 }
 
 /* Tabs Navigation */
-.tab-navigation {
+.tabs {
     display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 20px;
 }
 
 .tab-btn {
-    padding: 10px 20px;
+    padding: 12px 24px;
     background: none;
     border: none;
     font-size: 16px;
-    font-weight: 600;
-    color: #6c757d;
+    font-weight: 500;
+    color: #666;
     cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+    border-radius: 0;
 }
 
 .tab-btn:hover {
-    background: #e9ecef;
-    color: #495057;
+    color: #333;
+    background: none;
 }
 
 .tab-btn.active {
-    background: #6f42c1;
-    color: white;
+    color: #007bff;
+    border-bottom-color: #007bff;
+    background: none;
 }
 
 /* Data Tables */

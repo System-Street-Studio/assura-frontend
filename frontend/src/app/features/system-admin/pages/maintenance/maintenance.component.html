@@ -1,7 +1,7 @@
 <div class="dashboard-container">
     <h1 class="statics-title">Troubleshooting & System Maintenance</h1>
 
-    <div class="tab-navigation">
+    <div class="tabs">
         <button class="tab-btn" [class.active]="activeTab === 'backup'" (click)="setActiveTab('backup')">Database Backup</button>
         <button class="tab-btn" [class.active]="activeTab === 'logs'" (click)="setActiveTab('logs')">System Logs</button>
         <button class="tab-btn" [class.active]="activeTab === 'support'" (click)="setActiveTab('support')">Technical Support</button>
