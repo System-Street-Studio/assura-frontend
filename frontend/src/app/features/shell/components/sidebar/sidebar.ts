@@ -34,7 +34,6 @@ export class SidebarComponent {
     { label: 'Master Data', icon: 'settings', link: '/system-admin/master-data', roles: ['SystemAdmin'] },
     { label: 'Security', icon: 'security', link: '/system-admin/security', roles: ['SystemAdmin'] },
     { label: 'System Logs', icon: 'build', link: '/system-admin/maintenance', roles: ['SystemAdmin'] },
-    { label: 'Audit Trail', icon: 'policy', link: '/system-admin/auditing', roles: ['SystemAdmin'] },
 
     // Procurement section
     { label: 'Overview', icon: 'home', link: '/procurement/overview', roles: ['Procurement', 'Admin'] },
