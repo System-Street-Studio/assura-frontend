@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge';
 import { AssetService } from '../../../../core/services/asset.service';
 import QRCode from 'qrcode';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
     selector: 'app-asset-details',
@@ -19,6 +20,7 @@ export class AssetDetailsComponent implements OnInit {
     private router = inject(Router);
     private assetService = inject(AssetService);
     private cdr = inject(ChangeDetectorRef);
+    private toastService = inject(ToastService);
 
     assetId: string | null = null;
     asset: any = {
@@ -97,10 +99,12 @@ export class AssetDetailsComponent implements OnInit {
             next: (response) => {
                 console.log('Status updated successfully');
                 this.asset.status = newStatus;
+                this.toastService.show('Status updated successfully!', 'success');
                 this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Failed to update status:', err);
+                this.toastService.show('Failed to update status.', 'error');
             }
         });
     }

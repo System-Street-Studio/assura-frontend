@@ -5,6 +5,7 @@ import { StatusCardComponent } from '../../../../shared/components/status-card/s
 import { ProcurementService } from '../../services/procurement.service';
 import { AssetInformingDto, InformStoresRequest } from '../../models/arrival.model';
 import { PurchasingOrderSummaryDto } from '../../models/purchase-order.model';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-new-arrivals',
@@ -16,8 +17,8 @@ import { PurchasingOrderSummaryDto } from '../../models/purchase-order.model';
 export class NewArrivalsComponent implements OnInit {
   private fb = inject(FormBuilder);
   private procurementService = inject(ProcurementService);
+  private toastService = inject(ToastService);
 
-  showSuccess = false;
   isSubmitting = false;
   divisions: any[] = [];
   history: AssetInformingDto[] = [];
@@ -172,21 +173,18 @@ export class NewArrivalsComponent implements OnInit {
 
       this.procurementService.informStores(request).subscribe({
         next: () => {
-          this.showSuccess = true;
+          this.toastService.show('Informed Stores Successfully', 'success');
           this.isSubmitting = false;
           this.loadHistory();
-          setTimeout(() => {
-            this.showSuccess = false;
-            this.arrivalForm.reset({
-              purchasedDate: new Date().toISOString().split('T')[0],
-              divisionId: null
-            });
-          }, 2000);
+          this.arrivalForm.reset({
+            purchasedDate: new Date().toISOString().split('T')[0],
+            divisionId: null
+          });
         },
         error: (err) => {
           console.error('Error informing stores', err);
           this.isSubmitting = false;
-          alert('Failed to inform stores. Please check the logs.');
+          this.toastService.show('Failed to inform stores. Please check the logs.', 'error');
         }
       });
     }

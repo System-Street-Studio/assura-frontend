@@ -8,6 +8,7 @@ import { ProcurementService } from '../../services/procurement.service';
 import { CreatePurchasingOrderItemDto } from '../../models/purchase-order.model';
 import { SupplierService } from '../../../../core/services/supplier.service';
 import { Supplier } from '../../../../core/models/supplier.model';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-po-create',
@@ -21,10 +22,10 @@ export class PoCreate {
   private procurementService = inject(ProcurementService);
   private fb = inject(FormBuilder);
   private supplierService = inject(SupplierService);
+  private toastService = inject(ToastService);
   suppliers: Supplier[] = [];
 
   itemCount = 1;
-  showSuccessPopup = false;
   isSubmitting = false;
   requestId?: number;
 
@@ -125,7 +126,7 @@ export class PoCreate {
   onSaveAndNext() {
     this.itemForm.markAllAsTouched();
     if (this.itemForm.invalid) {
-      alert('Please fill in all mandatory item fields with valid values.');
+      this.toastService.show('Please fill in all mandatory item fields with valid values.', 'error');
       return;
     }
 
@@ -140,13 +141,9 @@ export class PoCreate {
     this.items.push(newItemForm);
     this.addedItems.push(itemData);
 
-    this.showSuccessPopup = true;
-
-    setTimeout(() => {
-      this.showSuccessPopup = false;
-      this.itemCount++;
-      this.resetItemForm();
-    }, 800);
+    this.toastService.show('Item added successfully!', 'success');
+    this.itemCount++;
+    this.resetItemForm();
   }
 
   resetItemForm() {
@@ -171,12 +168,12 @@ export class PoCreate {
   onSubmitOrder() {
     if (this.poForm.invalid) {
       this.poForm.markAllAsTouched();
-      alert('Please ensure the Supplier Name is entered.');
+      this.toastService.show('Please ensure the Supplier Name is entered.', 'error');
       return;
     }
 
     if (this.items.length === 0) {
-      alert('Please add at least one item to the order.');
+      this.toastService.show('Please add at least one item to the order.', 'error');
       return;
     }
 
@@ -189,11 +186,12 @@ export class PoCreate {
     this.procurementService.createOrder(request).subscribe({
       next: (id) => {
         console.log('Order created successfully with ID:', id);
+        this.toastService.show('Order created successfully!', 'success');
         this.router.navigate(['procurement', 'purchase-orders']);
       },
       error: (err) => {
         console.error('Error creating order:', err);
-        alert('Failed to create order. Please check the console for details.');
+        this.toastService.show('Failed to create order. Please check the console for details.', 'error');
         this.isSubmitting = false;
       }
     });

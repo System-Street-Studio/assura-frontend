@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SupplierService } from '../../../../core/services/supplier.service';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
     selector: 'app-supplier-create',
@@ -16,6 +17,7 @@ export class SupplierCreateComponent implements OnInit {
     private route = inject(ActivatedRoute);
     private supplierService = inject(SupplierService);
     private fb = inject(FormBuilder);
+    private toastService = inject(ToastService);
 
     supplierForm: FormGroup;
     isEdit = false;
@@ -76,7 +78,7 @@ export class SupplierCreateComponent implements OnInit {
             },
             error: (err) => {
                 console.error('[ERROR] Error loading supplier details for edit:', err);
-                alert('Failed to load supplier details.');
+                this.toastService.show('Failed to load supplier details.', 'error');
                 this.close();
             }
         });
@@ -120,24 +122,24 @@ export class SupplierCreateComponent implements OnInit {
             this.supplierService.updateSupplier(this.supplierId, supplierData).subscribe({
                 next: () => {
                     console.log('[DEBUG] Supplier updated successfully');
-                    alert('Supplier updated successfully!');
+                    this.toastService.show('Supplier updated successfully!', 'success');
                     this.router.navigate(['procurement', 'suppliers']);
                 },
                 error: (err: any) => {
                     console.error('[ERROR] Error updating supplier:', err);
-                    alert('Failed to update supplier.');
+                    this.toastService.show('Failed to update supplier.', 'error');
                 }
             });
         } else {
             this.supplierService.createSupplier(supplierData).subscribe({
                 next: (id) => {
                     console.log('[DEBUG] Supplier created successfully with ID:', id);
-                    alert('Supplier created successfully!');
+                    this.toastService.show('Supplier created successfully!', 'success');
                     this.router.navigate(['procurement', 'suppliers']);
                 },
                 error: (err: any) => {
                     console.error('[ERROR] Error creating supplier:', err);
-                    alert('Failed to create supplier.');
+                    this.toastService.show('Failed to create supplier.', 'error');
                 }
             });
         }

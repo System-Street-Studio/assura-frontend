@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
 import { ProcurementService } from '../../services/procurement.service';
 import { MaintenanceDto } from '../../models/maintenance.model';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
     selector: 'app-maintenance-note',
@@ -17,11 +18,11 @@ export class MaintenanceNoteComponent implements OnInit {
     private route = inject(ActivatedRoute);
     private router = inject(Router);
     private procurementService = inject(ProcurementService);
+    private toastService = inject(ToastService);
 
     noteId: number | null = null;
     noteData: MaintenanceDto | null = null;
     isUpdating = false;
-    showSuccessPopup = false;
     editStatus: string = '';
 
     ngOnInit(): void {
@@ -51,16 +52,13 @@ export class MaintenanceNoteComponent implements OnInit {
         this.procurementService.updateMaintenanceStatus(this.noteId, this.editStatus).subscribe({
             next: () => {
                 this.isUpdating = false;
-                this.showSuccessPopup = true;
+                this.toastService.show('Status Updated Successfully', 'success');
                 if (this.noteData) this.noteData.status = this.editStatus;
-                setTimeout(() => {
-                    this.showSuccessPopup = false;
-                }, 2000);
             },
             error: (err) => {
                 this.isUpdating = false;
                 console.error('Error updating maintenance status', err);
-                alert('Failed to update status.');
+                this.toastService.show('Failed to update status.', 'error');
             }
         });
     }

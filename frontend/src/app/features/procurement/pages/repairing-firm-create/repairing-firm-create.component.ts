@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { ProcurementService } from '../../services/procurement.service';
 import { CreateRepairingFirmRequest } from '../../models/maintenance.model';
 import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
     selector: 'app-repairing-firm-create',
@@ -18,8 +19,8 @@ export class RepairingFirmCreateComponent implements OnInit {
     private route = inject(ActivatedRoute);
     private procurementService = inject(ProcurementService);
     private fb = inject(FormBuilder);
+    private toastService = inject(ToastService);
 
-    showSuccessPopup = false;
     isSaving = false;
     firmForm!: FormGroup;
     isEdit = false;
@@ -55,7 +56,7 @@ export class RepairingFirmCreateComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Error loading repairing firm details', err);
-                alert('Failed to load repairing firm details.');
+                this.toastService.show('Failed to load repairing firm details.', 'error');
                 this.close();
             }
         });
@@ -96,33 +97,27 @@ export class RepairingFirmCreateComponent implements OnInit {
         if (this.isEdit && this.firmId !== null) {
             this.procurementService.updateRepairingFirm(this.firmId, requestData).subscribe({
                 next: () => {
-                    this.showSuccessPopup = true;
+                    this.toastService.show('Repairing firm updated successfully!', 'success');
                     this.isSaving = false;
-                    setTimeout(() => {
-                        this.showSuccessPopup = false;
-                        this.router.navigate(['/procurement/maintenance/repairing-firms']);
-                    }, 1500);
+                    this.router.navigate(['/procurement/maintenance/repairing-firms']);
                 },
                 error: (err) => {
                     console.error('Error updating repairing firm', err);
                     this.isSaving = false;
-                    alert('Error updating firm. Please check logs.');
+                    this.toastService.show('Error updating firm. Please check logs.', 'error');
                 }
             });
         } else {
             this.procurementService.createRepairingFirm(requestData).subscribe({
                 next: (id) => {
-                    this.showSuccessPopup = true;
+                    this.toastService.show('Repairing firm added successfully!', 'success');
                     this.isSaving = false;
-                    setTimeout(() => {
-                        this.showSuccessPopup = false;
-                        this.router.navigate(['/procurement/maintenance/repairing-firms']);
-                    }, 1500);
+                    this.router.navigate(['/procurement/maintenance/repairing-firms']);
                 },
                 error: (err) => {
                     console.error('Error saving repairing firm', err);
                     this.isSaving = false;
-                    alert('Error saving firm. Please check logs.');
+                    this.toastService.show('Error saving firm. Please check logs.', 'error');
                 }
             });
         }

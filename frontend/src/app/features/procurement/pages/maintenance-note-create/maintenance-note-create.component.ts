@@ -6,6 +6,7 @@ import { StatusCardComponent } from '../../../../shared/components/status-card/s
 import { ProcurementService } from '../../services/procurement.service';
 import { AssetSummaryDto, RepairingFirmDto, CreateMaintenanceRequest } from '../../models/maintenance.model';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
     selector: 'app-maintenance-note-create',
@@ -19,10 +20,7 @@ export class MaintenanceNoteCreateComponent implements OnInit {
     private router = inject(Router);
     private route = inject(ActivatedRoute);
     private procurementService = inject(ProcurementService);
-
-
-
-    showSuccessPopup = false;
+    private toastService = inject(ToastService);
     assets: AssetSummaryDto[] = [];
     repairingFirms: RepairingFirmDto[] = [];
     selectedAsset: AssetSummaryDto | null = null;
@@ -160,15 +158,12 @@ export class MaintenanceNoteCreateComponent implements OnInit {
         console.log('Saving note:', request);
         this.procurementService.createMaintenance(request).subscribe({
             next: (id) => {
-                this.showSuccessPopup = true;
-                setTimeout(() => {
-                    this.showSuccessPopup = false;
-                    this.router.navigate(['/procurement/maintenance']);
-                }, 1500);
+                this.toastService.show('Added New Maintenance Note Successfully', 'success');
+                this.router.navigate(['/procurement/maintenance']);
             },
             error: (err) => {
                 console.error('Error saving maintenance note', err);
-                alert('Error saving maintenance note. Please check logs.');
+                this.toastService.show('Error saving maintenance note. Please check logs.', 'error');
             }
         });
     }
