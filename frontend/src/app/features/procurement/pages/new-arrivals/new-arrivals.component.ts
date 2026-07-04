@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
+
 import { ProcurementService } from '../../services/procurement.service';
 import { AssetInformingDto, InformStoresRequest } from '../../models/arrival.model';
 import { PurchasingOrderSummaryDto } from '../../models/purchase-order.model';
@@ -10,7 +10,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
 @Component({
   selector: 'app-new-arrivals',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, StatusCardComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './new-arrivals.component.html',
   styleUrls: ['./new-arrivals.component.css']
 })

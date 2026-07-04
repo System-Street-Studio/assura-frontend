@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
+
 import { ProcurementService } from '../../services/procurement.service';
 import { MaintenanceDto } from '../../models/maintenance.model';
 import { ToastService } from '../../../../shared/services/toast.service';
@@ -10,7 +10,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
 @Component({
     selector: 'app-maintenance-note',
     standalone: true,
-    imports: [CommonModule, FormsModule, StatusCardComponent],
+    imports: [CommonModule, FormsModule],
     templateUrl: './maintenance-note.component.html',
     styleUrls: ['./maintenance-note.component.css']
 })

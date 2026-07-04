@@ -4,13 +4,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProcurementService } from '../../services/procurement.service';
 import { CreateRepairingFirmRequest } from '../../models/maintenance.model';
-import { StatusCardComponent } from '../../../../shared/components/status-card/status-card';
+
 import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
     selector: 'app-repairing-firm-create',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, StatusCardComponent],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule],
     templateUrl: './repairing-firm-create.component.html',
     styleUrls: ['./repairing-firm-create.component.css']
 })
