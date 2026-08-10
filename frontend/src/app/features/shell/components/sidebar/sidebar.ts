@@ -91,7 +91,18 @@ export class SidebarComponent {
 
     // Determine the current section from the URL (e.g. '/inventory/assets' -> 'inventory')
     const sectionMatch = currentUrl.match(/^\/([^/]+)/);
-    const currentSection = sectionMatch ? sectionMatch[1] : '';
+    let currentSection = sectionMatch ? sectionMatch[1] : '';
+
+    // If in employee portal, fallback to the last active functional section
+    if (currentSection === 'employee') {
+      const lastSection = localStorage.getItem('lastActiveSection');
+      if (lastSection) {
+        currentSection = lastSection;
+      }
+    } else if (currentSection && currentSection !== 'auth') {
+      // Save the current functional section
+      localStorage.setItem('lastActiveSection', currentSection);
+    }
 
     return this.menuItems.filter(item => {
       const hasRole = item.roles.includes('ANY') || userRoles.some(role => item.roles.includes(role));
