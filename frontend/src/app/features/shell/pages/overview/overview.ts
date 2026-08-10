@@ -7,6 +7,8 @@ import { ActionButtonComponent } from '../../../../shared/components/action-butt
 import { FilterDropdownComponent, FilterGroup, } from '../../../../shared/components/filter-dropdown/filter-dropdown';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { CategoryService } from '../../../inventory/services/category.service';
+import { DivisionService } from '../../../inventory/services/division.service';
 
 @Component({
   selector: 'app-overview',
@@ -91,12 +93,46 @@ import { AuthService } from '../../../../core/auth/auth.service';
 export class OverviewComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
+  private categoryService = inject(CategoryService);
+  private divisionService = inject(DivisionService);
 
   ngOnInit(): void {
     const dashboardUrl = this.authService.getDashboardUrl();
     if (dashboardUrl !== '/overview') {
       this.router.navigate([dashboardUrl]);
     }
+    this.loadCategories();
+    this.loadDivisions();
+  }
+
+  private loadDivisions(): void {
+    this.divisionService.getAll().subscribe({
+      next: (divisions) => {
+        const divisionGroup = this.filterGroups.find(g => g.title === 'Assign Divisions');
+        if (divisionGroup) {
+          divisionGroup.options = divisions.map(d => ({
+            label: d.name,
+            value: d.name.toLowerCase().replace(/\s+/g, '_'),
+            checked: false,
+          }));
+        }
+      },
+    });
+  }
+
+  private loadCategories(): void {
+    this.categoryService.getAll().subscribe({
+      next: (categories) => {
+        const categoryGroup = this.filterGroups.find(g => g.title === 'Category');
+        if (categoryGroup) {
+          categoryGroup.options = categories.map(c => ({
+            label: c.name,
+            value: c.name.toLowerCase().replace(/\s+/g, '_'),
+            checked: false,
+          }));
+        }
+      },
+    });
   }
 
   showFilter = false;
@@ -110,10 +146,10 @@ export class OverviewComponent implements OnInit {
   ];
 
   allData = [
-    { id: '123A', name: 'Dell XPS15', category: 'Computer', status: 'In Use' },
-    { id: '234A', name: 'Cisco Switch', category: 'Networking', status: 'Repairing' },
-    { id: '994D', name: 'Wooden Table', category: 'Furniture', status: 'Discarded' },
-    { id: '034S', name: 'Chair', category: 'Furniture', status: 'In Store' },
+    { id: '123A', name: 'Dell XPS15', category: 'Computer & Peripherals', status: 'In Use' },
+    { id: '234A', name: 'Cisco Switch', category: 'Office Equipment', status: 'Repairing' },
+    { id: '994D', name: 'Wooden Table', category: 'Furniture & Fittings', status: 'Discarded' },
+    { id: '034S', name: 'Chair', category: 'Furniture & Fittings', status: 'In Store' },
   ];
 
   tableData = [...this.allData];
@@ -123,28 +159,11 @@ export class OverviewComponent implements OnInit {
     {
       title: 'Assign Divisions',
       required: true,
-      options: [
-        { label: 'Information Technology', value: 'it', checked: false },
-        { label: 'Industrial Services', value: 'industrial', checked: false },
-        { label: 'Electronics and Microelectronics', value: 'electronics', checked: false },
-        { label: 'Communication Engineering', value: 'communication', checked: false },
-        { label: 'Space Applications', value: 'space', checked: false },
-        { label: 'Astronomy', value: 'astronomy', checked: false },
-        { label: 'Admin', value: 'admin', checked: false },
-        { label: 'Finance', value: 'finance', checked: false },
-        { label: 'Procurement', value: 'procurement', checked: false },
-        { label: 'Stores', value: 'stores', checked: false },
-        { label: 'Human Resource', value: 'hr', checked: false },
-      ],
+      options: [], // Populated dynamically from DivisionService
     },
     {
       title: 'Category',
-      options: [
-        { label: 'Computer', value: 'computer', checked: false },
-        { label: 'Networking', value: 'networking', checked: false },
-        { label: 'Electronics', value: 'electronics', checked: false },
-        { label: 'Furniture', value: 'furniture', checked: false },
-      ],
+      options: [], // Populated dynamically from CategoryService
     },
     {
       title: 'Status',

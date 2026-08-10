@@ -109,4 +109,10 @@ export class SharedSidebarComponent {
       return item.link.startsWith(`/${currentSection}`);
     });
   }
+
+  isCollapsed = false;
+
+  toggleSidebar(): void {
+    this.isCollapsed = !this.isCollapsed;
+  }
 }
