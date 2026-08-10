@@ -8,6 +8,7 @@ import { FilterDropdownComponent, FilterGroup } from '../../../../shared/compone
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { AssetService } from '../../../../core/services/asset.service';
 import { Asset } from '../../../../shared/models/asset.model';
+import { CategoryService } from '../../../inventory/services/category.service';
 
 @Component({
     selector: 'app-track-assets',
@@ -27,6 +28,7 @@ export class TrackAssetsComponent implements OnInit {
     private router = inject(Router);
     private assetService = inject(AssetService);
     private cdr = inject(ChangeDetectorRef);
+    private categoryService = inject(CategoryService);
 
     columns: ColumnDef[] = [
         { key: 'id', label: 'ID', type: 'link' },
@@ -45,6 +47,22 @@ export class TrackAssetsComponent implements OnInit {
 
     ngOnInit(): void {
         this.fetchAssets();
+        this.loadCategories();
+    }
+
+    private loadCategories(): void {
+        this.categoryService.getAll().subscribe({
+            next: (categories) => {
+                const categoryGroup = this.filterGroups.find(g => g.title === 'Category');
+                if (categoryGroup) {
+                    categoryGroup.options = categories.map(c => ({
+                        label: c.name,
+                        value: c.name,
+                        checked: false,
+                    }));
+                }
+            },
+        });
     }
 
     private fetchAssets(): void {
@@ -98,12 +116,7 @@ export class TrackAssetsComponent implements OnInit {
     filterGroups: FilterGroup[] = [
         {
             title: 'Category',
-            options: [
-                { label: 'Computer', value: 'Computer', checked: false },
-                { label: 'Networking', value: 'Networking', checked: false },
-                { label: 'Furniture', value: 'Furniture', checked: false },
-                { label: 'Electronics', value: 'Electronics', checked: false }
-            ]
+            options: [] // Populated dynamically from CategoryService
         },
         {
             title: 'Status',

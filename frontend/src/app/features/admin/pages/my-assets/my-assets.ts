@@ -24,9 +24,9 @@ export class MyAssetsComponent {
     ];
 
     assets = [
-        { id: '123A', name: 'Dell XPS15', category: 'Computer', status: 'In Use' },
-        { id: '124B', name: 'MacBook Pro', category: 'Computer', status: 'In Use' },
-        { id: '235C', name: 'HP Monitor', category: 'Computer', status: 'In Use' }
+        { id: '123A', name: 'Dell XPS15', category: 'Computer & Peripherals', status: 'In Use' },
+        { id: '124B', name: 'MacBook Pro', category: 'Computer & Peripherals', status: 'In Use' },
+        { id: '235C', name: 'HP Monitor', category: 'Office Equipment', status: 'In Use' }
     ];
 
     onAssetClick(asset: any): void {

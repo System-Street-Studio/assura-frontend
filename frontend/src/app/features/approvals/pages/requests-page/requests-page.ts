@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { RequestService } from '../../services/requests.service';
 import { RequestItem } from '../../models/request.model';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import { CategoryService } from '../../../inventory/services/category.service';
 
 
 
@@ -21,6 +22,7 @@ export class RequestsPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private requestService = inject(RequestService);
+  private categoryService = inject(CategoryService);
 
   isLoading = signal<boolean>(true);
 
@@ -69,7 +71,7 @@ export class RequestsPageComponent implements OnInit {
       ]
     },
     { label: 'Division', key: 'division', options: [] },
-    { label: 'Asset Category', key: 'category', options: ['Laptop', 'Furniture', 'Electronics', 'Network'] },
+    { label: 'Asset Category', key: 'category', options: [] as string[] }, // Populated dynamically from CategoryService
   ];
 
  // requests-page.ts
@@ -84,6 +86,16 @@ ngOnInit() {
     if (tab) {
       this.activeTab.set(tab as any);
     }
+  });
+
+  // Load categories dynamically from the API
+  this.categoryService.getAll().subscribe({
+    next: (categories) => {
+      const catFilter = this.filterConfig.find(f => f.key === 'category');
+      if (catFilter) {
+        catFilter.options = categories.map(c => c.name);
+      }
+    },
   });
 }
 

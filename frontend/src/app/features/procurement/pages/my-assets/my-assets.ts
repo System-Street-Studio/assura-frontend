@@ -24,8 +24,8 @@ export class ProcurementMyAssetsComponent {
     ];
 
     assets = [
-        { id: '456P', name: 'MacBook Air', category: 'Computer', status: 'In Use' },
-        { id: '789Q', name: 'Dell Monitor', category: 'Electronics', status: 'In Use' }
+        { id: '456P', name: 'MacBook Air', category: 'Computer & Peripherals', status: 'In Use' },
+        { id: '789Q', name: 'Dell Monitor', category: 'Office Equipment', status: 'In Use' }
     ];
 
     onAssetClick(asset: any): void {
