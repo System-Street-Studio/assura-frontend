@@ -8,6 +8,7 @@ import { FilterDropdownComponent, FilterGroup, } from '../../../../shared/compon
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CategoryService } from '../../../inventory/services/category.service';
+import { DivisionService } from '../../../inventory/services/division.service';
 
 @Component({
   selector: 'app-overview',
@@ -93,6 +94,7 @@ export class OverviewComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private categoryService = inject(CategoryService);
+  private divisionService = inject(DivisionService);
 
   ngOnInit(): void {
     const dashboardUrl = this.authService.getDashboardUrl();
@@ -100,6 +102,22 @@ export class OverviewComponent implements OnInit {
       this.router.navigate([dashboardUrl]);
     }
     this.loadCategories();
+    this.loadDivisions();
+  }
+
+  private loadDivisions(): void {
+    this.divisionService.getAll().subscribe({
+      next: (divisions) => {
+        const divisionGroup = this.filterGroups.find(g => g.title === 'Assign Divisions');
+        if (divisionGroup) {
+          divisionGroup.options = divisions.map(d => ({
+            label: d.name,
+            value: d.name.toLowerCase().replace(/\s+/g, '_'),
+            checked: false,
+          }));
+        }
+      },
+    });
   }
 
   private loadCategories(): void {
@@ -141,19 +159,7 @@ export class OverviewComponent implements OnInit {
     {
       title: 'Assign Divisions',
       required: true,
-      options: [
-        { label: 'Information Technology', value: 'it', checked: false },
-        { label: 'Industrial Services', value: 'industrial', checked: false },
-        { label: 'Electronics and Microelectronics', value: 'electronics', checked: false },
-        { label: 'Communication Engineering', value: 'communication', checked: false },
-        { label: 'Space Applications', value: 'space', checked: false },
-        { label: 'Astronomy', value: 'astronomy', checked: false },
-        { label: 'Admin', value: 'admin', checked: false },
-        { label: 'Finance', value: 'finance', checked: false },
-        { label: 'Procurement', value: 'procurement', checked: false },
-        { label: 'Stores', value: 'stores', checked: false },
-        { label: 'Human Resource', value: 'hr', checked: false },
-      ],
+      options: [], // Populated dynamically from DivisionService
     },
     {
       title: 'Category',
