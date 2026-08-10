@@ -1,8 +1,8 @@
-<aside class="shared-sidebar">
+<aside class="shared-sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-brand">
     <img src="assets/images/LOGO2.png" alt="Assura" />
     <strong>Assura</strong>
-    <mat-icon aria-hidden="true">menu</mat-icon>
+    <mat-icon aria-hidden="true" (click)="toggleSidebar()" style="outline: none;">menu</mat-icon>
   </div>
 
   <nav class="sidebar-nav" aria-label="Main navigation">
