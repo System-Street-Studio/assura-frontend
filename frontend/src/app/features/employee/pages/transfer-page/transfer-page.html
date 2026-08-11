@@ -1,237 +1,326 @@
-<div class="container">
-  <header class="dashboard-header">
-    <div class="header-content">
-      <h1>Transfers</h1>
-      <p class="sub-text">Track, approve, and manage asset movements across divisions.</p>
-    </div>
-
-    <div class="overview-section">
-      <h3>Overview</h3>
-    </div>
-  </header>
-
-  <div class="transfer-tabs">
-    <button class="tab-btn" [class.active]="activeTab() === 'incoming'" (click)="setTab('incoming')">Incoming Requests</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">Pending Approval</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'active'" (click)="setTab('active')">Active Transfers</button>
-    <button class="tab-btn" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">Completed</button>
+<div class="transfers-page">
+  <!-- ── 1. Page Header ── -->
+  <div class="page-header">
+    <h1 class="assura-page-title">Transfer Management</h1>
+    <p class="page-subtitle">Track, approve, and manage temporary equipment movements and custody transfers.</p>
   </div>
 
-  <!--cards-->
-  <div class="stats-grid">
-    <div class="card blue-border" [class.highlight]="activeTab() === 'incoming'">
-      <div class="card-content">
-        <p class="card-title">Incoming Requests</p>
-        <h2 class="card-number">{{ incomingCount() }}</h2>
-      </div>
+  <!-- ── 2. Navigation Tabs ── -->
+  <div class="transfer-tabs-bar">
+    <button class="tab-pill-btn" [class.active]="activeTab() === 'incoming'" (click)="setTab('incoming')">
+      <mat-icon>inbox</mat-icon>
+      <span>Incoming Requests</span>
+      @if (incomingCount() > 0) {
+        <span class="tab-count-badge">{{ incomingCount() }}</span>
+      }
+    </button>
+    <button class="tab-pill-btn" [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">
+      <mat-icon>hourglass_top</mat-icon>
+      <span>Pending Approval</span>
+      @if (pendingCount() > 0) {
+        <span class="tab-count-badge">{{ pendingCount() }}</span>
+      }
+    </button>
+    <button class="tab-pill-btn" [class.active]="activeTab() === 'active'" (click)="setTab('active')">
+      <mat-icon>sync_alt</mat-icon>
+      <span>Active Transfers</span>
+      @if (activeCount() > 0) {
+        <span class="tab-count-badge">{{ activeCount() }}</span>
+      }
+    </button>
+    <button class="tab-pill-btn" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">
+      <mat-icon>check_circle</mat-icon>
+      <span>Completed</span>
+      @if (completedCount() > 0) {
+        <span class="tab-count-badge">{{ completedCount() }}</span>
+      }
+    </button>
+  </div>
+
+  <!-- ── 3. KPI Stats Grid ── -->
+  <div class="assura-grid assura-grid-cols-4">
+    <div class="assura-card assura-accent-info" [class.active-card]="activeTab() === 'incoming'" (click)="setTab('incoming')">
+      <span class="assura-card-title">Incoming Requests</span>
+      <strong class="assura-card-value">{{ incomingCount() }}</strong>
+      <span class="assura-card-subtitle">Requiring your action</span>
     </div>
 
-    <div class="card green-border" [class.highlight]="activeTab() === 'pending'">
-      <div class="card-content">
-        <p class="card-title">Pending Approval</p>
-        <h2 class="card-number">{{ pendingCount() }}</h2>
-      </div>
+    <div class="assura-card assura-accent-warning" [class.active-card]="activeTab() === 'pending'" (click)="setTab('pending')">
+      <span class="assura-card-title">Pending Approval</span>
+      <strong class="assura-card-value">{{ pendingCount() }}</strong>
+      <span class="assura-card-subtitle">Awaiting holder approval</span>
     </div>
 
-    <div class="card orange-border" [class.highlight]="activeTab() === 'active'">
-      <div class="card-content">
-        <p class="card-title">Active Transfers</p>
-        <h2 class="card-number">{{ activeCount() }}</h2>
-      </div>
+    <div class="assura-card assura-accent-primary" [class.active-card]="activeTab() === 'active'" (click)="setTab('active')">
+      <span class="assura-card-title">Active Transfers</span>
+      <strong class="assura-card-value">{{ activeCount() }}</strong>
+      <span class="assura-card-subtitle">Currently on loan</span>
     </div>
 
-    <div class="card red-border" [class.highlight]="activeTab() === 'completed'">
-      <div class="card-content">
-        <p class="card-title">Completed Transfers</p>
-        <h2 class="card-number">{{ completedCount() }}</h2>
-      </div>
+    <div class="assura-card assura-accent-success" [class.active-card]="activeTab() === 'completed'" (click)="setTab('completed')">
+      <span class="assura-card-title">Completed Transfers</span>
+      <strong class="assura-card-value">{{ completedCount() }}</strong>
+      <span class="assura-card-subtitle">Successfully returned</span>
     </div>
   </div>
 
-  <section class="content-container">
-    <div class="content-header-row">
-      <h2 class="section-main-title">
+  <!-- ── 4. Main Content Panel ── -->
+  <div class="glass-panel">
+    <div class="panel-header-row">
+      <h3 class="panel-title">
         {{ activeTab() | titlecase }} {{ activeTab() === 'active' || activeTab() === 'completed' ? 'Transfers' : 'Requests' }}
-      </h2>
-    </div>
+      </h3>
 
-    <!--search and filter bar-->
-    @if (activeTab() === 'active' || activeTab() === 'completed') {
-      <div class="table-actions">
-        <div class="input-wrapper">
-          <mat-icon class="search-icon">search</mat-icon>
-          <input type="text" placeholder="Search Assets..." class="search-bar" [value]="searchQuery()" (input)="onSearchChange($event)">
-        </div>
+      <!-- Search & Filter Controls -->
+      @if (activeTab() === 'active' || activeTab() === 'completed') {
+        <div class="controls-group">
+          <div class="search-box">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input
+              type="text"
+              placeholder="Search by asset, user, or code..."
+              class="assura-search-input"
+              [value]="searchQuery()"
+              (input)="onSearchChange($event)">
+          </div>
 
-        <div class="action-group">
-          <div class="filter-dropdown">
-            <button class="filter-btn" (click)="$event.stopPropagation(); showMenu.set(!showMenu())">
-              <div class="filter-icon">
+          <div class="filter-dropdown" (click)="$event.stopPropagation()">
+            <button class="assura-filter-btn" (click)="$event.stopPropagation(); showMenu.set(!showMenu())">
+              <div class="filter-btn-inner">
                 <mat-icon>tune</mat-icon>
                 <span>{{ filterType() === 'all' ? 'All Transfers' : (filterType() === 'IncomingActive' ? 'Incoming' : 'Outgoing') }}</span>
               </div>
-              <mat-icon class="arrow">expand_more</mat-icon>
+              <mat-icon class="arrow-icon">expand_more</mat-icon>
             </button>
 
             @if (showMenu()) {
-              <div class="filter-menu-card">
-                <div class="filter-option" (click)="setFilterType('all')" [class.active]="filterType() === 'all'">All Transfers</div>
-                <div class="filter-option" (click)="setFilterType('IncomingActive')" [class.active]="filterType() === 'IncomingActive'">Incoming Transfers</div>
-                <div class="filter-option" (click)="setFilterType('OutgoingActive')" [class.active]="filterType() === 'OutgoingActive'">Outgoing Transfers</div>
+              <div class="filter-dropdown-menu" (click)="$event.stopPropagation()">
+                <div class="filter-menu-item" (click)="setFilterType('all')" [class.active]="filterType() === 'all'">
+                  All Transfers
+                </div>
+                <div class="filter-menu-item" (click)="setFilterType('IncomingActive')" [class.active]="filterType() === 'IncomingActive'">
+                  Incoming Transfers
+                </div>
+                <div class="filter-menu-item" (click)="setFilterType('OutgoingActive')" [class.active]="filterType() === 'OutgoingActive'">
+                  Outgoing Transfers
+                </div>
               </div>
             }
           </div>
         </div>
-      </div>
-    }
+      }
+    </div>
 
-    <div class="list-wrapper">
-      <!--loading state-->
+    <!-- Transfer Cards List -->
+    <div class="transfers-list-container">
       @if (isLoading()) {
         <div class="loading-state">
           <mat-icon class="spin-animation">sync</mat-icon>
-          <p>Loading transfers... Please wait.</p>
+          <p>Loading transfer records... Please wait.</p>
         </div>
-      } 
-      @else {
-        
+      } @else {
         @for (item of paginatedRequests(); track item.id) {
           
-          <!--incoming and pending tabs-->
+          <!-- Incoming & Pending Cards -->
           @if (activeTab() === 'incoming' || activeTab() === 'pending') {
-            <div class="asset-item-card">
-              <div class="card-badge-row">
-                <span class="time-stamp"><mat-icon>schedule</mat-icon>{{ item.timeAgo }}</span>
-              </div>
-                
-              <div class="asset-info-box">
-                <div class="info-header">
-                  <span class="asset-name-id">{{ item.productName  }} <span class="sub-id">Code: {{ item.assetCode || 'N/A' }}</span></span> 
-                  <span class="trf-id"> ( ID: #{{ item.id }} )</span>
+            <div class="transfer-card">
+              <div class="card-top-row">
+                <div class="item-title-group">
+                  <span class="id-tag">#{{ item.id }}</span>
+                  <h4 class="transfer-item-title">{{ item.productName || 'Asset Transfer' }}</h4>
+                  <span class="code-pill">{{ item.assetCode || 'N/A' }}</span>
                 </div>
+                <span class="timestamp-tag">
+                  <mat-icon>schedule</mat-icon> {{ item.timeAgo }}
+                </span>
+              </div>
 
-                <div class="info-grid-details">
-                  <p><span>Division:</span> {{ item.toDivisionName }}</p>
-                  <p><span>Transfer Period:</span> {{ item.transferPeriod }}</p>
-                  <p><span>Requested by:</span> {{ item.transferByName }}</p>
-                  <p><span>Asset need to:</span> {{ item.targetUserName }}</p>
-                  <p class="full-width"><span>Reason:</span> {{ item.reason }}</p>
-                 
+              <div class="transfer-meta-grid">
+                <div class="meta-item">
+                  <span class="meta-label">Division:</span>
+                  <span class="meta-val">{{ item.toDivisionName }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Transfer Period:</span>
+                  <span class="meta-val">{{ item.transferPeriod }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Requested By:</span>
+                  <span class="meta-val">{{ item.transferByName }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Target Custodian:</span>
+                  <span class="meta-val">{{ item.targetUserName }}</span>
+                </div>
+                <div class="meta-item full-width">
+                  <span class="meta-label">Reason:</span>
+                  <span class="meta-val highlight">{{ item.reason || 'No description provided.' }}</span>
                 </div>
               </div>
-              
-              <div class="action-buttons-cell">
+
+              <div class="card-footer-row">
                 @if (activeTab() === 'incoming') {
-                  <button class="btn-accept" (click)="acceptTransfer(+item.id)">Accept</button>
-                  <button class="btn-reject" (click)="rejectTransfer(+item.id)">Reject</button>
+                  <div class="action-buttons-group">
+                    <button class="assura-btn-danger" (click)="rejectTransfer(+item.id)">
+                      <mat-icon>close</mat-icon> Reject
+                    </button>
+                    <button class="assura-btn-success" (click)="acceptTransfer(+item.id)">
+                      <mat-icon>check</mat-icon> Accept Transfer
+                    </button>
+                  </div>
                 } @else {
-                  <span class="status-badge-outline pending">Pending Approval</span>
+                  <span class="status-badge pending">
+                    <span class="status-dot"></span> Pending Approval
+                  </span>
                 }
               </div>
             </div>
           }
 
-            <!--active and conpleted tabs-->
+          <!-- Active & Completed Cards -->
           @if (activeTab() === 'active' || activeTab() === 'completed') {
-            <div class="asset-item-card" [class.expanded]="expandedItemId() === item.id"> 
-              <div class="card-badge-row">
-               
-                 @if (activeTab() === 'active' ) {
-                <div class="days-left-tag absolute-top-right">
-                  <mat-icon>hourglass_empty</mat-icon>
-                  {{ item.daysLeft|| 'N/A' }}
-                </div>
-              } 
-                <span class="time-stamp ">
-                  <mat-icon>schedule</mat-icon>{{ item.timeAgo }}
-                </span>
-                
-                
-              </div>
-
-              <div class="asset-info-box">
-                <div class="info-header-vertical">
-                  <span class="asset-name-id">{{ item.productName || 'Unnamed Product' }} <span class="sub-id">Code: {{ item.assetCode }} <span class="trf-id"> ( ID: #{{ item.id }} )</span> </span></span> 
-                  <div class="badge-group">
-                    <span class="badge-type" [ngClass]="item.type === 'IncomingActive' ? 'inc' : 'out'">
-                      {{ item.type === 'IncomingActive' ? 'Incoming' : 'Outgoing' }}
+            <div class="transfer-card" [class.card-expanded]="expandedItemId() === item.id">
+              <div class="card-top-row">
+                <div class="item-title-group">
+                  <span class="id-tag">#{{ item.id }}</span>
+                  <h4 class="transfer-item-title">{{ item.productName || 'Asset Transfer' }}</h4>
+                  <span class="code-pill">{{ item.assetCode }}</span>
+                  <span class="direction-badge" [ngClass]="item.type === 'IncomingActive' ? 'incoming' : 'outgoing'">
+                    {{ item.type === 'IncomingActive' ? 'Incoming' : 'Outgoing' }}
+                  </span>
+                  @if (activeTab() === 'completed') {
+                    <span class="status-badge approved">
+                      <span class="status-dot"></span> Completed
                     </span>
-                    @if (activeTab() === 'completed') {
-                      <div class="status-pill completed">Completed</div>
-                    }
-                  </div>
-                  
+                  }
                 </div>
 
-                <div class="info-grid-details"> 
-                  @if (item.type === 'OutgoingActive') {
-                    <p><span>Division(Transfer to):</span> {{ item.toDivisionName }}</p>
-                    <p><span>Asset Transfer To:</span> {{ item.targetUserName }}{{ item.targetUserId ? ' (ID: ' + item.targetUserId + ')' : '' }}</p>
-                  } @else {
-                    <p><span>Division(Transfer from):</span> {{ item.fromDivisionName }}</p> 
-                    <p><span>Asset Transfer From:</span> {{ item.currentHolderName }}{{ item.currentHolderId ? ' (ID: ' + item.currentHolderId + ')' : '' }}</p> 
+                <div class="card-top-right">
+                  @if (activeTab() === 'active') {
+                    <div class="countdown-badge">
+                      <mat-icon>hourglass_empty</mat-icon>
+                      <span>{{ item.daysLeft || 'N/A' }}</span>
+                    </div>
                   }
-                  <p><span>Transfer Period:</span> {{ item.transferPeriod }}</p>
+                  <span class="timestamp-tag">
+                    <mat-icon>schedule</mat-icon> {{ item.timeAgo }}
+                  </span>
                 </div>
               </div>
 
-              <div class="action-buttons-cell">
-                <button class="btn-view-outline" (click)="$event.stopPropagation(); toggleDetails(item.id)">
+              <div class="transfer-meta-grid">
+                @if (item.type === 'OutgoingActive') {
+                  <div class="meta-item">
+                    <span class="meta-label">Transfer To Division:</span>
+                    <span class="meta-val">{{ item.toDivisionName }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Recipient User:</span>
+                    <span class="meta-val">{{ item.targetUserName }}</span>
+                  </div>
+                } @else {
+                  <div class="meta-item">
+                    <span class="meta-label">Transfer From Division:</span>
+                    <span class="meta-val">{{ item.fromDivisionName }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Origin Custodian:</span>
+                    <span class="meta-val">{{ item.currentHolderName }}</span>
+                  </div>
+                }
+                <div class="meta-item full-width">
+                  <span class="meta-label">Transfer Period:</span>
+                  <span class="meta-val">{{ item.transferPeriod }}</span>
+                </div>
+              </div>
+
+              <div class="card-footer-row">
+                <button class="assura-btn-secondary" (click)="$event.stopPropagation(); toggleDetails(item.id)">
                   <mat-icon>{{ expandedItemId() === item.id ? 'expand_less' : 'visibility' }}</mat-icon>
                   {{ expandedItemId() === item.id ? 'Hide Details' : 'View Details' }}
                 </button>
               </div>
 
+              <!-- Expanded Details Sub-Panel -->
               @if (expandedItemId() === item.id) {
-                <div class="more-details-panel">
-                  <h4><mat-icon>info</mat-icon> Detailed Transfer Information</h4>
-                  <div class="details-extended-grid">
-                    <p><span>Transfer ID:</span> #{{ item.id }}</p>
-                    <p><span>Asset Tag Code:</span> {{ item.assetTag }}</p>
-                    <p><span>Current Status:</span> <span class="status-badge-inline transfer">{{ item.status }}</span></p>
-                    <p><span>Transfer By:</span> {{ item.transferByName || 'N/A' }}</p>
-                    <p><span>Transfer Date:</span> {{ (item.transferDate | date: 'yyyy-MM-dd')}}</p>
-
-                    @if(activeTab() === 'completed') {
-                      <p><span>Return Date:</span> {{(item.returnDate | date: 'yyyy-MM-dd') ?? 'N/A'}}</p>
+                <div class="expanded-details-box">
+                  <h5 class="expanded-title">
+                    <mat-icon>info</mat-icon> Full Transfer Specification
+                  </h5>
+                  <div class="details-spec-grid">
+                    <div class="spec-cell">
+                      <span class="spec-label">Transfer ID</span>
+                      <span class="spec-val mono">#{{ item.id }}</span>
+                    </div>
+                    <div class="spec-cell">
+                      <span class="spec-label">Asset Tag</span>
+                      <span class="spec-val mono">{{ item.assetTag }}</span>
+                    </div>
+                    <div class="spec-cell">
+                      <span class="spec-label">Current Status</span>
+                      <span class="status-badge" [ngClass]="item.status ? item.status.toLowerCase() : 'transferred'">
+                        <span class="status-dot"></span> {{ item.status }}
+                      </span>
+                    </div>
+                    <div class="spec-cell">
+                      <span class="spec-label">Authorized By</span>
+                      <span class="spec-val">{{ item.transferByName || 'N/A' }}</span>
+                    </div>
+                    <div class="spec-cell">
+                      <span class="spec-label">Transfer Date</span>
+                      <span class="spec-val">{{ item.transferDate | date: 'mediumDate' }}</span>
+                    </div>
+                    @if (activeTab() === 'completed') {
+                      <div class="spec-cell">
+                        <span class="spec-label">Return Date</span>
+                        <span class="spec-val">{{ (item.returnDate | date: 'mediumDate') ?? 'N/A' }}</span>
+                      </div>
                     }
-                    
-                    <p class="full-width"><span>Reason for Transfer:</span> {{ item.reason || 'No specific reason provided.' }}</p>
+                    <div class="spec-cell full-width">
+                      <span class="spec-label">Reason / Justification</span>
+                      <span class="spec-val">{{ item.reason || 'No specific reason provided.' }}</span>
+                    </div>
                   </div>
 
                   @if (activeTab() === 'active' && item.type === 'IncomingActive') {
-                    <div class="return-action-zone">
-                      <p class="action-notice">As the receiving division head, you can return this asset back to the original owner once the usage period is completed.</p>
-                      <button class="btn-return-asset" (click)="returnAsset(item.id)">
+                    <div class="return-action-banner">
+                      <div class="banner-text">
+                        <mat-icon class="banner-icon">assignment_return</mat-icon>
+                        <div>
+                          <strong>Return Asset to Owner</strong>
+                          <p>Once your project or usage duration is completed, initiate return to mark the transfer finished.</p>
+                        </div>
+                      </div>
+                      <button class="assura-btn-primary" (click)="returnAsset(item.id)">
                         <mat-icon>keyboard_return</mat-icon> Return Asset
                       </button>
                     </div>
                   }
                 </div>
               }
-
             </div>
           }
 
         } @empty {
-          <!--Empty state-->
-          <div class="empty-state">
+          <div class="empty-state-box">
             <mat-icon class="empty-icon">layers_clear</mat-icon>
-            <h3>No Records Found</h3>
-            <p>There are no transfer records matching this criteria at the moment.</p>
+            <h4>No Records Found</h4>
+            <p>There are no transfer records under this category at the moment.</p>
           </div>
         }
       }
     </div>
 
-      <!--pagination-->
-    @if (filteredResults().length > 0) {
-      <app-pagination 
-        [currentPage]="currentPage()" 
-        [totalPages]="totalPages()" 
-        [pageNumbers]="pageNumbers()"
-        (pageChange)="onPageChange($event)">
-      </app-pagination>
+    <!-- Pagination -->
+    @if (filteredResults().length > 0 && totalPages() > 1) {
+      <div class="pagination-wrapper">
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          [pageNumbers]="pageNumbers()"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
     }
-  </section>
+  </div>
 </div>

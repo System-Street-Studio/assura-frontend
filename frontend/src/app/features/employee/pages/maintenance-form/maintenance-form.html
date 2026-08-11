@@ -1,117 +1,131 @@
-<div class="container">
-  <div class="content-padding">
+<div class="request-form-page">
+  <!-- ── 1. Page Header ── -->
+  <div class="page-header">
+    <div class="back-nav">
+      <button (click)="onCancel()" class="back-link-btn">
+        <mat-icon>arrow_back</mat-icon> Back to Requests
+      </button>
+    </div>
+    <h1 class="assura-page-title">Maintenance Request</h1>
+    <p class="page-subtitle">Report defects, damage, or request routine service for equipment in your custody.</p>
+  </div>
 
-    <!--Back link and page header -->
-    <h1 class="section-label">Requests</h1>
-    <a (click)="onCancel()" class="back-link">←</a>
-    <h2 class="page-title">Maintenance Requests</h2>
+  <!-- ── 2. Glassmorphic Form Card ── -->
+  <div class="form-glass-card">
+    <div class="card-hero-header">
+      <div class="hero-icon-box amber">
+        <mat-icon>handyman</mat-icon>
+      </div>
+      <div>
+        <h3 class="hero-card-title">Asset Maintenance Details</h3>
+        <p class="hero-card-subtitle">Please specify the asset and describe the malfunction or repair required.</p>
+      </div>
+    </div>
 
-    <!-- Form card -->
-    <div class="form-card">
-      <header>
-        <h3>Asset Maintenance Details</h3>
-        <p>Please provide details about the asset and the issue you are experiencing</p>
-      </header>
-
-       <!-- asset Name -->
-      <form (ngSubmit)="onSubmit()">
-      
-        <div class="field">
-          <label>Select Asset <span class="required" >*</span></label>
-          <select [ngModel]="asset()" (ngModelChange)="onAssetSelected($event)" name="asset" required>
+    <form (ngSubmit)="onSubmit()" class="modern-form">
+      <div class="form-grid-2">
+        <!-- Select Asset -->
+        <div class="form-field-group">
+          <label class="field-label">Select Assigned Asset <span class="required">*</span></label>
+          <select [ngModel]="asset()" (ngModelChange)="onAssetSelected($event)" name="asset" class="assura-select" required>
             <option value="" disabled selected>Select an asset</option>
             @for (a of assignedAssets(); track a.id) {
-            <option [value]="a.productName + ' (' + a.assetCode + ')'">
-              {{a.productName}} ({{a.assetCode}})
-            </option>
+              <option [value]="a.productName + ' (' + a.assetCode + ')'">
+                {{ a.productName }} ({{ a.assetCode }})
+              </option>
             }
           </select>
         </div>
 
-         <!-- Issue type -->
-        <div class="field">
-          <label>Issue Type <span class="required">*</span></label>
-          <select [ngModel]="issueType()" (ngModelChange)="issueType.set($event)" name="issueType">
-            <option value="Damaged">Damaged</option>
+        <!-- Issue Type -->
+        <div class="form-field-group">
+          <label class="field-label">Issue Type <span class="required">*</span></label>
+          <select [ngModel]="issueType()" (ngModelChange)="issueType.set($event)" name="issueType" class="assura-select">
+            <option value="Damaged">Physical Damage</option>
             <option value="Software">Software Malfunction</option>
-            <option value="Connectivity">Connectivity Issues</option>
-            <option value="Power">Power Problems</option>
+            <option value="Connectivity">Connectivity / Network Issue</option>
+            <option value="Power">Power & Battery Problem</option>
             <option value="Performance">Performance Slowness</option>
-            <option value="Other">Other</option>
+            <option value="Other">Other / General Maintenance</option>
           </select>
         </div>
+      </div>
 
-          <!-- Description -->
-        <div class="field">
-          <label>Description</label>
-          <textarea [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"
-            placeholder="Describe the issue in detail...">
-          </textarea>
-        </div>
-
-          <!-- Priority -->
-        <div class="field">
-          <label>Priority <span class="required" >*</span></label>
-          <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority">
+      <!-- Priority -->
+      <div class="form-grid-2">
+        <div class="form-field-group">
+          <label class="field-label">Priority Level <span class="required">*</span></label>
+          <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority" class="assura-select">
             <option value="Normal">Normal</option>
             <option value="Low">Low</option>
             <option value="High">High</option>
             <option value="Critical">Critical</option>
           </select>
         </div>
+      </div>
 
-          <!-- Attachment -->
-        <div class="field">
-          <label>Attachment (Optional)</label>
-          @if (selectedFiles().length === 0) {
-          <div class="upload-box" (click)="browseFiles()">
-            <mat-icon class="upload-icon">cloud_upload</mat-icon>
-            <p>Drag files here or <span class="browse">click to browse</span></p>
+      <!-- Description -->
+      <div class="form-field-group full-width">
+        <label class="field-label">Issue Description & Diagnostics</label>
+        <textarea
+          [ngModel]="description()"
+          (ngModelChange)="description.set($event)"
+          name="description"
+          placeholder="Describe symptoms, error codes, steps to reproduce, or incident details..."
+          class="assura-textarea"
+          rows="3">
+        </textarea>
+      </div>
+
+      <!-- Attachment Dropzone -->
+      <div class="form-field-group full-width">
+        <label class="field-label">Attachments (Photos of damage, logs, or error screenshots)</label>
+        @if (selectedFiles().length === 0) {
+          <div class="upload-dropzone" (click)="browseFiles()">
+            <mat-icon class="dropzone-icon">cloud_upload</mat-icon>
+            <p class="dropzone-text">Drag & drop files here or <span class="browse-link">browse files</span></p>
+            <span class="dropzone-sub">Supports JPG, PNG, PDF (Max 10MB)</span>
           </div>
-          }
-
-          <!-- Display selected files -->
-          @if (selectedFiles().length > 0) {
-          <div class="selected-files" (click)="browseFiles()">
-            <p class="files-label">Selected Files: {{ selectedFiles().length }}</p>
-            @for (file of selectedFiles(); track file.name; let i = $index) {
-            <div class="file-item">
-              <mat-icon class="file-icon">attach_file</mat-icon>
-              <span class="file-name">{{ file.name }}</span>
-              <span class="file-size">({{ (file.size / 1024).toFixed(2) }} KB)</span>
-              <button type="button" class="remove-btn" (click)="removeFile(i); $event.stopPropagation()">
-                <mat-icon>close</mat-icon>
-              </button>
+        } @else {
+          <div class="files-preview-box">
+            <div class="files-list">
+              @for (file of selectedFiles(); track file.name; let i = $index) {
+                <div class="file-chip">
+                  <mat-icon class="file-icon">attach_file</mat-icon>
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-size-tag">({{ (file.size / 1024).toFixed(1) }} KB)</span>
+                  <button type="button" class="remove-file-btn" (click)="removeFile(i); $event.stopPropagation()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              }
             </div>
-            }
-            <button type="button" class="add-files-btn" (click)="browseFiles(); $event.stopPropagation()">
-              <mat-icon>add_circle_outline</mat-icon>
-              Add More Files
+            <button type="button" class="add-more-btn" (click)="browseFiles(); $event.stopPropagation()">
+              <mat-icon>add</mat-icon> Add More Files
             </button>
           </div>
-          }
-        </div>
+        }
+      </div>
 
-         <!-- Form Submit -->
-        <div class="actions">
-          <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">Cancel</button>
-          <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
-            @if (isSubmitting()) {
-            <mat-icon class="spinner">schedule</mat-icon>
-            Submitting...
-            } @else {
-            Submit Request
-            }
-          </button>
-        </div>
-      </form>
-    </div>
+      <!-- Actions -->
+      <div class="form-actions-row">
+        <button type="button" class="assura-btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">
+          Cancel
+        </button>
+        <button type="submit" class="assura-btn-primary" [disabled]="isSubmitting() || !asset()">
+          @if (isSubmitting()) {
+            <mat-icon class="spin-animation">sync</mat-icon> Submitting Ticket...
+          } @else {
+            <mat-icon>send</mat-icon> Submit Maintenance Request
+          }
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
-
-// Result Overlay
-@if(showResult()){
+<!-- Result Overlay -->
+@if (showResult()) {
   <app-result-overlay
     [type]="resultType()"
     [title]="resultTitle()"

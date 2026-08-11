@@ -1,262 +1,247 @@
-<div class="page-container">
-  <h1 class="main-title">Assets</h1>
+<div class="employee-assets-page">
 
-  <!--status  card details -->
-  <section class="overview-section">
-    <h3 class="sub-label">Asset Overview</h3>
-    <div class="stats-grid">
-
-      <div class="stat-card border-blue">
-        <div class="stat-info">
-          <div class="stat-top1">Total Assets</div>
-          <mat-icon class="inventory-icon">inventory</mat-icon>
-        </div>
-        <div class="stat-value">{{ totalAssets() }}</div>
-        <p class="stat-desc">All assets assigned to you</p>
-      </div>
-
-      <div class="stat-card border-yellow">
-        <div class="stat-info">
-          <div class="stat-top2">Assets In Use</div>
-          <mat-icon class="check_circle">check_circle</mat-icon>
-        </div>
-        <div class="stat-value">{{ assetsInUse() }}</div>
-        <p class="stat-desc">Currently utilized assets</p>
-      </div>
-
-      <div class="stat-card border-red">
-        <div class="stat-info">
-          <div class="stat-top3">Assets in maintenance</div>
-          <mat-icon class="build">build</mat-icon>
-        </div>
-        <div class="stat-value">{{ assetsInMaintenance() }}</div>
-        <p class="stat-desc">Awaiting repair or service</p>
-      </div>
-
-      <div class="stat-card border-green">
-        <div class="stat-info">
-          <div class="stat-top4">Assets Transferred</div>
-          <mat-icon class="compare_arrows">compare_arrows</mat-icon>
-        </div>
-        <div class="stat-value">{{ assetsTransferred() }}</div>
-        <p class="stat-desc">Assets in transfer process</p>
-      </div>
-
-      <div class="stat-card border-orange">
-        <div class="stat-info">
-          <div class="stat-top5">Assets Discarded</div>
-          <mat-icon class="delete_outline">delete_outline</mat-icon>
-        </div>
-        <div class="stat-value">{{ assetsDiscarded() }}</div>
-        <p class="stat-desc">Discarded or removed assets</p>
-      </div>
-
+  @if (!selectedAsset()) {
+    <!-- ── 1. Page Title & Overview Strip ── -->
+    <div class="page-header">
+      <h1 class="assura-page-title">My Assigned Assets</h1>
+      <p class="page-subtitle">Track and manage all equipment and hardware assigned to your profile.</p>
     </div>
-  </section>
 
-  <div class="title-group">
-    <h2>My Assigned Assets</h2>
-    <p>A list of all assets currently assigned to you.</p>
-  </div>
+    <!-- ── 2. KPI Overview Grid ── -->
+    <section class="section-block">
+      <div class="assura-grid assura-grid-cols-5">
+        <!-- Total Assets -->
+        <div class="assura-card assura-accent-info">
+          <span class="assura-card-title">Total Assets</span>
+          <strong class="assura-card-value">{{ totalAssets() }}</strong>
+          <span class="assura-card-subtitle">All assigned to you</span>
+        </div>
 
+        <!-- In Use -->
+        <div class="assura-card assura-accent-success">
+          <span class="assura-card-title">In Use</span>
+          <strong class="assura-card-value">{{ assetsInUse() }}</strong>
+          <span class="assura-card-subtitle">Currently active</span>
+        </div>
 
+        <!-- In Maintenance -->
+        <div class="assura-card assura-accent-danger">
+          <span class="assura-card-title">In Maintenance</span>
+          <strong class="assura-card-value">{{ assetsInMaintenance() }}</strong>
+          <span class="assura-card-subtitle">Under repair/service</span>
+        </div>
 
-  <div class="dynamic-content">
-    @if (!selectedAsset()) {
+        <!-- Transferred -->
+        <div class="assura-card assura-accent-primary">
+          <span class="assura-card-title">Transferred</span>
+          <strong class="assura-card-value">{{ assetsTransferred() }}</strong>
+          <span class="assura-card-subtitle">Temporary transfer</span>
+        </div>
 
-    <!--search section-->
-    <div class="table-actions">
-      <div class="input-wrapper">
+        <!-- Discarded -->
+        <div class="assura-card assura-accent-warning">
+          <span class="assura-card-title">Discarded</span>
+          <strong class="assura-card-value">{{ assetsDiscarded() }}</strong>
+          <span class="assura-card-subtitle">Decommissioned</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 3. Filters & View Controls ── -->
+    <div class="controls-bar">
+      <!-- Search Input -->
+      <div class="search-box">
         <mat-icon class="search-icon">search</mat-icon>
-        <input type="text" placeholder="Search Assets..." [ngModel]="searchTerm()"
-          (ngModelChange)="onSearchChange($event)" class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by asset name or code..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearchChange($event)"
+          class="assura-search-input">
       </div>
 
-      <!-- Status Filter Dropdown -->
-      <div class="filter-container" data-filter="status-filter" (click)="$event.stopPropagation()">
-        <button class="filter-btn" (click)="$event.stopPropagation(); statusMenuOpen.set(!statusMenuOpen())">
-          <div class="filter-icon">
-            <mat-icon>tune</mat-icon>
-            <span>{{ getStatusLabel() }}</span>
-          </div>
-          <mat-icon class="arrow">expand_more</mat-icon>
-        </button>
+      <div class="filter-actions-group">
+        <!-- Status Filter Dropdown -->
+        <div class="filter-dropdown-container" data-filter="status-filter" (click)="$event.stopPropagation()">
+          <button class="assura-filter-btn" (click)="$event.stopPropagation(); statusMenuOpen.set(!statusMenuOpen())">
+            <div class="filter-btn-inner">
+              <mat-icon>tune</mat-icon>
+              <span>{{ getStatusLabel() }}</span>
+            </div>
+            <mat-icon class="arrow-icon">expand_more</mat-icon>
+          </button>
 
-        @if (statusMenuOpen()) {
-          <div class="filter-options" (click)="$event.stopPropagation()">
-            <div class="option" (click)="setStatus('All')" [class.active]="selectedStatus() === ''">
-              All Status
-            </div>
-            <div class="option" (click)="setStatus('In Use')" [class.active]="selectedStatus() === 'In Use'">
-              In Use
-            </div>
-            <div class="option" (click)="setStatus('Transferred')" [class.active]="selectedStatus() === 'Transferred'">
-              Transferred
-            </div>
-            <div class="option" (click)="setStatus('Maintenance')" [class.active]="selectedStatus() === 'Maintenance'">
-              Maintenance
-            </div>
-            <div class="option" (click)="setStatus('Discarded')" [class.active]="selectedStatus() === 'Discarded'">
-              Discarded
-            </div>
-          </div>
-        }
-      </div>
-
-      <!-- Category Filter Dropdown -->
-      <div class="filter-container" data-filter="category-filter" (click)="$event.stopPropagation()">
-        <button class="filter-btn" (click)="$event.stopPropagation(); categoryMenuOpen.set(!categoryMenuOpen())">
-          <div class="filter-icon">
-            <mat-icon>tune</mat-icon>
-            <span>{{ getCategoryLabel() }}</span>
-          </div>
-          <mat-icon class="arrow">expand_more</mat-icon>
-        </button>
-
-        @if (categoryMenuOpen()) {
-          <div class="filter-options" (click)="$event.stopPropagation()">
-            <div class="option" (click)="setCategory('All Categories')" [class.active]="selectedCategory() === ''">
-              All Categories
-            </div>
-            @for (cat of categories(); track cat) {
-              <div class="option" (click)="setCategory(cat)" [class.active]="selectedCategory() === cat">
-                {{ cat }}
+          @if (statusMenuOpen()) {
+            <div class="filter-dropdown-menu" (click)="$event.stopPropagation()">
+              <div class="filter-menu-item" (click)="setStatus('All')" [class.active]="selectedStatus() === ''">
+                All Status
               </div>
-            }
-          </div>
-        }
-      </div>
+              <div class="filter-menu-item" (click)="setStatus('In Use')" [class.active]="selectedStatus() === 'In Use'">
+                In Use
+              </div>
+              <div class="filter-menu-item" (click)="setStatus('Transferred')" [class.active]="selectedStatus() === 'Transferred'">
+                Transferred
+              </div>
+              <div class="filter-menu-item" (click)="setStatus('Maintenance')" [class.active]="selectedStatus() === 'Maintenance'">
+                Maintenance
+              </div>
+              <div class="filter-menu-item" (click)="setStatus('Discarded')" [class.active]="selectedStatus() === 'Discarded'">
+                Discarded
+              </div>
+            </div>
+          }
+        </div>
 
-      
-        <div class="view-toggle">
-        <mat-icon [class.active]="viewMode() === 'list'" (click)="setViewMode('list')">reorder</mat-icon>
-        <mat-icon [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')">grid_view</mat-icon>
-      </div>
+        <!-- Category Filter Dropdown -->
+        <div class="filter-dropdown-container" data-filter="category-filter" (click)="$event.stopPropagation()">
+          <button class="assura-filter-btn" (click)="$event.stopPropagation(); categoryMenuOpen.set(!categoryMenuOpen())">
+            <div class="filter-btn-inner">
+              <mat-icon>category</mat-icon>
+              <span>{{ getCategoryLabel() }}</span>
+            </div>
+            <mat-icon class="arrow-icon">expand_more</mat-icon>
+          </button>
 
+          @if (categoryMenuOpen()) {
+            <div class="filter-dropdown-menu" (click)="$event.stopPropagation()">
+              <div class="filter-menu-item" (click)="setCategory('All Categories')" [class.active]="selectedCategory() === ''">
+                All Categories
+              </div>
+              @for (cat of categories(); track cat) {
+                <div class="filter-menu-item" (click)="setCategory(cat)" [class.active]="selectedCategory() === cat">
+                  {{ cat }}
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- List / Grid View Mode Toggle -->
+        <div class="view-mode-toggle">
+          <button class="toggle-btn" [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')" title="Grid View">
+            <mat-icon>grid_view</mat-icon>
+          </button>
+          <button class="toggle-btn" [class.active]="viewMode() === 'list'" (click)="setViewMode('list')" title="List View">
+            <mat-icon>view_list</mat-icon>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!--Loading state-->
+    <!-- ── 4. Assets Container ── -->
     @if (isLoading()) {
       <div class="loading-state">
         <mat-icon class="spin-animation">sync</mat-icon>
         <p>Loading your assigned assets...</p>
       </div>
     } @else {
-
-    <!--assets cards section-->
-    <div class="asset-grid" [ngClass]="viewMode()">
-      @for (asset of paginatedAssets(); track asset.assetId) {
-
-      <div class="asset-card">
-            <div class="card-body">
-              <h4 class="asset-name">{{ asset.assetName }}</h4>
-              <span class="asset-id-only">Code: {{  asset.assetCode }}</span>
-              <span class="asset-cat-only"> {{ asset.category }}</span>
-              
-              <div class="status-badge" [ngClass]="asset.status.replace(' ', '-').toLowerCase()">
+      <div class="assets-collection" [ngClass]="viewMode()">
+        @for (asset of paginatedAssets(); track asset.assetId) {
+          <div class="asset-card">
+            <div class="asset-card-header">
+              <span class="asset-code-pill">#{{ asset.assetCode }}</span>
+              <span class="status-badge" [ngClass]="getStatusBadgeClass(asset.status)">
+                <span class="status-dot"></span>
                 {{ asset.status }}
+              </span>
+            </div>
+
+            <div class="asset-card-main">
+              <h4 class="asset-title">{{ asset.assetName }}</h4>
+              <div class="asset-meta-row">
+                <span class="meta-tag"><mat-icon>category</mat-icon> {{ asset.category }}</span>
+                <span class="meta-tag"><mat-icon>tag</mat-icon> SN: {{ asset.serialNumber }}</span>
               </div>
-              
-             
-            <button class="view-btn" (click)="viewDetails(asset)">View Asset Details</button>
+            </div>
+
+            <div class="asset-card-footer">
+              <button class="assura-btn-secondary full-width" (click)="viewDetails(asset)">
+                <mat-icon>visibility</mat-icon> View Details
+              </button>
             </div>
           </div>
-          
-      } @empty {
-        <!--empty state-->
-        <div class="assets-empty-state">
-          <mat-icon class="empty-icon">layers_clear</mat-icon>
-          <h3>No Assets Found</h3>
-          <p>We couldn't find any assets matching your search queries or active filters.</p>
-        </div>
-      }
-    </div>
+        } @empty {
+          <div class="empty-state-box">
+            <mat-icon class="empty-icon">inventory_2</mat-icon>
+            <h4>No Assets Found</h4>
+            <p>We couldn't find any assets matching your search queries or active filters.</p>
+          </div>
+        }
+      </div>
 
-
-        <!--pagination-->
-        @if (!isLoading() && paginatedAssets().length > 0) {
-          <app-pagination 
-            [currentPage]="currentPage()" 
-            [totalPages]="totalPages()" 
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+        <div class="pagination-wrapper">
+          <app-pagination
+            [currentPage]="currentPage()"
+            [totalPages]="totalPages()"
             [pageNumbers]="pageNumbers()"
             (pageChange)="onPageChange($event)">
           </app-pagination>
-        }
-     }
-    } @else {
-
-
-      
-    <!--asset details section-->
-    <div class="details-view">
-      <button (click)="backToList()" class="back-link">
-        <mat-icon>arrow_back</mat-icon> Back to Assets
+        </div>
+      }
+    }
+  } @else {
+    <!-- ── 5. Detailed Asset View ── -->
+    <div class="details-view-container">
+      <button (click)="backToList()" class="back-action-link">
+        <mat-icon>arrow_back</mat-icon> Back to Assets List
       </button>
 
-      <div class="info-card">
-        <div class="title">
-          <h2>General Information</h2>
-        </div>
-        <div class="info-header">
-         <!-- <img [src]="selectedAsset()?.image" class="info-img"> -->
-          <div class="info-title">
-            <h2>{{ selectedAsset()?.assetName }}</h2>
-            <p><strong>Asset ID: #{{ selectedAsset()?.assetId }}</strong></p>
+      <div class="detail-glass-card">
+        <div class="detail-hero-box">
+          <div class="hero-left">
+            <span class="hero-badge">Asset #{{ selectedAsset()?.assetCode }}</span>
+            <h2 class="hero-title">{{ selectedAsset()?.assetName }}</h2>
+            <p class="hero-sub">Category: {{ selectedAsset()?.category }}</p>
+          </div>
+          <div class="hero-right">
+            <span class="status-badge large" [ngClass]="getStatusBadgeClass(selectedAsset()?.status)">
+              <span class="status-dot"></span>
+              {{ selectedAsset()?.status }}
+            </span>
           </div>
         </div>
 
-        <div class="info-body">
-
-          <!--Asset Details-->
-          <div class="info-row">
-            <span class="label">Asset Specifications :</span>
-            <div class="val">
-              <p> {{ selectedAsset()?.description}}</p>
-            </div>
+        <div class="specs-grid">
+          <div class="spec-row">
+            <span class="spec-label">Serial Number</span>
+            <span class="spec-value mono">{{ selectedAsset()?.serialNumber || 'N/A' }}</span>
           </div>
 
-          <div class="info-row">
-            <span class="label">Assigned Employee :</span>
-            <span class="val">{{ selectedAsset()?.assignedEmployee }}</span>
+          <div class="spec-row">
+            <span class="spec-label">Assigned Employee</span>
+            <span class="spec-value">{{ selectedAsset()?.assignedEmployee }}</span>
           </div>
 
-          <div class="info-row">
-            <span class="label">Asset Category:</span>
-            <span class="val">{{ selectedAsset()?.category }}</span>
+          <div class="spec-row">
+            <span class="spec-label">Asset Category</span>
+            <span class="spec-value">{{ selectedAsset()?.category }}</span>
           </div>
 
-           <div class="info-row">
-            <span class="label">Serial Number:</span>
-            <span class="val">{{ selectedAsset()?.serialNumber }}</span>
+          <div class="spec-row">
+            <span class="spec-label">Current Condition</span>
+            <span class="spec-value">{{ selectedAsset()?.conditionStatus || 'Good' }}</span>
           </div>
 
-          <!--
-          <div class="info-row">
-            <span class="label">Assigned Date :</span>
-            <span class="val">{{ selectedAsset()?.assignedDate | date:'yyyy-MM-dd' }}</span>
-          </div>-->
-
-          <div class="info-row">
-            <span class="label">Status :</span>
-            <span class="status-badge" [ngClass]="getStatusBadgeClass(selectedAsset()?.status)">{{ selectedAsset()?.status }}</span>
+          <div class="spec-row full-width">
+            <span class="spec-label">Asset Specifications & Notes</span>
+            <span class="spec-value text-block">{{ selectedAsset()?.description || 'No detailed specifications recorded.' }}</span>
           </div>
-
-         
-          <div class="info-row">
-            <span class="label">Condition :</span>
-            <span class="val">{{ selectedAsset()?.conditionStatus }}</span>
-          </div>
-
         </div>
 
-        <div class="info-actions" *ngIf="selectedAsset()?.status !== 'Discarded'">
-          <button class="btn-maint" (click)="goToMaintenanceForm()">Request to Maintenance</button>
-          <button class="btn-discard" (click)="goToDiscardForm()">Request to Discard</button>
-        </div>
-
+        @if (selectedAsset()?.status !== 'Discarded') {
+          <div class="detail-actions-footer">
+            <button class="assura-btn-secondary" (click)="goToMaintenanceForm()">
+              <mat-icon>build</mat-icon> Request Maintenance
+            </button>
+            <button class="assura-btn-danger" (click)="goToDiscardForm()">
+              <mat-icon>delete_outline</mat-icon> Request Discard
+            </button>
+          </div>
+        }
       </div>
-
     </div>
-    }
-  </div>
+  }
+
 </div>

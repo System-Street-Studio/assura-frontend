@@ -1,90 +1,104 @@
-<div class="container">
-  <div class="content-padding">
+<div class="request-form-page">
+  <!-- ── 1. Page Header ── -->
+  <div class="page-header">
+    <div class="back-nav">
+      <button (click)="onCancel()" class="back-link-btn">
+        <mat-icon>arrow_back</mat-icon> Back to Requests
+      </button>
+    </div>
+    <h1 class="assura-page-title">Discard Request</h1>
+    <p class="page-subtitle">Submit requests for the disposal, recycling, or decommissioning of unserviceable assets.</p>
+  </div>
 
-    <!-- Page Title -->
-    <h1 class="section-label">Requests</h1>
-    <a (click)="onCancel()" class="back-link">←</a>
-    <h2 class="page-title">Discard Requests</h2>
+  <!-- ── 2. Glassmorphic Form Card ── -->
+  <div class="form-glass-card">
+    <div class="card-hero-header">
+      <div class="hero-icon-box red">
+        <mat-icon>delete_sweep</mat-icon>
+      </div>
+      <div>
+        <h3 class="hero-card-title">Asset Discard Details</h3>
+        <p class="hero-card-subtitle">Select the asset and provide the reason for scrap or decommission.</p>
+      </div>
+    </div>
 
-    <div class="form-card">
-      <header>
-        <h3>Asset Discard Details</h3>
-        <p>Please provide details about the asset you want to discard</p>
-      </header>
-
-      <!-- asset name-->
-      <form (ngSubmit)="onSubmit()">
-        <div class="field">
-          <label>Select Asset <span class="required" >*</span></label>
-          <select [ngModel]="asset()" (ngModelChange)="onAssetSelected($event)" name="asset" required>
-            <option value="" disabled selected>Select an asset</option>
-            @for (a of assignedAssets(); track a.id) {
+    <form (ngSubmit)="onSubmit()" class="modern-form">
+      <!-- Select Asset -->
+      <div class="form-field-group full-width">
+        <label class="field-label">Select Assigned Asset <span class="required">*</span></label>
+        <select [ngModel]="asset()" (ngModelChange)="onAssetSelected($event)" name="asset" class="assura-select" required>
+          <option value="" disabled selected>Select an asset to discard</option>
+          @for (a of assignedAssets(); track a.id) {
             <option [value]="a.productName + ' (' + a.assetCode + ')'">
-              {{a.productName}} ({{a.assetCode}})
+              {{ a.productName }} ({{ a.assetCode }})
             </option>
-            }
-          </select>
-        </div>
-
-        <!-- Reason for Discard -->
-        <div class="field">
-          <label>Reason for Discard</label>
-          <textarea [ngModel]="reason()" (ngModelChange)="reason.set($event)" name="reason"
-            placeholder="Briefly explain why this asset discard is needed...">
-          </textarea>
-        </div>
-
-        <!-- File Upload Section -->
-        <div class="field">
-          <label>Attachment (Optional)</label>
-          @if (selectedFiles().length === 0) {
-            <div class="upload-box" (click)="browseFiles()">
-              <mat-icon class="upload-icon">cloud_upload</mat-icon>
-              <p>Drag files here or <span class="browse">click to browse</span></p>
-            </div>
           }
+        </select>
+      </div>
 
-          <!-- Display selected files -->
-          @if (selectedFiles().length > 0) {
-            <div class="selected-files" (click)="browseFiles()">
-              <p class="files-label">Selected Files: {{ selectedFiles().length }}</p>
+      <!-- Reason for Discard -->
+      <div class="form-field-group full-width">
+        <label class="field-label">Reason for Discard / Decommissioning <span class="required">*</span></label>
+        <textarea
+          [ngModel]="reason()"
+          (ngModelChange)="reason.set($event)"
+          name="reason"
+          placeholder="Briefly explain why this asset should be discarded (e.g. beyond economical repair, obsolete, severe physical defect)..."
+          class="assura-textarea"
+          rows="3"
+          required>
+        </textarea>
+      </div>
+
+      <!-- Attachment Dropzone -->
+      <div class="form-field-group full-width">
+        <label class="field-label">Attachments (Photos of damage, inspection report)</label>
+        @if (selectedFiles().length === 0) {
+          <div class="upload-dropzone" (click)="browseFiles()">
+            <mat-icon class="dropzone-icon">cloud_upload</mat-icon>
+            <p class="dropzone-text">Drag & drop files here or <span class="browse-link">browse files</span></p>
+            <span class="dropzone-sub">Supports JPG, PNG, PDF (Max 10MB)</span>
+          </div>
+        } @else {
+          <div class="files-preview-box">
+            <div class="files-list">
               @for (file of selectedFiles(); track file.name; let i = $index) {
-                <div class="file-item">
+                <div class="file-chip">
                   <mat-icon class="file-icon">attach_file</mat-icon>
                   <span class="file-name">{{ file.name }}</span>
-                  <span class="file-size">({{ (file.size / 1024).toFixed(2) }} KB)</span>
-                  <button type="button" class="remove-btn" (click)="removeFile(i); $event.stopPropagation()">
+                  <span class="file-size-tag">({{ (file.size / 1024).toFixed(1) }} KB)</span>
+                  <button type="button" class="remove-file-btn" (click)="removeFile(i); $event.stopPropagation()">
                     <mat-icon>close</mat-icon>
                   </button>
                 </div>
               }
-              <button type="button" class="add-files-btn" (click)="browseFiles(); $event.stopPropagation()">
-                <mat-icon>add_circle_outline</mat-icon>
-                Add More Files
-              </button>
             </div>
-          }
-        </div>
+            <button type="button" class="add-more-btn" (click)="browseFiles(); $event.stopPropagation()">
+              <mat-icon>add</mat-icon> Add More Files
+            </button>
+          </div>
+        }
+      </div>
 
-        <!-- Form Actions -->
-        <div class="actions">
-          <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">Cancel</button>
-          <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
-            @if (isSubmitting()) {
-              <mat-icon class="spinner">schedule</mat-icon>
-              Submitting...
-            } @else {
-              Submit Request
-            }
-          </button>
-        </div>
-      </form>
-    </div>
+      <!-- Actions -->
+      <div class="form-actions-row">
+        <button type="button" class="assura-btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">
+          Cancel
+        </button>
+        <button type="submit" class="assura-btn-danger" [disabled]="isSubmitting() || !asset() || !reason()">
+          @if (isSubmitting()) {
+            <mat-icon class="spin-animation">sync</mat-icon> Submitting Discard Request...
+          } @else {
+            <mat-icon>delete_outline</mat-icon> Submit Discard Request
+          }
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
-// Result Overlay
-@if(showResult()){
+<!-- Result Overlay -->
+@if (showResult()) {
   <app-result-overlay
     [type]="resultType()"
     [title]="resultTitle()"
