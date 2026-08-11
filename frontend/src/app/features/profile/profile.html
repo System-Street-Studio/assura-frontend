@@ -13,11 +13,11 @@
         </p>
       </div>
       <div class="header-actions">
-        <button mat-stroked-button class="back-btn" (click)="goBack()">
+        <button class="assura-btn assura-btn-secondary back-btn" (click)="goBack()">
           <mat-icon>arrow_back</mat-icon>
           Back
         </button>
-        <button mat-flat-button color="primary" class="edit-btn" (click)="toggleEdit()" *ngIf="!isEditing">
+        <button class="assura-btn assura-btn-primary edit-btn" (click)="toggleEdit()" *ngIf="!isEditing">
           <mat-icon>edit</mat-icon>
           Edit Profile
         </button>
@@ -101,8 +101,8 @@
           </div>
 
           <div class="form-actions">
-            <button mat-button type="button" (click)="toggleEdit()" [disabled]="saving">Cancel</button>
-            <button mat-flat-button color="primary" type="submit" [disabled]="profileForm.invalid || saving">
+            <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleEdit()" [disabled]="saving">Cancel</button>
+            <button class="assura-btn assura-btn-primary" type="submit" [disabled]="profileForm.invalid || saving">
               <mat-spinner diameter="20" *ngIf="saving"></mat-spinner>
               <span *ngIf="!saving">Save Changes</span>
             </button>

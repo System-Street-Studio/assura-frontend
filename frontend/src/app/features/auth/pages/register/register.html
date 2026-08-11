@@ -8,7 +8,7 @@
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
             @if (errorMessage) {
-            <div class="error-alert" style="color: #ef4444; background: #fee2e2; padding: 12px; border-radius: 6px; margin-bottom: 1rem; text-align: center; font-size: 0.9rem; border: 1px solid #fca5a5;">
+            <div class="error-alert">
                 {{ errorMessage }}
             </div>
             }
@@ -95,9 +95,10 @@
     </div>
     } @else {
     <div class="success-card">
+        <mat-icon class="success-icon">check_circle</mat-icon>
         <p class="success-main">Account Created Successfully</p>
-        <p class="success-sub">Wait for assigning role(s) and Division(s)</p>
-        <a routerLink="/auth/login" class="btn-primary" style="margin-top: 2rem; display: inline-block; text-decoration: none;">Back to Login</a>
+        <p class="success-sub">Please wait for an administrator to assign your role(s) and division(s).</p>
+        <a routerLink="/auth/login" class="btn-primary" style="margin-top: 1.5rem; text-decoration: none;">Back to Login</a>
     </div>
     }
 </div>
