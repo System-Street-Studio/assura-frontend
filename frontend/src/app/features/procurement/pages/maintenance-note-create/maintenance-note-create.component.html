@@ -1,91 +1,97 @@
-<div class="note-page-container">
+<div style="padding: 32px; max-width: 800px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h1 class="assura-page-title" style="margin-bottom: 4px;">Add New Note</h1>
+            <span style="color: #64748b; font-size: 14px;">Create a new maintenance record</span>
+        </div>
+    </div>
 
-    <h1 class="page-title">Add New Note</h1>
-
-    <div class="note-card">
-        <form [formGroup]="noteForm" (ngSubmit)="save()" >
-            <div class="note-grid">
-                <div class="note-item">
-                    <label for="maintenanceNumber">Maintenance No:</label>
-                    <input type="text" id="maintenanceNumber" formControlName="maintenanceNumber" readonly>
+    <div class="assura-card" style="padding: 32px;">
+        <form [formGroup]="noteForm" (ngSubmit)="save()">
+            <div class="assura-grid assura-grid-cols-2" style="gap: 24px;">
+                <div>
+                    <label class="assura-label" for="maintenanceNumber">Maintenance No</label>
+                    <input type="text" id="maintenanceNumber" formControlName="maintenanceNumber" class="assura-input" readonly style="background: #f8fafc;">
                 </div>
-                <div class="note-item">
-                    <label for="asset">Asset:</label>
-                    <select id="asset" formControlName="assetId" (ngModelChange)="onAssetChange()"
-                        class="custom-select">
+                <div>
+                    <label class="assura-label" for="asset">Asset <span style="color: #ef4444;">*</span></label>
+                    <select id="asset" formControlName="assetId" (ngModelChange)="onAssetChange()" class="assura-input custom-select">
                         <option [ngValue]="null">Select Asset</option>
-                        <option *ngFor="let asset of assets" [ngValue]="asset.id">{{ asset.assetCode }} - {{
-                            asset.assetName }}</option>
+                        <option *ngFor="let asset of assets" [ngValue]="asset.id">{{ asset.assetCode }} - {{ asset.assetName }}</option>
                     </select>
-                    <div *ngIf="f['assetId'].invalid && f['assetId'].touched" class="error-message">
+                    <div *ngIf="f['assetId'].invalid && f['assetId'].touched" style="color: #ef4444; font-size: 12px; margin-top: 4px;">
                         Asset is required
                     </div>
                 </div>
 
                 <!-- Asset Details section (Auto-fill) -->
-                <div class="asset-details-container full-width" *ngIf="selectedAsset">
-                    <div class="details-header">Asset Details:</div>
-                    <div class="details-grid">
-                        <div class="detail-field">
-                            <span class="detail-label">Product:</span>
-                            <span class="detail-value">{{ selectedAsset.productName }}</span>
+                <div style="grid-column: span 2; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;" *ngIf="selectedAsset">
+                    <div style="font-weight: 600; color: #0f172a; margin-bottom: 12px;">Asset Details</div>
+                    <div class="assura-grid assura-grid-cols-2" style="gap: 16px;">
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px;">
+                            <span style="color: #64748b; font-size: 13px;">Product:</span>
+                            <span style="color: #0f172a; font-size: 13px; font-weight: 500;">{{ selectedAsset.productName }}</span>
                         </div>
-                        <div class="detail-field">
-                            <span class="detail-label">Category:</span>
-                            <span class="detail-value">{{ selectedAsset.categoryName }}</span>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px;">
+                            <span style="color: #64748b; font-size: 13px;">Category:</span>
+                            <span style="color: #0f172a; font-size: 13px; font-weight: 500;">{{ selectedAsset.categoryName }}</span>
                         </div>
-                        <div class="detail-field">
-                            <span class="detail-label">Division:</span>
-                            <span class="detail-value">{{ selectedAsset.divisionName }}</span>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px;">
+                            <span style="color: #64748b; font-size: 13px;">Division:</span>
+                            <span style="color: #0f172a; font-size: 13px; font-weight: 500;">{{ selectedAsset.divisionName }}</span>
                         </div>
-                        <div class="detail-field">
-                            <span class="detail-label">Serial Number:</span>
-                            <span class="detail-value">{{ selectedAsset.serialNumber || 'N/A' }}</span>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px;">
+                            <span style="color: #64748b; font-size: 13px;">Serial Number:</span>
+                            <span style="color: #0f172a; font-size: 13px; font-weight: 500;">{{ selectedAsset.serialNumber || 'N/A' }}</span>
                         </div>
                     </div>
                 </div>
-                <div class="note-item">
-                    <label for="date">Date:</label>
-                    <input type="date" id="date" name="date" formControlName="date" class="form-control">
-                    <div *ngIf="f['date'].invalid && f['date'].touched" class="error-message">
+
+                <div>
+                    <label class="assura-label" for="date">Date <span style="color: #ef4444;">*</span></label>
+                    <input type="date" id="date" formControlName="date" class="assura-input">
+                    <div *ngIf="f['date'].invalid && f['date'].touched" style="color: #ef4444; font-size: 12px; margin-top: 4px;">
                         Date is required
                     </div>
                 </div>
-                <div class="note-item">
-                    <label for="repairFirm">Repair Firm:</label>
-                    <select id="repairFirm" formControlName="repairingFirmId" class="custom-select">
+                <div>
+                    <label class="assura-label" for="repairFirm">Repair Firm</label>
+                    <select id="repairFirm" formControlName="repairingFirmId" class="assura-input custom-select">
                         <option [ngValue]="null">Select Repair Firm</option>
                         <option *ngFor="let firm of repairingFirms" [ngValue]="firm.id">{{ firm.name }}</option>
                     </select>
                 </div>
-                <div class="note-item">
-                    <label for="status">Status:</label>
-                    <select id="status" formControlName="status" class="custom-select">
+                <div>
+                    <label class="assura-label" for="status">Status</label>
+                    <select id="status" formControlName="status" class="assura-input custom-select">
                         <option value="Scheduled">Scheduled</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Completed">Completed</option>
                     </select>
                 </div>
-                <div class="note-item">
-                    <label for="cost">Cost (LKR):</label>
-                    <input type="number" id="cost" formControlName="cost" class="form-control" min="0" (keydown)="preventNegative($event)">
-                    <div *ngIf="f['cost'].invalid && f['cost'].touched" class="error-message">
+                <div>
+                    <label class="assura-label" for="cost">Cost (LKR) <span style="color: #ef4444;">*</span></label>
+                    <input type="number" id="cost" formControlName="cost" class="assura-input" min="0" (keydown)="preventNegative($event)">
+                    <div *ngIf="f['cost'].invalid && f['cost'].touched" style="color: #ef4444; font-size: 12px; margin-top: 4px;">
                         <span *ngIf="f['cost'].errors?.['required']">Cost is required</span>
                         <span *ngIf="f['cost'].errors?.['min']">Cost cannot be negative</span>
                     </div>
                 </div>
-                <div class="note-item full-width">
-                    <label for="description">Description:</label>
-                    <textarea id="description" formControlName="description" class="form-control"></textarea>
-                    <div *ngIf="f['description'].invalid && f['description'].touched" class="error-message">
+                <div style="grid-column: span 2;">
+                    <label class="assura-label" for="description">Description <span style="color: #ef4444;">*</span></label>
+                    <textarea id="description" formControlName="description" class="assura-input" rows="3"></textarea>
+                    <div *ngIf="f['description'].invalid && f['description'].touched" style="color: #ef4444; font-size: 12px; margin-top: 4px;">
                         Description is required
                     </div>
                 </div>
             </div>
 
-            <div class="action-row">
-                <button type="button" class="action-btn close-btn" (click)="close()">Close</button>
-                <button type="submit" class="action-btn save-btn" [disabled]="noteForm.invalid">Save & Exit</button>
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                <button type="button" class="assura-btn assura-btn-secondary" (click)="close()">Close</button>
+                <button type="submit" class="assura-btn assura-btn-primary" [disabled]="noteForm.invalid">
+                    <mat-icon style="font-size: 18px;">save</mat-icon> Save & Exit
+                </button>
             </div>
         </form>
     </div>

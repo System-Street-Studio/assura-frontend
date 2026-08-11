@@ -1,100 +1,140 @@
-<div class="maintenance-container">
-    <!-- History of Maintenance Section -->
-    <section class="history-section">
-        <h1 class="section-title">History of Maintenance</h1>
-        <div class="history-controls">
-            <app-search-bar (queryChange)="onSearch($event)" placeholder="Search Assets..."></app-search-bar>
-            <button class="manage-firms-btn" (click)="navigateToFirms()">
-                <span class="material-icons">business</span> Manage Repairing Firms
-            </button>
-        </div>
+<div style="padding: 32px; max-width: 1400px; margin: 0 auto; height: 100%; overflow-y: auto;">
+  
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div>
+      <h1 class="assura-page-title" style="margin-bottom: 4px;">Maintenance</h1>
+      <span style="color: #64748b; font-size: 14px;">Manage maintenance requests and history</span>
+    </div>
+    <div style="display: flex; gap: 12px;">
+        <button class="assura-btn assura-btn-secondary" (click)="navigateToFirms()">
+            <mat-icon style="font-size: 18px;">business</mat-icon> Manage Repairing Firms
+        </button>
+    </div>
+  </div>
 
-        <div class="table-card">
-            <table class="maintenance-history-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Asset</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let record of pagedHistory">
-                        <td class="clickable-id" (click)="navigateToNote(record.id)">{{ record.maintenanceNumber }}</td>
-                        <td>{{ record.assetName }}</td>
-                    </tr>
-                    <tr *ngIf="pagedHistory.length === 0">
-                        <td colspan="2" class="empty-state">No data available</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <app-pagination [currentPage]="historyCurrentPage" [totalPages]="historyTotalPages"
-                [pageNumbers]="historyPageNumbers" (pageChange)="goToHistoryPage($event)">
-            </app-pagination>
-        </div>
-    </section>
-
-    <!-- Maintenance Requests Section -->
-    <section class="requests-section">
-        <h1 class="section-title">Maintenance Requests</h1>
-
-        <div class="requests-layout">
-            <!-- Requests List (Left) -->
-            <div class="requests-list">
-                <div *ngFor="let request of pagedRequests" class="request-card"
-                    [class.active]="selectedRequest?.id === request.id" (click)="selectRequest(request)">
-                    <div class="req-name">{{ request.assetName }}</div>
-                    <div class="req-dept">{{ request.division }}</div>
-                    <div class="req-time">{{ request.timestamp }}</div>
+  <div class="assura-grid assura-grid-cols-2" style="grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+    
+    <!-- Maintenance Requests Section (Left Column) -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div class="assura-card" style="padding: 24px;">
+            <h2 style="margin: 0 0 16px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #0f172a;">Maintenance Requests</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div *ngFor="let request of pagedRequests" 
+                     class="assura-card" 
+                     [ngStyle]="{'border-left': selectedRequest?.id === request.id ? '4px solid #4f46e5' : '4px solid transparent', 'cursor': 'pointer', 'background': selectedRequest?.id === request.id ? '#f8fafc' : '#ffffff', 'transition': 'all 0.2s'}"
+                     (click)="selectRequest(request)"
+                     style="padding: 16px; margin: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <strong style="color: #0f172a; font-size: 15px;">{{ request.assetName }}</strong>
+                        <span style="color: #64748b; font-size: 12px;">{{ request.timestamp }}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; color: #64748b; font-size: 13px;">
+                        <mat-icon style="font-size: 16px; width: 16px; height: 16px;">domain</mat-icon> {{ request.division }}
+                    </div>
                 </div>
 
-                <!-- Pagination Component -->
+                <div *ngIf="pagedRequests.length === 0" style="padding: 32px; text-align: center; color: #64748b;">
+                    <mat-icon style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 8px; color: #cbd5e1;">inbox</mat-icon>
+                    <p style="margin: 0; font-size: 14px;">No active requests</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px;" *ngIf="pagedRequests.length > 0">
                 <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
                     [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
                 </app-pagination>
             </div>
+        </div>
 
-            <!-- Request Details (Right) -->
-            <div class="request-details-panel">
-                <div class="panel-header">
-                    <h2>Request</h2>
+        <!-- Request Details Panel (Shown when a request is selected) -->
+        <div class="assura-card" style="padding: 0; overflow: hidden; border-top: 4px solid #4f46e5;" *ngIf="selectedRequest">
+            <div style="padding: 24px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+                <h2 style="margin: 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #0f172a;">Request Details</h2>
+            </div>
+            
+            <div style="padding: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                        <span style="color: #64748b; font-size: 14px;">Description</span>
+                        <span style="color: #0f172a; font-weight: 500; font-size: 14px;">{{ selectedRequest.assetName }}</span>
+                    </div>
+                    
+                    <div>
+                        <span style="display: block; color: #64748b; font-size: 14px; margin-bottom: 8px;">Specifications</span>
+                        <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                            <div *ngFor="let spec of selectedRequest.specificationsArray" style="color: #334155; font-size: 13px; line-height: 1.5;">
+                                • {{ spec }}
+                            </div>
+                            <div *ngIf="!selectedRequest.specificationsArray.length" style="color: #94a3b8; font-size: 13px; font-style: italic;">No specifications provided</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                        <span style="color: #64748b; font-size: 14px;">Division</span>
+                        <span style="color: #0f172a; font-weight: 500; font-size: 14px;">{{ selectedRequest.division }}</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                        <span style="color: #64748b; font-size: 14px;">Date</span>
+                        <span style="color: #0f172a; font-weight: 500; font-size: 14px;">{{ selectedRequest.date }}</span>
+                    </div>
                 </div>
 
-                <div class="panel-content" *ngIf="selectedRequest">
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <label>Description</label>
-                            <div class="value">{{ selectedRequest.assetName }}</div>
-                        </div>
-                        <div class="detail-item">
-                            <label>Specifications</label>
-                            <div class="spec-box">
-                                <div *ngFor="let spec of selectedRequest.specificationsArray">
-                                    {{ spec }}
-                                </div>
-                                <div *ngIf="!selectedRequest.specificationsArray.length">N/A</div>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <label>Division</label>
-                            <div class="value">{{ selectedRequest.division }}</div>
-                        </div>
-                        <div class="detail-item">
-                            <label>Date</label>
-                            <div class="value">{{ selectedRequest.date }}</div>
-                        </div>
-                    </div>
+                <div style="margin-bottom: 24px;">
+                    <label class="assura-label">Special Note</label>
+                    <textarea class="assura-input" readonly rows="3" style="background: #f8fafc; color: #475569;">{{ selectedRequest.specialNote || 'No special note provided.' }}</textarea>
+                </div>
 
-                    <div class="special-note">
-                        <label>Special Note</label>
-                        <textarea readonly>{{ selectedRequest.specialNote }}</textarea>
-                    </div>
-
-                    <div class="action-footer">
-                        <button class="create-note-btn" (click)="navigateToCreate()">Create a Note</button>
-                    </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button class="assura-btn assura-btn-primary" (click)="navigateToCreate()">
+                        <mat-icon style="font-size: 18px;">note_add</mat-icon> Create Maintenance Note
+                    </button>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+
+    <!-- History Section (Right Column) -->
+    <div class="assura-card" style="padding: 24px; display: flex; flex-direction: column;">
+        <h2 style="margin: 0 0 16px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #0f172a;">History of Maintenance</h2>
+        
+        <div style="margin-bottom: 16px;">
+            <app-search-bar (queryChange)="onSearch($event)" placeholder="Search History..."></app-search-bar>
+        </div>
+
+        <div class="assura-table-container">
+            <table class="assura-table">
+                <thead>
+                    <tr>
+                        <th class="assura-th">Maintenance No</th>
+                        <th class="assura-th">Asset</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let record of pagedHistory" class="assura-tr-hover">
+                        <td class="assura-td">
+                            <span style="color: #4f46e5; font-weight: 600; cursor: pointer;" (click)="navigateToNote(record.id)">{{ record.maintenanceNumber }}</span>
+                        </td>
+                        <td class="assura-td" style="color: #0f172a; font-weight: 500;">{{ record.assetName }}</td>
+                    </tr>
+                    <tr *ngIf="pagedHistory.length === 0">
+                        <td colspan="2" class="assura-td" style="text-align: center; padding: 32px; color: #94a3b8;">
+                            <mat-icon style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 8px; color: #cbd5e1;">history</mat-icon>
+                            <div style="font-size: 14px;">No history records found</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 16px;" *ngIf="pagedHistory.length > 0">
+            <app-pagination [currentPage]="historyCurrentPage" [totalPages]="historyTotalPages"
+                [pageNumbers]="historyPageNumbers" (pageChange)="goToHistoryPage($event)">
+            </app-pagination>
+        </div>
+    </div>
+
+  </div>
 </div>

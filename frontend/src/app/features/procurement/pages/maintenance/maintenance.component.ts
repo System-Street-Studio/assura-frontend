@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
@@ -26,7 +27,7 @@ export interface LiveMaintenanceRequest {
 @Component({
   selector: 'app-procurement-maintenance',
   standalone: true,
-  imports: [CommonModule, SearchBarComponent, PaginationComponent],
+  imports: [CommonModule, SearchBarComponent, PaginationComponent, MatIconModule],
   templateUrl: './maintenance.component.html',
   styleUrls: ['./maintenance.component.css']
 })
