@@ -1,242 +1,240 @@
 <div class="assets-container">
-    <div class="header-section">
-        <div class="title-area">
-            <h1>My Assets</h1>
-            <p>Manage and track your assigned equipment</p>
-        </div>
-        <div class="header-actions">
-            <div class="search-bar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Search assets..." />
-            </div>
-  <button class="add-btn" (click)="openAddAssetModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Add Asset
-            </button>
-        </div>
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="title-area">
+      <div class="title-with-badge">
+        <h1 class="assura-page-title">My Assigned Assets</h1>
+        <span class="header-badge">Hardware Portfolio</span>
+      </div>
+      <p class="assura-page-subtitle">Manage, verify, and monitor equipment assigned to your custody.</p>
     </div>
-
-    <div class="assets-grid">
-        <div class="asset-card" *ngFor="let asset of filteredAssets">
-            <div class="asset-icon">
-                <svg *ngIf="asset.type === 'Laptop'" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
-                    viewBox="0 0 24 24" fill="none" stroke="#00b2b2" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                    <line x1="2" y1="20" x2="22" y2="20" />
-                </svg>
-                <svg *ngIf="asset.type === 'Monitor'" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
-                    viewBox="0 0 24 24" fill="none" stroke="#00b2b2" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                    <line x1="8" y1="21" x2="16" y2="21" />
-                    <line x1="12" y1="17" x2="12" y2="21" />
-                </svg>
-                <svg *ngIf="asset.type === 'Peripheral' || asset.type === 'Networking'"
-                    xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
-                    stroke="#00b2b2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2v8" />
-                    <path d="m4.93 4.93 4.24 4.24" />
-                    <path d="M2 12h8" />
-                    <path d="m4.93 19.07 4.24-4.24" />
-                    <path d="M12 22v-8" />
-                    <path d="m19.07 19.07-4.24-4.24" />
-                    <path d="M22 12h-8" />
-                    <path d="m19.07 4.93-4.24 4.24" />
-                </svg>
-            </div>
-            <div class="asset-details">
-                <div class="top-row">
-                    <h3 class="asset-name">{{ asset.name }}</h3>
-                    <span class="status-badge" [ngClass]="getStatusClass(asset.status)">{{ asset.status }}</span>
-                </div>
-                <p class="serial-no">{{ asset.serialNumber }}</p>
-                <div class="bottom-row">
-                    <span class="type-tag">{{ asset.type }}</span>
-                    <span class="division-tag">{{ asset.division }}</span>
-                </div>
-            </div>
-            <div class="card-footer">
-                <button class="view-btn" (click)="selectAsset(asset)">View Details</button>
-            </div>
-        </div>
+    <div class="header-actions">
+      <div class="search-bar-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="search-icon">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Search assets by name or serial..." />
+      </div>
+      <button class="assura-btn-primary add-btn" (click)="openAddAssetModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Add Asset
+      </button>
     </div>
+  </div>
 
-    <!-- Detail Modal -->
-    <div class="global-modal-overlay" *ngIf="selectedAsset" (click)="closeDetail()">
-        <div class="global-modal-card" (click)="$event.stopPropagation()">
-            <div class="global-modal-header">
-                <h2>Asset Details</h2>
-                <button class="global-modal-close-btn" (click)="closeDetail()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-            </div>
-            <div class="global-modal-body">
-                <div class="detail-icon-section">
-                    <div class="detail-icon">
-                        <svg *ngIf="selectedAsset.type === 'Laptop'" xmlns="http://www.w3.org/2000/svg" width="60"
-                            height="60" viewBox="0 0 24 24" fill="none" stroke="#00b2b2" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                            <line x1="2" y1="20" x2="22" y2="20" />
-                        </svg>
-                        <svg *ngIf="selectedAsset.type === 'Monitor'" xmlns="http://www.w3.org/2000/svg" width="60"
-                            height="60" viewBox="0 0 24 24" fill="none" stroke="#00b2b2" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                            <line x1="8" y1="21" x2="16" y2="21" />
-                            <line x1="12" y1="17" x2="12" y2="21" />
-                        </svg>
-                        <svg *ngIf="selectedAsset.type === 'Peripheral' || selectedAsset.type === 'Networking'"
-                            xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none"
-                            stroke="#00b2b2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2v8" />
-                            <path d="m4.93 4.93 4.24 4.24" />
-                            <path d="M2 12h8" />
-                            <path d="m4.93 19.07 4.24-4.24" />
-                            <path d="M12 22v-8" />
-                            <path d="m19.07 19.07-4.24-4.24" />
-                            <path d="M22 12h-8" />
-                            <path d="m19.07 4.93-4.24 4.24" />
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-name-section">
-                    <h3>{{ selectedAsset.name }}</h3>
-                    <span class="status-badge" [ngClass]="getStatusClass(selectedAsset.status)">
-                        {{ selectedAsset.status }}
-                    </span>
-                </div>
-
-                <div class="detail-info-grid">
-                    <div class="detail-info-item">
-                        <label>Asset Type</label>
-                        <span>{{ selectedAsset.type }}</span>
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Serial Number</label>
-                        <span>{{ selectedAsset.serialNumber }}</span>
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Division</label>
-                        <span>{{ selectedAsset.division }}</span>
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Asset ID</label>
-                        <span>#{{ selectedAsset.id }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="global-modal-footer">
-                <button class="close-detail-btn" (click)="closeDetail()">Close</button>
-                <button class="edit-asset-btn" (click)="openEditAssetModal(selectedAsset)">Edit Asset</button>
-            </div>
+  <!-- Assets Grid -->
+  <div class="assets-grid">
+    @for (asset of filteredAssets; track asset.id) {
+      <div class="glass-card asset-card">
+        <div class="card-top-row">
+          <div class="asset-icon-box">
+            @if (asset.type === 'Laptop') {
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <line x1="2" y1="20" x2="22" y2="20" />
+              </svg>
+            } @else if (asset.type === 'Monitor') {
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v8" />
+                <path d="m4.93 4.93 4.24 4.24" />
+                <path d="M2 12h8" />
+                <path d="m4.93 19.07 4.24-4.24" />
+                <path d="M12 22v-8" />
+                <path d="m19.07 19.07-4.24-4.24" />
+                <path d="M22 12h-8" />
+                <path d="m19.07 4.93-4.24 4.24" />
+              </svg>
+            }
+          </div>
+          <span class="status-badge" [ngClass]="getStatusClass(asset.status)">
+            <span class="status-dot"></span> {{ asset.status }}
+          </span>
         </div>
-    </div>
-    <!-- Add Asset Modal -->
-    <div class="global-modal-overlay" *ngIf="isAddAssetModalOpen" (click)="closeAddAssetModal()">
-        <div class="global-modal-card" (click)="$event.stopPropagation()">
-            <div class="global-modal-header">
-                <h2>Add New Asset</h2>
-                <button class="global-modal-close-btn" (click)="closeAddAssetModal()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-            </div>
-            <div class="global-modal-body">
-                <div class="form-group">
-                    <label>Asset Name</label>
-                    <input type="text" name="assetName" [ngModel]="newAsset.name" (ngModelChange)="newAsset.name = $event" placeholder="e.g. Dell Latitude 7420">
-                </div>
-                <div class="form-group">
-                    <label>Serial Number</label>
-                    <input type="text" name="serialNumber" [ngModel]="newAsset.serialNumber" (ngModelChange)="newAsset.serialNumber = $event" placeholder="e.g. S/N 12345XYZ">
-                </div>
-                <div class="form-group">
-                    <label>Type</label>
-                    <select name="assetType" [ngModel]="newAsset.type" (ngModelChange)="newAsset.type = $event">
-                        <option value="Laptop">Laptop</option>
-                        <option value="Monitor">Monitor</option>
-                        <option value="Peripheral">Peripheral</option>
-                        <option value="Networking">Networking</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Division</label>
-                    <input type="text" name="division" [ngModel]="newAsset.division" (ngModelChange)="newAsset.division = $event" placeholder="e.g. IT Department">
-                </div>
-            </div>
-            <div class="global-modal-footer">
-                <button class="close-detail-btn" (click)="closeAddAssetModal()">Cancel</button>
-                <button class="edit-asset-btn" (click)="submitAddAsset()">Add Asset</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Edit Asset Modal -->
-    <div class="global-modal-overlay" *ngIf="isEditAssetModalOpen && editingAsset" (click)="closeEditAssetModal()">
-        <div class="global-modal-card" (click)="$event.stopPropagation()">
-            <div class="global-modal-header">
-                <h2>Edit Asset</h2>
-                <button class="global-modal-close-btn" (click)="closeEditAssetModal()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
-            </div>
-            <div class="global-modal-body">
-                <div class="form-group">
-                    <label>Asset Name</label>
-                    <input type="text" name="editAssetName" [ngModel]="editingAsset.name" (ngModelChange)="editingAsset.name = $event" placeholder="e.g. Dell Latitude 7420">
-                </div>
-                <div class="form-group">
-                    <label>Serial Number</label>
-                    <input type="text" name="editSerialNumber" [ngModel]="editingAsset.serialNumber" (ngModelChange)="editingAsset.serialNumber = $event" placeholder="e.g. S/N 12345XYZ">
-                </div>
-                <div class="form-group">
-                    <label>Type</label>
-                    <select name="editAssetType" [ngModel]="editingAsset.type" (ngModelChange)="editingAsset.type = $event">
-                        <option value="Laptop">Laptop</option>
-                        <option value="Monitor">Monitor</option>
-                        <option value="Peripheral">Peripheral</option>
-                        <option value="Networking">Networking</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Division</label>
-                    <input type="text" name="editDivision" [ngModel]="editingAsset.division" (ngModelChange)="editingAsset.division = $event" placeholder="e.g. IT Department">
-                </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select name="editAssetStatus" [ngModel]="editingAsset.status" (ngModelChange)="editingAsset.status = $event">
-                        <option value="Active">Active</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Assigned">Assigned</option>
-                    </select>
-                </div>
-            </div>
-            <div class="global-modal-footer">
-                <button class="close-detail-btn" (click)="closeEditAssetModal()">Cancel</button>
-                <button class="edit-asset-btn" (click)="submitEditAsset()">Save Changes</button>
-            </div>
+        <div class="asset-details">
+          <h3 class="asset-name">{{ asset.name }}</h3>
+          <p class="serial-no mono">S/N: {{ asset.serialNumber }}</p>
+          <div class="tag-row">
+            <span class="type-tag">{{ asset.type }}</span>
+            <span class="division-tag">{{ asset.division }}</span>
+          </div>
         </div>
+
+        <div class="card-footer">
+          <button class="view-btn" (click)="selectAsset(asset)">View Details</button>
+        </div>
+      </div>
+    } @empty {
+      <div class="glass-card empty-state full-grid">
+        <p>No assigned assets found.</p>
+      </div>
+    }
+  </div>
+
+  <!-- Detail Modal -->
+  @if (selectedAsset) {
+    <div class="global-modal-overlay" (click)="closeDetail()">
+      <div class="glass-modal global-modal-card" (click)="$event.stopPropagation()">
+        <div class="global-modal-header">
+          <div class="modal-header-titles">
+            <span class="modal-pretitle">Asset Record</span>
+            <h2>{{ selectedAsset.name }}</h2>
+          </div>
+          <button class="global-modal-close-btn" (click)="closeDetail()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="global-modal-body">
+          <div class="detail-name-section">
+            <span class="status-badge large" [ngClass]="getStatusClass(selectedAsset.status)">
+              <span class="status-dot"></span> {{ selectedAsset.status }}
+            </span>
+          </div>
+
+          <div class="detail-info-grid">
+            <div class="detail-info-item">
+              <label>Asset Type</label>
+              <span>{{ selectedAsset.type }}</span>
+            </div>
+            <div class="detail-info-item">
+              <label>Serial Number</label>
+              <span class="mono">{{ selectedAsset.serialNumber }}</span>
+            </div>
+            <div class="detail-info-item">
+              <label>Division</label>
+              <span class="highlight">{{ selectedAsset.division }}</span>
+            </div>
+            <div class="detail-info-item">
+              <label>Asset ID</label>
+              <span class="mono">#{{ selectedAsset.id }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="global-modal-footer">
+          <button class="close-detail-btn" (click)="closeDetail()">Close</button>
+          <button class="assura-btn-primary" (click)="openEditAssetModal(selectedAsset)">Edit Asset</button>
+        </div>
+      </div>
     </div>
+  }
+
+  <!-- Add Asset Modal -->
+  @if (isAddAssetModalOpen) {
+    <div class="global-modal-overlay" (click)="closeAddAssetModal()">
+      <div class="glass-modal global-modal-card" (click)="$event.stopPropagation()">
+        <div class="global-modal-header">
+          <h2>Add New Asset</h2>
+          <button class="global-modal-close-btn" (click)="closeAddAssetModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="global-modal-body">
+          <div class="form-group">
+            <label>Asset Name</label>
+            <input class="glass-input" type="text" name="assetName" [ngModel]="newAsset.name" (ngModelChange)="newAsset.name = $event" placeholder="e.g. Dell Latitude 7420">
+          </div>
+          <div class="form-group">
+            <label>Serial Number</label>
+            <input class="glass-input" type="text" name="serialNumber" [ngModel]="newAsset.serialNumber" (ngModelChange)="newAsset.serialNumber = $event" placeholder="e.g. S/N 12345XYZ">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select class="glass-select" name="assetType" [ngModel]="newAsset.type" (ngModelChange)="newAsset.type = $event">
+              <option value="Laptop">Laptop</option>
+              <option value="Monitor">Monitor</option>
+              <option value="Peripheral">Peripheral</option>
+              <option value="Networking">Networking</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Division</label>
+            <input class="glass-input" type="text" name="division" [ngModel]="newAsset.division" (ngModelChange)="newAsset.division = $event" placeholder="e.g. IT Department">
+          </div>
+        </div>
+        <div class="global-modal-footer">
+          <button class="close-detail-btn" (click)="closeAddAssetModal()">Cancel</button>
+          <button class="assura-btn-primary" (click)="submitAddAsset()">Add Asset</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Edit Asset Modal -->
+  @if (isEditAssetModalOpen && editingAsset) {
+    <div class="global-modal-overlay" (click)="closeEditAssetModal()">
+      <div class="glass-modal global-modal-card" (click)="$event.stopPropagation()">
+        <div class="global-modal-header">
+          <h2>Edit Asset</h2>
+          <button class="global-modal-close-btn" (click)="closeEditAssetModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="global-modal-body">
+          <div class="form-group">
+            <label>Asset Name</label>
+            <input class="glass-input" type="text" name="editAssetName" [ngModel]="editingAsset.name" (ngModelChange)="editingAsset.name = $event" placeholder="e.g. Dell Latitude 7420">
+          </div>
+          <div class="form-group">
+            <label>Serial Number</label>
+            <input class="glass-input" type="text" name="editSerialNumber" [ngModel]="editingAsset.serialNumber" (ngModelChange)="editingAsset.serialNumber = $event" placeholder="e.g. S/N 12345XYZ">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select class="glass-select" name="editAssetType" [ngModel]="editingAsset.type" (ngModelChange)="editingAsset.type = $event">
+              <option value="Laptop">Laptop</option>
+              <option value="Monitor">Monitor</option>
+              <option value="Peripheral">Peripheral</option>
+              <option value="Networking">Networking</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Division</label>
+            <input class="glass-input" type="text" name="editDivision" [ngModel]="editingAsset.division" (ngModelChange)="editingAsset.division = $event" placeholder="e.g. IT Department">
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select class="glass-select" name="editAssetStatus" [ngModel]="editingAsset.status" (ngModelChange)="editingAsset.status = $event">
+              <option value="Active">Active</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Assigned">Assigned</option>
+            </select>
+          </div>
+        </div>
+        <div class="global-modal-footer">
+          <button class="close-detail-btn" (click)="closeEditAssetModal()">Cancel</button>
+          <button class="assura-btn-primary" (click)="submitEditAsset()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
