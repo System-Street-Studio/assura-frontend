@@ -411,9 +411,26 @@ select::-ms-expand {
 
 /* Dark Mode Overrides */
 @media (prefers-color-scheme: dark) {
+    body, html, .shell-layout, .content, .main-area {
+        color: #f8fafc;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #f8fafc;
+    }
+
+    p, label {
+        color: #94a3b8;
+    }
+
+    button:not(.assura-btn-primary):not(.assura-btn-danger) {
+        color: #f8fafc;
+    }
+
     .assura-card {
         background: #0f172a;
         border-color: #1e293b;
+        color: #f8fafc;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
     }
 
@@ -430,7 +447,7 @@ select::-ms-expand {
     }
 
     .assura-card-subtitle {
-        color: #64748b;
+        color: #94a3b8;
     }
 
     .assura-page-title {
