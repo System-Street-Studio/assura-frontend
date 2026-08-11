@@ -1,158 +1,127 @@
-<div class="container">
-<div class="header-section">
-      <div class ="page-title">Requests</div>      
+<div class="approval-detail-page">
+  <div class="header-section">
+    <button class="back-link-btn" (click)="close()">
+      <mat-icon>arrow_back</mat-icon> Back to Requests
+    </button>
+    <div class="page-title-row">
+      <h1 class="assura-page-title">Discard Request Details</h1>
+      <span class="request-id-pill">ID: #{{ request().id }}</span>
     </div>
-    
-    <div class="modal-overlay">
-  <div class="modal-container">
-    <div class="modal-header">
-      <h2>Discard Request Details    ( id: #{{ request().id }} )</h2>
-      <button class="close-btn" (click)="close()">
-        <mat-icon>close</mat-icon>
-      </button>
+  </div>
+
+  <div class="detail-container">
+    <!-- Hero Banner -->
+    <div class="glass-card hero-banner">
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="asset-category-tag">{{ request().category || 'Decommission' }}</div>
+          <h2 class="hero-asset-name">{{ request().assetName }}</h2>
+          <div class="requester-line">
+            <mat-icon>person</mat-icon>
+            <span><strong>{{ request().name }}</strong> (ID: {{ request().requesterId || request().employeeId || request().employee || 'N/A' }})</span>
+          </div>
+        </div>
+        <div class="hero-right">
+          <span class="status-badge large" [ngClass]="(request().status || 'pending').toLowerCase()">
+            <span class="status-dot"></span> {{ request().status || 'Pending' }}
+          </span>
+        </div>
+      </div>
     </div>
 
-    <div class="details-grid">
-      <!-- Line 1: Asset Name | Asset Category -->
-      <div class="info-group">
-        <label>Asset Name</label>
-        <p class="bold-text">{{ request().assetName }}</p>
+    <!-- Details Card -->
+    <div class="glass-card info-card">
+      <div class="card-section-header">
+        <mat-icon>delete_sweep</mat-icon>
+        <h3>Asset Decommission & Scrapping Information</h3>
       </div>
 
-      <div class="info-group">
-        <label>Asset Category</label>
-        <p class="bold-text">{{ request().category }}</p>
+      <div class="info-grid-2">
+        <div class="info-item">
+          <span class="info-label">Submission Date</span>
+          <span class="info-value">{{ request().date | date:'medium' }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Priority Level</span>
+          <span class="priority-pill" [ngClass]="(request().priority || 'normal').toLowerCase()">
+            {{ request().priority || 'Normal' }}
+          </span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Asset Category</span>
+          <span class="info-value">{{ request().category || 'General Asset' }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Status</span>
+          <span class="status-badge" [ngClass]="(request().status || 'pending').toLowerCase()">
+            <span class="status-dot"></span> {{ request().status || 'Pending' }}
+          </span>
+        </div>
+
+        <div class="info-item full-width">
+          <span class="info-label">Reason for Discarding</span>
+          <p class="info-text-block highlight">{{ request().justification || 'No specific discard justification recorded.' }}</p>
+        </div>
+
+        <div class="info-item full-width">
+          <span class="info-label">Technical Condition & Additional Details</span>
+          <p class="info-text-block">{{ request().specs || 'No additional technical notes.' }}</p>
+        </div>
       </div>
 
-      <!-- Line 2: Employee Name | Employee ID -->
-      <div class="info-group">
-        <label>Employee Name</label>
-        <p class="bold-text">{{ request().name }}</p>
-      </div>
-
-      <div class="info-group">
-        <label>Employee ID</label>
-        <p class="bold-text">{{ request().requesterId || request().employeeId || request().employee || 'N/A' }}</p>
-      </div>
-
-      <!-- Line 3: Submitted Date & Time | Priority -->
-      <div class="info-group">
-        <label>Submitted Date & Time</label>
-        <p class="bold-text">{{ request().date | date:'medium' }}</p>
-      </div>
-
-      <div class="info-group">
-        <label>Priority</label>
-        <p class="bold-text" [ngClass]="'priority-' + request().priority.toLowerCase()">{{ request().priority }}</p>
-      </div>
-
-      <!-- Full Width: Additional Details -->
-      <div class="info-group full-width">
-        <label>Additional Details</label>
-        <p class="bold-text">{{ request().specs }}</p>
-      </div>
-
-      <!-- Full Width: Reason for Discarding -->
-      <div class="info-group full-width">
-        <label>Reason for Discarding</label>
-        <p class="bold-text">{{ request().justification }}</p>
-      </div>
-
-      
-       <!-- Attachments Section -->
+      <!-- Attachments Section -->
       @if (request()!.attachments && (request()!.attachments?.length ?? 0) > 0) {
-        <div class="info-group full-width">
-          <label>Attachments</label>
-        <div class="card full-width attachments-section">
-          <h5 class="section-title">
-            <mat-icon>attach_file</mat-icon>
-            Attached Files ({{ request()!.attachments?.length ?? 0 }})
-          </h5>
+        <div class="attachments-block">
+          <span class="info-label">Inspection & Scrapping Reports ({{ request()!.attachments?.length ?? 0 }})</span>
           <div class="attachments-list">
             @for (attachment of request()!.attachments; track attachment.id) {
-              <div class="attachment-item">
+              <div class="attachment-item-card">
                 <div class="attachment-info">
                   <mat-icon class="file-type-icon">{{ getFileIcon(attachment.fileName) }}</mat-icon>
                   <div class="file-details">
-                    <p class="file-name">{{ attachment.fileName }}</p>
-                    <div class="file-meta">
-                      <span class="file-size">{{ formatFileSize(attachment.fileSize) }}</span>
-                      @if (attachment.uploadedDate) {
-                        <span class="file-date">
-                          {{ attachment.uploadedDate | date:'short' }}
-                        </span>
-                      }
-                    </div>
+                    <span class="file-name">{{ attachment.fileName }}</span>
+                    <span class="file-meta">{{ formatFileSize(attachment.fileSize) }}</span>
                   </div>
                 </div>
-                <button 
-                  class="download-btn" 
-                  (click)="downloadFile(attachment)"
-                  title="Download file"
-                >
+                <button class="download-icon-btn" (click)="downloadFile(attachment)" title="Download report">
                   <mat-icon>download</mat-icon>
                 </button>
               </div>
             }
           </div>
         </div>
-        </div>
-      }        
-    
-
-      <!-- Full Width: Status -->
-      <div class="info-group full-width">
-        <label>Status</label>
-        <span class="status-badge" [ngClass]="request().status.toLowerCase()">{{ request().status }}</span>
-      </div>
+      }
     </div>
 
-    <hr />
-
-    <div class="action-buttons">
-      <button class="btn-approve" (click)="approveRequest()">
-        <mat-icon>delete_forever</mat-icon> Confirm Discard
-      </button>
-      <button class="btn-reject" (click)="rejectRequest()">
-        <mat-icon>close</mat-icon> Reject Request
-      </button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" *ngIf="showPopup()">
-  <div class="glass-card" [class.reject]="popupType() === 'reject'">
-    
-    <div class="icon-container">
-      <div class="ripple-ring r1"></div>
-      <div class="ripple-ring r2"></div>
-      <div class="main-circle">
-        <svg class="checkmark" viewBox="0 0 52 52">
-          <path class="checkmark-path" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-        </svg>
-      </div>
-    </div>
-
-    <div class="content-container">
-      <button class="btn-close" (click)="closePopup()">
-        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-      </button>
-      
-      <div class="text-block">
-        <h2 class="gradient-text">Success!</h2>
-        <p>{{ popupMessage() }}</p>
-      </div>
-
-      <div class="actions">
-        <button class="btn-done" (click)="closePopup()">
-          <span>Done</span>
-          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+    <!-- Actions Panel -->
+    <div class="glass-card actions-panel">
+      <div class="action-buttons-row">
+        <button class="btn-approve discard-confirm-btn" (click)="approveRequest()">
+          <mat-icon>delete_forever</mat-icon> Confirm Decommission
+        </button>
+        <button class="btn-reject" (click)="rejectRequest()">
+          <mat-icon>cancel</mat-icon> Reject Request
         </button>
       </div>
     </div>
-
-    <div class="progress-bar"></div>
   </div>
-</div>
 
+  <!-- Confirmation / Success Modal -->
+  @if (showPopup()) {
+    <div class="overlay" (click)="closePopup()">
+      <div class="glass-modal" [class.reject]="popupType() === 'reject'" (click)="$event.stopPropagation()">
+        <div class="modal-icon-badge">
+          <mat-icon>{{ popupType() === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+        </div>
+        <div class="modal-body-text">
+          <h3>{{ popupType() === 'success' ? 'Discard Approved' : 'Request Processed' }}</h3>
+          <p>{{ popupMessage() }}</p>
+        </div>
+        <button class="modal-done-btn" (click)="closePopup()">Done</button>
+      </div>
+    </div>
+  }
 </div>

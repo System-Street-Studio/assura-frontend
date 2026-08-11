@@ -1,81 +1,134 @@
-<div class="dashboard-wrapper">
-  <div class="content-padding">
-    <h1 class="page-title">Dashboard</h1>
+<div class="division-overview-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="assura-page-title">Division Head Dashboard</h1>
+      <p class="page-subtitle">Monitor division asset valuation, department allocations, and pending approvals.</p>
+    </div>
+  </div>
 
-   @if (isLoading()) {
-      <div class="loading-state">
-        <mat-icon class="spin-animation">sync</mat-icon>
-        <p>Loading dashboard data... Please wait.</p>
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-icon class="spin-animation">sync</mat-icon>
+      <p>Loading dashboard metrics... Please wait.</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="error-alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  } @else {
+    
+    <!-- ── 1. KPI Stats Grid ── -->
+    <section class="metrics-section">
+      <div class="metrics-grid-4">
+        <!-- Total Asset Value -->
+        <div class="assura-card stat-card border-blue">
+          <div class="stat-header">
+            <span class="stat-label">Total Purchase Value</span>
+            <div class="icon-box blue-icon">
+              <mat-icon>account_balance_wallet</mat-icon>
+            </div>
+          </div>
+          <div class="stat-value">{{ formatNumber(totalAssetValue()) }}</div>
+          <div class="stat-desc">Cumulative value of division assets</div>
+        </div>
+
+        <!-- Assigned Assets -->
+        <div class="assura-card stat-card border-green">
+          <div class="stat-header">
+            <span class="stat-label">Assigned Assets</span>
+            <div class="icon-box green-icon">
+              <mat-icon>inventory_2</mat-icon>
+            </div>
+          </div>
+          <div class="stat-value">{{ totalAssetsCount() }}</div>
+          <div class="stat-desc">Active equipment in your division</div>
+        </div>
+
+        <!-- Pending Requests -->
+        <div class="assura-card stat-card border-amber">
+          <div class="stat-header">
+            <span class="stat-label">Pending Requests</span>
+            <div class="icon-box amber-icon">
+              <mat-icon>pending_actions</mat-icon>
+            </div>
+          </div>
+          <div class="stat-value">{{ activeRequestsCount() }}</div>
+          <div class="stat-desc">Awaiting your division approval</div>
+        </div>
+
+        <!-- Transferred Assets -->
+        <div class="assura-card stat-card border-purple">
+          <div class="stat-header">
+            <span class="stat-label">Transferred Assets</span>
+            <div class="icon-box purple-icon">
+              <mat-icon>swap_horiz</mat-icon>
+            </div>
+          </div>
+          <div class="stat-value">{{ transferredAssetsCount() }}</div>
+          <div class="stat-desc">Cross-division transfers</div>
+        </div>
       </div>
-    } @else if (errorMessage()) {
-      <div class="error-alert">{{ errorMessage() }}</div>
-    } @else {
-      
-      <!-- Overview Section -->
-      <section class="section">
-        <h3 class="section-label">Overview</h3>
-        <div class="grid-4">
-          <div class="stat-card border-blue">
-            <div class="stat-top">Division Total Purchase Values</div>
-            <div class="stat-val-container">
-              <span class="stat-val">{{ formatNumber(totalAssetValue()) }}</span>
-            </div>
-            <div class="stat-sub">All division assets value</div>
-          </div>
+    </section>
 
-          <div class="stat-card border-green">
-            <div class="stat-top">Division Assigned Assets</div>
-            <div class="stat-val-container">
-              <span class="stat-val">{{ totalAssetsCount() }}</span>
-            </div>
-            <div class="stat-sub">Total assets in division</div>
-          </div>
-
-          <div class="stat-card border-yellow">
-            <div class="stat-top">Pending Requests Count</div>
-            <div class="stat-val-container">
-              <span class="stat-val">{{ activeRequestsCount() }}</span>
-            </div>
-            <div class="stat-sub">Pending asset requests</div>
-          </div>
-
-          <div class="stat-card border-green">
-            <div class="stat-top">Transferred Assets</div>
-            <div class="stat-val-container">
-              <span class="stat-val">{{ transferredAssetsCount() }}</span>
-            </div>
-            <div class="stat-sub">Assets transferred out</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Quick Action Section -->
-      <section class="section mt-30">
-        <h3 class="section-label">Quick Actions</h3>
-        <div class="grid-3">
-          <button class="action-btn" routerLink="/approvals/assets">
+    <!-- ── 2. Quick Actions ── -->
+    <section class="actions-section">
+      <h3 class="section-title">Quick Actions</h3>
+      <div class="actions-grid-3">
+        <button class="action-card-btn" routerLink="/approvals/assets">
+          <div class="action-icon-circle blue">
             <mat-icon>domain</mat-icon>
-            <span>View My Division Assets</span>
-          </button>
-          <button class="action-btn" routerLink="/approvals/requests">
-            <mat-icon>assignment_turned_in</mat-icon>
-            <span>Review New Assets Requests</span>
-          </button>
-          <button class="action-btn" routerLink="/approvals/transfers">
-            <mat-icon>compare_arrows</mat-icon>
-            <span>View All Transferred Assets</span>
-          </button>
-        </div>
-      </section>
+          </div>
+          <div class="action-card-info">
+            <h4>Division Assets</h4>
+            <p>Browse & inspect all assets allocated to your team</p>
+          </div>
+          <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+        </button>
 
-      <!-- Pending Requests Table -->
-      <div class="details-layout">
-        <div class="white-panel">
-          <h3>Pending Requests  ({{ pendingRequests().length }})</h3>
-          <table class="data-table">
+        <button class="action-card-btn" routerLink="/approvals/requests">
+          <div class="action-icon-circle amber">
+            <mat-icon>assignment_turned_in</mat-icon>
+          </div>
+          <div class="action-card-info">
+            <h4>Review Requests</h4>
+            <p>Approve or reject pending employee asset requests</p>
+          </div>
+          <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+        </button>
+
+        <button class="action-card-btn" routerLink="/approvals/transfers">
+          <div class="action-icon-circle purple">
+            <mat-icon>compare_arrows</mat-icon>
+          </div>
+          <div class="action-card-info">
+            <h4>Transfers Hub</h4>
+            <p>Manage incoming & outgoing inter-division transfers</p>
+          </div>
+          <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+        </button>
+      </div>
+    </section>
+
+    <!-- ── 3. Pending Requests Table ── -->
+    <section class="table-section">
+      <div class="glass-panel">
+        <div class="panel-header-row">
+          <div class="panel-title-group">
+            <h3 class="panel-title">Pending Requests Awaiting Action</h3>
+            <span class="count-pill">{{ pendingRequests().length }} pending</span>
+          </div>
+          <a routerLink="/approvals/requests" class="assura-btn-secondary view-all-btn">
+            View All in Requests Hub <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="assura-table">
             <thead>
               <tr>
-                <th>Item</th>
+                <th>Item / Asset Name</th>
                 <th>Request Date</th>
                 <th>Request Type</th>
                 <th>Priority</th>
@@ -83,22 +136,32 @@
             </thead>
             <tbody>
               @for (req of pendingRequests(); track $index) {
-                <tr>
-                  <td>{{ req.item }}</td>
-                  <td>{{ formatDate(req.date) }}</td>
+                <tr class="table-row" routerLink="/approvals/requests">
+                  <td class="item-name-cell">
+                    <div class="item-info">
+                      <mat-icon class="item-icon">description</mat-icon>
+                      <span class="name-text">{{ req.item }}</span>
+                    </div>
+                  </td>
+                  <td class="date-cell">{{ formatDate(req.date) }}</td>
                   <td>
-                    <span class="req-type" [ngClass]="(req.type || '').toLowerCase()">
+                    <span class="request-type-badge" [ngClass]="(req.type || '').toLowerCase()">
                       {{ req.type }}
                     </span>
                   </td>
-                  <td [ngClass]="'priority-' + (req.priority || '').toLowerCase()">
-                    {{ req.priority }}
+                  <td>
+                    <span class="priority-pill" [ngClass]="(req.priority || 'normal').toLowerCase()">
+                      {{ req.priority || 'Normal' }}
+                    </span>
                   </td>
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="4" style="text-align: center; padding: 20px;">
-                    No pending requests found.
+                  <td colspan="4" class="empty-cell">
+                    <div class="empty-table-state">
+                      <mat-icon>check_circle_outline</mat-icon>
+                      <p>All caught up! No pending requests require your review right now.</p>
+                    </div>
                   </td>
                 </tr>
               }
@@ -106,6 +169,6 @@
           </table>
         </div>
       </div>
-    }
-  </div>
+    </section>
+  }
 </div>
