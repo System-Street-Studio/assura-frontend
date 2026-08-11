@@ -1,86 +1,85 @@
-<div class="page">
-  <!-- Header -->
-  <div class="page-header">
-    <div class="header-left">
-      <h1 class="page-title">Products</h1>
-      <span class="item-count">{{ filteredProducts.length }} of {{ allProducts.length }} products</span>
-    </div>
-    <div class="header-actions">
-      <button class="btn outline" title="Export to CSV">
-        <mat-icon class="btn-icon">file_download</mat-icon>
-        Export
-      </button>
-      <button class="btn primary" [routerLink]="['/inventory/products/new']" type="button">
-        <mat-icon class="btn-icon">add</mat-icon>
-        New Product
-      </button>
-    </div>
-  </div>
-
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="toolbar-left">
-      <div class="search-box">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input class="search-input" placeholder="Search by name, ID, manufacturer, model..." [(ngModel)]="search"
-          (input)="applyFilters()" />
-        <button class="search-clear" *ngIf="search" (click)="search = ''; applyFilters()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-
-      <button class="btn-text" *ngIf="search" (click)="clearFilters()">
-        <mat-icon>filter_list_off</mat-icon> Clear
-      </button>
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h1 class="assura-page-title" style="margin-bottom: 4px;">Products</h1>
+            <span style="color: #64748b; font-size: 14px;">{{ filteredProducts.length }} of {{ allProducts.length }} products</span>
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <button class="assura-btn assura-btn-secondary" title="Export to CSV">
+                <i class="material-icons" style="font-size: 18px;">file_download</i>
+                Export
+            </button>
+            <button class="assura-btn assura-btn-primary" [routerLink]="['/inventory/products/new']" type="button">
+                <i class="material-icons" style="font-size: 18px;">add</i>
+                New Product
+            </button>
+        </div>
     </div>
 
-    <div class="toolbar-right">
-      <button class="btn outline sm" [disabled]="selectedCount === 0" title="Delete selected">
-        <mat-icon class="btn-icon">delete_outline</mat-icon>
-        Delete
-      </button>
+    <!-- Toolbar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div style="display: flex; gap: 16px; align-items: center;">
+            <div style="position: relative; width: 400px;">
+                <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 20px;">search</mat-icon>
+                <input type="text" class="assura-input" style="padding-left: 40px; padding-right: 40px;" placeholder="Search by name, ID, manufacturer, model..." [(ngModel)]="search" (input)="applyFilters()" />
+                <button *ngIf="search" (click)="search = ''; applyFilters()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; display: flex;">
+                    <mat-icon style="font-size: 18px;">close</mat-icon>
+                </button>
+            </div>
+
+            <button class="assura-btn assura-btn-secondary" style="border: none; background: transparent; box-shadow: none;" *ngIf="search" (click)="clearFilters()">
+                <i class="material-icons" style="font-size: 18px;">filter_list_off</i> Clear
+            </button>
+        </div>
+
+        <div>
+            <button class="assura-btn assura-btn-secondary" style="color: #ef4444; border-color: #fca5a5;" [disabled]="selectedCount === 0" title="Delete selected">
+                <i class="material-icons" style="font-size: 18px;">delete_outline</i>
+                Delete
+            </button>
+        </div>
     </div>
-  </div>
 
-  <!-- Table -->
-  <div class="table-container">
-    <table class="products-table">
-      <thead>
-        <tr>
-          <th class="col-check">
-            <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll($event)" />
-          </th>
-          <th>Product ID</th>
-          <th>Name</th>
-          <th>Manufacturer</th>
-          <th>Model</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let product of viewProducts" [class.row-selected]="product.selected" class="clickable-row"
-          (click)="onRowClick(product)">
-          <td class="col-check" (click)="$event.stopPropagation()">
-            <input type="checkbox" [checked]="product.selected" (change)="onRowSelect(product, $event)" />
-          </td>
-          <td class="cell-id">{{ product.id }}</td>
-          <td>{{ product.name }}</td>
-          <td>{{ product.manufacturer || '—' }}</td>
-          <td>{{ product.modelNumber || '—' }}</td>
-          <td>{{ product.description || '—' }}</td>
-        </tr>
-        <tr *ngIf="viewProducts.length === 0 && !loading">
-          <td colspan="6" class="empty-state">
-            <mat-icon class="empty-icon">inventory_2</mat-icon>
-            <div class="empty-text">No products found</div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- Table -->
+    <div class="assura-table-container">
+        <table class="assura-table">
+            <thead>
+                <tr>
+                    <th class="assura-th" style="width: 40px; text-align: center;">
+                        <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll($event)" />
+                    </th>
+                    <th class="assura-th">Product ID</th>
+                    <th class="assura-th">Name</th>
+                    <th class="assura-th">Manufacturer</th>
+                    <th class="assura-th">Model</th>
+                    <th class="assura-th">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let product of viewProducts" class="assura-tr-hover" style="cursor: pointer;" [ngStyle]="{'background': product.selected ? '#eff6ff' : ''}" (click)="onRowClick(product)">
+                    <td class="assura-td" style="text-align: center;" (click)="$event.stopPropagation()">
+                        <input type="checkbox" [checked]="product.selected" (change)="onRowSelect(product, $event)" />
+                    </td>
+                    <td class="assura-td" style="font-weight: 600; color: #4f46e5;">{{ product.id }}</td>
+                    <td class="assura-td" style="font-weight: 500; color: #0f172a;">{{ product.name }}</td>
+                    <td class="assura-td" style="color: #475569;">{{ product.manufacturer || '—' }}</td>
+                    <td class="assura-td" style="color: #475569;">{{ product.modelNumber || '—' }}</td>
+                    <td class="assura-td" style="color: #64748b;">{{ product.description || '—' }}</td>
+                </tr>
+                <tr *ngIf="viewProducts.length === 0 && !loading">
+                    <td colspan="6" class="assura-td" style="text-align: center; padding: 48px; color: #94a3b8;">
+                        <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">inventory_2</mat-icon>
+                        <div style="font-size: 16px; font-weight: 500; color: #475569;">No products found</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-  <!-- Pagination -->
-  <app-pagination *ngIf="filteredProducts.length > 0" [currentPage]="currentPage" [totalPages]="totalPages"
-    [pageNumbers]="pageNumbers" (pageChange)="setPage($event)">
-  </app-pagination>
+        <!-- Pagination -->
+        <div *ngIf="filteredProducts.length > 0" style="padding: 16px 24px; border-top: 1px solid #e2e8f0;">
+            <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pageNumbers" (pageChange)="setPage($event)">
+            </app-pagination>
+        </div>
+    </div>
 </div>

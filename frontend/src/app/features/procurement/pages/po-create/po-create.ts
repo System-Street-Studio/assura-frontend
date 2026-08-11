@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ButtonComponent } from '../../../../shared/components/button/button';
 
 import { ProcurementService } from '../../services/procurement.service';
 import { CreatePurchasingOrderItemDto } from '../../models/purchase-order.model';
@@ -13,7 +12,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
 @Component({
   selector: 'app-po-create',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './po-create.html',
   styleUrl: './po-create.css',
 })

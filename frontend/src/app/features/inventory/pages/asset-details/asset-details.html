@@ -1,164 +1,164 @@
-<div class="loading-state" *ngIf="loading">
-  <!-- Displays a spinning loading indicator until asset data is fully fetched -->
-  <mat-icon class="loading-spinner rotating">autorenew</mat-icon>
-  <p>Loading Asset Details...</p>
+<div *ngIf="loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #64748b; padding: 48px;">
+  <mat-icon style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 16px; animation: spin 1s linear infinite;">autorenew</mat-icon>
+  <p style="margin: 0; font-weight: 500;">Loading Asset Details...</p>
 </div>
 
-<div class="asset-detail-page" *ngIf="!loading && asset">
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;" *ngIf="!loading && asset">
   <!-- Navigation link to return to the main inventory table -->
-  <button class="back-link" (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
+  <button class="assura-btn assura-btn-secondary" style="border: none; background: transparent; box-shadow: none; padding: 0; color: #64748b; margin-bottom: 24px;" (click)="goBack()">
+    <mat-icon style="font-size: 18px; margin-right: 4px;">arrow_back</mat-icon>
     Back to Assets
   </button>
 
   <!-- Header row -->
-  <div class="header-row">
-    <div class="left">
-      <div class="title-row">
-        <div class="thumb-placeholder">
-          <mat-icon class="thumb-icon">devices</mat-icon>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; border-bottom: 1px solid #e2e8f0; padding-bottom: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <div style="width: 64px; height: 64px; border-radius: 12px; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center;">
+          <mat-icon style="font-size: 32px; width: 32px; height: 32px;">devices</mat-icon>
         </div>
-        <div class="title">
-          <h2>{{ asset.productName }}</h2>
-          <div class="meta">
-            Code: {{ asset.assetCode }} &bull; Tag: {{ asset.assetTag || '—' }}
+        <div>
+          <h2 style="margin: 0 0 8px 0; font-family: 'Jost'; font-size: 24px; font-weight: 700; color: #0f172a;">{{ asset.productName }}</h2>
+          <div style="color: #475569; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+            <span style="font-weight: 600; color: #0f172a;">Code:</span> {{ asset.assetCode }} <span style="color: #cbd5e1;">&bull;</span> <span style="font-weight: 600; color: #0f172a;">Tag:</span> {{ asset.assetTag || '—' }}
           </div>
         </div>
       </div>
 
-      <div class="action-tabs">
-        <button class="tab" *ngFor="let t of tabs" [class.active]="activeTab === t.id" (click)="setTab(t.id)">
+      <div style="display: flex; gap: 4px;">
+        <button *ngFor="let t of tabs" style="padding: 8px 16px; border: none; background: transparent; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; border-radius: 6px;" [ngStyle]="{'color': activeTab === t.id ? '#4f46e5' : '#64748b', 'background': activeTab === t.id ? '#eff6ff' : 'transparent'}" (click)="setTab(t.id)">
           {{ t.label }}
         </button>
       </div>
     </div>
 
-    <div class="right-actions">
-      <button class="btn blue" (click)="onClone()">
-        <mat-icon class="btn-icon">content_copy</mat-icon>
+    <div style="display: flex; gap: 12px;">
+      <button class="assura-btn assura-btn-secondary" (click)="onClone()">
+        <mat-icon style="font-size: 18px;">content_copy</mat-icon>
         Clone
       </button>
-      <button class="btn orange" (click)="onEdit()">
-        <mat-icon class="btn-icon">edit</mat-icon>
+      <button class="assura-btn assura-btn-primary" style="background: #f59e0b; border-color: #f59e0b; color: white;" (click)="onEdit()">
+        <mat-icon style="font-size: 18px;">edit</mat-icon>
         Edit
       </button>
-      <button class="btn red" (click)="onDelete()">
-        <mat-icon class="btn-icon">delete</mat-icon>
+      <button class="assura-btn assura-btn-primary" style="background: #ef4444; border-color: #ef4444; color: white;" (click)="onDelete()">
+        <mat-icon style="font-size: 18px;">delete</mat-icon>
         Delete
       </button>
     </div>
   </div>
 
   <!-- Content grid: Splits the page into a main details section (left) and a status sidebar (right) -->
-  <div class="content-grid">
-    <div class="main-col">
+  <div class="assura-grid" style="grid-template-columns: 2fr 1fr; gap: 32px;">
+    <div>
       <!-- About / QR section -->
-      <section class="about" *ngIf="activeTab === 'about'">
-        <div class="about-grid">
-          <div class="qr-block">
-            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" class="qr-image" (error)="onQrImageError()" />
-            <div class="qr-placeholder" *ngIf="!qrDataUrl">
-              <mat-icon class="qr-icon">qr_code_2</mat-icon>
+      <section *ngIf="activeTab === 'about'">
+        <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 24px;">
+          <div class="assura-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; text-align: center; border-top: 4px solid #4f46e5;">
+            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" style="width: 150px; height: 150px; margin-bottom: 16px;" (error)="onQrImageError()" />
+            <div *ngIf="!qrDataUrl" style="width: 150px; height: 150px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; border-radius: 8px;">
+              <mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #cbd5e1;">qr_code_2</mat-icon>
             </div>
-            <div class="serial">{{ asset.serialNumber || '—' }}</div>
-            <div class="assetid">{{ asset.assetCode }}</div>
-            <div class="property">Property of Assura Inventory</div>
-            <button class="btn light" (click)="onPrint()">
-              <mat-icon class="btn-icon">print</mat-icon>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">{{ asset.serialNumber || '—' }}</div>
+            <div style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">{{ asset.assetCode }}</div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 24px;">Property of Assura Inventory</div>
+            <button class="assura-btn assura-btn-secondary" style="width: 100%; justify-content: center;" (click)="onPrint()">
+              <mat-icon style="font-size: 18px;">print</mat-icon>
               Print Label
             </button>
           </div>
 
-          <div class="about-text">
-            <p class="muted">Asset QR reflects the unique identifier for tracking.</p>
-            <p class="tip">
-              Tip: Labels can be printed in bulk from the main Assets table.
-            </p>
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <p style="margin: 0 0 16px 0; color: #475569; font-size: 15px; line-height: 1.6;">Asset QR reflects the unique identifier for tracking.</p>
+            <div style="background: #f0fdf4; color: #166534; padding: 12px 16px; border-radius: 8px; border: 1px solid #bbf7d0; font-size: 14px; display: flex; gap: 8px;">
+              <mat-icon style="font-size: 18px; width: 18px; height: 18px; margin-top: 2px;">lightbulb</mat-icon>
+              <div>Tip: Labels can be printed in bulk from the main Assets table.</div>
+            </div>
           </div>
         </div>
 
-        <hr class="section-divider" />
+        <div style="margin: 32px 0; border-top: 1px solid #e2e8f0;"></div>
 
         <!-- Details -->
-        <h3 class="section-title">Asset Information</h3>
+        <h3 style="margin: 0 0 24px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #0f172a; text-transform: uppercase;">Asset Information</h3>
 
-        <div class="details-grid">
-          <div class="detail-col">
-            <div class="field">
-              <div class="label">Asset Code</div>
-              <div class="value">{{ asset.assetCode }}</div>
+        <div class="assura-grid assura-grid-cols-3" style="margin-top: 0; gap: 24px;">
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Asset Code</div>
+              <div style="font-size: 15px; font-weight: 500; color: #0f172a;">{{ asset.assetCode }}</div>
             </div>
-            <div class="field">
-              <div class="label">Asset Tag</div>
-              <div class="value">{{ asset.assetTag || '—' }}</div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Asset Tag</div>
+              <div style="font-size: 15px; font-weight: 500; color: #0f172a;">{{ asset.assetTag || '—' }}</div>
             </div>
-            <div class="field">
-              <div class="label">Serial Number</div>
-              <div class="value">{{ asset.serialNumber || '—' }}</div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Serial Number</div>
+              <div style="font-size: 15px; font-weight: 500; color: #0f172a;">{{ asset.serialNumber || '—' }}</div>
             </div>
           </div>
 
-          <div class="detail-col">
-            <div class="field">
-              <div class="label">Product</div>
-              <div class="value">{{ asset.productName }}</div>
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Product</div>
+              <div style="font-size: 15px; font-weight: 500; color: #0f172a;">{{ asset.productName }}</div>
             </div>
-            <div class="field">
-              <div class="label">Category</div>
-              <div class="value">{{ asset.categoryName }}</div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Category</div>
+              <div style="font-size: 15px; font-weight: 500; color: #0f172a;">{{ asset.categoryName }}</div>
             </div>
-            <div class="field">
-              <div class="label">Division</div>
-              <div class="value">{{ asset.divisionName }}</div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Division</div>
+              <div style="font-size: 15px; font-weight: 500; color: #0f172a;">{{ asset.divisionName }}</div>
             </div>
           </div>
 
-          <div class="detail-col">
-            <div class="field">
-              <div class="label">Supplier</div>
-              <div class="value">{{ asset.supplierName }}</div>
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Supplier</div>
+              <div style="font-size: 15px; font-weight: 500; color: #0f172a;">{{ asset.supplierName }}</div>
             </div>
-            <div class="field">
-              <div class="label">Purchase Value</div>
-              <div class="value">{{ asset.purchaseValue | currency:'LKR' }}</div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Purchase Value</div>
+              <div style="font-size: 15px; font-weight: 500; color: #0f172a;">{{ asset.purchaseValue | currency:'LKR' }}</div>
             </div>
-            <div class="field">
-              <div class="label">Asset Date</div>
-              <div class="value">{{ asset.assetDate || '—' }}</div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Asset Date</div>
+              <div style="font-size: 15px; font-weight: 500; color: #0f172a;">{{ asset.assetDate || '—' }}</div>
             </div>
           </div>
         </div>
 
-        <div class="notes-section" *ngIf="asset.notes">
-          <div class="label">Notes</div>
-          <div class="value">{{ asset.notes }}</div>
+        <div style="margin-top: 32px; background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;" *ngIf="asset.notes">
+          <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Notes</div>
+          <div style="font-size: 14px; color: #475569; line-height: 1.6;">{{ asset.notes }}</div>
         </div>
       </section>
 
       <!-- Placeholder for other tabs -->
-      <section class="tab-placeholder" *ngIf="activeTab !== 'about'">
-        <mat-icon class="placeholder-icon">history</mat-icon>
-        <p class="placeholder-text">
+      <section style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 0; color: #94a3b8;" *ngIf="activeTab !== 'about'">
+        <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">history</mat-icon>
+        <p style="margin: 0; font-size: 16px; font-weight: 500; color: #64748b;">
           {{ activeTab === 'checkout-log' ? 'Maintenance and assignment history coming soon.' : 'Additional details.' }}
         </p>
       </section>
     </div>
 
     <!-- Right sidebar -->
-    <aside class="right-col">
-      <div class="status-card">
-        <h4>Current Status</h4>
-        <div class="status-row">
-          <span class="status-dot" [ngClass]="getStatusClass()"></span>
-          <span class="status-txt">{{ getStatusLabel(asset.status) }}</span>
+    <aside>
+      <div class="assura-card" style="padding: 24px; border-top: 4px solid #64748b;">
+        <h4 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600; color: #0f172a; text-transform: uppercase;">Current Status</h4>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 15px; font-weight: 500; color: #0f172a;">
+          <span style="width: 12px; height: 12px; border-radius: 50%; display: inline-block;" [ngClass]="getStatusClass()"></span>
+          <span>{{ getStatusLabel(asset.status) }}</span>
         </div>
-        <div class="status-row" *ngIf="asset.assignedUserName">
-          <mat-icon class="status-icon">person</mat-icon>
-          <span class="status-txt">Assigned to: {{ asset.assignedUserName }}</span>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; font-size: 14px; color: #475569; background: #f1f5f9; padding: 12px; border-radius: 6px;" *ngIf="asset.assignedUserName">
+          <mat-icon style="font-size: 18px; width: 18px; height: 18px; color: #64748b;">person</mat-icon>
+          <span>Assigned to: <strong style="color: #0f172a;">{{ asset.assignedUserName }}</strong></span>
         </div>
-        <button class="btn green" (click)="onCheckin()"
+        <button class="assura-btn assura-btn-primary" style="width: 100%; justify-content: center; background: #10b981; border-color: #10b981;" (click)="onCheckin()"
           *ngIf="asset.assignedUserName || asset.status === 'Deployed' || asset.status === 'InUse'">
-          <mat-icon class="btn-icon">login</mat-icon>
+          <mat-icon style="font-size: 18px;">login</mat-icon>
           Check-In
         </button>
       </div>
@@ -167,38 +167,39 @@
 
   <!-- ═══ CHECK-IN MODAL ═══ -->
   <!-- Opens as an overlay allowing users to return a deployed asset and log its condition -->
-  <div class="overlay" *ngIf="showCheckinModal" (click)="cancelCheckin()">
-    <div class="checkin-dialog" (click)="$event.stopPropagation()">
-      <div class="checkin-icon-wrap">
-        <mat-icon class="checkin-icon">assignment_return</mat-icon>
-      </div>
+  <div class="modal-overlay" *ngIf="showCheckinModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="cancelCheckin()">
+    <div class="assura-card" style="width: 100%; max-width: 450px; padding: 0; overflow: hidden; border-top: 4px solid #10b981;" (click)="$event.stopPropagation()">
+      <div style="padding: 32px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: #d1fae5; color: #10b981; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+          <mat-icon style="font-size: 32px; width: 32px; height: 32px;">assignment_return</mat-icon>
+        </div>
+        <h3 style="margin: 0 0 8px 0; font-family: 'Jost'; font-size: 20px; font-weight: 700; color: #0f172a;">Quick Check-In</h3>
+        <p style="margin: 0 0 24px 0; color: #64748b; font-size: 15px;">
+          Returning <strong style="color: #0f172a;">{{ asset.assetCode }}</strong>
+        </p>
 
-      <h3>Quick Check-In</h3>
-      <p class="checkin-subtitle">
-        Returning <strong>{{ asset.assetCode }}</strong>
-      </p>
-
-      <div class="checkin-field">
-        <label class="checkin-label">Return Condition</label>
-        <div class="condition-options">
-          <label class="condition-option" [class.selected]="checkinCondition === 'Good'">
-            <input type="radio" name="condition" value="Good" [(ngModel)]="checkinCondition" />
-            <span>Good</span>
-          </label>
-          <label class="condition-option" [class.selected]="checkinCondition === 'Fair'">
-            <input type="radio" name="condition" value="Fair" [(ngModel)]="checkinCondition" />
-            <span>Fair</span>
-          </label>
-          <label class="condition-option" [class.selected]="checkinCondition === 'Damaged'">
-            <input type="radio" name="condition" value="Damaged" [(ngModel)]="checkinCondition" />
-            <span>Damaged</span>
-          </label>
+        <div style="width: 100%; text-align: left; margin-bottom: 32px;">
+          <label class="assura-label">Return Condition</label>
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;" [ngStyle]="{'background': checkinCondition === 'Good' ? '#eff6ff' : '', 'border-color': checkinCondition === 'Good' ? '#bfdbfe' : ''}">
+              <input type="radio" name="condition" value="Good" [(ngModel)]="checkinCondition" style="width: 18px; height: 18px; accent-color: #3b82f6;" />
+              <span style="font-weight: 500; color: #0f172a;">Good</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;" [ngStyle]="{'background': checkinCondition === 'Fair' ? '#fef3c7' : '', 'border-color': checkinCondition === 'Fair' ? '#fde68a' : ''}">
+              <input type="radio" name="condition" value="Fair" [(ngModel)]="checkinCondition" style="width: 18px; height: 18px; accent-color: #f59e0b;" />
+              <span style="font-weight: 500; color: #0f172a;">Fair</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;" [ngStyle]="{'background': checkinCondition === 'Damaged' ? '#fee2e2' : '', 'border-color': checkinCondition === 'Damaged' ? '#fecaca' : ''}">
+              <input type="radio" name="condition" value="Damaged" [(ngModel)]="checkinCondition" style="width: 18px; height: 18px; accent-color: #ef4444;" />
+              <span style="font-weight: 500; color: #0f172a;">Damaged</span>
+            </label>
+          </div>
         </div>
       </div>
 
-      <div class="checkin-actions">
-        <button class="btn outline" (click)="cancelCheckin()" [disabled]="checkinProcessing">Cancel</button>
-        <button class="btn green" (click)="confirmCheckin()" [disabled]="checkinProcessing">
+      <div style="display: flex; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0; background: #f8fafc;">
+        <button class="assura-btn assura-btn-secondary" style="flex: 1; justify-content: center;" (click)="cancelCheckin()" [disabled]="checkinProcessing">Cancel</button>
+        <button class="assura-btn assura-btn-primary" style="flex: 1; justify-content: center; background: #10b981; border-color: #10b981;" (click)="confirmCheckin()" [disabled]="checkinProcessing">
           Confirm Check-In
         </button>
       </div>
@@ -207,13 +208,18 @@
 
   <!-- Delete Confirmation -->
   <!-- Prompt to prevent accidental permanent deletion of an asset -->
-  <div class="overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()">
-    <div class="confirm-dialog" (click)="$event.stopPropagation()">
-      <h3>Delete Asset?</h3>
-      <p>Are you sure you want to remove <strong>{{ asset.assetCode }}</strong>?</p>
-      <div class="confirm-actions">
-        <button class="btn outline" (click)="cancelDelete()">Cancel</button>
-        <button class="btn red" (click)="confirmDelete()" [disabled]="deleting">Delete</button>
+  <div class="modal-overlay" *ngIf="showDeleteConfirm" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="cancelDelete()">
+    <div class="assura-card" style="width: 100%; max-width: 400px; padding: 0; overflow: hidden; border-top: 4px solid #ef4444;" (click)="$event.stopPropagation()">
+      <div style="padding: 32px; text-align: center;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+          <mat-icon style="font-size: 32px; width: 32px; height: 32px;">warning</mat-icon>
+        </div>
+        <h3 style="margin: 0 0 12px 0; font-family: 'Jost'; font-size: 20px; font-weight: 700; color: #0f172a;">Delete Asset?</h3>
+        <p style="margin: 0; color: #475569; font-size: 15px; line-height: 1.5;">Are you sure you want to remove <strong style="color: #0f172a;">{{ asset.assetCode }}</strong>?</p>
+      </div>
+      <div style="display: flex; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0; background: #f8fafc;">
+        <button class="assura-btn assura-btn-secondary" style="flex: 1; justify-content: center;" (click)="cancelDelete()">Cancel</button>
+        <button class="assura-btn assura-btn-primary" style="flex: 1; justify-content: center; background: #ef4444; border-color: #ef4444;" (click)="confirmDelete()" [disabled]="deleting">Delete</button>
       </div>
     </div>
   </div>
@@ -223,8 +229,8 @@
     (closed)="onResultClosed()"></app-result-overlay>
 
   <!-- Print-only container to output only QR code and Asset ID on paper -->
-  <div class="print-only-label" *ngIf="qrDataUrl">
-    <img [src]="qrDataUrl" alt="QR Code Label" />
-    <div class="print-asset-id">{{ asset.assetCode }}</div>
+  <div style="display: none; @media print { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; height: 100vh; position: fixed; top: 0; left: 0; background: white; z-index: 9999; }" *ngIf="qrDataUrl">
+    <img [src]="qrDataUrl" alt="QR Code Label" style="width: 200px; height: 200px; margin-bottom: 16px;" />
+    <div style="font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: bold;">{{ asset.assetCode }}</div>
   </div>
 </div>

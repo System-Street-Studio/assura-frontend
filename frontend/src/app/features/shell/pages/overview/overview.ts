@@ -23,10 +23,16 @@ import { DivisionService } from '../../../inventory/services/division.service';
   template: `
     <div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
       <!-- Greeting Banner -->
-      <div class="assura-greeting-banner">
-        <h2 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h2>
-        <p class="assura-greeting-date">{{ currentDate | date:'EEEE, MMMM d, y — h:mm a' }}</p>
-      </div>
+      <section class="assura-greeting-banner" style="display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; margin-bottom: 24px;">
+        <!-- Decorative blurred circles; purely visual, pointer-events: none -->
+        <div class="banner-bg-shape"></div>
+        <div class="banner-bg-shape secondary"></div>
+
+        <div class="welcome-left">
+          <h1 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h1>
+          <p class="assura-greeting-date">Here's your system overview for {{ currentDate | date:'EEEE, MMMM d, yyyy — h:mm a' }}</p>
+        </div>
+      </section>
 
       <h1 class="assura-page-title">All Assets</h1>
 

@@ -1,62 +1,63 @@
-<div class="supplier-details-container">
-    <div class="page-header">
-        <h1 class="page-title">Supplier Details</h1>
-    </div>
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <h1 class="assura-page-title" style="margin-bottom: 24px;">Supplier Details</h1>
 
-    <div class="details-card" *ngIf="supplier; else notFound">
-        <div class="details-grid">
+    <div class="assura-card" *ngIf="supplier; else notFound" style="max-width: 800px; margin: 0 auto; border-top: 4px solid #3b82f6;">
+        <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 32px;">
             <!-- Left Column -->
-            <div class="details-column">
-                <div class="detail-row">
-                    <span class="label">Supplier ID :</span>
-                    <span class="value">{{ supplier.id }}</span>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Supplier ID</span>
+                    <span style="font-size: 16px; font-weight: 600; color: #0f172a;">{{ supplier.id }}</span>
                 </div>
-                <div class="detail-row">
-                    <span class="label">Supplier Name :</span>
-                    <span class="value">{{ supplier.name }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Supplier Name</span>
+                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.name }}</span>
                 </div>
-                <div class="detail-row">
-                    <span class="label">Email :</span>
-                    <span class="value">{{ supplier.email }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Email</span>
+                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.email }}</span>
                 </div>
-                <div class="detail-row">
-                    <span class="label">Address :</span>
-                    <span class="value">{{ supplier.address || 'N/A' }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Address</span>
+                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.address || 'N/A' }}</span>
                 </div>
             </div>
 
             <!-- Right Column -->
-            <div class="details-column">
-                <div class="detail-row">
-                    <span class="label">Contact Number :</span>
-                    <span class="value">{{ supplier.phone || supplier.contactNumber || 'N/A' }}</span>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Contact Number</span>
+                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.phone || supplier.contactNumber || 'N/A' }}</span>
                 </div>
-                <div class="detail-row">
-                    <span class="label">Contact Person :</span>
-                    <span class="value">{{ supplier.contactPerson || 'N/A' }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Contact Person</span>
+                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.contactPerson || 'N/A' }}</span>
                 </div>
-                <div class="detail-row">
-                    <span class="label">Website :</span>
-                    <span class="value">{{ supplier.website || supplier.url || 'N/A' }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Website</span>
+                    <span style="font-size: 16px; font-weight: 500; color: #4f46e5;">{{ supplier.website || supplier.url || 'N/A' }}</span>
                 </div>
-                <div class="detail-row">
-                    <span class="label">Date Registered :</span>
-                    <span class="value">{{ supplier.dateRegistered || (supplier.createdAt | date:'yyyy MMM dd') || 'N/A'
-                        }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Date Registered</span>
+                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.dateRegistered || (supplier.createdAt | date:'yyyy MMM dd') || 'N/A' }}</span>
                 </div>
             </div>
         </div>
 
-        <div class="footer-actions">
-            <button class="edit-btn" (click)="goToEdit()">Edit</button>
-            <button class="close-btn" (click)="goBack()">Close</button>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+            <button class="assura-btn assura-btn-secondary" (click)="goBack()">Close</button>
+            <button class="assura-btn assura-btn-primary" (click)="goToEdit()">
+                <i class="material-icons" style="font-size: 18px;">edit</i>
+                Edit Supplier
+            </button>
         </div>
     </div>
 
     <ng-template #notFound>
-        <div class="details-card">
-            <p class="not-found" *ngIf="!isLoading">Supplier with ID "{{ routeId }}" not found.</p>
-            <p class="not-found" *ngIf="isLoading">Loading supplier details...</p>
+        <div class="assura-card" style="max-width: 800px; margin: 0 auto; text-align: center; padding: 48px;">
+            <i class="material-icons" style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px;">error_outline</i>
+            <p style="font-size: 16px; color: #475569; font-weight: 500;" *ngIf="!isLoading">Supplier with ID "{{ routeId }}" not found.</p>
+            <p style="font-size: 16px; color: #475569; font-weight: 500;" *ngIf="isLoading">Loading supplier details...</p>
         </div>
     </ng-template>
 </div>

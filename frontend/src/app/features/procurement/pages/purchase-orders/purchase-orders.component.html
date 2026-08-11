@@ -1,77 +1,72 @@
-<div class="po-container">
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 40px;">
 
     <!-- Section 1: List of Purchasing Orders -->
-    <section class="orders-section">
-        <h2 class="section-title">List of Purchasing Orders</h2>
-
-        <div class="controls-row">
-            <div class="search-bar">
-                <mat-icon class="search-icon">search</mat-icon>
-                <input type="text" placeholder="Search" class="search-input" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+    <section>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h2 class="assura-page-title" style="margin-bottom: 0;">List of Purchasing Orders</h2>
+            <div style="position: relative; width: 300px;">
+                <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 20px;">search</mat-icon>
+                <input type="text" placeholder="Search Orders..." class="assura-input" style="padding-left: 40px;" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
             </div>
-            <!-- <div class="filter-wrapper">
-                <button class="filter-btn" (click)="toggleFilter()">
-                    <mat-icon>filter_list</mat-icon> Filter
-                </button>
-                <app-filter-dropdown *ngIf="isFilterOpen" [groups]="filterGroups"
-                    (closed)="onFilterClose($event)"></app-filter-dropdown>
-            </div> -->
         </div>
 
-        <div class="table-container">
+        <div class="assura-table-container">
             <ng-container *ngIf="!isLoading">
-                <table class="orders-table" *ngIf="filteredOrders.length > 0">
+                <table class="assura-table" *ngIf="filteredOrders.length > 0">
                     <thead>
                         <tr>
-                            <th>PO ID</th>
-                            <th>Supplier</th>
-                            <th>Date</th>
+                            <th class="assura-th">PO ID</th>
+                            <th class="assura-th">Supplier</th>
+                            <th class="assura-th">Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let order of pagedOrders">
-                            <td (click)="navigateToDetails(order.id)"
-                                style="cursor: pointer; color: #000; font-weight: 500;">{{ order.orderNumber }}</td>
-                            <td>{{ order.supplierName || 'Unknown' }}</td>
-                            <td>{{ order.issuedDate | date:'dd MMM yyyy' }}</td>
+                        <tr *ngFor="let order of pagedOrders" class="assura-tr-hover">
+                            <td class="assura-td" (click)="navigateToDetails(order.id)" style="cursor: pointer; color: #4f46e5; font-weight: 600;">{{ order.orderNumber }}</td>
+                            <td class="assura-td" style="font-weight: 500;">{{ order.supplierName || 'Unknown' }}</td>
+                            <td class="assura-td" style="color: #64748b;">{{ order.issuedDate | date:'dd MMM yyyy' }}</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <!-- Empty State -->
-                <div *ngIf="filteredOrders.length === 0" class="empty-state">
+                <div *ngIf="filteredOrders.length === 0" style="padding: 32px; text-align: center; color: #94a3b8;">
                     No purchasing orders found.
                 </div>
 
                 <!-- Orders Pagination -->
-                <app-pagination *ngIf="filteredOrders.length > 0" [currentPage]="ordersCurrentPage"
-                    [totalPages]="ordersTotalPages" [pageNumbers]="ordersPageNumbers"
-                    (pageChange)="goToOrdersPage($event)">
-                </app-pagination>
+                <div *ngIf="filteredOrders.length > 0" style="padding: 16px 24px; border-top: 1px solid #e2e8f0;">
+                    <app-pagination [currentPage]="ordersCurrentPage" [totalPages]="ordersTotalPages" [pageNumbers]="ordersPageNumbers" (pageChange)="goToOrdersPage($event)"></app-pagination>
+                </div>
             </ng-container>
 
             <!-- Loading State -->
-            <div *ngIf="isLoading" class="loading-state">
+            <div *ngIf="isLoading" style="padding: 40px; text-align: center; color: #64748b;">
                 Loading orders...
             </div>
         </div>
     </section>
 
     <!-- Section 2: Requests Area -->
-    <section class="requests-section">
-        <h2 class="section-title">Purchasing Order Requests</h2>
+    <section>
+        <h2 class="assura-page-title" style="margin-bottom: 24px;">Purchasing Order Requests</h2>
 
-        <div class="requests-layout">
+        <div style="display: flex; gap: 24px;">
             <!-- Left: Request List -->
-            <div class="requests-list-wrapper">
-                <div class="requests-list">
-                    <div class="request-card" *ngFor="let req of pagedRequests" (click)="selectRequest(req)"
-                        [class.active]="selectedRequest === req">
-                        <div class="req-name">{{ req.employeeName }}</div>
-                        <div class="req-dept">{{ req.divisionName }}</div>
-                        <div class="req-time">{{ req.date | date:'dd MMM' }}</div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div *ngFor="let req of pagedRequests" (click)="selectRequest(req)"
+                        class="assura-card" style="cursor: pointer; min-height: auto; padding: 16px; border-left: 4px solid transparent; transition: all 0.2s;"
+                        [ngStyle]="{'border-left-color': selectedRequest === req ? '#4f46e5' : 'transparent', 'background': selectedRequest === req ? '#f8fafc' : '#ffffff'}">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div style="font-weight: 600; color: #0f172a; font-size: 15px;">{{ req.employeeName }}</div>
+                                <div style="color: #64748b; font-size: 13px; margin-top: 4px;">{{ req.divisionName }}</div>
+                            </div>
+                            <div style="color: #94a3b8; font-size: 12px; font-weight: 500;">{{ req.date | date:'dd MMM' }}</div>
+                        </div>
                     </div>
-                    <div *ngIf="requests.length === 0" class="empty-state">
+                    <div *ngIf="requests.length === 0" style="text-align: center; padding: 32px; color: #94a3b8; background: #f8fafc; border-radius: 12px;">
                         No pending requests.
                     </div>
                 </div>
@@ -83,58 +78,58 @@
             </div>
 
             <!-- Right: Asset Request Details -->
-            <div class="request-details" *ngIf="selectedRequest">
-                <h3 class="details-title">Asset Request #{{ selectedRequest.id }}</h3>
-                <hr class="divider">
+            <div style="flex: 2;">
+                <div class="assura-card" *ngIf="selectedRequest" style="position: sticky; top: 24px;">
+                    <h3 style="margin: 0 0 16px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px;">
+                        Asset Request #{{ selectedRequest.id }}
+                    </h3>
 
-                <div class="details-grid">
-                    <div class="detail-field">
-                        <label>Employee</label>
-                        <div class="value">{{ selectedRequest.employeeName }}</div>
+                    <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase;">Employee</span>
+                            <span style="font-size: 15px; font-weight: 500; color: #1e293b;">{{ selectedRequest.employeeName }}</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase;">Request Type</span>
+                            <span style="font-size: 15px; font-weight: 500; color: #1e293b;">{{ selectedRequest.type || 'N/A' }}</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; grid-column: 1 / -1;">
+                            <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase;">Requested Item</span>
+                            <span style="font-size: 16px; font-weight: 600; color: #4f46e5;">{{ selectedRequest.assetName || 'N/A' }}</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase;">Division</span>
+                            <span style="font-size: 15px; font-weight: 500; color: #1e293b;">{{ selectedRequest.divisionName }}</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase;">Date</span>
+                            <span style="font-size: 15px; font-weight: 500; color: #1e293b;">{{ selectedRequest.date | date:'dd MMM yyyy, HH:mm' }}</span>
+                        </div>
                     </div>
-                    <div class="detail-field">
-                        <label>Request Type</label>
-                        <div class="value">{{ selectedRequest.type || 'N/A' }}</div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 24px;">
+                        <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase;">Description</span>
+                        <div style="background: #f8fafc; padding: 12px; border-radius: 8px; color: #475569; font-size: 14px; white-space: pre-wrap;">
+                            {{ selectedRequest.description || selectedRequest.specifications || 'N/A' }}
+                        </div>
                     </div>
-                    <div class="detail-field full-width">
-                        <label>Requested Item</label>
-                        <div class="value" style="font-weight: 600; color: #00AFB5; font-size: 16px;">{{ selectedRequest.assetName || 'N/A' }}</div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+                        <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase;">Special Note</span>
+                        <div style="background: #fef3c7; color: #92400e; padding: 12px; border-radius: 8px; font-size: 14px;">
+                            {{ selectedRequest.specialNote || 'No special note.' }}
+                        </div>
                     </div>
-                    <div class="detail-field">
-                        <label>Division</label>
-                        <div class="value">{{ selectedRequest.divisionName }}</div>
-                    </div>
-                    <div class="detail-field">
-                        <label>Date</label>
-                        <div class="value">{{ selectedRequest.date | date:'dd MMM yyyy, HH:mm' }}</div>
+
+                    <div style="margin-top: 24px; display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                        <button class="assura-btn assura-btn-primary" (click)="navigateToCreate(selectedRequest)">Create PO</button>
                     </div>
                 </div>
 
-                <div class="detail-field full-width" style="margin-top: 12px;">
-                    <label>Description</label>
-                    <div class="specs-box">
-                        <div class="pre-wrap">{{ selectedRequest.description || selectedRequest.specifications || 'N/A'
-                            }}</div>
-                    </div>
+                <div class="assura-card" *ngIf="!selectedRequest && requests.length > 0" style="display: flex; align-items: center; justify-content: center; min-height: 200px; color: #94a3b8;">
+                    <p>Select a request from the list to view details</p>
                 </div>
-
-                <div class="detail-field full-width" style="margin-top: 12px;">
-                    <label>Special Note</label>
-                    <div class="note-box">
-                        {{ selectedRequest.specialNote || 'No special note.' }}
-                    </div>
-                </div>
-
-                <!-- Create PO Button inside the details box -->
-                <div class="details-action-row" style="margin-top: 20px; display: flex; justify-content: flex-end;">
-                    <button class="create-po-btn" (click)="navigateToCreate(selectedRequest)">Create PO</button>
-                </div>
-
-            </div>
-            <div class="request-details empty" *ngIf="!selectedRequest && requests.length > 0">
-                <p>Select a request for details</p>
             </div>
         </div>
     </section>
-
 </div>

@@ -431,6 +431,199 @@ body {
 }
 
 /* =========================================
+   GLOBAL TABLE SYSTEM (ASSURA)
+   ========================================= */
+.assura-table-container {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.assura-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.assura-th {
+    background: #f8fafc;
+    padding: 16px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.assura-td {
+    padding: 16px 24px;
+    font-size: 15px;
+    color: #1e293b;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+}
+
+.assura-tr-hover {
+    transition: background-color 0.2s;
+}
+
+.assura-tr-hover:hover {
+    background-color: #f1f5f9;
+}
+
+.assura-table tbody tr:last-child .assura-td {
+    border-bottom: none;
+}
+
+/* =========================================
+   GLOBAL FORM & BUTTON SYSTEM (ASSURA)
+   ========================================= */
+.assura-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    font-family: 'Jost', sans-serif;
+}
+
+.assura-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.assura-btn-primary {
+    background: #4f46e5;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+}
+
+.assura-btn-primary:hover:not(:disabled) {
+    background: #4338ca;
+    box-shadow: 0 6px 8px -2px rgba(79, 70, 229, 0.3);
+    transform: translateY(-1px);
+}
+
+.assura-btn-secondary {
+    background: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.assura-btn-secondary:hover:not(:disabled) {
+    background: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+
+.assura-btn-danger {
+    background: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);
+}
+
+.assura-btn-danger:hover:not(:disabled) {
+    background: #dc2626;
+    box-shadow: 0 6px 8px -2px rgba(239, 68, 68, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Forms */
+.assura-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #1e293b;
+    background: #ffffff;
+    transition: all 0.2s;
+    font-family: 'Jost', sans-serif;
+}
+
+.assura-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.assura-input:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.assura-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+/* Status Badges */
+.assura-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.assura-badge-success { background: #dcfce7; color: #166534; }
+.assura-badge-warning { background: #fef3c7; color: #92400e; }
+.assura-badge-danger { background: #fee2e2; color: #991b1b; }
+.assura-badge-info { background: #e0f2fe; color: #075985; }
+
+/* Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+    .assura-table-container {
+        background: #0f172a;
+        border-color: #1e293b;
+    }
+    .assura-th {
+        background: #1e293b;
+        color: #94a3b8;
+        border-color: #334155;
+    }
+    .assura-td {
+        color: #f8fafc;
+        border-color: #1e293b;
+    }
+    .assura-tr-hover:hover {
+        background-color: #1e293b;
+    }
+    .assura-input {
+        background: #1e293b;
+        border-color: #334155;
+        color: #f8fafc;
+    }
+    .assura-label {
+        color: #94a3b8;
+    }
+    .assura-btn-secondary {
+        background: #1e293b;
+        color: #f8fafc;
+        border-color: #334155;
+    }
+    .assura-btn-secondary:hover:not(:disabled) {
+        background: #334155;
+        border-color: #475569;
+    }
+}
+
+/* =========================================
    GLOBAL PRINT STYLES
    ========================================= */
 @media print {

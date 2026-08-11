@@ -1,75 +1,75 @@
-<div class="dashboard-container">
-    <div class="header-actions">
-        <h1 class="statics-title">Master Data Management</h1>
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h1 class="assura-page-title" style="margin-bottom: 0;">Master Data Management</h1>
     </div>
 
     <!-- Tabs -->
-    <div class="tabs">
-        <button class="tab-btn" [class.active]="activeTab === 'divisions'" (click)="switchTab('divisions')">Divisions (Departments)</button>
-        <button class="tab-btn" [class.active]="activeTab === 'categories'" (click)="switchTab('categories')">Asset Categories</button>
+    <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+        <button class="assura-btn" [ngClass]="activeTab === 'divisions' ? 'assura-btn-primary' : 'assura-btn-secondary'" (click)="switchTab('divisions')">Divisions (Departments)</button>
+        <button class="assura-btn" [ngClass]="activeTab === 'categories' ? 'assura-btn-primary' : 'assura-btn-secondary'" (click)="switchTab('categories')">Asset Categories</button>
     </div>
 
     <!-- Action Bar -->
-    <div class="action-bar" *ngIf="!showForm" style="display: flex; justify-content: space-between;">
-        <div class="search-bar">
-            <input type="text" [(ngModel)]="searchTerm" placeholder="Search..." class="form-control" style="width: 250px;">
+    <div *ngIf="!showForm" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div style="width: 300px;">
+            <input type="text" [(ngModel)]="searchTerm" placeholder="Search..." class="assura-input">
         </div>
-        <button class="btn btn-primary" (click)="openAddForm()">
-            <i class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 5px;">add</i>
+        <button class="assura-btn assura-btn-primary" (click)="openAddForm()">
+            <i class="material-icons" style="font-size: 18px;">add</i>
             Add New {{ activeTab === 'divisions' ? 'Division' : 'Category' }}
         </button>
     </div>
 
     <!-- Form Section -->
-    <div class="form-section" *ngIf="showForm">
-        <h3 style="margin-top: 0;">{{ isEditing ? 'Edit' : 'Add' }} {{ activeTab === 'divisions' ? 'Division' : 'Category' }}</h3>
+    <div class="assura-card" *ngIf="showForm" style="max-width: 600px; margin: 0 auto; border-top: 4px solid #4f46e5;">
+        <h3 style="margin: 0 0 24px 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">{{ isEditing ? 'Edit' : 'Add' }} {{ activeTab === 'divisions' ? 'Division' : 'Category' }}</h3>
         
-        <form [formGroup]="form" (ngSubmit)="submitForm()" class="master-data-form">
-            <div class="form-group">
-                <label>Name <span class="required">*</span></label>
-                <input type="text" formControlName="name" class="form-control" placeholder="Enter name">
-                <div class="error-msg" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">Name is required</div>
+        <form [formGroup]="form" (ngSubmit)="submitForm()" style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+                <label class="assura-label">Name <span style="color: #ef4444;">*</span></label>
+                <input type="text" formControlName="name" class="assura-input" placeholder="Enter name">
+                <div style="color: #ef4444; font-size: 13px; margin-top: 4px;" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">Name is required</div>
             </div>
 
-            <div class="form-group">
-                <label>Description</label>
-                <textarea formControlName="description" class="form-control" placeholder="Enter description" rows="3"></textarea>
+            <div>
+                <label class="assura-label">Description</label>
+                <textarea formControlName="description" class="assura-input" placeholder="Enter description" rows="3"></textarea>
             </div>
 
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
-                <button type="submit" class="btn btn-success" [disabled]="form.invalid">Save</button>
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px;">
+                <button type="button" class="assura-btn assura-btn-secondary" (click)="closeForm()">Cancel</button>
+                <button type="submit" class="assura-btn assura-btn-primary" [disabled]="form.invalid">Save</button>
             </div>
         </form>
     </div>
 
     <!-- Data Table Section -->
-    <div class="table-container" *ngIf="!showForm">
-        <table class="data-table">
+    <div class="assura-table-container" *ngIf="!showForm">
+        <table class="assura-table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th style="width: 150px; text-align: center;">Actions</th>
+                    <th class="assura-th">ID</th>
+                    <th class="assura-th">Name</th>
+                    <th class="assura-th">Description</th>
+                    <th class="assura-th" style="width: 150px; text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of (activeTab === 'divisions' ? filteredDivisions : filteredCategories)">
-                    <td>{{ item.id }}</td>
-                    <td><strong>{{ item.name }}</strong></td>
-                    <td style="color: #666;">{{ item.description || '-' }}</td>
-                    <td style="text-align: center;">
-                        <button class="icon-btn edit-btn" (click)="openEditForm(item)" title="Edit">
-                            <i class="material-icons">edit</i>
+                <tr class="assura-tr-hover" *ngFor="let item of (activeTab === 'divisions' ? filteredDivisions : filteredCategories)">
+                    <td class="assura-td">{{ item.id }}</td>
+                    <td class="assura-td" style="font-weight: 600;">{{ item.name }}</td>
+                    <td class="assura-td" style="color: #64748b;">{{ item.description || '-' }}</td>
+                    <td class="assura-td" style="text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
+                        <button class="assura-btn assura-btn-secondary" style="padding: 6px 12px;" (click)="openEditForm(item)" title="Edit">
+                            <i class="material-icons" style="font-size: 16px;">edit</i>
                         </button>
-                        <button class="icon-btn delete-btn" (click)="deleteItem(item.id)" title="Delete">
-                            <i class="material-icons">delete</i>
+                        <button class="assura-btn assura-btn-danger" style="padding: 6px 12px;" (click)="deleteItem(item.id)" title="Delete">
+                            <i class="material-icons" style="font-size: 16px;">delete</i>
                         </button>
                     </td>
                 </tr>
                 <tr *ngIf="(activeTab === 'divisions' ? filteredDivisions : filteredCategories).length === 0">
-                    <td colspan="4" class="empty-state">No data match your search.</td>
+                    <td colspan="4" class="assura-td" style="text-align: center; color: #94a3b8; padding: 32px;">No data match your search.</td>
                 </tr>
             </tbody>
         </table>
