@@ -1,79 +1,63 @@
-<nav class="h-14 flex items-center justify-between px-6 shrink-0
-            bg-white border-b border-slate-200
-            dark:bg-slate-900 dark:border-slate-800">
+<nav class="navbar-wrapper">
   <!-- Page Title -->
-  <div class="flex items-center gap-3">
-    <mat-icon aria-hidden="true"
-      class="text-indigo-600 dark:text-indigo-400"
-      style="font-size: 22px; width: 22px; height: 22px;">dashboard</mat-icon>
-    <span class="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight">{{ pageTitle }}</span>
+  <div class="navbar-page-title-container">
+    <mat-icon aria-hidden="true" class="navbar-page-title-icon">dashboard</mat-icon>
+    <span class="navbar-page-title-text">{{ pageTitle }}</span>
   </div>
 
   <!-- Right Actions -->
-  <div class="relative flex items-center gap-2">
+  <div class="navbar-actions-container">
 
     <!-- Notification Bell -->
-    <div class="relative flex items-center">
+    <div class="navbar-notification-wrapper">
       <button
-        class="relative p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-indigo-600
-               dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-indigo-400
-               transition-all duration-200 border-0 cursor-pointer"
+        class="navbar-notification-btn"
         type="button" aria-label="Notifications" (click)="toggleNotificationMenu($event)">
-        <mat-icon aria-hidden="true" style="font-size: 22px; width: 22px; height: 22px;">notifications</mat-icon>
+        <mat-icon aria-hidden="true">notifications</mat-icon>
         @if ((unreadCount$ | async) ?? 0; as unread) {
           @if (unread > 0) {
-            <span class="absolute top-1 right-1 min-w-[18px] h-[18px] flex items-center justify-center
-                         rounded-full bg-rose-500 text-white text-[10px] font-bold px-1 leading-none">
-              {{ unread }}
-            </span>
+            <span class="navbar-notification-badge">{{ unread }}</span>
           }
         }
       </button>
 
       <!-- Notification Dropdown -->
       @if (showNotificationMenu) {
-        <div class="absolute top-12 right-0 w-80 bg-white dark:bg-slate-900 rounded-2xl
-                    border border-slate-200 dark:border-slate-700
-                    shadow-lg shadow-slate-200/50 dark:shadow-slate-950/50
-                    z-50 overflow-hidden" (click)="$event.stopPropagation()">
-
+        <div class="navbar-dropdown notification-dropdown" (click)="$event.stopPropagation()">
+          
           <!-- Header -->
-          <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800
-                      bg-slate-50 dark:bg-slate-800/50">
-            <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-200 m-0">Notifications</h4>
-            <button class="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline
-                          bg-transparent border-0 cursor-pointer" (click)="markAllAsRead($event)">
+          <div class="navbar-dropdown-header">
+            <h4>Notifications</h4>
+            <button class="navbar-dropdown-header-action" (click)="markAllAsRead($event)">
               Mark all as read
             </button>
           </div>
 
           <!-- List -->
-          <div class="max-h-[360px] overflow-y-auto">
+          <div class="navbar-dropdown-list">
             @if ((notifications$ | async)?.length === 0) {
-              <div class="py-8 text-center text-sm text-slate-400 dark:text-slate-500">No notifications</div>
+              <div class="navbar-dropdown-empty">No notifications</div>
             }
             @for (note of notifications$ | async; track note.id) {
-              <div class="flex items-start gap-3 px-4 py-3 border-b border-slate-50 dark:border-slate-800
-                          cursor-pointer transition-colors duration-150
-                          hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                   [class.bg-indigo-50]="!note.read"
-                   [class.dark:bg-indigo-950/30]="!note.read"
+              <div class="navbar-dropdown-item"
+                   [class.unread-note]="!note.read"
                    (click)="markAsRead(note.id, $event)">
 
                 <!-- Icon -->
-                <mat-icon class="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-white text-[18px] note-icon"
-                  [class]="note.type">{{ note.icon || 'info' }}</mat-icon>
+                <mat-icon class="navbar-dropdown-item-icon note-icon" [class]="note.type">
+                  {{ note.icon || 'info' }}
+                </mat-icon>
 
                 <!-- Content -->
-                <div class="flex-1 min-w-0">
-                  <h5 class="text-[13px] font-semibold text-slate-800 dark:text-slate-200 m-0 mb-0.5 truncate">{{ note.title }}</h5>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 m-0 mb-1 leading-relaxed line-clamp-2">{{ note.message }}</p>
-                  <span class="text-[11px] text-slate-400 dark:text-slate-500 font-mono">{{ notificationService.formatTimeAgo(note.timestamp) }}</span>
+                <div class="navbar-dropdown-item-content">
+                  <h5 class="navbar-dropdown-item-title">{{ note.title }}</h5>
+                  <p class="navbar-dropdown-item-message">{{ note.message }}</p>
+                  <span class="navbar-dropdown-item-time">{{ notificationService.formatTimeAgo(note.timestamp) }}</span>
                 </div>
 
                 <!-- Unread dot -->
                 @if (!note.read) {
-                  <div class="w-2 h-2 rounded-full bg-indigo-500 shrink-0 mt-2"></div>
+                  <div class="navbar-dropdown-unread-dot"></div>
                 }
               </div>
             }
@@ -84,35 +68,20 @@
 
     <!-- Profile Avatar -->
     <button
-      class="w-9 h-9 rounded-full border-2 border-indigo-200 dark:border-indigo-700
-             bg-gradient-to-br from-indigo-500 to-violet-600
-             text-white inline-flex items-center justify-center cursor-pointer
-             hover:shadow-md hover:shadow-indigo-300/40 dark:hover:shadow-indigo-800/40
-             transition-all duration-200 p-0"
+      class="navbar-avatar-btn"
       type="button" aria-label="Open profile menu" (click)="toggleProfileMenu($event)">
-      <span class="text-sm font-extrabold leading-none">A</span>
+      <span class="navbar-avatar-text">A</span>
     </button>
 
     <!-- Profile Menu -->
     @if (showProfileMenu) {
-      <div class="absolute right-0 top-12 w-48 p-2 bg-white dark:bg-slate-900
-                  border border-slate-200 dark:border-slate-700 rounded-xl
-                  shadow-lg shadow-slate-200/50 dark:shadow-slate-950/50
-                  z-50" (click)="$event.stopPropagation()">
-        <button type="button" (click)="openProfile()"
-          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium
-                 text-slate-600 dark:text-slate-300 bg-transparent border-0 cursor-pointer
-                 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400
-                 transition-colors duration-150">
-          <mat-icon aria-hidden="true" style="font-size: 16px; width: 16px; height: 16px;">person</mat-icon>
+      <div class="navbar-dropdown profile-dropdown" (click)="$event.stopPropagation()">
+        <button type="button" (click)="openProfile()" class="navbar-dropdown-action-btn">
+          <mat-icon aria-hidden="true">person</mat-icon>
           Profile
         </button>
-        <button type="button" (click)="logout()"
-          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium
-                 text-slate-600 dark:text-slate-300 bg-transparent border-0 cursor-pointer
-                 hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-600 dark:hover:text-rose-400
-                 transition-colors duration-150">
-          <mat-icon aria-hidden="true" style="font-size: 16px; width: 16px; height: 16px;">logout</mat-icon>
+        <button type="button" (click)="logout()" class="navbar-dropdown-action-btn logout-btn">
+          <mat-icon aria-hidden="true">logout</mat-icon>
           Sign Out
         </button>
       </div>
