@@ -3,6 +3,35 @@
   height: 100%;
 }
 
+.sidebar-nav-container {
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.sidebar-nav-item-wrapper {
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.sidebar-nav-link {
+  padding: 12px 16px;
+  font-size: 15px;
+  gap: 14px;
+}
+
+.sidebar-nav-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  background-color: transparent !important;
+}
+
+.active-collapse-padding {
+  padding: 8px 0;
+  justify-content: center;
+}
+
 /* Active link state — applied via routerLinkActive="active-link" */
 .active-link {
   background-color: #4f46e5 !important; /* indigo-600 */
