@@ -6,34 +6,34 @@
     </div>
 
     <!-- Stats Strip -->
-    <div class="assura-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 0;" *ngIf="stats">
-        <div class="assura-card" [class.assura-accent-primary]="filterStatus === ''" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('')" [ngStyle]="{'background': filterStatus === '' ? '#eff6ff' : 'white'}">
-            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === '' ? '#4f46e5' : ''}">Total Records</span>
-            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === '' ? '#4f46e5' : ''}">{{ stats.total }}</strong>
+    <div class="assura-grid assura-grid-cols-7" style="margin-top: 0;" *ngIf="stats">
+        <div class="assura-card assura-accent-primary" style="cursor: pointer;" [style.border-color]="filterStatus === '' ? '#6366f1' : ''" [style.box-shadow]="filterStatus === '' ? '0 0 0 2px #6366f1' : ''" (click)="setFilterStatus('')">
+            <span class="assura-card-title">Total Records</span>
+            <strong class="assura-card-value">{{ stats.total }}</strong>
         </div>
-        <div class="assura-card" [class.assura-accent-info]="filterStatus === 'Approved'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('Approved')" [ngStyle]="{'background': filterStatus === 'Approved' ? '#eff6ff' : 'white'}">
-            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'Approved' ? '#0ea5e9' : ''}">Ready for Store</span>
-            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'Approved' ? '#0ea5e9' : ''}">{{ stats.approved }}</strong>
+        <div class="assura-card assura-accent-info" style="cursor: pointer;" [style.border-color]="filterStatus === 'Approved' ? '#0ea5e9' : ''" [style.box-shadow]="filterStatus === 'Approved' ? '0 0 0 2px #0ea5e9' : ''" (click)="setFilterStatus('Approved')">
+            <span class="assura-card-title">Ready for Store</span>
+            <strong class="assura-card-value">{{ stats.approved }}</strong>
         </div>
-        <div class="assura-card" [class.assura-accent-warning]="filterStatus === 'InProgress'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('InProgress')" [ngStyle]="{'background': filterStatus === 'InProgress' ? '#fef3c7' : 'white'}">
-            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'InProgress' ? '#f59e0b' : ''}">In Progress</span>
-            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'InProgress' ? '#f59e0b' : ''}">{{ stats.inProgress }}</strong>
+        <div class="assura-card assura-accent-warning" style="cursor: pointer;" [style.border-color]="filterStatus === 'InProgress' ? '#f59e0b' : ''" [style.box-shadow]="filterStatus === 'InProgress' ? '0 0 0 2px #f59e0b' : ''" (click)="setFilterStatus('InProgress')">
+            <span class="assura-card-title">In Progress</span>
+            <strong class="assura-card-value">{{ stats.inProgress }}</strong>
         </div>
-        <div class="assura-card" [class.assura-accent-primary]="filterStatus === 'TempAssigned'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('TempAssigned')" [ngStyle]="{'background': filterStatus === 'TempAssigned' ? '#eff6ff' : 'white'}">
-            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'TempAssigned' ? '#8b5cf6' : ''}">Temp Assigned</span>
-            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'TempAssigned' ? '#8b5cf6' : ''}">{{ stats.tempAssigned }}</strong>
+        <div class="assura-card assura-accent-primary" style="cursor: pointer;" [style.border-color]="filterStatus === 'TempAssigned' ? '#8b5cf6' : ''" [style.box-shadow]="filterStatus === 'TempAssigned' ? '0 0 0 2px #8b5cf6' : ''" (click)="setFilterStatus('TempAssigned')">
+            <span class="assura-card-title">Temp Assigned</span>
+            <strong class="assura-card-value">{{ stats.tempAssigned }}</strong>
         </div>
-        <div class="assura-card" [class.assura-accent-warning]="filterStatus === 'SentForRepair'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('SentForRepair')" [ngStyle]="{'background': filterStatus === 'SentForRepair' ? '#fef3c7' : 'white'}">
-            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'SentForRepair' ? '#f97316' : ''}">At Repair Firm</span>
-            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'SentForRepair' ? '#f97316' : ''}">{{ stats.sentForRepair }}</strong>
+        <div class="assura-card assura-accent-warning" style="cursor: pointer;" [style.border-color]="filterStatus === 'SentForRepair' ? '#f97316' : ''" [style.box-shadow]="filterStatus === 'SentForRepair' ? '0 0 0 2px #f97316' : ''" (click)="setFilterStatus('SentForRepair')">
+            <span class="assura-card-title">At Repair Firm</span>
+            <strong class="assura-card-value">{{ stats.sentForRepair }}</strong>
         </div>
-        <div class="assura-card" [class.assura-accent-danger]="filterStatus === 'EscalatedToProcurement'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('EscalatedToProcurement')" [ngStyle]="{'background': filterStatus === 'EscalatedToProcurement' ? '#fee2e2' : 'white'}">
-            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'EscalatedToProcurement' ? '#ef4444' : ''}">Escalated</span>
-            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'EscalatedToProcurement' ? '#ef4444' : ''}">{{ stats.escalatedToProcurement }}</strong>
+        <div class="assura-card assura-accent-danger" style="cursor: pointer;" [style.border-color]="filterStatus === 'EscalatedToProcurement' ? '#ef4444' : ''" [style.box-shadow]="filterStatus === 'EscalatedToProcurement' ? '0 0 0 2px #ef4444' : ''" (click)="setFilterStatus('EscalatedToProcurement')">
+            <span class="assura-card-title">Escalated</span>
+            <strong class="assura-card-value">{{ stats.escalatedToProcurement }}</strong>
         </div>
-        <div class="assura-card" [class.assura-accent-success]="filterStatus === 'Completed'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('Completed')" [ngStyle]="{'background': filterStatus === 'Completed' ? '#d1fae5' : 'white'}">
-            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'Completed' ? '#10b981' : ''}">Completed</span>
-            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'Completed' ? '#10b981' : ''}">{{ stats.completed }}</strong>
+        <div class="assura-card assura-accent-success" style="cursor: pointer;" [style.border-color]="filterStatus === 'Completed' ? '#10b981' : ''" [style.box-shadow]="filterStatus === 'Completed' ? '0 0 0 2px #10b981' : ''" (click)="setFilterStatus('Completed')">
+            <span class="assura-card-title">Completed</span>
+            <strong class="assura-card-value">{{ stats.completed }}</strong>
         </div>
     </div>
 
@@ -281,7 +281,7 @@
 
 <div class="modal-overlay" *ngIf="showDetail" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); z-index: 900;" (click)="showDetail = false">
     <div class="assura-card" style="position: absolute; right: 0; top: 0; bottom: 0; width: 100%; max-width: 500px; margin: 0; border-radius: 0; padding: 0; overflow-y: auto; display: flex; flex-direction: column; transform: translateX(0); transition: transform 0.3s ease;" (click)="$event.stopPropagation()">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0; background: white; position: sticky; top: 0; z-index: 10;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10;">
             <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Maintenance Details</h2>
             <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="showDetail = false"><mat-icon>close</mat-icon></button>
         </div>
@@ -330,11 +330,11 @@
                         <div style="font-size: 15px; font-weight: 500;">${{ detailRequest.cost | number:'1.2-2' }}</div>
                     </div>
                 </div>
-                <div style="margin-top: 16px; padding: 16px; background: #f8fafc; border-radius: 8px;" *ngIf="detailRequest.description">
+                <div style="margin-top: 16px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px;" *ngIf="detailRequest.description">
                     <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Description</div>
                     <p style="margin: 0; font-size: 14px; line-height: 1.5;">{{ detailRequest.description }}</p>
                 </div>
-                <div style="margin-top: 16px; padding: 16px; background: #fefce8; border-radius: 8px; border: 1px solid #fef08a;" *ngIf="detailRequest.notes">
+                <div style="margin-top: 16px; padding: 16px; border-radius: 8px; border: 1px solid #fef08a;" *ngIf="detailRequest.notes">
                     <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; color: #a16207;">Storekeeper Notes</div>
                     <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #854d0e;">{{ detailRequest.notes }}</p>
                 </div>
@@ -382,7 +382,7 @@
             </div>
         </div>
         
-        <div style="padding: 24px; border-top: 1px solid #e2e8f0; background: #f8fafc; position: sticky; bottom: 0;">
+        <div style="padding: 24px; border-top: 1px solid #e2e8f0; position: sticky; bottom: 0;">
             <button class="assura-btn assura-btn-secondary" style="width: 100%; justify-content: center;" (click)="showDetail = false">Close</button>
         </div>
     </div>

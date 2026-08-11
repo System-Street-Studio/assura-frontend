@@ -292,26 +292,28 @@ body {
     margin-top: 24px;
 }
 
-.assura-grid-cols-2 {
-    grid-template-columns: repeat(1, 1fr);
-}
+.assura-grid-cols-2 { grid-template-columns: repeat(1, 1fr); }
+.assura-grid-cols-3 { grid-template-columns: repeat(1, 1fr); }
+.assura-grid-cols-4 { grid-template-columns: repeat(1, 1fr); }
+.assura-grid-cols-5 { grid-template-columns: repeat(1, 1fr); }
+.assura-grid-cols-6 { grid-template-columns: repeat(1, 1fr); }
+.assura-grid-cols-7 { grid-template-columns: repeat(1, 1fr); }
 
-.assura-grid-cols-3 {
-    grid-template-columns: repeat(1, 1fr);
-}
-
-.assura-grid-cols-4 {
-    grid-template-columns: repeat(1, 1fr);
-}
-
-@media (min-width: 768px) {
+@media (min-width: 640px) {
     .assura-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-    .assura-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .assura-grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
     .assura-grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+    .assura-grid-cols-5 { grid-template-columns: repeat(2, 1fr); }
+    .assura-grid-cols-6 { grid-template-columns: repeat(3, 1fr); }
+    .assura-grid-cols-7 { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (min-width: 1024px) {
+    .assura-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
     .assura-grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .assura-grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
+    .assura-grid-cols-6 { grid-template-columns: repeat(6, 1fr); }
+    .assura-grid-cols-7 { grid-template-columns: repeat(7, 1fr); }
 }
 
 /* Card Base */
@@ -628,6 +630,16 @@ body {
         background: #334155;
         border-color: #475569;
     }
+    .custom-select {
+        background-color: #1e293b;
+        border-color: #334155;
+        color: #f8fafc;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    }
+    .assura-badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .assura-badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .assura-badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .assura-badge-info { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
 }
 
 /* =========================================
