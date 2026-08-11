@@ -37,50 +37,10 @@
   <div class="dashboard-content" *ngIf="!loading">
 
     <!-- ── 2. Welcome Banner ── -->
-    <!-- Full-width teal gradient card with ambient background circles,
-         a contextual greeting, high-level stats, and navigation shortcuts. -->
-    <section class="assura-greeting-banner" style="display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden;">
-      <!-- Decorative blurred circles; purely visual, pointer-events: none -->
-      <div class="banner-bg-shape"></div>
-      <div class="banner-bg-shape secondary"></div>
-
-      <div class="welcome-left">
-        <!-- Greeting changes based on time of day using Angular's inline ternary -->
-        <h1 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h1>
-            <!-- Current date formatted via Angular's `date` pipe -->
-            <p class="assura-greeting-date">Here's your inventory overview for {{ today | date:'EEEE, MMMM d, yyyy — h:mm a' }}</p>
-
-            <!-- Mini stat pills inside the banner — pulled from computed getters and KPI data -->
-            <div class="banner-stats">
-              <div class="banner-stat">
-                <span class="banner-stat-value">{{ utilizationRate }}%</span>
-                <span class="banner-stat-label">Utilization</span>
-              </div>
-              <div class="banner-stat-divider"></div>
-              <div class="banner-stat">
-                <!-- `number` pipe adds thousand-separator formatting (e.g. 1,234) -->
-                <span class="banner-stat-value">{{ kpis.totalAssets | number }}</span>
-                <span class="banner-stat-label">Total Assets</span>
-              </div>
-              <div class="banner-stat-divider"></div>
-              <div class="banner-stat">
-                <span class="banner-stat-value">{{ kpis.totalAssetValue }}</span>
-                <span class="banner-stat-label">Portfolio Value</span>
-              </div>
-            </div>
-      </div>
-
-      <!-- Quick-action buttons on the right side of the banner -->
-      <div class="quick-actions">
-        <!-- routerLink navigates to the asset creation form (create mode) -->
-        <a class="quick-btn primary" routerLink="/inventory/assets/new">
-          <mat-icon>add_circle</mat-icon> New Asset
-        </a>
-        <a class="quick-btn outline" routerLink="/inventory/assets">
-          <mat-icon>inventory_2</mat-icon> View All
-        </a>
-      </div>
-    </section>
+    <div class="assura-greeting-banner">
+      <h2 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h2>
+      <p class="assura-greeting-date">{{ today | date:'EEEE, MMMM d, y — h:mm a' }}</p>
+    </div>
 
     <!-- ── 3. KPI Cards Grid ── -->
     <!-- 7 cards rendered in a 6-column responsive grid.
