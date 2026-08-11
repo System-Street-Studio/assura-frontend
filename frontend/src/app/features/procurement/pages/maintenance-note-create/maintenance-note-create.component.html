@@ -3,7 +3,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <div>
             <h1 class="assura-page-title" style="margin-bottom: 4px;">Add New Note</h1>
-            <span style="color: #64748b; font-size: 14px;">Create a new maintenance record</span>
+            <span class="assura-card-subtitle" style="font-size: 14px;">Create a new maintenance record</span>
         </div>
     </div>
 
@@ -12,7 +12,7 @@
             <div class="assura-grid assura-grid-cols-2" style="gap: 24px;">
                 <div>
                     <label class="assura-label" for="maintenanceNumber">Maintenance No</label>
-                    <input type="text" id="maintenanceNumber" formControlName="maintenanceNumber" class="assura-input" readonly style="background: #f8fafc;">
+                    <input type="text" id="maintenanceNumber" formControlName="maintenanceNumber" class="assura-input" readonly>
                 </div>
                 <div>
                     <label class="assura-label" for="asset">Asset <span style="color: #ef4444;">*</span></label>
@@ -26,24 +26,24 @@
                 </div>
 
                 <!-- Asset Details section (Auto-fill) -->
-                <div style="grid-column: span 2; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;" *ngIf="selectedAsset">
-                    <div style="font-weight: 600; color: #0f172a; margin-bottom: 12px;">Asset Details</div>
-                    <div class="assura-grid assura-grid-cols-2" style="gap: 16px;">
+                <div class="assura-input" style="grid-column: span 2; padding: 16px; height: auto; min-height: unset; pointer-events: none;" *ngIf="selectedAsset">
+                    <div class="assura-card-title" style="margin-bottom: 12px; font-size: 15px;">Asset Details</div>
+                    <div class="assura-grid assura-grid-cols-2" style="gap: 16px; margin-top: 0;">
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px;">
-                            <span style="color: #64748b; font-size: 13px;">Product:</span>
-                            <span style="color: #0f172a; font-size: 13px; font-weight: 500;">{{ selectedAsset.productName }}</span>
+                            <span class="assura-card-subtitle" style="font-size: 13px; margin: 0;">Product:</span>
+                            <span class="assura-card-title" style="font-size: 13px; margin: 0;">{{ selectedAsset.productName }}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px;">
-                            <span style="color: #64748b; font-size: 13px;">Category:</span>
-                            <span style="color: #0f172a; font-size: 13px; font-weight: 500;">{{ selectedAsset.categoryName }}</span>
+                            <span class="assura-card-subtitle" style="font-size: 13px; margin: 0;">Category:</span>
+                            <span class="assura-card-title" style="font-size: 13px; margin: 0;">{{ selectedAsset.categoryName }}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px;">
-                            <span style="color: #64748b; font-size: 13px;">Division:</span>
-                            <span style="color: #0f172a; font-size: 13px; font-weight: 500;">{{ selectedAsset.divisionName }}</span>
+                            <span class="assura-card-subtitle" style="font-size: 13px; margin: 0;">Division:</span>
+                            <span class="assura-card-title" style="font-size: 13px; margin: 0;">{{ selectedAsset.divisionName }}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px;">
-                            <span style="color: #64748b; font-size: 13px;">Serial Number:</span>
-                            <span style="color: #0f172a; font-size: 13px; font-weight: 500;">{{ selectedAsset.serialNumber || 'N/A' }}</span>
+                            <span class="assura-card-subtitle" style="font-size: 13px; margin: 0;">Serial Number:</span>
+                            <span class="assura-card-title" style="font-size: 13px; margin: 0;">{{ selectedAsset.serialNumber || 'N/A' }}</span>
                         </div>
                     </div>
                 </div>
