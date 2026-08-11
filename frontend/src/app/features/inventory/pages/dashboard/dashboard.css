@@ -1077,3 +1077,51 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* ── Dark Mode Overrides ── */
+@media (prefers-color-scheme: dark) {
+  .page {
+    background: transparent;
+  }
+  .kpi-card, .panel, .card, .anomaly-card {
+    background-color: #0f172a;
+    border-color: #1e293b;
+    box-shadow: none;
+  }
+  .kpi-value, .panel-title, .card-title, .section-title, .activity-main strong, .warranty-name {
+    color: #f8fafc;
+  }
+  .kpi-label, .card-subtitle, .activity-meta, .warranty-meta, .warranty-date, .anomaly-label {
+    color: #94a3b8;
+  }
+  .activity-item, .warranty-item {
+    border-bottom-color: #1e293b;
+  }
+  .activity-item:hover, .warranty-item:hover {
+    background: #1e293b;
+  }
+  .panel-header {
+    border-bottom-color: #1e293b;
+  }
+  .kpi-bar {
+    background: #1e293b;
+  }
+  .activity-icon {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+  .kpi-change.neutral {
+    background: #1e293b;
+    color: #94a3b8;
+  }
+  .kpi-change.positive {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+  }
+  .kpi-change.negative {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+  }
+  .panel-empty {
+    color: #64748b;
+  }
+}

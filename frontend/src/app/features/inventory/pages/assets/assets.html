@@ -3,7 +3,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <div>
             <h1 class="assura-page-title" style="margin-bottom: 4px;">Assets</h1>
-            <span style="color: #64748b; font-size: 14px;">{{ filteredAssets.length }} of {{ allAssets.length }} items</span>
+            <span style=" font-size: 14px;">{{ filteredAssets.length }} of {{ allAssets.length }} items</span>
         </div>
         <div style="display: flex; gap: 12px;">
             <button class="assura-btn assura-btn-secondary" title="Export to CSV">
@@ -25,8 +25,8 @@
                     <mat-icon>inventory_2</mat-icon>
                 </div>
                 <div>
-                    <div style="font-size: 20px; font-weight: 700; color: #0f172a;">{{ allAssets.length }}</div>
-                    <div style="font-size: 12px; color: #64748b; font-weight: 500; text-transform: uppercase;">All Assets</div>
+                    <div style="font-size: 20px; font-weight: 700; ">{{ allAssets.length }}</div>
+                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">All Assets</div>
                 </div>
             </div>
         </div>
@@ -37,8 +37,8 @@
                     <mat-icon>check_circle</mat-icon>
                 </div>
                 <div>
-                    <div style="font-size: 20px; font-weight: 700; color: #0f172a;">{{ statusCounts['InUse'] }}</div>
-                    <div style="font-size: 12px; color: #64748b; font-weight: 500; text-transform: uppercase;">In Use</div>
+                    <div style="font-size: 20px; font-weight: 700; ">{{ statusCounts['InUse'] }}</div>
+                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">In Use</div>
                 </div>
             </div>
         </div>
@@ -49,8 +49,8 @@
                     <mat-icon>shelves</mat-icon>
                 </div>
                 <div>
-                    <div style="font-size: 20px; font-weight: 700; color: #0f172a;">{{ statusCounts['InStore'] }}</div>
-                    <div style="font-size: 12px; color: #64748b; font-weight: 500; text-transform: uppercase;">In Store</div>
+                    <div style="font-size: 20px; font-weight: 700; ">{{ statusCounts['InStore'] }}</div>
+                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">In Store</div>
                 </div>
             </div>
         </div>
@@ -61,8 +61,8 @@
                     <mat-icon>build</mat-icon>
                 </div>
                 <div>
-                    <div style="font-size: 20px; font-weight: 700; color: #0f172a;">{{ statusCounts['UnderMaintenance'] }}</div>
-                    <div style="font-size: 12px; color: #64748b; font-weight: 500; text-transform: uppercase;">Maintenance</div>
+                    <div style="font-size: 20px; font-weight: 700; ">{{ statusCounts['UnderMaintenance'] }}</div>
+                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Maintenance</div>
                 </div>
             </div>
         </div>
@@ -73,20 +73,20 @@
                     <mat-icon>cancel</mat-icon>
                 </div>
                 <div>
-                    <div style="font-size: 20px; font-weight: 700; color: #0f172a;">{{ statusCounts['Discarded'] }}</div>
-                    <div style="font-size: 12px; color: #64748b; font-weight: 500; text-transform: uppercase;">Discarded</div>
+                    <div style="font-size: 20px; font-weight: 700; ">{{ statusCounts['Discarded'] }}</div>
+                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Discarded</div>
                 </div>
             </div>
         </div>
         
         <div class="assura-card" style="padding: 16px; border-bottom: 4px solid #64748b;">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: #f1f5f9; color: #475569; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <div style="  padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
                     <mat-icon>attach_money</mat-icon>
                 </div>
                 <div>
-                    <div style="font-size: 18px; font-weight: 700; color: #0f172a;">{{ formatCurrency(totalValue) }}</div>
-                    <div style="font-size: 12px; color: #64748b; font-weight: 500; text-transform: uppercase;">Total Value</div>
+                    <div style="font-size: 18px; font-weight: 700; ">{{ formatCurrency(totalValue) }}</div>
+                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Total Value</div>
                 </div>
             </div>
         </div>
@@ -95,9 +95,9 @@
     <!-- Toolbar -->
     <div style="display: flex; gap: 16px; margin-bottom: 24px; align-items: center;">
         <div style="position: relative; width: 350px;">
-            <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 20px;">search</mat-icon>
+            <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);  font-size: 20px;">search</mat-icon>
             <input type="text" class="assura-input" style="padding-left: 40px; padding-right: 40px;" placeholder="Search by name, code, serial, category..." [(ngModel)]="search" (input)="applyFilters()" />
-            <button *ngIf="search" (click)="search = ''; applyFilters()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; display: flex;">
+            <button *ngIf="search" (click)="search = ''; applyFilters()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none;  cursor: pointer; display: flex;">
                 <mat-icon style="font-size: 18px;">close</mat-icon>
             </button>
         </div>
@@ -146,8 +146,8 @@
                         <input type="checkbox" [checked]="asset.selected" (change)="onRowSelect(asset, $event)" />
                     </td>
                     <td class="assura-td" style="font-weight: 600; color: #4f46e5;">{{ asset.assetCode }}</td>
-                    <td class="assura-td" style="font-weight: 500; color: #0f172a;">{{ asset.productName }}</td>
-                    <td class="assura-td" style="color: #64748b;">{{ asset.categoryName }}</td>
+                    <td class="assura-td" style="font-weight: 500; ">{{ asset.productName }}</td>
+                    <td class="assura-td" style="">{{ asset.categoryName }}</td>
                     <td class="assura-td">
                         <span class="assura-badge" [ngClass]="{
                             'assura-badge-success': asset.status === 'InUse',
@@ -158,15 +158,15 @@
                             {{ getStatusLabel(asset.status) }}
                         </span>
                     </td>
-                    <td class="assura-td" style="color: #475569;">{{ asset.assignedUserName || '—' }}</td>
-                    <td class="assura-td" style="color: #475569;">{{ asset.divisionName }}</td>
-                    <td class="assura-td" style="color: #64748b;">{{ asset.serialNumber || '—' }}</td>
+                    <td class="assura-td" style="">{{ asset.assignedUserName || '—' }}</td>
+                    <td class="assura-td" style="">{{ asset.divisionName }}</td>
+                    <td class="assura-td" style="">{{ asset.serialNumber || '—' }}</td>
                     <td class="assura-td" style="text-align: right; font-weight: 500;">{{ formatCurrency(asset.purchaseValue) }}</td>
                 </tr>
                 <tr *ngIf="viewAssets.length === 0 && !loading">
-                    <td colspan="9" class="assura-td" style="text-align: center; padding: 48px; color: #94a3b8;">
+                    <td colspan="9" class="assura-td" style="text-align: center; padding: 48px; ">
                         <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">inventory_2</mat-icon>
-                        <div style="font-size: 16px; font-weight: 500; color: #475569;">No assets match your filters</div>
+                        <div style="font-size: 16px; font-weight: 500; ">No assets match your filters</div>
                     </td>
                 </tr>
             </tbody>

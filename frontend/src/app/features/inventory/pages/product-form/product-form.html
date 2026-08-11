@@ -4,13 +4,13 @@
       <mat-icon style="font-size: 20px;">arrow_back</mat-icon>
     </button>
     <div>
-      <span style="font-size: 13px; color: #64748b; font-weight: 500; text-transform: uppercase;">Inventory / Products / {{ pageTitle }}</span>
+      <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 500; text-transform: uppercase;">Inventory / Products / {{ pageTitle }}</span>
       <h1 class="assura-page-title" style="margin-bottom: 4px; margin-top: 4px;">{{ pageTitle }}</h1>
-      <p style="margin: 0; color: #475569; font-size: 15px;">{{ mode === 'edit' ? 'Update product metadata used by assets and requests.' : 'Create a product record that can be reused across asset registrations.' }}</p>
+      <p class="assura-card-subtitle" style="margin: 0; font-size: 15px;">{{ mode === 'edit' ? 'Update product metadata used by assets and requests.' : 'Create a product record that can be reused across asset registrations.' }}</p>
     </div>
   </div>
 
-  <div *ngIf="loading" style="padding: 48px; text-align: center; color: #64748b; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;">
+  <div *ngIf="loading" class="assura-card" style="padding: 48px; text-align: center; border-radius: 12px; margin-bottom: 24px;">
     <mat-icon style="animation: spin 1s linear infinite; margin-bottom: 12px;">sync</mat-icon>
     <div>Loading product details...</div>
   </div>
@@ -50,21 +50,21 @@
       </div>
     </form>
 
-    <aside class="assura-card" style="background: #f8fafc; height: fit-content; border: 1px solid #e2e8f0;">
-      <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #0f172a; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">Preview</h3>
+    <aside class="assura-card" style="height: fit-content;">
+      <h3 class="assura-card-title" style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">Preview</h3>
       
       <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
         <div>
-          <span style="display: block; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Name</span>
-          <span style="display: block; font-size: 15px; font-weight: 600; color: #0f172a;">{{ productForm.controls.name.value || 'Unnamed product' }}</span>
+          <span class="assura-card-subtitle" style="display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Name</span>
+          <span class="assura-card-title" style="display: block; font-size: 15px; font-weight: 600;">{{ productForm.controls.name.value || 'Unnamed product' }}</span>
         </div>
         <div>
-          <span style="display: block; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Manufacturer</span>
-          <span style="display: block; font-size: 15px; font-weight: 500; color: #1e293b;">{{ productForm.controls.manufacturer.value || '—' }}</span>
+          <span class="assura-card-subtitle" style="display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Manufacturer</span>
+          <span class="assura-card-title" style="display: block; font-size: 15px; font-weight: 500;">{{ productForm.controls.manufacturer.value || '—' }}</span>
         </div>
         <div>
-          <span style="display: block; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 4px;">Model</span>
-          <span style="display: block; font-size: 15px; font-weight: 500; color: #1e293b;">{{ productForm.controls.modelNumber.value || '—' }}</span>
+          <span class="assura-card-subtitle" style="display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Model</span>
+          <span class="assura-card-title" style="display: block; font-size: 15px; font-weight: 500;">{{ productForm.controls.modelNumber.value || '—' }}</span>
         </div>
       </div>
       

@@ -92,7 +92,7 @@
       <div class="assura-card assura-accent-info clickable" routerLink="/inventory/assets">
         <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap teal"><mat-icon>inventory_2</mat-icon></div>
-          <span class="kpi-change positive" style="color: #10b981; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 3.2%</span>
+          <span class="kpi-change positive" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 3.2%</span>
         </div>
         <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Total Assets</div>
         <div class="assura-card-value">{{ kpis.totalAssets | number }}</div>
@@ -105,7 +105,7 @@
       <div class="assura-card assura-accent-primary clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'checked_out' }">
         <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap blue"><mat-icon>logout</mat-icon></div>
-          <span class="kpi-change positive" style="color: #10b981; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 5.1%</span>
+          <span class="kpi-change positive" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 5.1%</span>
         </div>
         <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Checked Out</div>
         <div class="assura-card-value">{{ kpis.checkedOut | number }}</div>
@@ -118,7 +118,7 @@
       <div class="assura-card assura-accent-success clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'available' }">
         <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap green"><mat-icon>check_circle</mat-icon></div>
-          <span class="kpi-change neutral" style="color: #64748b; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">remove</mat-icon> 0.4%</span>
+          <span class="kpi-change neutral" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">remove</mat-icon> 0.4%</span>
         </div>
         <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Available</div>
         <div class="assura-card-value">{{ kpis.available | number }}</div>
@@ -131,7 +131,7 @@
       <div class="assura-card assura-accent-warning">
         <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap purple"><mat-icon>attach_money</mat-icon></div>
-          <span class="kpi-change positive" style="color: #10b981; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 1.8%</span>
+          <span class="kpi-change positive" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 1.8%</span>
         </div>
         <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Total Value</div>
         <div class="assura-card-value">{{ kpis.totalAssetValue }}</div>
@@ -141,7 +141,7 @@
       <div class="assura-card assura-accent-warning clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'pending' }">
         <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap orange"><mat-icon>pending_actions</mat-icon></div>
-          <span class="kpi-change negative" *ngIf="kpis.pendingRequests > 15" style="color: #ef4444; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon>
+          <span class="kpi-change negative" *ngIf="kpis.pendingRequests > 15" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon>
             12%</span>
         </div>
         <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Pending Requests</div>
@@ -152,7 +152,7 @@
       <div class="assura-card assura-accent-danger clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }">
         <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap red"><mat-icon>build_circle</mat-icon></div>
-          <span class="kpi-change negative" *ngIf="kpis.maintenanceDue > 10" style="color: #ef4444; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_downward</mat-icon>
+          <span class="kpi-change negative" *ngIf="kpis.maintenanceDue > 10" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_downward</mat-icon>
             8%</span>
         </div>
         <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Maintenance Due</div>
@@ -164,7 +164,7 @@
       <div class="assura-card assura-accent-info clickable" routerLink="/approvals/requests" [queryParams]="{ tab: 'new' }">
         <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap orange"><mat-icon>assignment_ind</mat-icon></div>
-          <span class="kpi-change neutral" style="color: #64748b; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">schedule</mat-icon> staged</span>
+          <span class="kpi-change neutral" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">schedule</mat-icon> staged</span>
         </div>
         <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Temporary Assigned</div>
         <div class="assura-card-value">{{ kpis.temporaryAssignedAssets }}</div>

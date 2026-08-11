@@ -3,7 +3,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <div>
             <h1 class="assura-page-title" style="margin-bottom: 4px;">Products</h1>
-            <span style="color: #64748b; font-size: 14px;">{{ filteredProducts.length }} of {{ allProducts.length }} products</span>
+            <span class="assura-card-subtitle" style="font-size: 14px;">{{ filteredProducts.length }} of {{ allProducts.length }} products</span>
         </div>
         <div style="display: flex; gap: 12px;">
             <button class="assura-btn assura-btn-secondary" title="Export to CSV">
@@ -57,20 +57,20 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let product of viewProducts" class="assura-tr-hover" style="cursor: pointer;" [ngStyle]="{'background': product.selected ? '#eff6ff' : ''}" (click)="onRowClick(product)">
+                <tr *ngFor="let product of viewProducts" class="assura-tr-hover" style="cursor: pointer;" [class.assura-row-selected]="product.selected" (click)="onRowClick(product)">
                     <td class="assura-td" style="text-align: center;" (click)="$event.stopPropagation()">
                         <input type="checkbox" [checked]="product.selected" (change)="onRowSelect(product, $event)" />
                     </td>
                     <td class="assura-td" style="font-weight: 600; color: #4f46e5;">{{ product.id }}</td>
-                    <td class="assura-td" style="font-weight: 500; color: #0f172a;">{{ product.name }}</td>
-                    <td class="assura-td" style="color: #475569;">{{ product.manufacturer || '—' }}</td>
-                    <td class="assura-td" style="color: #475569;">{{ product.modelNumber || '—' }}</td>
-                    <td class="assura-td" style="color: #64748b;">{{ product.description || '—' }}</td>
+                    <td class="assura-td" style="font-weight: 500;">{{ product.name }}</td>
+                    <td class="assura-td"><span class="assura-card-subtitle" style="margin:0; font-size: 15px;">{{ product.manufacturer || '—' }}</span></td>
+                    <td class="assura-td"><span class="assura-card-subtitle" style="margin:0; font-size: 15px;">{{ product.modelNumber || '—' }}</span></td>
+                    <td class="assura-td"><span class="assura-card-subtitle" style="margin:0; font-size: 15px;">{{ product.description || '—' }}</span></td>
                 </tr>
                 <tr *ngIf="viewProducts.length === 0 && !loading">
-                    <td colspan="6" class="assura-td" style="text-align: center; padding: 48px; color: #94a3b8;">
-                        <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">inventory_2</mat-icon>
-                        <div style="font-size: 16px; font-weight: 500; color: #475569;">No products found</div>
+                    <td colspan="6" class="assura-td" style="text-align: center; padding: 48px;">
+                        <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;">inventory_2</mat-icon>
+                        <div class="assura-card-subtitle" style="font-size: 16px; font-weight: 500;">No products found</div>
                     </td>
                 </tr>
             </tbody>

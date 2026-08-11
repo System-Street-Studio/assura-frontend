@@ -475,6 +475,10 @@ body {
     background-color: #f1f5f9;
 }
 
+.assura-row-selected {
+    background-color: #eff6ff !important;
+}
+
 .assura-table tbody tr:last-child .assura-td {
     border-bottom: none;
 }
@@ -603,6 +607,9 @@ body {
     }
     .assura-tr-hover:hover {
         background-color: #1e293b;
+    }
+    .assura-row-selected {
+        background-color: #1e293b !important;
     }
     .assura-input {
         background: #1e293b;

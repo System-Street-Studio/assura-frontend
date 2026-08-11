@@ -6,7 +6,7 @@
     </button>
     <!-- pageTitle is a computed getter: 'New Asset' | 'Edit Asset' | 'Clone Asset' -->
     <div>
-      <span style="font-size: 13px; color: #64748b; font-weight: 500; text-transform: uppercase;">Assets / {{ pageTitle }}</span>
+      <span style="font-size: 13px;  font-weight: 500; text-transform: uppercase;">Assets / {{ pageTitle }}</span>
       <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px;">
         <h1 class="assura-page-title" style="margin-bottom: 0;">{{ pageTitle }}</h1>
         <!-- Badge only appears once the user has typed an asset code -->
@@ -28,7 +28,7 @@
 
       <!-- ── LEFT COLUMN: Basic Information ── -->
       <div>
-        <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600; color: #0f172a; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Basic Information</h3>
+        <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600;  text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Basic Information</h3>
 
         <!-- Asset Code: required unique identifier (e.g. ASSET-001).
              [class.has-error] adds a red border when showError() returns true. -->
@@ -69,7 +69,7 @@
 
       <!-- ── RIGHT COLUMN: Details ── -->
       <div>
-        <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600; color: #0f172a; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Details</h3>
+        <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600;  text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Details</h3>
 
         <!-- Category: groups assets into logical types (e.g. Electronics, Furniture) -->
         <div style="margin-bottom: 20px;">
@@ -112,7 +112,7 @@
 
     <!-- ── Full-width Additional section (outside the two-column grid) ── -->
     <div style="margin-top: 12px; margin-bottom: 32px;">
-      <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600; color: #0f172a; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Additional</h3>
+      <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600;  text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Additional</h3>
 
       <!-- Side-by-side pair: Asset Date and Purchase Value -->
       <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 24px; margin-bottom: 20px;">
@@ -128,7 +128,7 @@
         <div>
           <label class="assura-label" for="purchaseValue">Purchase Value</label>
           <div style="display: flex; align-items: stretch;">
-            <span style="background: #f1f5f9; color: #475569; padding: 10px 16px; border: 1px solid #cbd5e1; border-right: none; border-radius: 8px 0 0 8px; font-weight: 500; font-size: 14px; display: flex; align-items: center;">LKR</span>
+            <span style="  padding: 10px 16px; border: 1px solid #cbd5e1; border-right: none; border-radius: 8px 0 0 8px; font-weight: 500; font-size: 14px; display: flex; align-items: center;">LKR</span>
             <input id="purchaseValue" type="number" class="assura-input" style="border-radius: 0 8px 8px 0; flex-grow: 1;" formControlName="purchaseValue" placeholder="0" min="0" step="1" />
           </div>
         </div>
