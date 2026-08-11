@@ -24,3 +24,12 @@
     padding: 24px;
     background-color: #f1f5f9; /* slate-100 */
 }
+
+@media (prefers-color-scheme: dark) {
+    .shell-layout {
+        background-color: #0f172a;
+    }
+    .page-content {
+        background-color: #020617;
+    }
+}
