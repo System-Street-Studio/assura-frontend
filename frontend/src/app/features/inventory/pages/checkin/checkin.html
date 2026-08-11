@@ -21,7 +21,7 @@
   </div>
 
   <!-- Not found -->
-  <div class="assura-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 32px; text-align: center; border-top: 4px solid #ef4444;" *ngIf="!loading && loadError">
+  <div class="assura-card assura-accent-danger" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 32px; text-align: center;" *ngIf="!loading && loadError">
     <div style="width: 80px; height: 80px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
       <mat-icon style="font-size: 40px; width: 40px; height: 40px;">cloud_off</mat-icon>
     </div>
@@ -33,7 +33,7 @@
     </button>
   </div>
 
-  <div class="assura-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 32px; text-align: center; border-top: 4px solid #f59e0b;" *ngIf="!loading && notFound">
+  <div class="assura-card assura-accent-warning" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 32px; text-align: center;" *ngIf="!loading && notFound">
     <div style="width: 80px; height: 80px; border-radius: 50%; background: #fef3c7; color: #f59e0b; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
       <mat-icon style="font-size: 40px; width: 40px; height: 40px;">search_off</mat-icon>
     </div>
@@ -45,7 +45,7 @@
     </button>
   </div>
 
-  <div class="assura-card" style="border-top: 4px solid #4f46e5;" *ngIf="!loading && !record && !notFound && !loadError">
+  <div class="assura-card assura-accent-primary" *ngIf="!loading && !record && !notFound && !loadError">
     <div style="display: flex; align-items: center; gap: 20px; padding: 24px; border-bottom: 1px solid #e2e8f0;  border-radius: 8px 8px 0 0;">
       <div style="width: 56px; height: 56px; border-radius: 12px; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center;">
         <mat-icon style="font-size: 28px; width: 28px; height: 28px;">login</mat-icon>
@@ -106,7 +106,7 @@
     <!-- Info Cards Row -->
     <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 24px; margin-bottom: 24px;">
       <!-- Asset Card -->
-      <div class="assura-card" style="padding: 0; overflow: hidden; border-top: 4px solid #3b82f6;">
+      <div class="assura-card assura-accent-info" style="padding: 0; overflow: hidden;">
         <div style="padding: 20px 24px; border-bottom: 1px solid #e2e8f0;  display: flex; align-items: center; gap: 12px;">
           <div style="width: 40px; height: 40px; border-radius: 8px; background: #dbeafe; color: #3b82f6; display: flex; align-items: center; justify-content: center;">
             <mat-icon>devices</mat-icon>
@@ -141,7 +141,7 @@
       </div>
 
       <!-- Assignment Card -->
-      <div class="assura-card" style="padding: 0; overflow: hidden; border-top: 4px solid #8b5cf6;">
+      <div class="assura-card assura-accent-primary" style="padding: 0; overflow: hidden;">
         <div style="padding: 20px 24px; border-bottom: 1px solid #e2e8f0;  display: flex; align-items: center; gap: 12px;">
           <div style="width: 40px; height: 40px; border-radius: 8px; background: #ede9fe; color: #8b5cf6; display: flex; align-items: center; justify-content: center;">
             <mat-icon>person</mat-icon>
@@ -193,7 +193,7 @@
     </div>
 
     <!-- Check-In Form Card -->
-    <div class="assura-card" style="padding: 0; overflow: hidden; border-top: 4px solid #10b981;">
+    <div class="assura-card assura-accent-success" style="padding: 0; overflow: hidden;">
       <div style="padding: 24px; border-bottom: 1px solid #e2e8f0;  display: flex; align-items: flex-start; gap: 16px;">
         <div style="width: 48px; height: 48px; border-radius: 12px; background: #d1fae5; color: #10b981; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
           <mat-icon style="font-size: 24px; width: 24px; height: 24px;">login</mat-icon>

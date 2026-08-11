@@ -8,65 +8,35 @@
   </div>
 
   <!-- Stats Strip -->
-  <div class="assura-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; margin-top: 0;">
-    <div class="assura-card" style="padding: 16px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #4f46e5;">
-      <div style="background: #e0e7ff; color: #4f46e5; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-        <mat-icon>description</mat-icon>
-      </div>
-      <div>
-        <div style="font-size: 20px; font-weight: 700; ">{{ totalCount }}</div>
-        <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Total Requests</div>
-      </div>
+  <div class="assura-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 24px; margin-top: 0;">
+    <div class="assura-card assura-accent-primary">
+      <span class="assura-card-title">Total Requests</span>
+      <strong class="assura-card-value">{{ totalCount }}</strong>
     </div>
     
-    <div class="assura-card" style="padding: 16px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #f59e0b;">
-      <div style="background: #fef3c7; color: #f59e0b; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-        <mat-icon>hourglass_empty</mat-icon>
-      </div>
-      <div>
-        <div style="font-size: 20px; font-weight: 700; ">{{ pendingCount }}</div>
-        <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Pending</div>
-      </div>
+    <div class="assura-card assura-accent-warning">
+      <span class="assura-card-title">Pending</span>
+      <strong class="assura-card-value">{{ pendingCount }}</strong>
     </div>
     
-    <div class="assura-card" style="padding: 16px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #3b82f6;">
-      <div style="background: #dbeafe; color: #3b82f6; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-        <mat-icon>check_circle</mat-icon>
-      </div>
-      <div>
-        <div style="font-size: 20px; font-weight: 700; ">{{ approvedCount }}</div>
-        <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Approved</div>
-      </div>
+    <div class="assura-card assura-accent-info">
+      <span class="assura-card-title">Approved</span>
+      <strong class="assura-card-value">{{ approvedCount }}</strong>
     </div>
     
-    <div class="assura-card" style="padding: 16px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #ef4444;">
-      <div style="background: #fee2e2; color: #ef4444; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-        <mat-icon>cancel</mat-icon>
-      </div>
-      <div>
-        <div style="font-size: 20px; font-weight: 700; ">{{ rejectedCount }}</div>
-        <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Rejected</div>
-      </div>
+    <div class="assura-card assura-accent-danger">
+      <span class="assura-card-title">Rejected</span>
+      <strong class="assura-card-value">{{ rejectedCount }}</strong>
     </div>
     
-    <div class="assura-card" style="padding: 16px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #10b981;">
-      <div style="background: #d1fae5; color: #10b981; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-        <mat-icon>task_alt</mat-icon>
-      </div>
-      <div>
-        <div style="font-size: 20px; font-weight: 700; ">{{ fulfilledCount }}</div>
-        <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Fulfilled</div>
-      </div>
+    <div class="assura-card assura-accent-success">
+      <span class="assura-card-title">Fulfilled</span>
+      <strong class="assura-card-value">{{ fulfilledCount }}</strong>
     </div>
     
-    <div class="assura-card" style="padding: 16px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #ef4444; transition: transform 0.2s;" [ngStyle]="{'transform': urgentCount > 0 ? 'scale(1.02)' : 'scale(1)', 'box-shadow': urgentCount > 0 ? '0 4px 6px -1px rgba(239, 68, 68, 0.2)' : ''}">
-      <div style="background: #fee2e2; color: #ef4444; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-        <mat-icon [ngStyle]="{'animation': urgentCount > 0 ? 'pulse 1s infinite' : ''}">local_fire_department</mat-icon>
-      </div>
-      <div>
-        <div style="font-size: 20px; font-weight: 700; ">{{ urgentCount }}</div>
-        <div style="font-size: 12px; color: #ef4444; font-weight: 600; text-transform: uppercase;">Urgent Pending</div>
-      </div>
+    <div class="assura-card assura-accent-danger" style="transition: transform 0.2s;" [ngStyle]="{'transform': urgentCount > 0 ? 'scale(1.02)' : 'scale(1)', 'box-shadow': urgentCount > 0 ? '0 4px 6px -1px rgba(239, 68, 68, 0.2)' : ''}">
+      <span class="assura-card-title" [ngStyle]="{'color': urgentCount > 0 ? 'var(--danger)' : ''}">Urgent Pending</span>
+      <strong class="assura-card-value">{{ urgentCount }}</strong>
     </div>
   </div>
 
@@ -252,7 +222,7 @@
 
   <!-- ═══ APPROVE / REJECT MODAL ═══ -->
   <div class="modal-overlay" *ngIf="showActionModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="cancelAction()">
-    <div class="assura-card" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden; border-top: 4px solid #4f46e5;" (click)="$event.stopPropagation()">
+    <div class="assura-card assura-accent-primary" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0; ">
         <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600; ">{{ actionType === 'approve' ? 'Approve' : 'Reject' }} Request</h2>
         <button style="background: none; border: none;  cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="cancelAction()">
@@ -425,7 +395,7 @@
 
   <!-- ═══ PROCESS REQUEST MODAL (Storekeeper Only) ═══ -->
   <div class="modal-overlay" *ngIf="showProcessModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="cancelProcess()">
-    <div class="assura-card" style="width: 100%; max-width: 550px; padding: 0; overflow: hidden; border-top: 4px solid #4f46e5;" (click)="$event.stopPropagation()">
+    <div class="assura-card assura-accent-primary" style="width: 100%; max-width: 550px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0; ">
         <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600; ">Process Request</h2>
         <button style="background: none; border: none;  cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="cancelProcess()">

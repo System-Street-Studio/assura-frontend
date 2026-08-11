@@ -88,86 +88,46 @@
          The `.kpi-bar-fill` width is bound to computed rate percentages via [style.width.%]. -->
     <section class="assura-grid assura-grid-cols-4">
 
-      <!-- Total Assets: always 100% bar fill since it IS the total -->
+      <!-- Total Assets -->
       <div class="assura-card assura-accent-info clickable" routerLink="/inventory/assets">
-        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="kpi-icon-wrap teal"><mat-icon>inventory_2</mat-icon></div>
-          <span class="kpi-change positive" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 3.2%</span>
-        </div>
-        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Total Assets</div>
-        <div class="assura-card-value">{{ kpis.totalAssets | number }}</div>
-        <div class="kpi-bar" style="height: 6px; background: #e2e8f0; border-radius: 4px; margin-top: 16px; overflow: hidden;">
-          <div class="kpi-bar-fill teal" [style.width.%]="100" style="height: 100%; background: #3b82f6;"></div>
-        </div>
+        <span class="assura-card-title">Total Assets</span>
+        <strong class="assura-card-value">{{ kpis.totalAssets | number }}</strong>
       </div>
 
-      <!-- Checked Out: bar fill = utilizationRate (checkedOut / totalAssets × 100) -->
+      <!-- Checked Out -->
       <div class="assura-card assura-accent-primary clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'checked_out' }">
-        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="kpi-icon-wrap blue"><mat-icon>logout</mat-icon></div>
-          <span class="kpi-change positive" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 5.1%</span>
-        </div>
-        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Checked Out</div>
-        <div class="assura-card-value">{{ kpis.checkedOut | number }}</div>
-        <div class="kpi-bar" style="height: 6px; background: #e2e8f0; border-radius: 4px; margin-top: 16px; overflow: hidden;">
-          <div class="kpi-bar-fill blue" [style.width.%]="utilizationRate" style="height: 100%; background: #6366f1;"></div>
-        </div>
+        <span class="assura-card-title">Checked Out</span>
+        <strong class="assura-card-value">{{ kpis.checkedOut | number }}</strong>
       </div>
 
-      <!-- Available: bar fill = availableRate (available / totalAssets × 100) -->
+      <!-- Available -->
       <div class="assura-card assura-accent-success clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'available' }">
-        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="kpi-icon-wrap green"><mat-icon>check_circle</mat-icon></div>
-          <span class="kpi-change neutral" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">remove</mat-icon> 0.4%</span>
-        </div>
-        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Available</div>
-        <div class="assura-card-value">{{ kpis.available | number }}</div>
-        <div class="kpi-bar" style="height: 6px; background: #e2e8f0; border-radius: 4px; margin-top: 16px; overflow: hidden;">
-          <div class="kpi-bar-fill green" [style.width.%]="availableRate" style="height: 100%; background: #10b981;"></div>
-        </div>
+        <span class="assura-card-title">Available</span>
+        <strong class="assura-card-value">{{ kpis.available | number }}</strong>
       </div>
 
-      <!-- Total Value: no progress bar (monetary value, not a ratio) -->
+      <!-- Total Value -->
       <div class="assura-card assura-accent-warning">
-        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="kpi-icon-wrap purple"><mat-icon>attach_money</mat-icon></div>
-          <span class="kpi-change positive" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 1.8%</span>
-        </div>
-        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Total Value</div>
-        <div class="assura-card-value">{{ kpis.totalAssetValue }}</div>
+        <span class="assura-card-title">Total Value</span>
+        <strong class="assura-card-value">{{ kpis.totalAssetValue }}</strong>
       </div>
 
-      <!-- Pending Requests: negative change badge only appears when count exceeds 15 -->
+      <!-- Pending Requests -->
       <div class="assura-card assura-accent-warning clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'pending' }">
-        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="kpi-icon-wrap orange"><mat-icon>pending_actions</mat-icon></div>
-          <span class="kpi-change negative" *ngIf="kpis.pendingRequests > 15" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon>
-            12%</span>
-        </div>
-        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Pending Requests</div>
-        <div class="assura-card-value">{{ kpis.pendingRequests }}</div>
+        <span class="assura-card-title">Pending Requests</span>
+        <strong class="assura-card-value">{{ kpis.pendingRequests }}</strong>
       </div>
 
-      <!-- Maintenance Due: negative change badge appears when count exceeds 10 -->
+      <!-- Maintenance Due -->
       <div class="assura-card assura-accent-danger clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }">
-        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="kpi-icon-wrap red"><mat-icon>build_circle</mat-icon></div>
-          <span class="kpi-change negative" *ngIf="kpis.maintenanceDue > 10" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_downward</mat-icon>
-            8%</span>
-        </div>
-        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Maintenance Due</div>
-        <div class="assura-card-value">{{ kpis.maintenanceDue }}</div>
+        <span class="assura-card-title">Maintenance Due</span>
+        <strong class="assura-card-value">{{ kpis.maintenanceDue }}</strong>
       </div>
 
-      <!-- Temporary Assigned: links to the approvals module.
-           Shows sub-details (awaiting pickup, escalated) in a meta row below the label. -->
+      <!-- Temporary Assigned -->
       <div class="assura-card assura-accent-info clickable" routerLink="/approvals/requests" [queryParams]="{ tab: 'new' }">
-        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="kpi-icon-wrap orange"><mat-icon>assignment_ind</mat-icon></div>
-          <span class="kpi-change neutral" style="font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">schedule</mat-icon> staged</span>
-        </div>
-        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Temporary Assigned</div>
-        <div class="assura-card-value">{{ kpis.temporaryAssignedAssets }}</div>
+        <span class="assura-card-title">Temporary Assigned</span>
+        <strong class="assura-card-value">{{ kpis.temporaryAssignedAssets }}</strong>
         <div class="assura-card-subtitle" style="display: flex; flex-direction: column; gap: 4px; margin-top: 12px;">
           <span>Awaiting pickup: {{ kpis.awaitingPickupConfirmations }}</span>
           <span>Escalated: {{ kpis.procurementEscalations }}</span>
@@ -176,15 +136,15 @@
     </section>
 
     <!-- ── 4. Two-Column Row: Recent Activity | Warranty Alerts ── -->
-    <section class="two-column">
+    <section class="assura-grid assura-grid-cols-2" style="margin-bottom: 24px;">
 
       <!-- Recent Activity Feed -->
       <!-- `*ngIf="recentActivity.length; else emptyActivity"` conditionally shows the list
            or falls back to a friendly empty state. -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2 class="panel-title"><mat-icon>history</mat-icon> Recent Activity</h2>
-          <a class="panel-link" routerLink="/inventory/assets">View all <mat-icon>arrow_forward</mat-icon></a>
+      <div class="assura-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 class="assura-card-title" style="margin: 0; display: flex; align-items: center; gap: 8px;"><mat-icon style="color: var(--text-muted);">history</mat-icon> Recent Activity</h2>
+          <a routerLink="/inventory/assets" style="font-size: 13px; font-weight: 500; text-decoration: none; color: var(--primary); display: flex; align-items: center; gap: 4px;">View all <mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_forward</mat-icon></a>
         </div>
         <div class="activity-list" *ngIf="recentActivity.length; else emptyActivity">
           <!-- `let last = last` gives the last-item flag so we can hide the connector line -->
@@ -220,19 +180,18 @@
         </div>
         <!-- Empty state template reference -->
         <ng-template #emptyActivity>
-          <div class="panel-empty">
-            <mat-icon>inbox</mat-icon>
-            <span>No recent activity</span>
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 20px; color: var(--text-muted); gap: 8px;">
+            <mat-icon style="font-size: 32px; width: 32px; height: 32px; opacity: 0.5;">inbox</mat-icon>
+            <span class="assura-card-subtitle" style="font-size: 14px; margin: 0;">No recent activity</span>
           </div>
         </ng-template>
       </div>
 
       <!-- Warranty Expiry Panel -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2 class="panel-title"><mat-icon>shield</mat-icon> Warranty Expiring</h2>
-          <!-- Badge shows total count of expiring warranties -->
-          <span class="panel-badge">{{ warrantyAlerts.length }} alerts</span>
+      <div class="assura-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 class="assura-card-title" style="margin: 0; display: flex; align-items: center; gap: 8px;"><mat-icon style="color: var(--text-muted);">shield</mat-icon> Warranty Expiring</h2>
+          <span style="font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: #fef3cd; color: #92640a;">{{ warrantyAlerts.length }} alerts</span>
         </div>
         <div class="warranty-list" *ngIf="warrantyAlerts.length; else emptyWarranty">
           <!-- `[class]="'severity-' + alert.severity"` adds a coloured left border per severity -->
@@ -256,128 +215,120 @@
           </div>
         </div>
         <ng-template #emptyWarranty>
-          <div class="panel-empty">
-            <mat-icon>verified</mat-icon>
-            <span>All warranties are up to date</span>
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 20px; color: var(--text-muted); gap: 8px;">
+            <mat-icon style="font-size: 32px; width: 32px; height: 32px; opacity: 0.5;">verified</mat-icon>
+            <span class="assura-card-subtitle" style="font-size: 14px; margin: 0;">All warranties are up to date</span>
           </div>
         </ng-template>
       </div>
     </section>
 
     <!-- ── 5. Charts Grid ── -->
-    <!-- 2×2 grid of Chart.js charts.
-         Each card uses `baseChart` directive from ng2-charts, with separate [data] and [options] bindings.
-         The `type` attribute specifies which Chart.js renderer to use. -->
-    <section class="charts-grid">
+    <section class="assura-grid assura-grid-cols-2" style="margin-bottom: 24px;">
 
-      <!-- Doughnut: Assets by Category — shows proportional breakdown across asset types -->
-      <div class="card">
-        <div class="card-accent teal"></div>
-        <div class="card-header">
+      <!-- Doughnut: Assets by Category -->
+      <div class="assura-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
           <div>
-            <div class="card-title">Assets by Category</div>
-            <div class="card-subtitle">Distribution across asset types</div>
+            <div class="assura-card-title">Assets by Category</div>
+            <div class="assura-card-subtitle">Distribution across asset types</div>
           </div>
-          <div class="card-icon-wrap teal"><mat-icon>pie_chart</mat-icon></div>
+          <mat-icon style="color: var(--primary);">pie_chart</mat-icon>
         </div>
-        <div class="chart-area doughnut">
-          <!-- doughnutData and doughnutOptions are set up in prepareCharts() -->
+        <div style="height: 210px;">
           <canvas baseChart [data]="doughnutData" [options]="doughnutOptions" type="doughnut"></canvas>
         </div>
       </div>
 
-      <!-- Line: Checkout Trend — monthly volume of checkout activity -->
-      <div class="card">
-        <div class="card-accent blue"></div>
-        <div class="card-header">
+      <!-- Line: Checkout Trend -->
+      <div class="assura-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
           <div>
-            <div class="card-title">Checkout Trend</div>
-            <div class="card-subtitle">Monthly asset checkout volume</div>
+            <div class="assura-card-title">Checkout Trend</div>
+            <div class="assura-card-subtitle">Monthly asset checkout volume</div>
           </div>
-          <div class="card-icon-wrap blue"><mat-icon>show_chart</mat-icon></div>
+          <mat-icon style="color: var(--accent);">show_chart</mat-icon>
         </div>
-        <div class="chart-area">
+        <div style="height: 210px;">
           <canvas baseChart [data]="lineData" [options]="lineOptions" type="line"></canvas>
         </div>
       </div>
 
-      <!-- Bar: Assets by Status — lifecycle distribution (InUse, InStore, etc.) -->
-      <div class="card">
-        <div class="card-accent green"></div>
-        <div class="card-header">
+      <!-- Bar: Assets by Status -->
+      <div class="assura-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
           <div>
-            <div class="card-title">Assets by Status</div>
-            <div class="card-subtitle">Current lifecycle distribution</div>
+            <div class="assura-card-title">Assets by Status</div>
+            <div class="assura-card-subtitle">Current lifecycle distribution</div>
           </div>
-          <div class="card-icon-wrap green"><mat-icon>bar_chart</mat-icon></div>
+          <mat-icon style="color: var(--success);">bar_chart</mat-icon>
         </div>
-        <div class="chart-area">
+        <div style="height: 210px;">
           <canvas baseChart [data]="assetsByStatusData" [options]="barOptions" type="bar"></canvas>
         </div>
       </div>
 
-      <!-- Bar: Assets by Division — how assets are spread across business units -->
-      <div class="card">
-        <div class="card-accent purple"></div>
-        <div class="card-header">
+      <!-- Bar: Assets by Division -->
+      <div class="assura-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
           <div>
-            <div class="card-title">Assets by Division</div>
-            <div class="card-subtitle">Allocation across divisions</div>
+            <div class="assura-card-title">Assets by Division</div>
+            <div class="assura-card-subtitle">Allocation across divisions</div>
           </div>
-          <div class="card-icon-wrap purple"><mat-icon>groups</mat-icon></div>
+          <mat-icon style="color: var(--warning);">groups</mat-icon>
         </div>
-        <div class="chart-area">
+        <div style="height: 210px;">
           <canvas baseChart [data]="assetsByDivisionData" [options]="barOptions" type="bar"></canvas>
         </div>
       </div>
     </section>
 
     <!-- ── 6. Asset Anomalies ── -->
-    <!-- Three cards highlighting operational problems that require investigation.
-         Each links to the assets list with a filter query param for drill-down.
-         Severity is indicated by the left border colour:
-           critical (red) → ghost assets
-           warning (amber) → missing assets
-           info (blue) → maintenance overdue -->
-    <section class="anomalies">
-      <h2 class="section-title"><mat-icon>warning</mat-icon> Asset Anomalies</h2>
-      <div class="anomaly-row">
+    <section>
+      <h2 class="assura-page-title" style="display: flex; align-items: center; gap: 8px;"><mat-icon style="color: var(--danger);">warning</mat-icon> Asset Anomalies</h2>
+      <div class="assura-grid assura-grid-cols-3">
 
-        <!-- Ghost Assets: exist in database but cannot be located physically -->
-        <div class="anomaly-card critical">
-          <div class="anomaly-icon-wrap critical-bg">
-            <!-- Pulsing red dot signals urgent attention needed -->
-            <span class="anomaly-pulse"></span>
-            <mat-icon>visibility_off</mat-icon>
+        <!-- Ghost Assets -->
+        <div class="assura-card" style="border-left: 3px solid var(--danger);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #fef2f2; color: var(--danger); display: flex; align-items: center; justify-content: center; position: relative;">
+              <span class="anomaly-pulse"></span>
+              <mat-icon>visibility_off</mat-icon>
+            </div>
+            <div>
+              <div style="font-size: 24px; font-weight: 700; color: var(--text-primary); line-height: 1;">{{ anomalies.ghostAssets }}</div>
+            </div>
           </div>
-          <div class="anomaly-body">
-            <div class="anomaly-value">{{ anomalies.ghostAssets }}</div>
-            <div class="anomaly-label">Ghost assets detected — exist in records but not found physically</div>
-            <a class="anomaly-action" routerLink="/inventory/assets" [queryParams]="{ filter: 'ghost' }">Investigate
-              <mat-icon>arrow_forward</mat-icon></a>
-          </div>
+          <div class="assura-card-subtitle" style="margin-bottom: 16px;">Ghost assets detected — exist in records but not found physically</div>
+          <a routerLink="/inventory/assets" [queryParams]="{ filter: 'ghost' }" style="font-size: 13px; font-weight: 500; text-decoration: none; color: var(--danger); display: flex; align-items: center; gap: 4px;">Investigate <mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_forward</mat-icon></a>
         </div>
 
-        <!-- Missing Assets: not found during a physical audit/scan -->
-        <div class="anomaly-card warning">
-          <div class="anomaly-icon-wrap warning-bg"><mat-icon>search_off</mat-icon></div>
-          <div class="anomaly-body">
-            <div class="anomaly-value">{{ anomalies.missingAssets }}</div>
-            <div class="anomaly-label">Assets missing physical verification during audit</div>
-            <a class="anomaly-action" routerLink="/inventory/assets" [queryParams]="{ filter: 'missing' }">Investigate
-              <mat-icon>arrow_forward</mat-icon></a>
+        <!-- Missing Assets -->
+        <div class="assura-card" style="border-left: 3px solid var(--warning);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #fffbeb; color: var(--warning); display: flex; align-items: center; justify-content: center;">
+              <mat-icon>search_off</mat-icon>
+            </div>
+            <div>
+              <div style="font-size: 24px; font-weight: 700; color: var(--text-primary); line-height: 1;">{{ anomalies.missingAssets }}</div>
+            </div>
           </div>
+          <div class="assura-card-subtitle" style="margin-bottom: 16px;">Assets missing physical verification during audit</div>
+          <a routerLink="/inventory/assets" [queryParams]="{ filter: 'missing' }" style="font-size: 13px; font-weight: 500; text-decoration: none; color: var(--warning); display: flex; align-items: center; gap: 4px;">Investigate <mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_forward</mat-icon></a>
         </div>
 
-        <!-- Maintenance Overdue: assets whose scheduled service date has passed -->
-        <div class="anomaly-card info">
-          <div class="anomaly-icon-wrap info-bg"><mat-icon>build_circle</mat-icon></div>
-          <div class="anomaly-body">
-            <div class="anomaly-value">{{ anomalies.maintenanceDue }}</div>
-            <div class="anomaly-label">Assets overdue for scheduled maintenance</div>
-            <a class="anomaly-action" routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }">View
-              schedule <mat-icon>arrow_forward</mat-icon></a>
+        <!-- Maintenance Overdue -->
+        <div class="assura-card" style="border-left: 3px solid var(--info);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #eff6ff; color: var(--info); display: flex; align-items: center; justify-content: center;">
+              <mat-icon>build_circle</mat-icon>
+            </div>
+            <div>
+              <div style="font-size: 24px; font-weight: 700; color: var(--text-primary); line-height: 1;">{{ anomalies.maintenanceDue }}</div>
+            </div>
           </div>
+          <div class="assura-card-subtitle" style="margin-bottom: 16px;">Assets overdue for scheduled maintenance</div>
+          <a routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }" style="font-size: 13px; font-weight: 500; text-decoration: none; color: var(--info); display: flex; align-items: center; gap: 4px;">View schedule <mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_forward</mat-icon></a>
         </div>
       </div>
     </section>

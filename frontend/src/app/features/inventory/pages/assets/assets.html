@@ -19,76 +19,34 @@
 
     <!-- Summary Stats -->
     <div class="assura-grid assura-grid-cols-6" style="margin-bottom: 24px;">
-        <div class="assura-card" style="padding: 16px; cursor: pointer; transition: all 0.2s;" (click)="filterStatus = ''; applyFilters();" [ngStyle]="{'border-bottom': !filterStatus ? '4px solid #4f46e5' : '4px solid transparent'}">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: #e0e7ff; color: #4f46e5; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                    <mat-icon>inventory_2</mat-icon>
-                </div>
-                <div>
-                    <div style="font-size: 20px; font-weight: 700; ">{{ allAssets.length }}</div>
-                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">All Assets</div>
-                </div>
-            </div>
+        <div class="assura-card assura-accent-primary" style="cursor: pointer;" [style.border-color]="!filterStatus ? 'var(--primary)' : ''" (click)="filterStatus = ''; applyFilters();">
+            <span class="assura-card-title">All Assets</span>
+            <strong class="assura-card-value">{{ allAssets.length }}</strong>
         </div>
         
-        <div class="assura-card" style="padding: 16px; cursor: pointer; transition: all 0.2s;" (click)="onStatusCardClick('InUse')" [ngStyle]="{'border-bottom': filterStatus === 'InUse' ? '4px solid #10b981' : '4px solid transparent'}">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: #d1fae5; color: #10b981; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                    <mat-icon>check_circle</mat-icon>
-                </div>
-                <div>
-                    <div style="font-size: 20px; font-weight: 700; ">{{ statusCounts['InUse'] }}</div>
-                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">In Use</div>
-                </div>
-            </div>
+        <div class="assura-card assura-accent-success" style="cursor: pointer;" [style.border-color]="filterStatus === 'InUse' ? 'var(--success)' : ''" (click)="onStatusCardClick('InUse')">
+            <span class="assura-card-title">In Use</span>
+            <strong class="assura-card-value">{{ statusCounts['InUse'] }}</strong>
         </div>
         
-        <div class="assura-card" style="padding: 16px; cursor: pointer; transition: all 0.2s;" (click)="onStatusCardClick('InStore')" [ngStyle]="{'border-bottom': filterStatus === 'InStore' ? '4px solid #3b82f6' : '4px solid transparent'}">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: #dbeafe; color: #3b82f6; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                    <mat-icon>shelves</mat-icon>
-                </div>
-                <div>
-                    <div style="font-size: 20px; font-weight: 700; ">{{ statusCounts['InStore'] }}</div>
-                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">In Store</div>
-                </div>
-            </div>
+        <div class="assura-card assura-accent-info" style="cursor: pointer;" [style.border-color]="filterStatus === 'InStore' ? 'var(--info)' : ''" (click)="onStatusCardClick('InStore')">
+            <span class="assura-card-title">In Store</span>
+            <strong class="assura-card-value">{{ statusCounts['InStore'] }}</strong>
         </div>
         
-        <div class="assura-card" style="padding: 16px; cursor: pointer; transition: all 0.2s;" (click)="onStatusCardClick('UnderMaintenance')" [ngStyle]="{'border-bottom': filterStatus === 'UnderMaintenance' ? '4px solid #f59e0b' : '4px solid transparent'}">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: #fef3c7; color: #f59e0b; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                    <mat-icon>build</mat-icon>
-                </div>
-                <div>
-                    <div style="font-size: 20px; font-weight: 700; ">{{ statusCounts['UnderMaintenance'] }}</div>
-                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Maintenance</div>
-                </div>
-            </div>
+        <div class="assura-card assura-accent-warning" style="cursor: pointer;" [style.border-color]="filterStatus === 'UnderMaintenance' ? 'var(--warning)' : ''" (click)="onStatusCardClick('UnderMaintenance')">
+            <span class="assura-card-title">Maintenance</span>
+            <strong class="assura-card-value">{{ statusCounts['UnderMaintenance'] }}</strong>
         </div>
         
-        <div class="assura-card" style="padding: 16px; cursor: pointer; transition: all 0.2s;" (click)="onStatusCardClick('Discarded')" [ngStyle]="{'border-bottom': filterStatus === 'Discarded' ? '4px solid #ef4444' : '4px solid transparent'}">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: #fee2e2; color: #ef4444; padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                    <mat-icon>cancel</mat-icon>
-                </div>
-                <div>
-                    <div style="font-size: 20px; font-weight: 700; ">{{ statusCounts['Discarded'] }}</div>
-                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Discarded</div>
-                </div>
-            </div>
+        <div class="assura-card assura-accent-danger" style="cursor: pointer;" [style.border-color]="filterStatus === 'Discarded' ? 'var(--danger)' : ''" (click)="onStatusCardClick('Discarded')">
+            <span class="assura-card-title">Discarded</span>
+            <strong class="assura-card-value">{{ statusCounts['Discarded'] }}</strong>
         </div>
         
-        <div class="assura-card" style="padding: 16px; border-bottom: 4px solid #64748b;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="  padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                    <mat-icon>attach_money</mat-icon>
-                </div>
-                <div>
-                    <div style="font-size: 18px; font-weight: 700; ">{{ formatCurrency(totalValue) }}</div>
-                    <div style="font-size: 12px;  font-weight: 500; text-transform: uppercase;">Total Value</div>
-                </div>
-            </div>
+        <div class="assura-card">
+            <span class="assura-card-title">Total Value</span>
+            <strong class="assura-card-value">{{ formatCurrency(totalValue) }}</strong>
         </div>
     </div>
 

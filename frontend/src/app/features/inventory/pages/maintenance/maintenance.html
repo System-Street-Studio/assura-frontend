@@ -1,78 +1,51 @@
-<div class="maintenance-container">
+<div style="padding: 32px; max-width: 1400px; margin: 0 auto; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 32px;">
     <!-- Header -->
-    <header class="page-header">
-        <div>
-            <h1>Maintenance Workflow</h1>
-            <p class="subtitle">Enterprise Maintenance and Repair Tracking</p>
-        </div>
-        <div class="header-actions">
-            <!-- Add future export or print actions here -->
-        </div>
-    </header>
+    <div>
+        <h1 class="assura-page-title" style="margin-bottom: 4px;">Maintenance Workflow</h1>
+        <span style="font-size: 14px; color: #64748b;">Enterprise Maintenance and Repair Tracking</span>
+    </div>
 
     <!-- Stats Strip -->
-    <div class="stats-grid" *ngIf="stats">
-        <div class="stat-card" [class.active]="filterStatus === ''" (click)="setFilterStatus('')">
-            <div class="stat-icon total"><mat-icon>build_circle</mat-icon></div>
-            <div class="stat-info">
-                <span class="value">{{ stats.total }}</span>
-                <span class="label">Total Records</span>
-            </div>
+    <div class="assura-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 0;" *ngIf="stats">
+        <div class="assura-card" [class.assura-accent-primary]="filterStatus === ''" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('')" [ngStyle]="{'background': filterStatus === '' ? '#eff6ff' : 'white'}">
+            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === '' ? '#4f46e5' : ''}">Total Records</span>
+            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === '' ? '#4f46e5' : ''}">{{ stats.total }}</strong>
         </div>
-        <div class="stat-card pending" [class.active]="filterStatus === 'Approved'" (click)="setFilterStatus('Approved')">
-            <div class="stat-icon"><mat-icon>new_releases</mat-icon></div>
-            <div class="stat-info">
-                <span class="value">{{ stats.approved }}</span>
-                <span class="label">Ready for Store</span>
-            </div>
+        <div class="assura-card" [class.assura-accent-info]="filterStatus === 'Approved'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('Approved')" [ngStyle]="{'background': filterStatus === 'Approved' ? '#eff6ff' : 'white'}">
+            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'Approved' ? '#0ea5e9' : ''}">Ready for Store</span>
+            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'Approved' ? '#0ea5e9' : ''}">{{ stats.approved }}</strong>
         </div>
-        <div class="stat-card in-progress" [class.active]="filterStatus === 'InProgress'" (click)="setFilterStatus('InProgress')">
-            <div class="stat-icon"><mat-icon>engineering</mat-icon></div>
-            <div class="stat-info">
-                <span class="value">{{ stats.inProgress }}</span>
-                <span class="label">In Progress</span>
-            </div>
+        <div class="assura-card" [class.assura-accent-warning]="filterStatus === 'InProgress'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('InProgress')" [ngStyle]="{'background': filterStatus === 'InProgress' ? '#fef3c7' : 'white'}">
+            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'InProgress' ? '#f59e0b' : ''}">In Progress</span>
+            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'InProgress' ? '#f59e0b' : ''}">{{ stats.inProgress }}</strong>
         </div>
-        <div class="stat-card temp-assigned" [class.active]="filterStatus === 'TempAssigned'" (click)="setFilterStatus('TempAssigned')">
-            <div class="stat-icon"><mat-icon>swap_horiz</mat-icon></div>
-            <div class="stat-info">
-                <span class="value">{{ stats.tempAssigned }}</span>
-                <span class="label">Temp Assigned</span>
-            </div>
+        <div class="assura-card" [class.assura-accent-primary]="filterStatus === 'TempAssigned'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('TempAssigned')" [ngStyle]="{'background': filterStatus === 'TempAssigned' ? '#eff6ff' : 'white'}">
+            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'TempAssigned' ? '#8b5cf6' : ''}">Temp Assigned</span>
+            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'TempAssigned' ? '#8b5cf6' : ''}">{{ stats.tempAssigned }}</strong>
         </div>
-        <div class="stat-card repair" [class.active]="filterStatus === 'SentForRepair'" (click)="setFilterStatus('SentForRepair')">
-            <div class="stat-icon"><mat-icon>local_shipping</mat-icon></div>
-            <div class="stat-info">
-                <span class="value">{{ stats.sentForRepair }}</span>
-                <span class="label">At Repair Firm</span>
-            </div>
+        <div class="assura-card" [class.assura-accent-warning]="filterStatus === 'SentForRepair'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('SentForRepair')" [ngStyle]="{'background': filterStatus === 'SentForRepair' ? '#fef3c7' : 'white'}">
+            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'SentForRepair' ? '#f97316' : ''}">At Repair Firm</span>
+            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'SentForRepair' ? '#f97316' : ''}">{{ stats.sentForRepair }}</strong>
         </div>
-        <div class="stat-card escalated" [class.active]="filterStatus === 'EscalatedToProcurement'" (click)="setFilterStatus('EscalatedToProcurement')">
-            <div class="stat-icon"><mat-icon>assignment_late</mat-icon></div>
-            <div class="stat-info">
-                <span class="value">{{ stats.escalatedToProcurement }}</span>
-                <span class="label">Escalated</span>
-            </div>
+        <div class="assura-card" [class.assura-accent-danger]="filterStatus === 'EscalatedToProcurement'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('EscalatedToProcurement')" [ngStyle]="{'background': filterStatus === 'EscalatedToProcurement' ? '#fee2e2' : 'white'}">
+            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'EscalatedToProcurement' ? '#ef4444' : ''}">Escalated</span>
+            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'EscalatedToProcurement' ? '#ef4444' : ''}">{{ stats.escalatedToProcurement }}</strong>
         </div>
-        <div class="stat-card completed" [class.active]="filterStatus === 'Completed'" (click)="setFilterStatus('Completed')">
-            <div class="stat-icon"><mat-icon>check_circle</mat-icon></div>
-            <div class="stat-info">
-                <span class="value">{{ stats.completed }}</span>
-                <span class="label">Completed</span>
-            </div>
+        <div class="assura-card" [class.assura-accent-success]="filterStatus === 'Completed'" style="cursor: pointer; padding: 16px; transition: all 0.2s;" (click)="setFilterStatus('Completed')" [ngStyle]="{'background': filterStatus === 'Completed' ? '#d1fae5' : 'white'}">
+            <span class="assura-card-title" [ngStyle]="{'color': filterStatus === 'Completed' ? '#10b981' : ''}">Completed</span>
+            <strong class="assura-card-value" [ngStyle]="{'color': filterStatus === 'Completed' ? '#10b981' : ''}">{{ stats.completed }}</strong>
         </div>
     </div>
 
     <!-- Main Content -->
-    <div class="content-card">
-        <!-- Toolbar -->
-        <div class="toolbar">
-            <div class="search-box">
-                <mat-icon>search</mat-icon>
-                <input type="text" placeholder="Search by MNT#, Asset Code, Name..." [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" />
-            </div>
-            <div class="filters">
-                <select [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()" class="select-input">
+    <section>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div style="position: relative; width: 300px;">
+                    <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5; font-size: 20px;">search</mat-icon>
+                    <input type="text" placeholder="Search by MNT#, Asset Code, Name..." class="assura-input" style="padding-left: 40px;" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" />
+                </div>
+                <select class="assura-input custom-select" style="width: auto;" [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
                     <option value="">All Statuses</option>
                     <option value="PendingApproval">Pending Approval</option>
                     <option value="Approved">Approved (Ready for Store)</option>
@@ -83,240 +56,221 @@
                     <option value="Completed">Completed</option>
                     <option value="Rejected">Rejected</option>
                 </select>
-                <button class="btn-icon" (click)="clearFilters()" *ngIf="searchTerm || filterStatus" title="Clear Filters">
-                    <mat-icon>clear</mat-icon>
+                <button class="assura-btn assura-btn-secondary" style="padding: 8px;" (click)="clearFilters()" *ngIf="searchTerm || filterStatus" title="Clear Filters">
+                    <mat-icon style="font-size: 18px;">clear</mat-icon>
                 </button>
             </div>
         </div>
 
-        <!-- Loading State -->
-        <div class="loading-state" *ngIf="loading">
-            <div class="spinner"></div>
-            <p>Loading maintenance records...</p>
+        <div class="assura-table-container">
+            <ng-container *ngIf="!loading">
+                <table class="assura-table" *ngIf="viewRequests.length > 0">
+                    <thead>
+                        <tr>
+                            <th class="assura-th">MNT Number</th>
+                            <th class="assura-th">Asset</th>
+                            <th class="assura-th">Type & Date</th>
+                            <th class="assura-th">Requester</th>
+                            <th class="assura-th">Status</th>
+                            <th class="assura-th" style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let req of viewRequests" class="assura-tr-hover" style="cursor: pointer;" (click)="openDetail(req)">
+                            <td class="assura-td">
+                                <div style="font-weight: 600; color: #4f46e5;">{{ req.maintenanceNumber }}</div>
+                                <div style="font-size: 12px; color: #64748b;">{{ req.priority || 'Normal' }} Priority</div>
+                            </td>
+                            <td class="assura-td">
+                                <div style="font-weight: 500;">{{ req.assetName }}</div>
+                                <div style="font-size: 12px; color: #64748b;">{{ req.assetCode }}</div>
+                            </td>
+                            <td class="assura-td">
+                                <div style="font-size: 13px; font-weight: 500;">{{ req.type }}</div>
+                                <div style="font-size: 12px; color: #64748b;">{{ formatDate(req.maintenanceDate) }}</div>
+                            </td>
+                            <td class="assura-td">
+                                <div *ngIf="req.requestedByName">
+                                    <div style="font-size: 13px; font-weight: 500;">{{ req.requestedByName }}</div>
+                                    <div style="font-size: 12px; color: #64748b;" *ngIf="req.requesterDivision">{{ req.requesterDivision }}</div>
+                                </div>
+                                <div style="color: #64748b;" *ngIf="!req.requestedByName">-</div>
+                            </td>
+                            <td class="assura-td">
+                                <span class="assura-badge" [ngClass]="getStatusClass(req.status)">
+                                    {{ getStatusLabel(req.status) }}
+                                </span>
+                            </td>
+                            <td class="assura-td" style="text-align: right;" (click)="$event.stopPropagation()">
+                                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                    <ng-container *ngIf="req.status === 'Approved'">
+                                        <button class="assura-btn assura-btn-primary" style="padding: 6px;" (click)="openAssignTemp(req, $event)" title="Assign Temp Asset">
+                                            <mat-icon style="font-size: 16px;">swap_horiz</mat-icon>
+                                        </button>
+                                        <button class="assura-btn assura-btn-secondary" style="padding: 6px; color: #f59e0b; border-color: #f59e0b;" (click)="openSendForRepair(req, $event)" title="Send for Repair">
+                                            <mat-icon style="font-size: 16px;">local_shipping</mat-icon>
+                                        </button>
+                                        <button class="assura-btn assura-btn-secondary" style="padding: 6px; color: #ef4444; border-color: #ef4444;" (click)="openEscalate(req, $event)" title="Escalate">
+                                            <mat-icon style="font-size: 16px;">assignment_late</mat-icon>
+                                        </button>
+                                    </ng-container>
+
+                                    <ng-container *ngIf="req.status === 'TempAssigned' || req.status === 'InProgress' || req.status === 'SentForRepair'">
+                                        <button class="assura-btn assura-btn-primary" style="padding: 6px; background: #10b981; border-color: #10b981;" (click)="openAction('complete', req, $event)" title="Mark Completed">
+                                            <mat-icon style="font-size: 16px;">check_circle</mat-icon>
+                                        </button>
+                                    </ng-container>
+
+                                    <button class="assura-btn assura-btn-secondary" style="padding: 6px;" (click)="openDetail(req)" title="View Details">
+                                        <mat-icon style="font-size: 16px;">visibility</mat-icon>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div *ngIf="viewRequests.length === 0" style="padding: 48px; text-align: center;">
+                    <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">inventory_2</mat-icon>
+                    <h3 style="margin: 0 0 8px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600;">No Records Found</h3>
+                    <p style="margin: 0; color: #64748b;">We couldn't find any maintenance records matching your criteria.</p>
+                </div>
+
+                <div *ngIf="viewRequests.length > 0" style="padding: 16px 24px; border-top: 1px solid #e2e8f0;">
+                    <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pages" (pageChange)="goToPage($event)"></app-pagination>
+                </div>
+            </ng-container>
+
+            <div *ngIf="loading" style="padding: 48px; text-align: center;">
+                <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1; animation: spin 1s linear infinite;">autorenew</mat-icon>
+                <div style="font-size: 16px; font-weight: 500;">Loading maintenance records...</div>
+            </div>
         </div>
-
-        <!-- Empty State -->
-        <div class="empty-state" *ngIf="!loading && viewRequests.length === 0">
-            <mat-icon>inventory_2</mat-icon>
-            <h3>No Records Found</h3>
-            <p>We couldn't find any maintenance records matching your criteria.</p>
-            <button class="btn-primary" *ngIf="searchTerm || filterStatus" (click)="clearFilters()">Clear Filters</button>
-        </div>
-
-        <!-- Data Table -->
-        <div class="table-container" *ngIf="!loading && viewRequests.length > 0">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>MNT Number</th>
-                        <th>Asset</th>
-                        <th>Type & Date</th>
-                        <th>Requester</th>
-                        <th>Status</th>
-                        <th class="actions-col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let req of viewRequests" class="row-hover" (click)="openDetail(req)">
-                        <td class="primary-cell">
-                            <strong>{{ req.maintenanceNumber }}</strong>
-                            <span class="sub-text">{{ req.priority || 'Normal' }} Priority</span>
-                        </td>
-                        <td>
-                            <div class="asset-info">
-                                <span class="asset-name">{{ req.assetName }}</span>
-                                <span class="asset-code">{{ req.assetCode }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="type-date">
-                                <span class="type-badge">{{ req.type }}</span>
-                                <span class="date">{{ formatDate(req.maintenanceDate) }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="requester-info" *ngIf="req.requestedByName">
-                                <span class="name">{{ req.requestedByName }}</span>
-                                <span class="division" *ngIf="req.requesterDivision">{{ req.requesterDivision }}</span>
-                            </div>
-                            <span class="sub-text" *ngIf="!req.requestedByName">-</span>
-                        </td>
-                        <td>
-                            <span class="status-badge" [ngClass]="getStatusClass(req.status)">
-                                {{ getStatusLabel(req.status) }}
-                            </span>
-                        </td>
-                        <td class="actions-cell" (click)="$event.stopPropagation()">
-                            <div class="action-buttons">
-                                <!-- Actions for Approved status -->
-                                <ng-container *ngIf="req.status === 'Approved'">
-                                    <button class="btn-action primary" (click)="openAssignTemp(req, $event)" title="Assign Temp Asset">
-                                        <mat-icon>swap_horiz</mat-icon>
-                                    </button>
-                                    <button class="btn-action warning" (click)="openSendForRepair(req, $event)" title="Send for Repair">
-                                        <mat-icon>local_shipping</mat-icon>
-                                    </button>
-                                    <button class="btn-action danger" (click)="openEscalate(req, $event)" title="Escalate">
-                                        <mat-icon>assignment_late</mat-icon>
-                                    </button>
-                                </ng-container>
-
-                                <!-- Actions for Temp Assigned or In Progress -->
-                                <ng-container *ngIf="req.status === 'TempAssigned' || req.status === 'InProgress' || req.status === 'SentForRepair'">
-                                    <button class="btn-action success" (click)="openAction('complete', req, $event)" title="Mark Completed">
-                                        <mat-icon>check_circle</mat-icon>
-                                    </button>
-                                </ng-container>
-
-                                <button class="btn-action default" (click)="openDetail(req)" title="View Details">
-                                    <mat-icon>visibility</mat-icon>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        <app-pagination *ngIf="!loading && viewRequests.length > 0"
-                        [currentPage]="currentPage"
-                        [totalPages]="totalPages"
-                        [pageNumbers]="pages"
-                        (pageChange)="goToPage($event)">
-        </app-pagination>
-    </div>
+    </section>
 </div>
 
 <!-- ================= MODALS ================= -->
 
-<!-- Simple Action Modal (Complete/Start/Reject) -->
-<div class="modal-overlay" *ngIf="showActionModal" (click)="closeModals()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <h2>Confirm Action</h2>
-            <button class="btn-close" (click)="closeModals()"><mat-icon>close</mat-icon></button>
+<div class="modal-overlay" *ngIf="showActionModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="closeModals()">
+    <div class="assura-card assura-accent-primary" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0;">
+            <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Confirm Action</h2>
+            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="closeModals()"><mat-icon>close</mat-icon></button>
         </div>
-        <div class="modal-body">
-            <p>Are you sure you want to <strong>{{ actionType }}</strong> maintenance <strong>{{ actionRequest?.maintenanceNumber }}</strong>?</p>
-            <div class="form-group" *ngIf="actionType === 'reject'">
-                <label>Reason for Rejection *</label>
-                <textarea [(ngModel)]="actionNotes" rows="3" placeholder="Enter reason..." class="input-field"></textarea>
+        <div style="padding: 24px;">
+            <p style="margin: 0 0 20px 0; line-height: 1.5;">Are you sure you want to <strong>{{ actionType }}</strong> maintenance <strong>{{ actionRequest?.maintenanceNumber }}</strong>?</p>
+            <div style="display: flex; flex-direction: column; gap: 8px;" *ngIf="actionType === 'reject'">
+                <label class="assura-label">Reason for Rejection *</label>
+                <textarea [(ngModel)]="actionNotes" rows="3" placeholder="Enter reason..." class="assura-input"></textarea>
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
-            <button class="btn-primary" (click)="confirmAction()" [disabled]="actionProcessing || (actionType === 'reject' && !actionNotes)">
+        <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0;">
+            <button class="assura-btn assura-btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
+            <button class="assura-btn assura-btn-primary" (click)="confirmAction()" [disabled]="actionProcessing || (actionType === 'reject' && !actionNotes)">
                 {{ actionProcessing ? 'Processing...' : 'Confirm' }}
             </button>
         </div>
     </div>
 </div>
 
-<!-- Assign Temp Asset Modal -->
-<div class="modal-overlay" *ngIf="showAssignModal" (click)="closeModals()">
-    <div class="modal-content large" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <h2>Assign Temporary Asset</h2>
-            <button class="btn-close" (click)="closeModals()"><mat-icon>close</mat-icon></button>
+<div class="modal-overlay" *ngIf="showAssignModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="closeModals()">
+    <div class="assura-card assura-accent-primary" style="width: 100%; max-width: 600px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0;">
+            <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Assign Temporary Asset</h2>
+            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="closeModals()"><mat-icon>close</mat-icon></button>
         </div>
-        <div class="modal-body">
-            <p class="modal-desc">Select a similar available asset from the store to assign temporarily while <strong>{{ actionRequest?.assetName }}</strong> is under maintenance.</p>
+        <div style="padding: 24px; max-height: 60vh; overflow-y: auto;">
+            <p style="margin: 0 0 20px 0; line-height: 1.5;">Select a similar available asset from the store to assign temporarily while <strong>{{ actionRequest?.assetName }}</strong> is under maintenance.</p>
 
-            <div class="loading-state" *ngIf="loadingSimilarAssets">
-                <div class="spinner"></div>
-                <p>Finding similar assets in store...</p>
+            <div *ngIf="loadingSimilarAssets" style="text-align: center; padding: 24px;">
+                <mat-icon style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 12px; color: #cbd5e1; animation: spin 1s linear infinite;">autorenew</mat-icon>
+                <div style="font-size: 14px;">Finding similar assets in store...</div>
             </div>
 
-            <div class="empty-state small" *ngIf="!loadingSimilarAssets && similarAssets.length === 0">
-                <mat-icon>search_off</mat-icon>
-                <h4>No similar assets available</h4>
-                <p>There are no assets in the 'InStore' status for category '{{ actionRequest?.categoryName }}'. Consider escalating to procurement.</p>
+            <div *ngIf="!loadingSimilarAssets && similarAssets.length === 0" style="text-align: center; padding: 32px; background: #f8fafc; border-radius: 8px;">
+                <mat-icon style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 12px; color: #cbd5e1;">search_off</mat-icon>
+                <h4 style="margin: 0 0 8px 0; font-size: 16px;">No similar assets available</h4>
+                <p style="margin: 0; font-size: 13px; color: #64748b;">There are no assets in the 'InStore' status for category '{{ actionRequest?.categoryName }}'. Consider escalating to procurement.</p>
             </div>
 
-            <div class="asset-grid" *ngIf="!loadingSimilarAssets && similarAssets.length > 0">
-                <div class="asset-card" 
-                     *ngFor="let asset of similarAssets" 
-                     [class.selected]="selectedSimilarAssetId === asset.id"
+            <div class="assura-grid assura-grid-cols-2" style="gap: 16px; margin-top: 0;" *ngIf="!loadingSimilarAssets && similarAssets.length > 0">
+                <div class="assura-card" *ngFor="let asset of similarAssets" 
+                     style="padding: 16px; cursor: pointer; border: 1px solid #e2e8f0; position: relative; transition: all 0.2s;"
+                     [ngStyle]="{'border-color': selectedSimilarAssetId === asset.id ? '#4f46e5' : '#e2e8f0', 'background': selectedSimilarAssetId === asset.id ? '#e0e7ff' : 'white'}"
                      (click)="selectSimilarAsset(asset.id)">
-                    <div class="card-check"><mat-icon *ngIf="selectedSimilarAssetId === asset.id">check_circle</mat-icon></div>
-                    <div class="card-title">{{ asset.productName }}</div>
-                    <div class="card-code">{{ asset.assetCode }}</div>
-                    <div class="card-meta">S/N: {{ asset.serialNumber || 'N/A' }}</div>
+                    <mat-icon style="position: absolute; top: 12px; right: 12px; color: #4f46e5;" *ngIf="selectedSimilarAssetId === asset.id">check_circle</mat-icon>
+                    <div style="font-weight: 600; font-size: 15px; margin-bottom: 4px;">{{ asset.productName }}</div>
+                    <div style="font-size: 13px; font-family: monospace;">{{ asset.assetCode }}</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 8px;">S/N: {{ asset.serialNumber || 'N/A' }}</div>
                 </div>
             </div>
 
-            <div class="form-group mt-3" *ngIf="similarAssets.length > 0">
-                <label>Notes (Optional)</label>
-                <input type="text" [(ngModel)]="actionNotes" placeholder="Any remarks regarding this temporary assignment..." class="input-field" />
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 24px;" *ngIf="similarAssets.length > 0">
+                <label class="assura-label">Notes (Optional)</label>
+                <input type="text" [(ngModel)]="actionNotes" placeholder="Any remarks regarding this temporary assignment..." class="assura-input" />
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
-            <button class="btn-primary" (click)="confirmAssignTemp()" [disabled]="actionProcessing || !selectedSimilarAssetId || similarAssets.length === 0">
+        <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0;">
+            <button class="assura-btn assura-btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
+            <button class="assura-btn assura-btn-primary" (click)="confirmAssignTemp()" [disabled]="actionProcessing || !selectedSimilarAssetId || similarAssets.length === 0">
                 {{ actionProcessing ? 'Processing...' : 'Assign Asset' }}
             </button>
         </div>
     </div>
 </div>
 
-<!-- Send for Repair Modal -->
-<div class="modal-overlay" *ngIf="showRepairModal" (click)="closeModals()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <h2>Send for External Repair</h2>
-            <button class="btn-close" (click)="closeModals()"><mat-icon>close</mat-icon></button>
+<div class="modal-overlay" *ngIf="showRepairModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="closeModals()">
+    <div class="assura-card assura-accent-warning" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0;">
+            <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Send for External Repair</h2>
+            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="closeModals()"><mat-icon>close</mat-icon></button>
         </div>
-        <div class="modal-body">
-            <p>You are about to send <strong>{{ actionRequest?.assetName }}</strong> to an external repair firm.</p>
-            
-            <div class="form-group">
-                <label>Repair Firm (Optional)</label>
-                <select [(ngModel)]="selectedFirmId" class="input-field">
+        <div style="padding: 24px;">
+            <p style="margin: 0 0 20px 0; line-height: 1.5;">You are about to send <strong>{{ actionRequest?.assetName }}</strong> to an external repair firm.</p>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                <label class="assura-label">Repair Firm (Optional)</label>
+                <select [(ngModel)]="selectedFirmId" class="assura-input custom-select">
                     <option [ngValue]="null">-- Not Specified --</option>
-                    <!-- In a real app, you would populate this from an API -->
                     <option [ngValue]="1">TechFix Solutions</option>
                     <option [ngValue]="2">ElectroCare Ltd</option>
                 </select>
             </div>
-
-            <div class="form-group">
-                <label>Notes / Issue Description</label>
-                <textarea [(ngModel)]="actionNotes" rows="3" placeholder="Describe the issue for the repair firm..." class="input-field"></textarea>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label class="assura-label">Notes / Issue Description</label>
+                <textarea [(ngModel)]="actionNotes" rows="3" placeholder="Describe the issue for the repair firm..." class="assura-input"></textarea>
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
-            <button class="btn-warning" (click)="confirmSendForRepair()" [disabled]="actionProcessing">
+        <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0;">
+            <button class="assura-btn assura-btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
+            <button class="assura-btn assura-btn-primary" style="background: #f59e0b; border-color: #f59e0b;" (click)="confirmSendForRepair()" [disabled]="actionProcessing">
                 {{ actionProcessing ? 'Processing...' : 'Send For Repair' }}
             </button>
         </div>
     </div>
 </div>
 
-<!-- Escalate Modal -->
-<div class="modal-overlay" *ngIf="showEscalateModal" (click)="closeModals()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <h2>Escalate to Procurement</h2>
-            <button class="btn-close" (click)="closeModals()"><mat-icon>close</mat-icon></button>
+<div class="modal-overlay" *ngIf="showEscalateModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="closeModals()">
+    <div class="assura-card assura-accent-danger" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0;">
+            <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Escalate to Procurement</h2>
+            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="closeModals()"><mat-icon>close</mat-icon></button>
         </div>
-        <div class="modal-body">
-            <div class="alert alert-warning">
-                <mat-icon>warning</mat-icon>
-                <div class="alert-content">
+        <div style="padding: 24px;">
+            <div style="background: #fffbeb; color: #b45309; padding: 16px; border-radius: 8px; border: 1px solid #fde68a; display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-start;">
+                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">warning</mat-icon>
+                <div style="font-size: 14px; line-height: 1.5;">
                     This action will forward the request to the Procurement division for a new purchase or specialized handling.
                 </div>
             </div>
             
-            <div class="form-group">
-                <label>Reason for Escalation *</label>
-                <textarea [(ngModel)]="actionNotes" rows="3" placeholder="Why are you escalating this? (e.g., Unrepairable, No temp assets available)..." class="input-field"></textarea>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label class="assura-label">Reason for Escalation *</label>
+                <textarea [(ngModel)]="actionNotes" rows="3" placeholder="Why are you escalating this? (e.g., Unrepairable, No temp assets available)..." class="assura-input"></textarea>
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
-            <button class="btn-danger" (click)="confirmEscalate()" [disabled]="actionProcessing || !actionNotes">
+        <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0;">
+            <button class="assura-btn assura-btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
+            <button class="assura-btn assura-btn-primary" style="background: #ef4444; border-color: #ef4444;" (click)="confirmEscalate()" [disabled]="actionProcessing || !actionNotes">
                 {{ actionProcessing ? 'Processing...' : 'Escalate' }}
             </button>
         </div>
@@ -325,126 +279,111 @@
 
 <!-- ================= DRAWER ================= -->
 
-<!-- Detail Drawer -->
-<div class="drawer-overlay" *ngIf="showDetail" (click)="showDetail = false">
-    <div class="drawer-content" (click)="$event.stopPropagation()" [class.open]="showDetail">
-        <div class="drawer-header">
-            <h2>Maintenance Details</h2>
-            <button class="btn-close" (click)="showDetail = false"><mat-icon>close</mat-icon></button>
+<div class="modal-overlay" *ngIf="showDetail" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); z-index: 900;" (click)="showDetail = false">
+    <div class="assura-card" style="position: absolute; right: 0; top: 0; bottom: 0; width: 100%; max-width: 500px; margin: 0; border-radius: 0; padding: 0; overflow-y: auto; display: flex; flex-direction: column; transform: translateX(0); transition: transform 0.3s ease;" (click)="$event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0; background: white; position: sticky; top: 0; z-index: 10;">
+            <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Maintenance Details</h2>
+            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="showDetail = false"><mat-icon>close</mat-icon></button>
         </div>
         
-        <div class="drawer-body" *ngIf="detailRequest">
-            <div class="detail-status">
-                <span class="status-badge" [ngClass]="getStatusClass(detailRequest.status)">
+        <div style="padding: 24px; flex-grow: 1;" *ngIf="detailRequest">
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <span class="assura-badge" [ngClass]="getStatusClass(detailRequest.status)">
                     {{ getStatusLabel(detailRequest.status) }}
                 </span>
-                <span class="priority-badge" *ngIf="detailRequest.priority">{{ detailRequest.priority }}</span>
+                <span class="assura-badge assura-badge-info" *ngIf="detailRequest.priority">{{ detailRequest.priority }}</span>
             </div>
 
-            <h3 class="detail-title">{{ detailRequest.maintenanceNumber }}</h3>
+            <h3 style="margin: 0 0 32px 0; font-family: 'Jost'; font-size: 24px; font-weight: 700; color: #4f46e5;">{{ detailRequest.maintenanceNumber }}</h3>
 
-            <div class="detail-section">
-                <h4>Asset Information</h4>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="label">Asset</span>
-                        <span class="value">{{ detailRequest.assetName }}</span>
+            <div style="margin-bottom: 32px;">
+                <h4 style="margin: 0 0 16px 0; font-size: 15px; font-weight: 600; text-transform: uppercase; color: #64748b; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Asset Information</h4>
+                <div class="assura-grid assura-grid-cols-2" style="gap: 16px; margin-top: 0;">
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Asset</div>
+                        <div style="font-size: 15px; font-weight: 500;">{{ detailRequest.assetName }}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="label">Code</span>
-                        <span class="value">{{ detailRequest.assetCode }}</span>
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Code</div>
+                        <div style="font-size: 15px; font-weight: 500;">{{ detailRequest.assetCode }}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="label">Category</span>
-                        <span class="value">{{ detailRequest.categoryName || '-' }}</span>
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Category</div>
+                        <div style="font-size: 15px; font-weight: 500;">{{ detailRequest.categoryName || '-' }}</div>
                     </div>
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <h4>Maintenance details</h4>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="label">Type</span>
-                        <span class="value">{{ detailRequest.type }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Date Logged</span>
-                        <span class="value">{{ formatDate(detailRequest.maintenanceDate) }}</span>
-                    </div>
-                    <div class="info-item" *ngIf="detailRequest.cost > 0">
-                        <span class="label">Cost</span>
-                        <span class="value">${{ detailRequest.cost | number:'1.2-2' }}</span>
-                    </div>
-                </div>
-                <div class="info-block mt-3" *ngIf="detailRequest.description">
-                    <span class="label">Description</span>
-                    <p class="desc-text">{{ detailRequest.description }}</p>
-                </div>
-                <div class="info-block mt-3" *ngIf="detailRequest.notes">
-                    <span class="label">Storekeeper Notes</span>
-                    <p class="desc-text notes-text">{{ detailRequest.notes }}</p>
                 </div>
             </div>
 
-            <div class="detail-section">
-                <h4>Workflow Audit</h4>
-                <div class="timeline">
-                    <div class="timeline-item" *ngIf="detailRequest.requestedByName">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">
-                            <div class="tl-title">Requested By</div>
-                            <div class="tl-desc">{{ detailRequest.requestedByName }} <span *ngIf="detailRequest.requesterDivision">({{ detailRequest.requesterDivision }})</span></div>
-                        </div>
+            <div style="margin-bottom: 32px;">
+                <h4 style="margin: 0 0 16px 0; font-size: 15px; font-weight: 600; text-transform: uppercase; color: #64748b; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Maintenance details</h4>
+                <div class="assura-grid assura-grid-cols-2" style="gap: 16px; margin-top: 0;">
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Type</div>
+                        <div style="font-size: 15px; font-weight: 500;">{{ detailRequest.type }}</div>
                     </div>
-                    <div class="timeline-item" *ngIf="detailRequest.approvedAt">
-                        <div class="timeline-dot approved"></div>
-                        <div class="timeline-content">
-                            <div class="tl-title">Approved By</div>
-                            <div class="tl-desc">{{ detailRequest.approvedByName || 'System' }} on {{ formatDate(detailRequest.approvedAt) }}</div>
-                        </div>
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Date Logged</div>
+                        <div style="font-size: 15px; font-weight: 500;">{{ formatDate(detailRequest.maintenanceDate) }}</div>
                     </div>
-                    <div class="timeline-item" *ngIf="detailRequest.startedAt">
-                        <div class="timeline-dot progress"></div>
-                        <div class="timeline-content">
-                            <div class="tl-title">Processed By Storekeeper</div>
-                            <div class="tl-desc">{{ detailRequest.storekeeperName }} on {{ formatDate(detailRequest.startedAt) }}</div>
-                        </div>
+                    <div *ngIf="detailRequest.cost > 0">
+                        <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Cost</div>
+                        <div style="font-size: 15px; font-weight: 500;">${{ detailRequest.cost | number:'1.2-2' }}</div>
                     </div>
-                    <div class="timeline-item" *ngIf="detailRequest.replacementAssetId">
-                        <div class="timeline-dot assigned"></div>
-                        <div class="timeline-content">
-                            <div class="tl-title">Temp Asset Assigned</div>
-                            <div class="tl-desc">{{ detailRequest.replacementAssetName }} ({{ detailRequest.replacementAssetCode }})</div>
-                        </div>
+                </div>
+                <div style="margin-top: 16px; padding: 16px; background: #f8fafc; border-radius: 8px;" *ngIf="detailRequest.description">
+                    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Description</div>
+                    <p style="margin: 0; font-size: 14px; line-height: 1.5;">{{ detailRequest.description }}</p>
+                </div>
+                <div style="margin-top: 16px; padding: 16px; background: #fefce8; border-radius: 8px; border: 1px solid #fef08a;" *ngIf="detailRequest.notes">
+                    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; color: #a16207;">Storekeeper Notes</div>
+                    <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #854d0e;">{{ detailRequest.notes }}</p>
+                </div>
+            </div>
+
+            <div>
+                <h4 style="margin: 0 0 16px 0; font-size: 15px; font-weight: 600; text-transform: uppercase; color: #64748b; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Workflow Audit</h4>
+                <div style="display: flex; flex-direction: column; gap: 24px; position: relative; padding-left: 20px; border-left: 2px solid #e2e8f0; margin-left: 10px;">
+                    <div style="position: relative;" *ngIf="detailRequest.requestedByName">
+                        <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #94a3b8; border: 2px solid white;"></div>
+                        <div style="font-weight: 600; font-size: 14px;">Requested By</div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">{{ detailRequest.requestedByName }} <span *ngIf="detailRequest.requesterDivision">({{ detailRequest.requesterDivision }})</span></div>
                     </div>
-                    <div class="timeline-item" *ngIf="detailRequest.repairingFirmName">
-                        <div class="timeline-dot repair"></div>
-                        <div class="timeline-content">
-                            <div class="tl-title">Sent for Repair</div>
-                            <div class="tl-desc">{{ detailRequest.repairingFirmName }}</div>
-                        </div>
+                    <div style="position: relative;" *ngIf="detailRequest.approvedAt">
+                        <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #3b82f6; border: 2px solid white;"></div>
+                        <div style="font-weight: 600; font-size: 14px;">Approved By</div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">{{ detailRequest.approvedByName || 'System' }} on {{ formatDate(detailRequest.approvedAt) }}</div>
                     </div>
-                    <div class="timeline-item" *ngIf="detailRequest.escalatedToProcurementAt">
-                        <div class="timeline-dot escalated"></div>
-                        <div class="timeline-content">
-                            <div class="tl-title">Escalated to Procurement</div>
-                            <div class="tl-desc">On {{ formatDate(detailRequest.escalatedToProcurementAt) }}</div>
-                        </div>
+                    <div style="position: relative;" *ngIf="detailRequest.startedAt">
+                        <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; border: 2px solid white;"></div>
+                        <div style="font-weight: 600; font-size: 14px;">Processed By Storekeeper</div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">{{ detailRequest.storekeeperName }} on {{ formatDate(detailRequest.startedAt) }}</div>
                     </div>
-                    <div class="timeline-item" *ngIf="detailRequest.completedAt">
-                        <div class="timeline-dot completed"></div>
-                        <div class="timeline-content">
-                            <div class="tl-title">Completed</div>
-                            <div class="tl-desc">On {{ formatDate(detailRequest.completedAt) }}</div>
-                        </div>
+                    <div style="position: relative;" *ngIf="detailRequest.replacementAssetId">
+                        <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #8b5cf6; border: 2px solid white;"></div>
+                        <div style="font-weight: 600; font-size: 14px;">Temp Asset Assigned</div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">{{ detailRequest.replacementAssetName }} ({{ detailRequest.replacementAssetCode }})</div>
+                    </div>
+                    <div style="position: relative;" *ngIf="detailRequest.repairingFirmName">
+                        <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #f97316; border: 2px solid white;"></div>
+                        <div style="font-weight: 600; font-size: 14px;">Sent for Repair</div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">{{ detailRequest.repairingFirmName }}</div>
+                    </div>
+                    <div style="position: relative;" *ngIf="detailRequest.escalatedToProcurementAt">
+                        <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #ef4444; border: 2px solid white;"></div>
+                        <div style="font-weight: 600; font-size: 14px;">Escalated to Procurement</div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">On {{ formatDate(detailRequest.escalatedToProcurementAt) }}</div>
+                    </div>
+                    <div style="position: relative;" *ngIf="detailRequest.completedAt">
+                        <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #10b981; border: 2px solid white;"></div>
+                        <div style="font-weight: 600; font-size: 14px;">Completed</div>
+                        <div style="font-size: 13px; color: #64748b; margin-top: 2px;">On {{ formatDate(detailRequest.completedAt) }}</div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="drawer-footer">
-            <button class="btn-secondary w-100" (click)="showDetail = false">Close</button>
+        <div style="padding: 24px; border-top: 1px solid #e2e8f0; background: #f8fafc; position: sticky; bottom: 0;">
+            <button class="assura-btn assura-btn-secondary" style="width: 100%; justify-content: center;" (click)="showDetail = false">Close</button>
         </div>
     </div>
 </div>

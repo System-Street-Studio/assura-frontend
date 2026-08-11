@@ -20,41 +20,30 @@
   </div>
 
   <!-- Stats Strip -->
-  <section class="assura-grid" style="grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px; margin-top: 0;" *ngIf="!loading">
-    <div class="assura-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s;" [ngStyle]="{'border-color': !filterStatus ? '#4f46e5' : '#e2e8f0', 'box-shadow': !filterStatus ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none'}" (click)="filterStatus = ''; applyFilters()">
-      <div style="width: 48px; height: 48px; border-radius: 12px; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><mat-icon>assignment</mat-icon></div>
-      <div>
-        <div style="font-size: 24px; font-weight: 700;  line-height: 1;">{{ totalCount }}</div>
-        <div style="font-size: 13px; font-weight: 600;  text-transform: uppercase; margin-top: 4px;">Total Records</div>
-      </div>
+  <section class="assura-grid assura-grid-cols-5" style="margin-bottom: 32px;" *ngIf="!loading">
+    <div class="assura-card assura-accent-primary" style="cursor: pointer;" [style.border-color]="!filterStatus ? 'var(--primary)' : ''" (click)="filterStatus = ''; applyFilters()">
+      <span class="assura-card-title">Total Records</span>
+      <strong class="assura-card-value">{{ totalCount }}</strong>
     </div>
-    <div class="assura-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s;" [ngStyle]="{'border-color': filterStatus === 'Checked Out' ? '#3b82f6' : '#e2e8f0', 'box-shadow': filterStatus === 'Checked Out' ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none'}" (click)="filterStatus = 'Checked Out'; activeView = 'active'; applyFilters()">
-      <div style="width: 48px; height: 48px; border-radius: 12px; background: #dbeafe; color: #3b82f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><mat-icon>exit_to_app</mat-icon></div>
-      <div>
-        <div style="font-size: 24px; font-weight: 700;  line-height: 1;">{{ activeCount }}</div>
-        <div style="font-size: 13px; font-weight: 600;  text-transform: uppercase; margin-top: 4px;">Checked Out</div>
-      </div>
+    
+    <div class="assura-card assura-accent-info" style="cursor: pointer;" [style.border-color]="filterStatus === 'Checked Out' ? 'var(--info)' : ''" (click)="filterStatus = 'Checked Out'; activeView = 'active'; applyFilters()">
+      <span class="assura-card-title">Checked Out</span>
+      <strong class="assura-card-value">{{ activeCount }}</strong>
     </div>
-    <div class="assura-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s;" [ngStyle]="{'border-color': filterStatus === 'Overdue' ? '#ef4444' : '#e2e8f0', 'box-shadow': filterStatus === 'Overdue' ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none'}" [class.pulse]="overdueCount > 0" (click)="filterStatus = 'Overdue'; activeView = 'active'; applyFilters()">
-      <div style="width: 48px; height: 48px; border-radius: 12px; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><mat-icon>schedule</mat-icon></div>
-      <div>
-        <div style="font-size: 24px; font-weight: 700;  line-height: 1;">{{ overdueCount }}</div>
-        <div style="font-size: 13px; font-weight: 600;  text-transform: uppercase; margin-top: 4px;">Overdue</div>
-      </div>
+
+    <div class="assura-card assura-accent-danger" style="cursor: pointer;" [style.border-color]="filterStatus === 'Overdue' ? 'var(--danger)' : ''" (click)="filterStatus = 'Overdue'; activeView = 'active'; applyFilters()">
+      <span class="assura-card-title">Overdue</span>
+      <strong class="assura-card-value">{{ overdueCount }}</strong>
     </div>
-    <div class="assura-card" style="padding: 20px; display: flex; align-items: center; gap: 16px;">
-      <div style="width: 48px; height: 48px; border-radius: 12px; background: #fef3c7; color: #f59e0b; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><mat-icon>notification_important</mat-icon></div>
-      <div>
-        <div style="font-size: 24px; font-weight: 700;  line-height: 1;">{{ dueSoonCount }}</div>
-        <div style="font-size: 13px; font-weight: 600;  text-transform: uppercase; margin-top: 4px;">Due Soon</div>
-      </div>
+
+    <div class="assura-card assura-accent-warning">
+      <span class="assura-card-title">Due Soon</span>
+      <strong class="assura-card-value">{{ dueSoonCount }}</strong>
     </div>
-    <div class="assura-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s;" [ngStyle]="{'border-color': filterStatus === 'Returned' ? '#10b981' : '#e2e8f0', 'box-shadow': filterStatus === 'Returned' ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none'}" (click)="filterStatus = 'Returned'; activeView = 'history'; applyFilters()">
-      <div style="width: 48px; height: 48px; border-radius: 12px; background: #d1fae5; color: #10b981; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><mat-icon>login</mat-icon></div>
-      <div>
-        <div style="font-size: 24px; font-weight: 700;  line-height: 1;">{{ returnedCount }}</div>
-        <div style="font-size: 13px; font-weight: 600;  text-transform: uppercase; margin-top: 4px;">Returned</div>
-      </div>
+
+    <div class="assura-card assura-accent-success" style="cursor: pointer;" [style.border-color]="filterStatus === 'Returned' ? 'var(--success)' : ''" (click)="filterStatus = 'Returned'; activeView = 'history'; applyFilters()">
+      <span class="assura-card-title">Returned</span>
+      <strong class="assura-card-value">{{ returnedCount }}</strong>
     </div>
   </section>
 

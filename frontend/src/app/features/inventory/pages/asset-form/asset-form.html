@@ -21,7 +21,7 @@
   <!-- Main reactive form.
        [formGroup] binds to the `assetForm` FormGroup defined in the component.
        (ngSubmit) triggers onSave() which validates then calls the appropriate API. -->
-  <form class="assura-card" style="border-top: 4px solid #4f46e5; padding: 24px;" [formGroup]="assetForm" (ngSubmit)="onSave()">
+  <form class="assura-card assura-accent-primary" style="padding: 24px;" [formGroup]="assetForm" (ngSubmit)="onSave()">
 
     <!-- Two-column grid: left = Basic Info, right = Details -->
     <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 32px;">
