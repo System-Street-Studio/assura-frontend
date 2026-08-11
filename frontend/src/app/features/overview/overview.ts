@@ -38,6 +38,10 @@ export class OverviewComponent implements OnInit {
   showSuccessCard = false;
   showRejectCard = false;
 
+  greeting = 'Welcome';
+  firstName = 'Superintendent';
+  currentDate = new Date();
+
   constructor(
     private queueItemsService: QueueItemsService,
     private route: ActivatedRoute,
@@ -45,6 +49,9 @@ export class OverviewComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    const hour = new Date().getHours();
+    this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
     this.queueItemsService.getAll().subscribe({
       next: (data) => {
         this.queue = data;

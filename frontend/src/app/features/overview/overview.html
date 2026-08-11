@@ -1,4 +1,10 @@
-<div class="overview-container">
+<div class="overview-container" style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <!-- Greeting Banner -->
+    <div class="assura-greeting-banner">
+        <h2 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h2>
+        <p class="assura-greeting-date">{{ currentDate | date:'EEEE, MMMM d, y — h:mm a' }}</p>
+    </div>
+
     <!-- Summary Cards -->
     <div class="summary-cards">
         <div class="summary-card pending" [class.card-active]="activeFilter === 'Pending'"
