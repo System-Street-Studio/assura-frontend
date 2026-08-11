@@ -17,17 +17,6 @@
   color: #ffffff !important;
 }
 
-/* Dark mode active link */
-@media (prefers-color-scheme: dark) {
-  .active-link {
-    background-color: #6366f1 !important; /* indigo-500 */
-  }
-
-  .active-link:hover {
-    background-color: #4f46e5 !important; /* indigo-600 */
-  }
-}
-
 /* Mobile responsive collapse */
 @media (max-width: 720px) {
   :host aside {
