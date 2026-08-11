@@ -26,15 +26,23 @@
             <tbody>
                 <tr *ngFor="let supplier of pagedSuppliers" class="assura-tr-hover">
                     <td class="assura-td" (click)="navigateToDetails(supplier.id)" style="color: #4f46e5; font-weight: 600; cursor: pointer;">{{ supplier.id }}</td>
-                    <td class="assura-td" style="font-weight: 600; color: #0f172a;">{{ supplier.name }}</td>
-                    <td class="assura-td" style="color: #64748b;">{{ supplier.email }}</td>
-                    <td class="assura-td" style="color: #64748b;">{{ supplier.phone || supplier.contactNumber }}</td>
+                    <td class="assura-td" style="font-weight: 600;">{{ supplier.name }}</td>
+                    <td class="assura-td">
+                        <span class="assura-card-subtitle" style="margin: 0; font-size: 15px;">{{ supplier.email }}</span>
+                    </td>
+                    <td class="assura-td">
+                        <span class="assura-card-subtitle" style="margin: 0; font-size: 15px;">{{ supplier.phone || supplier.contactNumber }}</span>
+                    </td>
                 </tr>
                 <tr *ngIf="!isLoading && pagedSuppliers.length === 0">
-                    <td colspan="4" class="assura-td" style="text-align: center; color: #94a3b8; padding: 32px;">No suppliers found.</td>
+                    <td colspan="4" class="assura-td" style="text-align: center; padding: 32px;">
+                        <span class="assura-card-subtitle">No suppliers found.</span>
+                    </td>
                 </tr>
                 <tr *ngIf="isLoading">
-                    <td colspan="4" class="assura-td" style="text-align: center; color: #64748b; padding: 32px;">Loading suppliers...</td>
+                    <td colspan="4" class="assura-td" style="text-align: center; padding: 32px;">
+                        <span class="assura-card-subtitle">Loading suppliers...</span>
+                    </td>
                 </tr>
             </tbody>
         </table>

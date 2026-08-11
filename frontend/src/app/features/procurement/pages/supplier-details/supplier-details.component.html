@@ -5,41 +5,41 @@
         <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 32px;">
             <!-- Left Column -->
             <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Supplier ID</span>
-                    <span style="font-size: 16px; font-weight: 600; color: #0f172a;">{{ supplier.id }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                    <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Supplier ID</span>
+                    <span class="assura-card-title" style="font-size: 16px; font-weight: 600; margin: 0;">{{ supplier.id }}</span>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Supplier Name</span>
-                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.name }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                    <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Supplier Name</span>
+                    <span class="assura-card-title" style="font-size: 16px; font-weight: 500; margin: 0;">{{ supplier.name }}</span>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Email</span>
-                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.email }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                    <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Email</span>
+                    <span class="assura-card-title" style="font-size: 16px; font-weight: 500; margin: 0;">{{ supplier.email }}</span>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Address</span>
-                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.address || 'N/A' }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                    <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Address</span>
+                    <span class="assura-card-title" style="font-size: 16px; font-weight: 500; margin: 0;">{{ supplier.address || 'N/A' }}</span>
                 </div>
             </div>
 
             <!-- Right Column -->
             <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Contact Number</span>
-                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.phone || supplier.contactNumber || 'N/A' }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                    <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Contact Number</span>
+                    <span class="assura-card-title" style="font-size: 16px; font-weight: 500; margin: 0;">{{ supplier.phone || supplier.contactNumber || 'N/A' }}</span>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Contact Person</span>
-                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.contactPerson || 'N/A' }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                    <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Contact Person</span>
+                    <span class="assura-card-title" style="font-size: 16px; font-weight: 500; margin: 0;">{{ supplier.contactPerson || 'N/A' }}</span>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Website</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                    <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Website</span>
                     <span style="font-size: 16px; font-weight: 500; color: #4f46e5;">{{ supplier.website || supplier.url || 'N/A' }}</span>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Date Registered</span>
-                    <span style="font-size: 16px; font-weight: 500; color: #1e293b;">{{ supplier.dateRegistered || (supplier.createdAt | date:'yyyy MMM dd') || 'N/A' }}</span>
+                <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                    <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Date Registered</span>
+                    <span class="assura-card-title" style="font-size: 16px; font-weight: 500; margin: 0;">{{ supplier.dateRegistered || (supplier.createdAt | date:'yyyy MMM dd') || 'N/A' }}</span>
                 </div>
             </div>
         </div>
