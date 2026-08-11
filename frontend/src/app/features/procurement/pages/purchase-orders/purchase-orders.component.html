@@ -1,134 +1,143 @@
-<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 40px;">
+<div class="purchase-orders-page">
 
     <!-- Section 1: List of Purchasing Orders -->
-    <section>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <h2 class="assura-page-title" style="margin-bottom: 0;">List of Purchasing Orders</h2>
-            <div style="position: relative; width: 300px;">
-                <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5; font-size: 20px;">search</mat-icon>
-                <input type="text" placeholder="Search Orders..." class="assura-input" style="padding-left: 40px;" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+    <section class="page-section">
+        <div class="section-header">
+            <h2 class="assura-page-title">List of Purchasing Orders</h2>
+            <div class="search-bar-wrapper">
+                <mat-icon class="search-icon">search</mat-icon>
+                <input type="text" placeholder="Search Orders..." class="glass-input search-input" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
             </div>
         </div>
 
-        <div class="assura-table-container">
-            <ng-container *ngIf="!isLoading">
-                <table class="assura-table" *ngIf="filteredOrders.length > 0">
-                    <thead>
-                        <tr>
-                            <th class="assura-th">PO ID</th>
-                            <th class="assura-th">Supplier</th>
-                            <th class="assura-th">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let order of pagedOrders" class="assura-tr-hover">
-                            <td class="assura-td" (click)="navigateToDetails(order.id)" style="cursor: pointer; color: #4f46e5; font-weight: 600;">{{ order.orderNumber }}</td>
-                            <td class="assura-td" style="font-weight: 500;">{{ order.supplierName || 'Unknown' }}</td>
-                            <td class="assura-td"><span class="assura-card-subtitle" style="margin: 0;">{{ order.issuedDate | date:'dd MMM yyyy' }}</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- Empty State -->
-                <div *ngIf="filteredOrders.length === 0" class="assura-card-subtitle" style="padding: 32px; text-align: center;">
-                    No purchasing orders found.
+        <div class="glass-panel table-panel">
+            @if (isLoading) {
+                <div class="empty-state">
+                    <mat-icon class="spin-animation">sync</mat-icon>
+                    <p>Loading orders...</p>
                 </div>
-
-                <!-- Orders Pagination -->
-                <div *ngIf="filteredOrders.length > 0" style="padding: 16px 24px; border-top: 1px solid #e2e8f0;">
-                    <app-pagination [currentPage]="ordersCurrentPage" [totalPages]="ordersTotalPages" [pageNumbers]="ordersPageNumbers" (pageChange)="goToOrdersPage($event)"></app-pagination>
-                </div>
-            </ng-container>
-
-            <!-- Loading State -->
-            <div *ngIf="isLoading" class="assura-card-subtitle" style="padding: 40px; text-align: center;">
-                Loading orders...
-            </div>
+            } @else {
+                @if (filteredOrders.length > 0) {
+                    <table class="assura-table">
+                        <thead>
+                            <tr>
+                                <th>PO ID</th>
+                                <th>Supplier</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (order of pagedOrders; track order.id) {
+                                <tr class="clickable-row">
+                                    <td class="primary-col" (click)="navigateToDetails(order.id)">{{ order.orderNumber }}</td>
+                                    <td>{{ order.supplierName || 'Unknown' }}</td>
+                                    <td><span class="date-chip">{{ order.issuedDate | date:'dd MMM yyyy' }}</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    
+                    <div class="pagination-footer">
+                        <app-pagination [currentPage]="ordersCurrentPage" [totalPages]="ordersTotalPages" [pageNumbers]="ordersPageNumbers" (pageChange)="goToOrdersPage($event)"></app-pagination>
+                    </div>
+                } @else {
+                    <div class="empty-state">
+                        <p>No purchasing orders found.</p>
+                    </div>
+                }
+            }
         </div>
     </section>
 
     <!-- Section 2: Requests Area -->
-    <section>
-        <h2 class="assura-page-title" style="margin-bottom: 24px;">Purchasing Order Requests</h2>
+    <section class="page-section">
+        <h2 class="assura-page-title">Purchasing Order Requests</h2>
 
-        <div style="display: flex; gap: 24px;">
+        <div class="requests-layout">
             <!-- Left: Request List -->
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <div *ngFor="let req of pagedRequests" (click)="selectRequest(req)"
-                        class="assura-card" style="cursor: pointer; min-height: auto; padding: 16px; border-left: 4px solid transparent; transition: all 0.2s;"
-                        [ngStyle]="{'border-left-color': selectedRequest === req ? '#4f46e5' : 'transparent'}">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <div class="assura-card-title" style="font-weight: 600; font-size: 15px; margin: 0;">{{ req.employeeName }}</div>
-                                <div class="assura-card-subtitle" style="font-size: 13px; margin-top: 4px;">{{ req.divisionName }}</div>
+            <div class="requests-list">
+                <div class="queue-cards-wrapper">
+                    @for (req of pagedRequests; track req.id) {
+                        <div class="glass-card queue-card" [class.active]="selectedRequest === req" (click)="selectRequest(req)">
+                            <div class="queue-card-top">
+                                <div>
+                                    <h4 class="req-employee">{{ req.employeeName }}</h4>
+                                    <span class="req-division">{{ req.divisionName }}</span>
+                                </div>
+                                <span class="date-chip">{{ req.date | date:'dd MMM' }}</span>
                             </div>
-                            <div class="assura-card-subtitle" style="font-size: 12px; font-weight: 500; margin: 0;">{{ req.date | date:'dd MMM' }}</div>
                         </div>
-                    </div>
-                    <div *ngIf="requests.length === 0" class="assura-card-subtitle" style="text-align: center; padding: 32px;">
-                        No pending requests.
-                    </div>
+                    } @empty {
+                        <div class="glass-card empty-state">
+                            <p>No pending requests.</p>
+                        </div>
+                    }
                 </div>
 
-                <!-- Requests Pagination -->
-                <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
-                    [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
-                </app-pagination>
+                @if (requests.length > 0) {
+                    <div class="pagination-wrapper">
+                        <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
+                            [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
+                        </app-pagination>
+                    </div>
+                }
             </div>
 
             <!-- Right: Asset Request Details -->
-            <div style="flex: 2;">
-                <div class="assura-card" *ngIf="selectedRequest" style="position: sticky; top: 24px;">
-                    <h3 class="assura-card-title" style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px;">
-                        Asset Request #{{ selectedRequest.id }}
-                    </h3>
+            <div class="request-details">
+                @if (selectedRequest) {
+                    <div class="glass-panel detail-panel sticky-top">
+                        <div class="detail-header">
+                            <span class="pre-title">Asset Request</span>
+                            <h3>Request #{{ selectedRequest.id }}</h3>
+                        </div>
 
-                    <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 20px;">
-                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Employee</span>
-                            <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ selectedRequest.employeeName }}</span>
+                        <div class="detail-info-grid">
+                            <div class="info-group">
+                                <label>Employee</label>
+                                <span>{{ selectedRequest.employeeName }}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Request Type</label>
+                                <span>{{ selectedRequest.type || 'N/A' }}</span>
+                            </div>
+                            <div class="info-group col-span-2">
+                                <label>Requested Item</label>
+                                <span class="highlight">{{ selectedRequest.assetName || 'N/A' }}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Division</label>
+                                <span>{{ selectedRequest.divisionName }}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Date</label>
+                                <span class="mono">{{ selectedRequest.date | date:'dd MMM yyyy, HH:mm' }}</span>
+                            </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Request Type</span>
-                            <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ selectedRequest.type || 'N/A' }}</span>
+
+                        <div class="desc-group mt-24">
+                            <label>Description</label>
+                            <div class="glass-box text-box">
+                                {{ selectedRequest.description || selectedRequest.specifications || 'N/A' }}
+                            </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px; grid-column: 1 / -1;">
-                            <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Requested Item</span>
-                            <span style="font-size: 16px; font-weight: 600; color: #4f46e5;">{{ selectedRequest.assetName || 'N/A' }}</span>
+
+                        <div class="desc-group mt-16">
+                            <label>Special Note</label>
+                            <div class="glass-box note-box">
+                                {{ selectedRequest.specialNote || 'No special note.' }}
+                            </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Division</span>
-                            <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ selectedRequest.divisionName }}</span>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Date</span>
-                            <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ selectedRequest.date | date:'dd MMM yyyy, HH:mm' }}</span>
+
+                        <div class="detail-actions">
+                            <button class="assura-btn-primary" (click)="navigateToCreate(selectedRequest)">Create PO</button>
                         </div>
                     </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 24px;">
-                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Description</span>
-                        <div class="assura-input" style="padding: 12px; height: auto; min-height: unset; white-space: pre-wrap; pointer-events: none;">
-                            {{ selectedRequest.description || selectedRequest.specifications || 'N/A' }}
-                        </div>
+                } @else {
+                    <div class="glass-panel detail-panel empty-state" [class.hidden]="requests.length === 0">
+                        <p>Select a request from the list to view details</p>
                     </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Special Note</span>
-                        <div style="background: #fef3c7; color: #92400e; padding: 12px; border-radius: 8px; font-size: 14px;">
-                            {{ selectedRequest.specialNote || 'No special note.' }}
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 24px; display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-                        <button class="assura-btn assura-btn-primary" (click)="navigateToCreate(selectedRequest)">Create PO</button>
-                    </div>
-                </div>
-
-                <div class="assura-card" *ngIf="!selectedRequest && requests.length > 0" style="display: flex; align-items: center; justify-content: center; min-height: 200px;">
-                    <p class="assura-card-subtitle">Select a request from the list to view details</p>
-                </div>
+                }
             </div>
         </div>
     </section>
