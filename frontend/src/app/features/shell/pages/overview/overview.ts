@@ -21,8 +21,14 @@ import { DivisionService } from '../../../inventory/services/division.service';
     FilterDropdownComponent,
   ],
   template: `
-    <div class="page">
-      <h1 class="page-title">All Assets</h1>
+    <div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+      <!-- Greeting Banner -->
+      <div class="assura-greeting-banner">
+        <h2 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h2>
+        <p class="assura-greeting-date">{{ currentDate | date:'EEEE, MMMM d, y — h:mm a' }}</p>
+      </div>
+
+      <h1 class="assura-page-title">All Assets</h1>
 
       <div class="toolbar">
         <div class="toolbar-left">
@@ -96,7 +102,13 @@ export class OverviewComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private divisionService = inject(DivisionService);
 
+  greeting = 'Welcome';
+  firstName = 'Admin';
+  currentDate = new Date();
+
   ngOnInit(): void {
+    const hour = new Date().getHours();
+    this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
     const dashboardUrl = this.authService.getDashboardUrl();
     if (dashboardUrl !== '/overview') {
       this.router.navigate([dashboardUrl]);

@@ -39,17 +39,16 @@
     <!-- ── 2. Welcome Banner ── -->
     <!-- Full-width teal gradient card with ambient background circles,
          a contextual greeting, high-level stats, and navigation shortcuts. -->
-    <section class="welcome-banner">
+    <section class="assura-greeting-banner" style="display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden;">
       <!-- Decorative blurred circles; purely visual, pointer-events: none -->
       <div class="banner-bg-shape"></div>
       <div class="banner-bg-shape secondary"></div>
 
       <div class="welcome-left">
         <!-- Greeting changes based on time of day using Angular's inline ternary -->
-        <h1 class="welcome-title">Good {{ today.getHours() < 12 ? 'Morning' : today.getHours() < 17 ? 'Afternoon'
-            : 'Evening' }}, Storekeeper</h1>
+        <h1 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h1>
             <!-- Current date formatted via Angular's `date` pipe -->
-            <p class="welcome-sub">Here's your inventory overview for {{ today | date:'MMMM d, yyyy' }}</p>
+            <p class="assura-greeting-date">Here's your inventory overview for {{ today | date:'EEEE, MMMM d, yyyy — h:mm a' }}</p>
 
             <!-- Mini stat pills inside the banner — pulled from computed getters and KPI data -->
             <div class="banner-stats">
@@ -87,96 +86,89 @@
     <!-- 7 cards rendered in a 6-column responsive grid.
          Cards with `routerLink` are clickable and navigate to a filtered assets view.
          The `.kpi-bar-fill` width is bound to computed rate percentages via [style.width.%]. -->
-    <section class="kpi-grid">
+    <section class="assura-grid assura-grid-cols-4">
 
       <!-- Total Assets: always 100% bar fill since it IS the total -->
-      <div class="kpi-card clickable" routerLink="/inventory/assets">
-        <div class="kpi-accent teal"></div>
-        <div class="kpi-header">
+      <div class="assura-card assura-accent-info clickable" routerLink="/inventory/assets">
+        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap teal"><mat-icon>inventory_2</mat-icon></div>
-          <span class="kpi-change positive"><mat-icon>arrow_upward</mat-icon> 3.2%</span>
+          <span class="kpi-change positive" style="color: #10b981; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 3.2%</span>
         </div>
-        <div class="kpi-value">{{ kpis.totalAssets | number }}</div>
-        <div class="kpi-label">Total Assets</div>
-        <div class="kpi-bar">
-          <div class="kpi-bar-fill teal" [style.width.%]="100"></div>
+        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Total Assets</div>
+        <div class="assura-card-value">{{ kpis.totalAssets | number }}</div>
+        <div class="kpi-bar" style="height: 6px; background: #e2e8f0; border-radius: 4px; margin-top: 16px; overflow: hidden;">
+          <div class="kpi-bar-fill teal" [style.width.%]="100" style="height: 100%; background: #3b82f6;"></div>
         </div>
       </div>
 
       <!-- Checked Out: bar fill = utilizationRate (checkedOut / totalAssets × 100) -->
-      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'checked_out' }">
-        <div class="kpi-accent blue"></div>
-        <div class="kpi-header">
+      <div class="assura-card assura-accent-primary clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'checked_out' }">
+        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap blue"><mat-icon>logout</mat-icon></div>
-          <span class="kpi-change positive"><mat-icon>arrow_upward</mat-icon> 5.1%</span>
+          <span class="kpi-change positive" style="color: #10b981; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 5.1%</span>
         </div>
-        <div class="kpi-value">{{ kpis.checkedOut | number }}</div>
-        <div class="kpi-label">Checked Out</div>
-        <div class="kpi-bar">
-          <div class="kpi-bar-fill blue" [style.width.%]="utilizationRate"></div>
+        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Checked Out</div>
+        <div class="assura-card-value">{{ kpis.checkedOut | number }}</div>
+        <div class="kpi-bar" style="height: 6px; background: #e2e8f0; border-radius: 4px; margin-top: 16px; overflow: hidden;">
+          <div class="kpi-bar-fill blue" [style.width.%]="utilizationRate" style="height: 100%; background: #6366f1;"></div>
         </div>
       </div>
 
       <!-- Available: bar fill = availableRate (available / totalAssets × 100) -->
-      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'available' }">
-        <div class="kpi-accent green"></div>
-        <div class="kpi-header">
+      <div class="assura-card assura-accent-success clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'available' }">
+        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap green"><mat-icon>check_circle</mat-icon></div>
-          <span class="kpi-change neutral"><mat-icon>remove</mat-icon> 0.4%</span>
+          <span class="kpi-change neutral" style="color: #64748b; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">remove</mat-icon> 0.4%</span>
         </div>
-        <div class="kpi-value">{{ kpis.available | number }}</div>
-        <div class="kpi-label">Available</div>
-        <div class="kpi-bar">
-          <div class="kpi-bar-fill green" [style.width.%]="availableRate"></div>
+        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Available</div>
+        <div class="assura-card-value">{{ kpis.available | number }}</div>
+        <div class="kpi-bar" style="height: 6px; background: #e2e8f0; border-radius: 4px; margin-top: 16px; overflow: hidden;">
+          <div class="kpi-bar-fill green" [style.width.%]="availableRate" style="height: 100%; background: #10b981;"></div>
         </div>
       </div>
 
       <!-- Total Value: no progress bar (monetary value, not a ratio) -->
-      <div class="kpi-card">
-        <div class="kpi-accent purple"></div>
-        <div class="kpi-header">
+      <div class="assura-card assura-accent-warning">
+        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap purple"><mat-icon>attach_money</mat-icon></div>
-          <span class="kpi-change positive"><mat-icon>arrow_upward</mat-icon> 1.8%</span>
+          <span class="kpi-change positive" style="color: #10b981; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon> 1.8%</span>
         </div>
-        <div class="kpi-value">{{ kpis.totalAssetValue }}</div>
-        <div class="kpi-label">Total Value</div>
+        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Total Value</div>
+        <div class="assura-card-value">{{ kpis.totalAssetValue }}</div>
       </div>
 
       <!-- Pending Requests: negative change badge only appears when count exceeds 15 -->
-      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'pending' }">
-        <div class="kpi-accent orange"></div>
-        <div class="kpi-header">
+      <div class="assura-card assura-accent-warning clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'pending' }">
+        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap orange"><mat-icon>pending_actions</mat-icon></div>
-          <span class="kpi-change negative" *ngIf="kpis.pendingRequests > 15"><mat-icon>arrow_upward</mat-icon>
+          <span class="kpi-change negative" *ngIf="kpis.pendingRequests > 15" style="color: #ef4444; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_upward</mat-icon>
             12%</span>
         </div>
-        <div class="kpi-value">{{ kpis.pendingRequests }}</div>
-        <div class="kpi-label">Pending Requests</div>
+        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Pending Requests</div>
+        <div class="assura-card-value">{{ kpis.pendingRequests }}</div>
       </div>
 
       <!-- Maintenance Due: negative change badge appears when count exceeds 10 -->
-      <div class="kpi-card clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }">
-        <div class="kpi-accent red"></div>
-        <div class="kpi-header">
+      <div class="assura-card assura-accent-danger clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }">
+        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap red"><mat-icon>build_circle</mat-icon></div>
-          <span class="kpi-change negative" *ngIf="kpis.maintenanceDue > 10"><mat-icon>arrow_downward</mat-icon>
+          <span class="kpi-change negative" *ngIf="kpis.maintenanceDue > 10" style="color: #ef4444; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_downward</mat-icon>
             8%</span>
         </div>
-        <div class="kpi-value">{{ kpis.maintenanceDue }}</div>
-        <div class="kpi-label">Maintenance Due</div>
+        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Maintenance Due</div>
+        <div class="assura-card-value">{{ kpis.maintenanceDue }}</div>
       </div>
 
       <!-- Temporary Assigned: links to the approvals module.
            Shows sub-details (awaiting pickup, escalated) in a meta row below the label. -->
-      <div class="kpi-card clickable" routerLink="/approvals/requests" [queryParams]="{ tab: 'new' }">
-        <div class="kpi-accent orange"></div>
-        <div class="kpi-header">
+      <div class="assura-card assura-accent-info clickable" routerLink="/approvals/requests" [queryParams]="{ tab: 'new' }">
+        <div class="kpi-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div class="kpi-icon-wrap orange"><mat-icon>assignment_ind</mat-icon></div>
-          <span class="kpi-change neutral"><mat-icon>schedule</mat-icon> staged</span>
+          <span class="kpi-change neutral" style="color: #64748b; font-size: 12px; font-weight: bold;"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">schedule</mat-icon> staged</span>
         </div>
-        <div class="kpi-value">{{ kpis.temporaryAssignedAssets }}</div>
-        <div class="kpi-label">Temporary Assigned</div>
-        <div class="kpi-meta-row">
+        <div class="assura-card-title" style="margin-top: 12px; margin-bottom: 4px;">Temporary Assigned</div>
+        <div class="assura-card-value">{{ kpis.temporaryAssignedAssets }}</div>
+        <div class="assura-card-subtitle" style="display: flex; flex-direction: column; gap: 4px; margin-top: 12px;">
           <span>Awaiting pickup: {{ kpis.awaitingPickupConfirmations }}</span>
           <span>Escalated: {{ kpis.procurementEscalations }}</span>
         </div>

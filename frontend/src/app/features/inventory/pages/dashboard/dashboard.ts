@@ -81,6 +81,8 @@ export class DashboardComponent implements OnInit {
 
   /** Used in the welcome banner to show a time-of-day greeting and the current date. */
   today = new Date();
+  greeting = 'Welcome';
+  firstName = 'Inventory Manager';
 
   // ── Computed KPI ratios used by the progress bars on KPI cards ──
 
@@ -167,6 +169,9 @@ export class DashboardComponent implements OnInit {
    * does not prevent the loading state from being cleared.
    */
   ngOnInit(): void {
+    const hour = new Date().getHours();
+    this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
     this.svc.getDashboardData().subscribe({
       next: (data: DashboardData) => {
         try {

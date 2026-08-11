@@ -19,7 +19,14 @@ export class ReportingDashboardComponent implements OnInit {
   readonly valueBars = signal<any[]>([]);
   readonly anomalies = signal<any>({ ghostAssetsDetected: 0, missingPhysicalVerification: 0 });
 
+  greeting = 'Welcome';
+  firstName = 'Reporter';
+  currentDate = new Date();
+
   ngOnInit(): void {
+    const hour = new Date().getHours();
+    this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
     this.reportingService.getDashboard().subscribe(data => {
       this.metrics.set(data.metrics);
       this.categoryLegend.set(data.categoryLegend);

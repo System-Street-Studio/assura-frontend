@@ -1,29 +1,35 @@
-<section class="reporting-dashboard">
-  <header class="dashboard-header">
-    <h1>Reporting &amp; Analytics Dashboard</h1>
-  </header>
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+  
+  <!-- Greeting Banner -->
+  <div class="assura-greeting-banner">
+    <h2 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h2>
+    <p class="assura-greeting-date">{{ currentDate | date:'EEEE, MMMM d, y — h:mm a' }}</p>
+  </div>
 
-  <div class="metrics-grid">
+  <h2 class="assura-page-title">Reporting &amp; Analytics Dashboard</h2>
+
+  <div class="assura-grid assura-grid-cols-4">
     @for (metric of metrics(); track metric.label) {
-      <article class="metric-card">
-        <span>{{ metric.label }}</span>
-        <strong>{{ metric.value }}</strong>
+      <div class="assura-card assura-accent-info">
+        <div class="assura-card-title">{{ metric.label }}</div>
+        <div class="assura-card-value">{{ metric.value }}</div>
         @if (metric.accent) {
           <i class="metric-accent" aria-hidden="true"></i>
         }
-      </article>
+      </div>
     }
   </div>
 
-  <div class="analytics-grid">
-    <article class="panel category-panel">
-      <h2>Assets by Category</h2>
-      <div class="donut-row">
-        <div class="donut-chart" aria-label="Assets by category donut chart"></div>
-        <ul class="legend-list">
+  <!-- Using 2 cols for panels -->
+  <div class="assura-grid assura-grid-cols-2">
+    <article class="assura-card assura-accent-primary">
+      <h3 class="assura-card-title">Assets by Category</h3>
+      <div class="donut-row" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="donut-chart" aria-label="Assets by category donut chart" style="height: 200px;"></div>
+        <ul class="legend-list" style="margin-top: 16px;">
           @for (item of categoryLegend(); track item.label) {
-            <li>
-              <span [style.background]="item.color"></span>
+            <li style="display: flex; align-items: center; gap: 8px;">
+              <span [style.background]="item.color" style="width: 12px; height: 12px; border-radius: 50%; display: inline-block;"></span>
               {{ item.label }}
             </li>
           }
@@ -31,58 +37,62 @@
       </div>
     </article>
 
-    <article class="panel">
-      <h2>Assets by Status</h2>
-      <div class="bar-chart status-chart">
+    <article class="assura-card assura-accent-success">
+      <h3 class="assura-card-title">Assets by Status</h3>
+      <div class="bar-chart status-chart" style="flex: 1; min-height: 200px; display: flex; align-items: flex-end; gap: 8px;">
         @for (bar of statusBars(); track bar.label) {
-          <div class="bar-item">
-            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
-            <small>{{ bar.label }}</small>
+          <div class="bar-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color" style="width: 100%; min-width: 20px; border-radius: 4px 4px 0 0; margin-top: auto;"></span>
+            <small style="margin-top: 4px; font-size: 11px; text-align: center;">{{ bar.label }}</small>
           </div>
         }
       </div>
     </article>
 
-    <article class="panel">
-      <h2>Assets by Division</h2>
-      <div class="bar-chart division-chart">
+    <article class="assura-card assura-accent-warning">
+      <h3 class="assura-card-title">Assets by Division</h3>
+      <div class="bar-chart division-chart" style="flex: 1; min-height: 200px; display: flex; align-items: flex-end; gap: 8px;">
         @for (bar of divisionBars(); track bar.label) {
-          <div class="bar-item">
-            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
-            <small>{{ bar.label }}</small>
+          <div class="bar-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color" style="width: 100%; min-width: 20px; border-radius: 4px 4px 0 0; margin-top: auto;"></span>
+            <small style="margin-top: 4px; font-size: 11px; text-align: center;">{{ bar.label }}</small>
           </div>
         }
       </div>
     </article>
 
-    <article class="panel">
-      <h2>Asset Value by Category</h2>
-      <div class="bar-chart value-chart">
+    <article class="assura-card assura-accent-info">
+      <h3 class="assura-card-title">Asset Value by Category</h3>
+      <div class="bar-chart value-chart" style="flex: 1; min-height: 200px; display: flex; align-items: flex-end; gap: 8px;">
         @for (bar of valueBars(); track bar.label) {
-          <div class="bar-item">
-            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
-            <small>{{ bar.label }}</small>
+          <div class="bar-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color" style="width: 100%; min-width: 20px; border-radius: 4px 4px 0 0; margin-top: auto;"></span>
+            <small style="margin-top: 4px; font-size: 11px; text-align: center;">{{ bar.label }}</small>
           </div>
         }
       </div>
     </article>
   </div>
 
-  <section class="anomalies-section">
-    <h2>Asset Anomalies</h2>
-    <div class="anomaly-grid">
-      <article class="anomaly-card info">
-        <span aria-hidden="true">△</span>
-        <strong>{{ anomalies().ghostAssetsDetected }} Ghost assets detected during audit</strong>
-      </article>
-      <article class="anomaly-card danger">
-        <span aria-hidden="true">△</span>
-        <strong>{{ anomalies().missingPhysicalVerification }} Assets missing physical verification</strong>
-      </article>
+  <section style="margin-top: 32px;">
+    <h2 class="assura-page-title" style="font-size: 20px;">Asset Anomalies</h2>
+    <div class="assura-grid assura-grid-cols-2">
+      <div class="assura-card assura-accent-warning">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span aria-hidden="true" style="color: #f59e0b; font-size: 24px;">△</span>
+          <strong style="color: #0f172a;">{{ anomalies().ghostAssetsDetected }} Ghost assets detected during audit</strong>
+        </div>
+      </div>
+      <div class="assura-card assura-accent-danger">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span aria-hidden="true" style="color: #ef4444; font-size: 24px;">△</span>
+          <strong style="color: #0f172a;">{{ anomalies().missingPhysicalVerification }} Assets missing physical verification</strong>
+        </div>
+      </div>
     </div>
   </section>
 
-  <button class="help-button" type="button" aria-label="Open help">
+  <button class="help-button" type="button" aria-label="Open help" style="position: fixed; bottom: 24px; right: 24px; width: 48px; height: 48px; border-radius: 50%; background: #4f46e5; color: white; border: none; font-size: 20px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(79,70,229,0.4);">
     <span aria-hidden="true">?</span>
   </button>
-</section>
+</div>
