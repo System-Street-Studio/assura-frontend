@@ -273,8 +273,8 @@
             [(ngModel)]="checkinForm.notes"></textarea>
         </div>
 
-        <div style="padding: 16px; border-radius: 8px;  border: 1px solid #e2e8f0;" [ngStyle]="{'border-color': (submitted && !checkinForm.acknowledged) ? '#ef4444' : '#e2e8f0', 'background': (submitted && !checkinForm.acknowledged) ? '#fef2f2' : '#f8fafc'}">
-          <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 14px; font-weight: 500;  user-select: none;">
+        <div style="padding: 16px; border-radius: 8px; border: 1px solid rgba(148, 163, 184, 0.2);" [ngStyle]="{'border-color': (submitted && !checkinForm.acknowledged) ? '#ef4444' : 'rgba(148, 163, 184, 0.2)', 'background': (submitted && !checkinForm.acknowledged) ? 'rgba(239, 68, 68, 0.15)' : 'rgba(30, 41, 59, 0.4)'}">
+          <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 14px; font-weight: 500; user-select: none;">
             <input type="checkbox" [(ngModel)]="checkinForm.acknowledged" style="width: 18px; height: 18px; accent-color: #10b981; cursor: pointer;" />
             <span>I confirm this inspection is accurate and complete. <span style="color: #ef4444;">*</span></span>
           </label>
@@ -282,7 +282,7 @@
         </div>
 
         <!-- Action buttons -->
-        <div style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+        <div style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(148, 163, 184, 0.2);">
           <button class="assura-btn assura-btn-secondary" style="padding: 12px 24px;" (click)="goBack()" [disabled]="processing">Cancel</button>
           <button class="assura-btn assura-btn-primary" style="padding: 12px 24px; font-size: 16px; background: #10b981; border-color: #10b981;" (click)="confirmCheckin()" [disabled]="processing">
             <mat-icon style="font-size: 20px;" *ngIf="!processing">login</mat-icon>

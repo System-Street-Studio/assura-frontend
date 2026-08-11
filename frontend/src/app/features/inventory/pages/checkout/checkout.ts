@@ -32,6 +32,7 @@ export class CheckoutComponent implements OnInit {
     searchTerm = '';
     filterStatus = '';
     filterDivision = '';
+    filterDueSoon = false;
 
     currentPage = 1;
     pageSize = 10;
@@ -84,11 +85,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     get dueSoonCount(): number {
-        const now = new Date();
-        const threeDays = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-        return this.allRecords.filter(
-            (r) => r.status === 'Checked Out' && new Date(r.dueDate) <= threeDays && new Date(r.dueDate) >= now
-        ).length;
+        return this.allRecords.filter((r) => this.isDueSoon(r)).length;
     }
 
     get divisions(): string[] {
@@ -186,6 +183,12 @@ export class CheckoutComponent implements OnInit {
     setView(view: 'active' | 'history'): void {
         this.activeView = view;
         this.currentPage = 1;
+        if (view === 'history' && this.filterStatus !== 'Returned') {
+            this.filterStatus = '';
+            this.filterDueSoon = false;
+        } else if (view === 'active' && this.filterStatus === 'Returned') {
+            this.filterStatus = '';
+        }
         this.applyFilters();
     }
 
@@ -212,8 +215,9 @@ export class CheckoutComponent implements OnInit {
 
             const matchesStatus = !this.filterStatus || r.status === this.filterStatus;
             const matchesDept = !this.filterDivision || r.division === this.filterDivision;
+            const matchesDueSoon = !this.filterDueSoon || this.isDueSoon(r);
 
-            return matchesSearch && matchesStatus && matchesDept;
+            return matchesSearch && matchesStatus && matchesDept && matchesDueSoon;
         });
 
         this.currentPage = 1;
@@ -224,11 +228,12 @@ export class CheckoutComponent implements OnInit {
         this.searchTerm = '';
         this.filterStatus = '';
         this.filterDivision = '';
+        this.filterDueSoon = false;
         this.applyFilters();
     }
 
     get hasActiveFilters(): boolean {
-        return !!this.searchTerm || !!this.filterStatus || !!this.filterDivision;
+        return !!this.searchTerm || !!this.filterStatus || !!this.filterDivision || this.filterDueSoon;
     }
 
     /* ── Pagination ── */

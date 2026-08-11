@@ -21,27 +21,27 @@
 
   <!-- Stats Strip -->
   <section class="assura-grid assura-grid-cols-5" style="margin-bottom: 32px;" *ngIf="!loading">
-    <div class="assura-card assura-accent-primary" style="cursor: pointer;" [style.border-color]="!filterStatus ? 'var(--primary)' : ''" (click)="filterStatus = ''; applyFilters()">
+    <div class="assura-card assura-accent-primary" style="cursor: pointer;" [style.border-color]="!filterStatus && !filterDueSoon ? 'var(--primary)' : ''" (click)="filterStatus = ''; filterDueSoon = false; applyFilters()">
       <span class="assura-card-title">Total Records</span>
       <strong class="assura-card-value">{{ totalCount }}</strong>
     </div>
     
-    <div class="assura-card assura-accent-info" style="cursor: pointer;" [style.border-color]="filterStatus === 'Checked Out' ? 'var(--info)' : ''" (click)="filterStatus = 'Checked Out'; activeView = 'active'; applyFilters()">
+    <div class="assura-card assura-accent-info" style="cursor: pointer;" [style.border-color]="filterStatus === 'Checked Out' && !filterDueSoon ? 'var(--info)' : ''" (click)="filterStatus = 'Checked Out'; filterDueSoon = false; activeView = 'active'; applyFilters()">
       <span class="assura-card-title">Checked Out</span>
       <strong class="assura-card-value">{{ activeCount }}</strong>
     </div>
 
-    <div class="assura-card assura-accent-danger" style="cursor: pointer;" [style.border-color]="filterStatus === 'Overdue' ? 'var(--danger)' : ''" (click)="filterStatus = 'Overdue'; activeView = 'active'; applyFilters()">
+    <div class="assura-card assura-accent-danger" style="cursor: pointer;" [style.border-color]="filterStatus === 'Overdue' && !filterDueSoon ? 'var(--danger)' : ''" (click)="filterStatus = 'Overdue'; filterDueSoon = false; activeView = 'active'; applyFilters()">
       <span class="assura-card-title">Overdue</span>
       <strong class="assura-card-value">{{ overdueCount }}</strong>
     </div>
 
-    <div class="assura-card assura-accent-warning">
+    <div class="assura-card assura-accent-warning" style="cursor: pointer;" [style.border-color]="filterDueSoon ? 'var(--warning)' : ''" (click)="filterDueSoon = true; filterStatus = ''; activeView = 'active'; applyFilters()">
       <span class="assura-card-title">Due Soon</span>
       <strong class="assura-card-value">{{ dueSoonCount }}</strong>
     </div>
 
-    <div class="assura-card assura-accent-success" style="cursor: pointer;" [style.border-color]="filterStatus === 'Returned' ? 'var(--success)' : ''" (click)="filterStatus = 'Returned'; activeView = 'history'; applyFilters()">
+    <div class="assura-card assura-accent-success" style="cursor: pointer;" [style.border-color]="filterStatus === 'Returned' && !filterDueSoon ? 'var(--success)' : ''" (click)="filterStatus = 'Returned'; filterDueSoon = false; activeView = 'history'; applyFilters()">
       <span class="assura-card-title">Returned</span>
       <strong class="assura-card-value">{{ returnedCount }}</strong>
     </div>

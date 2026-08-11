@@ -60,9 +60,9 @@
     </div>
 
     <!-- ═══ INFORM MODAL ═══ -->
-    <div class="modal-overlay" *ngIf="showInformModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="closeInformModal()">
+    <div class="modal-overlay" *ngIf="showInformModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="closeInformModal()">
         <div class="assura-card assura-accent-primary" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid rgba(148, 163, 184, 0.2);">
                 <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Inform Stakeholders</h2>
                 <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="closeInformModal()">
                     <mat-icon>close</mat-icon>
@@ -80,7 +80,7 @@
                             {{ emp.name }} ({{ emp.division }})
                         </option>
                     </select>
-                    <div style="font-size: 13px; margin-top: 4px;">The employee will receive a notification.</div>
+                    <div style="font-size: 13px; margin-top: 4px; opacity: 0.75;">The employee will receive a notification.</div>
                 </div>
 
                 <div style="margin-bottom: 24px;">
@@ -97,9 +97,9 @@
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0;">
+            <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 20px 24px; border-top: 1px solid rgba(148, 163, 184, 0.2);">
                 <button class="assura-btn assura-btn-secondary" (click)="closeInformModal()" [disabled]="informProcessing">Cancel</button>
-                <button class="assura-btn assura-btn-primary" (click)="confirmInform()" [disabled]="informProcessing || !selectedEmployeeId">
+                <button class="assura-btn assura-btn-primary" (click)="confirmInform()" [disabled]="!selectedEmployeeId || informProcessing">
                     <mat-icon style="font-size: 18px;" *ngIf="!informProcessing">send</mat-icon>
                     <mat-icon style="font-size: 18px; animation: spin 1s linear infinite;" *ngIf="informProcessing">autorenew</mat-icon>
                     {{ informProcessing ? 'Informing...' : 'Send Notification' }}
