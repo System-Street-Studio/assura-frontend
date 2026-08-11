@@ -49,23 +49,23 @@
 
   <!-- View Toggle + Toolbar -->
   <div style="display: flex; justify-content: center; margin-bottom: 24px;">
-    <div style=" padding: 4px; border-radius: 8px; display: inline-flex; gap: 4px;">
-      <button style="padding: 8px 16px; border-radius: 6px; border: none; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" [ngStyle]="{'background': activeView === 'active' ? 'white' : 'transparent', 'color': activeView === 'active' ? '#0f172a' : '#64748b', 'box-shadow': activeView === 'active' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'}" (click)="setView('active')">
+    <div style="padding: 4px; border-radius: 12px; display: inline-flex; gap: 6px; border: 1px solid #e2e8f0;">
+      <button class="assura-btn" [ngClass]="activeView === 'active' ? 'assura-btn-primary' : 'assura-btn-secondary'" style="padding: 8px 20px; font-size: 14px;" (click)="setView('active')">
         <mat-icon style="font-size: 18px; width: 18px; height: 18px;">exit_to_app</mat-icon> Active Checkouts
       </button>
-      <button style="padding: 8px 16px; border-radius: 6px; border: none; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" [ngStyle]="{'background': activeView === 'history' ? 'white' : 'transparent', 'color': activeView === 'history' ? '#0f172a' : '#64748b', 'box-shadow': activeView === 'history' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'}" (click)="setView('history')">
+      <button class="assura-btn" [ngClass]="activeView === 'history' ? 'assura-btn-primary' : 'assura-btn-secondary'" style="padding: 8px 20px; font-size: 14px;" (click)="setView('history')">
         <mat-icon style="font-size: 18px; width: 18px; height: 18px;">history</mat-icon> History
       </button>
     </div>
   </div>
 
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 16px;  border: 1px solid #e2e8f0; border-radius: 8px; gap: 16px; flex-wrap: wrap;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 16px; flex-wrap: wrap;">
     <div style="display: flex; gap: 12px; align-items: center; flex-grow: 1;">
       <div style="position: relative; flex-grow: 1; max-width: 400px;">
-        <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);  font-size: 20px; pointer-events: none;">search</mat-icon>
+        <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 20px; pointer-events: none; opacity: 0.5;">search</mat-icon>
         <input class="assura-input" style="padding-left: 40px; padding-right: 40px; width: 100%;" type="text" placeholder="Search by name, asset, serial, division…"
           [(ngModel)]="searchTerm" (keyup)="applyFilters()" />
-        <button style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none;  cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px;" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
+        <button style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px;" *ngIf="searchTerm" (click)="searchTerm = ''; applyFilters()">
           <mat-icon style="font-size: 16px; width: 16px; height: 16px;">close</mat-icon>
         </button>
       </div>
@@ -73,53 +73,53 @@
         <option value="">All Divisions</option>
         <option *ngFor="let d of divisions" [value]="d">{{ d }}</option>
       </select>
-      <button class="assura-btn" style="border: none; background: transparent;  box-shadow: none; padding: 8px;" *ngIf="hasActiveFilters" (click)="clearFilters()">
+      <button class="assura-btn assura-btn-secondary" style="border: none; background: transparent; box-shadow: none; padding: 8px;" *ngIf="hasActiveFilters" (click)="clearFilters()">
         <mat-icon style="font-size: 18px;">filter_list_off</mat-icon> Clear
       </button>
     </div>
   </div>
 
   <!-- Selection banner -->
-  <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;" *ngIf="selectedCount > 0">
-    <div style="display: flex; align-items: center; gap: 8px; color: #1e3a8a; font-weight: 500;">
+  <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;" *ngIf="selectedCount > 0">
+    <div style="display: flex; align-items: center; gap: 8px; color: #3b82f6; font-weight: 500;">
       <mat-icon style="color: #3b82f6;">check_circle</mat-icon>
       {{ selectedCount }} record{{ selectedCount > 1 ? 's' : '' }} selected
     </div>
-    <button style=" border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 12px; color: #3b82f6; font-weight: 500; cursor: pointer; font-size: 13px;" (click)="clearSelection()">Clear</button>
+    <button class="assura-btn assura-btn-secondary" style="padding: 4px 12px; font-size: 13px;" (click)="clearSelection()">Clear</button>
   </div>
 
   <!-- Table -->
   <div class="assura-table-container">
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 32px; text-align: center; " *ngIf="!loading && loadError">
-      <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">cloud_off</mat-icon>
-      <div style="font-size: 16px; font-weight: 500;  margin-bottom: 16px;">Unable to load checkout records right now.</div>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 32px; text-align: center;" *ngIf="!loading && loadError">
+      <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;">cloud_off</mat-icon>
+      <div style="font-size: 16px; font-weight: 500; margin-bottom: 16px;">Unable to load checkout records right now.</div>
       <button class="assura-btn assura-btn-secondary" (click)="retryLoad()">Retry</button>
     </div>
 
     <table class="assura-table" *ngIf="!loading">
       <thead>
         <tr>
-          <th style="width: 48px; text-align: center;">
+          <th class="assura-th" style="width: 48px; text-align: center;">
             <input type="checkbox" style="width: 16px; height: 16px; accent-color: #4f46e5; cursor: pointer;" [checked]="allSelected" (change)="toggleSelectAll()" />
           </th>
-          <th>Checkout ID</th>
-          <th>Asset</th>
-          <th>Checked Out To</th>
-          <th>Checkout Date</th>
-          <th>Due Date</th>
-          <th *ngIf="activeView === 'history'">Return Date</th>
-          <th *ngIf="activeView === 'history'">Condition</th>
-          <th>Status</th>
-          <th *ngIf="activeView === 'active'" style="width: 120px; text-align: right;">Actions</th>
+          <th class="assura-th">Checkout ID</th>
+          <th class="assura-th">Asset</th>
+          <th class="assura-th">Checked Out To</th>
+          <th class="assura-th">Checkout Date</th>
+          <th class="assura-th">Due Date</th>
+          <th class="assura-th" *ngIf="activeView === 'history'">Return Date</th>
+          <th class="assura-th" *ngIf="activeView === 'history'">Condition</th>
+          <th class="assura-th">Status</th>
+          <th class="assura-th" *ngIf="activeView === 'active'" style="width: 120px; text-align: right;">Actions</th>
         </tr>
       </thead>
       <tbody>
         <!-- Empty state -->
         <tr *ngIf="viewRecords.length === 0">
-          <td [attr.colspan]="activeView === 'active' ? 9 : 10" style="text-align: center; padding: 64px 32px; ">
+          <td [attr.colspan]="activeView === 'active' ? 9 : 10" class="assura-td" style="text-align: center; padding: 64px 32px;">
             <div style="display: flex; flex-direction: column; align-items: center;">
-              <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">{{ activeView === 'active' ? 'exit_to_app' : 'history' }}</mat-icon>
-              <div style="font-size: 16px; font-weight: 500;  margin-bottom: 16px;">
+              <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;">{{ activeView === 'active' ? 'exit_to_app' : 'history' }}</mat-icon>
+              <div style="font-size: 16px; font-weight: 500; margin-bottom: 16px;">
                 {{ hasActiveFilters ? 'No records match your filters' : (activeView === 'active' ? 'No active checkouts' : 'No checkout history yet') }}
               </div>
               <button class="assura-btn assura-btn-secondary" *ngIf="hasActiveFilters" (click)="clearFilters()">
@@ -130,69 +130,67 @@
         </tr>
 
         <!-- Data rows -->
-        <tr *ngFor="let rec of viewRecords" style="cursor: pointer; transition: background-color 0.2s;" [ngStyle]="{'background-color': rec.selected ? '#f8fafc' : (isOverdue(rec) ? '#fef2f2' : 'white')}" onmouseover="if(!this.style.backgroundColor || this.style.backgroundColor === 'white' || this.style.backgroundColor === 'rgb(255, 255, 255)') this.style.backgroundColor='#f1f5f9';" onmouseout="if(this.style.backgroundColor === 'rgb(241, 245, 249)') this.style.backgroundColor='white';" (click)="openDetail(rec)">
-          <td style="text-align: center;" (click)="$event.stopPropagation()">
+        <tr *ngFor="let rec of viewRecords" class="assura-tr-hover" style="cursor: pointer;" [class.assura-row-selected]="rec.selected" (click)="openDetail(rec)">
+          <td class="assura-td" style="text-align: center;" (click)="$event.stopPropagation()">
             <input type="checkbox" style="width: 16px; height: 16px; accent-color: #4f46e5; cursor: pointer;" [(ngModel)]="rec.selected" />
           </td>
-          <td>
-            <span style="font-family: 'Courier New', Courier, monospace; font-size: 13px; font-weight: 600; ">{{ rec.id }}</span>
+          <td class="assura-td">
+            <span style="font-family: 'Courier New', Courier, monospace; font-size: 13px; font-weight: 600; color: #6366f1;">{{ rec.id }}</span>
           </td>
-          <td>
+          <td class="assura-td">
             <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 40px; height: 40px; border-radius: 8px; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center;"
-                [ngClass]="rec.category === 'Mobile Devices' ? 'phone' : rec.category === 'Tablets' ? 'tablet' : 'laptop'">
-                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ rec.category === 'Mobile Devices' ? 'smartphone' :
-                  rec.category === 'Tablets' ? 'tablet' : 'laptop' }}</mat-icon>
+              <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(99, 102, 241, 0.15); color: #6366f1; display: flex; align-items: center; justify-content: center;">
+                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ rec.category === 'Mobile Devices' ? 'smartphone' : rec.category === 'Tablets' ? 'tablet' : 'laptop' }}</mat-icon>
               </div>
               <div>
-                <div style="font-weight: 600;  font-size: 14px; margin-bottom: 2px;">{{ rec.assetName }}</div>
-                <div style="font-size: 12px; ">{{ rec.assetId }} · {{ rec.serial }}</div>
+                <div style="font-weight: 600; font-size: 14px; margin-bottom: 2px;">{{ rec.assetName }}</div>
+                <div class="assura-card-subtitle" style="font-size: 12px; margin: 0;">{{ rec.assetId }} · {{ rec.serial }}</div>
               </div>
             </div>
           </td>
-          <td>
+          <td class="assura-td">
             <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0;  font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center;" [ngClass]="getAvatarClass(rec.id)">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(99, 102, 241, 0.15); color: #6366f1; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center;">
                 {{ getInitials(rec.checkedOutTo) }}
               </div>
               <div>
-                <div style="font-weight: 600;  font-size: 14px; margin-bottom: 2px;">{{ rec.checkedOutTo }}</div>
-                <div style="font-size: 12px; ">{{ rec.division }}</div>
+                <div style="font-weight: 600; font-size: 14px; margin-bottom: 2px;">{{ rec.checkedOutTo }}</div>
+                <div class="assura-card-subtitle" style="font-size: 12px; margin: 0;">{{ rec.division }}</div>
               </div>
             </div>
           </td>
-          <td>
+          <td class="assura-td">
             <div>
-              <div style="font-weight: 500;  font-size: 14px; margin-bottom: 2px;">{{ formatDate(rec.checkoutDate) }}</div>
-              <div style="font-size: 12px; ">{{ getTimeAgo(rec.checkoutDate) }}</div>
+              <div style="font-weight: 500; font-size: 14px; margin-bottom: 2px;">{{ formatDate(rec.checkoutDate) }}</div>
+              <div class="assura-card-subtitle" style="font-size: 12px; margin: 0;">{{ getTimeAgo(rec.checkoutDate) }}</div>
             </div>
           </td>
-          <td>
+          <td class="assura-td">
             <div>
-              <div style="font-weight: 500;  font-size: 14px; margin-bottom: 2px;">{{ formatDate(rec.dueDate) }}</div>
-              <span style="font-size: 12px; font-weight: 600; " *ngIf="rec.status !== 'Returned'" [ngStyle]="{'color': isOverdue(rec) ? '#ef4444' : (isDueSoon(rec) ? '#f59e0b' : '#64748b')}">
+              <div style="font-weight: 500; font-size: 14px; margin-bottom: 2px;">{{ formatDate(rec.dueDate) }}</div>
+              <span style="font-size: 12px; font-weight: 600;" *ngIf="rec.status !== 'Returned'" [ngStyle]="{'color': isOverdue(rec) ? '#ef4444' : (isDueSoon(rec) ? '#f59e0b' : '#64748b')}">
                 {{ getDaysInfo(rec) }}
               </span>
             </div>
           </td>
-          <td *ngIf="activeView === 'history'">
-            <span style="font-weight: 500;  font-size: 14px;" *ngIf="rec.returnDate">{{ formatDate(rec.returnDate) }}</span>
-            <span style="" *ngIf="!rec.returnDate">—</span>
+          <td class="assura-td" *ngIf="activeView === 'history'">
+            <span style="font-weight: 500; font-size: 14px;" *ngIf="rec.returnDate">{{ formatDate(rec.returnDate) }}</span>
+            <span class="assura-card-subtitle" style="margin: 0;" *ngIf="!rec.returnDate">—</span>
           </td>
-          <td *ngIf="activeView === 'history'">
-            <span style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;" *ngIf="rec.condition"
+          <td class="assura-td" *ngIf="activeView === 'history'">
+            <span class="assura-badge" *ngIf="rec.condition"
               [ngClass]="getConditionClass(rec.condition)">
-              <mat-icon style="font-size: 14px; width: 14px; height: 14px;">{{ getConditionIcon(rec.condition) }}</mat-icon>
+              <mat-icon style="font-size: 14px; width: 14px; height: 14px; margin-right: 4px;">{{ getConditionIcon(rec.condition) }}</mat-icon>
               {{ rec.condition }}
             </span>
-            <span style="" *ngIf="!rec.condition">—</span>
+            <span class="assura-card-subtitle" style="margin: 0;" *ngIf="!rec.condition">—</span>
           </td>
-          <td>
+          <td class="assura-td">
             <span class="assura-badge" [ngClass]="getStatusClass(rec.status)">
               {{ rec.status }}
             </span>
           </td>
-          <td style="text-align: right;" *ngIf="activeView === 'active'" (click)="$event.stopPropagation()">
+          <td class="assura-td" style="text-align: right;" *ngIf="activeView === 'active'" (click)="$event.stopPropagation()">
             <button class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" title="Check In" (click)="onCheckin(rec)">
               <mat-icon style="font-size: 16px;">login</mat-icon>
               <span>Check In</span>

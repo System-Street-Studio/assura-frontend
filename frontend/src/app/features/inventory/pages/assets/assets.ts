@@ -186,8 +186,8 @@ export class AssetsComponent implements OnInit {
   }
 
   formatCurrency(value: number | undefined): string {
-    if (!value) return '—';
-    return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 0 });
+    if (value === undefined || value === null) return '—';
+    return '$' + Math.round(value).toLocaleString('en-US');
   }
 
   get selectedCount(): number {
