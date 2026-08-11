@@ -8,7 +8,7 @@
     height: 100vh;
     width: 100%;
     overflow: hidden;
-    background-color: #f8fafc; /* slate-50 */
+    background-color: #0f172a;
 }
 
 .main-area {
@@ -24,14 +24,5 @@
     overflow-y: auto;
     width: 100%;
     padding: 24px;
-    background-color: #f1f5f9; /* slate-100 */
-}
-
-@media (prefers-color-scheme: dark) {
-    .shell-layout {
-        background-color: #0f172a;
-    }
-    .content {
-        background-color: #020617;
-    }
+    background-color: #020617;
 }

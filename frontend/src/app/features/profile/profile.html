@@ -1,154 +1,146 @@
 <div class="profile-container" *ngIf="!loading(); else loadingTemplate">
-  <div class="profile-header">
-    <div class="cover-photo"></div>
-    <div class="header-content">
-      <div class="avatar-container">
-        <div class="profile-avatar">{{ initials }}</div>
+  
+  <!-- Profile Banner -->
+  <div class="profile-banner">
+    <div class="banner-content">
+      <div class="avatar-wrapper">
+        <div class="avatar-circle">{{ initials }}</div>
       </div>
-      <div class="user-main-info">
-        <h1 class="user-display-name">{{ profile()?.firstName }} {{ profile()?.lastName }}</h1>
-        <p class="user-role-badge">
+      
+      <div class="user-meta">
+        <h1 class="user-name">{{ profile()?.firstName }} {{ profile()?.lastName }}</h1>
+        <span class="role-chip">
           <mat-icon>verified_user</mat-icon>
           {{ profile()?.role }}
-        </p>
+        </span>
       </div>
-      <div class="header-actions">
-        <button class="assura-btn assura-btn-secondary back-btn" (click)="goBack()">
+
+      <div class="banner-actions">
+        <button class="assura-btn-secondary" (click)="goBack()" *ngIf="!isEditing">
           <mat-icon>arrow_back</mat-icon>
           Back
         </button>
-        <button class="assura-btn assura-btn-primary edit-btn" (click)="toggleEdit()" *ngIf="!isEditing">
+        <button class="assura-btn-primary" (click)="toggleEdit()" *ngIf="!isEditing">
           <mat-icon>edit</mat-icon>
           Edit Profile
+        </button>
+        
+        <button class="assura-btn-secondary" type="button" (click)="toggleEdit()" *ngIf="isEditing" [disabled]="saving">
+          Cancel
+        </button>
+        <button class="assura-btn-primary" (click)="saveProfile()" *ngIf="isEditing" [disabled]="profileForm.invalid || saving">
+          <mat-spinner diameter="20" *ngIf="saving"></mat-spinner>
+          <span *ngIf="!saving">Save Changes</span>
         </button>
       </div>
     </div>
   </div>
 
-  <div class="profile-content">
-    <div class="profile-card">
-      <div class="card-header">
-        <mat-icon>person</mat-icon>
+  <div class="glass-panel main-panel">
+    <div class="panel-header">
+      <div class="header-title-group">
+        <mat-icon>person_outline</mat-icon>
         <h2>Account Information</h2>
       </div>
+    </div>
 
-      <mat-divider></mat-divider>
-
-      <div class="card-body">
-        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" *ngIf="isEditing; else viewTemplate" autocomplete="off">
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" placeholder="First Name">
-              <mat-error *ngIf="profileForm.get('firstName')?.hasError('required')">First Name is required</mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" placeholder="Last Name">
-              <mat-error *ngIf="profileForm.get('lastName')?.hasError('required')">Last Name is required</mat-error>
-            </mat-form-field>
+    <div class="panel-body">
+      <!-- Edit Mode -->
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" *ngIf="isEditing; else viewTemplate" autocomplete="off" class="edit-form">
+        
+        <div class="form-grid">
+          <div class="input-group">
+            <label>First Name</label>
+            <input type="text" class="glass-input" formControlName="firstName" placeholder="First Name">
+            <span class="error-text" *ngIf="profileForm.get('firstName')?.hasError('required')">First Name is required</span>
           </div>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Email Address</mat-label>
-              <input matInput formControlName="email" type="email" placeholder="Email Address">
-              <mat-icon matSuffix>email</mat-icon>
-              <mat-error *ngIf="profileForm.get('email')?.hasError('required')">Email is required</mat-error>
-              <mat-error *ngIf="profileForm.get('email')?.hasError('email')">Please enter a valid email
-                address</mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Telephone Number</mat-label>
-              <input matInput formControlName="phoneNumber" placeholder="Telephone Number">
-              <mat-icon matSuffix>phone</mat-icon>
-            </mat-form-field>
+          <div class="input-group">
+            <label>Last Name</label>
+            <input type="text" class="glass-input" formControlName="lastName" placeholder="Last Name">
+            <span class="error-text" *ngIf="profileForm.get('lastName')?.hasError('required')">Last Name is required</span>
           </div>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Username</mat-label>
-              <input matInput formControlName="username" placeholder="Username">
-              <mat-icon matSuffix>person</mat-icon>
-              <mat-error *ngIf="profileForm.get('username')?.hasError('required')">Username is required</mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Current Password</mat-label>
-              <input matInput formControlName="currentPassword" type="password" placeholder="Current Password" autocomplete="new-password">
-              <mat-icon matSuffix>lock</mat-icon>
-              <mat-error *ngIf="profileForm.get('currentPassword')?.hasError('required')">Required when changing password</mat-error>
-            </mat-form-field>
+          <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" class="glass-input" formControlName="email" placeholder="Email Address">
+            <span class="error-text" *ngIf="profileForm.get('email')?.hasError('required')">Email is required</span>
+            <span class="error-text" *ngIf="profileForm.get('email')?.hasError('email')">Invalid email address</span>
           </div>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>New Password</mat-label>
-              <input matInput formControlName="password" type="password" placeholder="Leave blank to keep current" autocomplete="new-password">
-              <mat-icon matSuffix>lock</mat-icon>
-              <mat-hint>Leave blank to keep your current password</mat-hint>
-              <mat-error *ngIf="profileForm.get('password')?.hasError('pattern')">Must be at least 8 chars with uppercase, lowercase, number, and special char.</mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Confirm New Password</mat-label>
-              <input matInput formControlName="confirmPassword" type="password" placeholder="Confirm New Password" autocomplete="new-password">
-              <mat-icon matSuffix>lock</mat-icon>
-              <mat-error *ngIf="profileForm.get('confirmPassword')?.hasError('mismatch')">Passwords do not match</mat-error>
-            </mat-form-field>
+          <div class="input-group">
+            <label>Telephone Number</label>
+            <input type="text" class="glass-input" formControlName="phoneNumber" placeholder="Telephone Number">
           </div>
 
-          <div class="form-actions">
-            <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleEdit()" [disabled]="saving">Cancel</button>
-            <button class="assura-btn assura-btn-primary" type="submit" [disabled]="profileForm.invalid || saving">
-              <mat-spinner diameter="20" *ngIf="saving"></mat-spinner>
-              <span *ngIf="!saving">Save Changes</span>
-            </button>
+          <div class="input-group">
+            <label>Username</label>
+            <input type="text" class="glass-input" formControlName="username" placeholder="Username">
+            <span class="error-text" *ngIf="profileForm.get('username')?.hasError('required')">Username is required</span>
           </div>
-        </form>
 
-        <ng-template #viewTemplate>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">First Name</span>
-              <span class="value">{{ profile()?.firstName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Last Name</span>
-              <span class="value">{{ profile()?.lastName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Email Address</span>
-              <span class="value">{{ profile()?.email }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Username</span>
-              <span class="value">{{ profile()?.username }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Telephone Number</span>
-              <span class="value">{{ profile()?.phoneNumber || 'Not provided' }}</span>
-            </div>
-            <div class="info-item" *ngIf="profile()?.divisionName">
-              <span class="label">Division</span>
-              <span class="value">{{ profile()?.divisionName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Role</span>
-              <span class="value">{{ profile()?.role }}</span>
-            </div>
+          <div class="input-group">
+            <label>Current Password</label>
+            <input type="password" class="glass-input" formControlName="currentPassword" placeholder="Current Password" autocomplete="new-password">
+            <span class="error-text" *ngIf="profileForm.get('currentPassword')?.hasError('required')">Required when changing password</span>
           </div>
-        </ng-template>
-      </div>
+
+          <div class="input-group">
+            <label>New Password</label>
+            <input type="password" class="glass-input" formControlName="password" placeholder="Leave blank to keep current" autocomplete="new-password">
+            <span class="hint-text">Leave blank to keep your current password</span>
+            <span class="error-text" *ngIf="profileForm.get('password')?.hasError('pattern')">Must be at least 8 chars with uppercase, lowercase, number, and special char.</span>
+          </div>
+
+          <div class="input-group">
+            <label>Confirm New Password</label>
+            <input type="password" class="glass-input" formControlName="confirmPassword" placeholder="Confirm New Password" autocomplete="new-password">
+            <span class="error-text" *ngIf="profileForm.get('confirmPassword')?.hasError('mismatch')">Passwords do not match</span>
+          </div>
+        </div>
+      </form>
+
+      <!-- View Mode -->
+      <ng-template #viewTemplate>
+        <div class="info-grid">
+          <div class="glass-card info-card">
+            <span class="label">First Name</span>
+            <span class="value">{{ profile()?.firstName }}</span>
+          </div>
+          
+          <div class="glass-card info-card">
+            <span class="label">Last Name</span>
+            <span class="value">{{ profile()?.lastName }}</span>
+          </div>
+          
+          <div class="glass-card info-card">
+            <span class="label">Email Address</span>
+            <span class="value">{{ profile()?.email }}</span>
+          </div>
+          
+          <div class="glass-card info-card">
+            <span class="label">Username</span>
+            <span class="value">{{ profile()?.username }}</span>
+          </div>
+          
+          <div class="glass-card info-card">
+            <span class="label">Telephone Number</span>
+            <span class="value">{{ profile()?.phoneNumber || 'Not provided' }}</span>
+          </div>
+          
+          <div class="glass-card info-card" *ngIf="profile()?.divisionName">
+            <span class="label">Division</span>
+            <span class="value">{{ profile()?.divisionName }}</span>
+          </div>
+        </div>
+      </ng-template>
     </div>
   </div>
 </div>
 
 <ng-template #loadingTemplate>
-  <div class="loading-container">
-    <mat-spinner diameter="50"></mat-spinner>
+  <div class="loading-state">
+    <mat-icon class="spin-animation">sync</mat-icon>
     <p>Loading your profile...</p>
   </div>
 </ng-template>
