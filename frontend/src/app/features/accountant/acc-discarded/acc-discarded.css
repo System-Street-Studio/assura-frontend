@@ -1,17 +1,8 @@
 .acc-discarded-container {
     padding: 24px;
-    background-color: #f8fafc;
-    min-height: calc(100vh - 62px);
     display: flex;
     flex-direction: column;
     font-family: 'Jost', sans-serif;
-}
-
-.page-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #0b6c78;
-    margin: 0 0 24px 0;
 }
 
 /* ============ Layout ============ */
@@ -23,51 +14,17 @@
 }
 
 .table-card {
-    background: #ffffff;
-    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
     flex: 1;
-}
-
-.discarded-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Jost', sans-serif;
-}
-
-.discarded-table th {
-    text-align: left;
-    background: #f8fbfb;
-    padding: 16px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #8fa1a1;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid #edf1f1;
-}
-
-.discarded-table td {
-    padding: 16px;
-    font-size: 14px;
-    font-weight: 400;
-    color: #3d4a4a;
-    border-bottom: 1px solid #edf1f1;
 }
 
 .discarded-table tbody tr {
     cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-.discarded-table tbody tr:hover {
-    background: #f8fafc;
 }
 
 .discarded-table tbody tr.active-row {
-    background: #f1f5f9;
-    border-left: 3px solid #0b6c78;
+    background: rgba(15, 23, 42, 0.4);
+    border-left: 3px solid #6366f1;
 }
 
 .empty-row {
@@ -84,10 +41,7 @@
 }
 
 .detail-panel-card {
-    background: #ffffff;
-    border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 
 .detail-panel-header {
@@ -100,7 +54,7 @@
 .detail-panel-name {
     font-size: 20px;
     font-weight: 600;
-    color: #0f172a;
+    color: #f8fafc;
     margin: 0;
 }
 
@@ -115,12 +69,12 @@
 }
 
 .btn-close-detail:hover {
-    color: #0f172a;
+    color: #f8fafc;
 }
 
 .detail-panel-divider {
     border: none;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
     margin: 16px 0 20px 0;
 }
 
@@ -146,7 +100,7 @@
 
 .detail-panel-item span {
     font-size: 14px;
-    color: #334155;
+    color: #e2e8f0;
     font-weight: 500;
 }
 
@@ -169,12 +123,12 @@
 }
 
 .detail-panel-note-box {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 8px;
     padding: 16px;
     font-size: 14px;
-    color: #475569;
+    color: #e2e8f0;
     line-height: 1.6;
 }
 

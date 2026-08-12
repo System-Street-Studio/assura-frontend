@@ -1,9 +1,9 @@
 <div class="acc-lose-container">
-    <h1 class="page-title">Lose</h1>
+    <h1 class="assura-page-title">Lose</h1>
 
     <div class="lose-layout">
-        <div class="table-wrapper">
-            <table class="lose-table">
+        <div class="glass-panel assura-table-container table-wrapper">
+            <table class="assura-table lose-table">
                 <thead>
                     <tr>
                         <th>Asset Name</th>
@@ -33,7 +33,7 @@
 
         <!-- Detail Panel -->
         <div class="detail-panel" *ngIf="selectedItem">
-            <div class="detail-panel-card">
+            <div class="glass-panel detail-panel-card">
                 <div class="detail-panel-header">
                     <h3 class="detail-panel-name">{{ selectedItem.assetName }}</h3>
                     <button class="btn-close-detail" (click)="closeDetail()">✕</button>
