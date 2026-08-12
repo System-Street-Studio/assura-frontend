@@ -29,6 +29,8 @@ export class EmployeeOverviewComponent implements OnInit {
   private empAssetService = inject(EmpAssetService);
   private invAssetService = inject(InvAssetService);
 
+  isPendingUser = false;
+
   isLoading = signal(true);
   pendingRequests = signal<RequestItem[]>([]);
   assignedAssets = signal<AssetDetail[]>([]);
@@ -49,7 +51,15 @@ export class EmployeeOverviewComponent implements OnInit {
     this.isLoading.set(true);
 
     const userId = this.authService.getUserId();
+    const divisionId = this.authService.getDivisionId();
+
     if (!userId) {
+      this.isLoading.set(false);
+      return;
+    }
+
+    if (!divisionId) {
+      this.isPendingUser = true;
       this.isLoading.set(false);
       return;
     }
