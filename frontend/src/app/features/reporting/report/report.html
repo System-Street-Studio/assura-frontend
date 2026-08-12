@@ -80,11 +80,10 @@
       </div>
 
       @for (insight of insights(); track insight.title) {
-        <article class="glass-card" [class]="insight.tone">
-          <span aria-hidden="true"></span>
-          <div>
-            <strong style="color: #f8fafc;">{{ insight.title }}</strong>
-            <p style="color: #94a3b8; font-size: 14px; margin-top: 4px;">{{ insight.detail }}</p>
+        <article class="glass-card" [class]="insight.tone" style="padding: 20px; overflow: hidden;">
+          <div style="width: 100%; word-break: break-word; white-space: normal;">
+            <strong style="color: #f8fafc; display: block; line-height: 1.4;">{{ insight.title }}</strong>
+            <p style="color: #94a3b8; font-size: 14px; margin-top: 6px; line-height: 1.5;">{{ insight.detail }}</p>
           </div>
         </article>
       }

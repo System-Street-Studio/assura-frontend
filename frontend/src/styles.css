@@ -411,11 +411,11 @@ select::-ms-expand {
 }
 
 /* Semantic Accents (Top Border or Background) */
-.assura-accent-danger { border-top: 4px solid #ef4444; }
-.assura-accent-success { border-top: 4px solid #10b981; }
-.assura-accent-warning { border-top: 4px solid #f59e0b; }
-.assura-accent-info { border-top: 4px solid #3b82f6; }
-.assura-accent-primary { border-top: 4px solid #6366f1; }
+.assura-accent-danger, .danger { border-top: 4px solid #ef4444 !important; }
+.assura-accent-success, .success { border-top: 4px solid #10b981 !important; }
+.assura-accent-warning, .warning { border-top: 4px solid #f59e0b !important; }
+.assura-accent-info, .info { border-top: 4px solid #3b82f6 !important; }
+.assura-accent-primary, .primary { border-top: 4px solid #6366f1 !important; }
 
 /* Dashboard Typography */
 .assura-page-title {
