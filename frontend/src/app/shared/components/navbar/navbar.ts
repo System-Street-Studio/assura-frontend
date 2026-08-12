@@ -56,9 +56,35 @@ export class SharedNavbarComponent {
     this.showProfileMenu = false;
   }
 
-  markAsRead(id: string, event: MouseEvent): void {
+  handleNotificationClick(note: AppNotification, event: MouseEvent): void {
     event.stopPropagation();
-    this.notificationService.markAsRead(id);
+    this.notificationService.markAsRead(note.id);
+    this.showNotificationMenu = false;
+
+    const role = this.authService.getRole()?.toLowerCase() || '';
+    const title = note.title.toLowerCase();
+
+    let targetUrl = '';
+
+    if (title.includes('arrival') || title.includes('received')) {
+      targetUrl = role === 'procurement' ? '/procurement/new-arrivals' : '/inventory/informed-arrivals';
+    } else if (title.includes('request') || title.includes('assigned') || title.includes('reserved') || title.includes('approval')) {
+      if (role === 'employee') {
+        targetUrl = '/employee/all-emp-requests';
+      } else if (role === 'divisionhead' || role === 'inventorymanager' || role === 'inventory manager') {
+        targetUrl = '/approvals/requests';
+      } else {
+        targetUrl = `/${role}/requests`;
+      }
+    } else if (title.includes('discard')) {
+      if (role === 'superintendent') targetUrl = '/superintendent/discarded-notes';
+      else if (role === 'accountant') targetUrl = '/accountant/discard-note';
+      else targetUrl = `/${role}/discarded-notes`;
+    }
+
+    if (targetUrl) {
+      this.router.navigate([targetUrl]);
+    }
   }
 
   markAllAsRead(event: MouseEvent): void {

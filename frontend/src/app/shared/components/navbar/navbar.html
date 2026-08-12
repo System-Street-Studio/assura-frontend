@@ -41,7 +41,7 @@
             @for (note of notifications$ | async; track note.id) {
               <div class="navbar-dropdown-item"
                    [class.unread-note]="!note.read"
-                   (click)="markAsRead(note.id, $event)">
+                   (click)="handleNotificationClick(note, $event)">
 
                 <!-- Icon -->
                 <mat-icon class="navbar-dropdown-item-icon note-icon" [class]="note.type">

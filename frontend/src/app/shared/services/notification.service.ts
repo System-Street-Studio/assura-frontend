@@ -12,6 +12,7 @@ export interface AppNotification {
   read: boolean;
   type: 'info' | 'warning' | 'success' | 'error';
   icon: string;
+  referenceId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -35,7 +36,8 @@ export class NotificationService {
         timestamp: new Date(n.createdAt),
         read: n.isRead,
         type: (n.type?.toLowerCase() as any) || 'info',
-        icon: n.icon || 'info'
+        icon: n.icon || 'info',
+        referenceId: n.referenceId
       }));
       this.notifications$.next(mapped);
     });
