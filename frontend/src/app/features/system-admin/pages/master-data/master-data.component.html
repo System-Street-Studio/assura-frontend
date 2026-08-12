@@ -1,4 +1,4 @@
-<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto; font-family: 'Jost', sans-serif;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <h1 class="assura-page-title" style="margin-bottom: 0;">Master Data Management</h1>
     </div>
@@ -21,8 +21,8 @@
     </div>
 
     <!-- Form Section -->
-    <div class="assura-card" *ngIf="showForm" style="max-width: 600px; margin: 0 auto; border-top: 4px solid #4f46e5;">
-        <h3 style="margin: 0 0 24px 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">{{ isEditing ? 'Edit' : 'Add' }} {{ activeTab === 'divisions' ? 'Division' : 'Category' }}</h3>
+    <div class="glass-panel" *ngIf="showForm" style="max-width: 600px; margin: 0 auto;">
+        <h3 style="margin: 0 0 24px 0; font-family: 'Jost'; font-size: 20px; font-weight: 600; color: #f8fafc;">{{ isEditing ? 'Edit' : 'Add' }} {{ activeTab === 'divisions' ? 'Division' : 'Category' }}</h3>
         
         <form [formGroup]="form" (ngSubmit)="submitForm()" style="display: flex; flex-direction: column; gap: 20px;">
             <div>
@@ -44,7 +44,7 @@
     </div>
 
     <!-- Data Table Section -->
-    <div class="assura-table-container" *ngIf="!showForm">
+    <div class="glass-panel assura-table-container" *ngIf="!showForm">
         <table class="assura-table">
             <thead>
                 <tr>
@@ -58,7 +58,7 @@
                 <tr class="assura-tr-hover" *ngFor="let item of (activeTab === 'divisions' ? filteredDivisions : filteredCategories)">
                     <td class="assura-td">{{ item.id }}</td>
                     <td class="assura-td" style="font-weight: 600;">{{ item.name }}</td>
-                    <td class="assura-td" style="color: #64748b;">{{ item.description || '-' }}</td>
+                    <td class="assura-td" style="color: #94a3b8;">{{ item.description || '-' }}</td>
                     <td class="assura-td" style="text-align: right; display: flex; justify-content: flex-end; gap: 8px;">
                         <button class="assura-btn assura-btn-secondary" style="padding: 6px 12px;" (click)="openEditForm(item)" title="Edit">
                             <i class="material-icons" style="font-size: 16px;">edit</i>

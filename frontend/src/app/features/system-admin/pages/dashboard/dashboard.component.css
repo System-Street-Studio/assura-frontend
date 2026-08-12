@@ -1,8 +1,25 @@
 .dashboard-container {
     padding: 32px 40px;
-    background-color: #f7f9fb;
-    min-height: calc(100vh - 48px);
     font-family: 'Jost', sans-serif;
+}
+
+.glass-card {
+    background: rgba(30, 41, 59, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.25s ease;
+    min-height: 140px;
+}
+
+.glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
 }
 
 .statics-title {
@@ -12,43 +29,7 @@
     margin-bottom: 24px;
 }
 
-/* Summary Cards (Top Row) */
-.summary-cards-row {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
-}
 
-.summary-card {
-    flex: 1;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 24px 32px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 140px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.summary-card.highlighted {
-    background: #e0f2fe;
-    border-color: #bae6fd;
-}
-
-.card-label {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #64748b;
-}
-
-.card-value {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #0f172a;
-    align-self: flex-end;
-}
 
 /* Stats Grid */
 .stats-grid {
@@ -58,53 +39,7 @@
     gap: 2rem;
 }
 
-.stats-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-    display: flex;
-    flex-direction: column;
-}
 
-.stats-card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #111;
-    margin-bottom: 1.5rem;
-}
-
-.stats-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-
-.stats-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.item-label {
-    font-size: 1.05rem;
-    color: #374151;
-    font-weight: 400;
-}
-
-.item-value {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #111;
-}
-
-.action-btn {
-    transition: background-color 0.2s ease;
-}
-
-.action-btn:hover {
-    opacity: 0.9;
-}
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {

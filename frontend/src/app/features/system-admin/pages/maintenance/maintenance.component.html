@@ -9,12 +9,12 @@
 
     <!-- TAB 1: Database Backup -->
     <div class="assura-grid assura-grid-cols-2" *ngIf="activeTab === 'backup'">
-        <div class="assura-card assura-accent-info" style="grid-column: 1 / -1;">
-            <h3 class="assura-card-title" style="font-size: 18px; color: #0f172a;">Database Backup</h3>
-            <p style="color: #475569; font-size: 15px; margin: 12px 0; line-height: 1.6;">
+        <div class="glass-card assura-accent-info" style="grid-column: 1 / -1;">
+            <h3 class="assura-card-title" style="font-size: 18px; color: #f8fafc;">Database Backup</h3>
+            <p style="color: #94a3b8; font-size: 15px; margin: 12px 0; line-height: 1.6;">
                 Generate a complete snapshot of the current live database. This includes all structural data, historical audit logs, user profiles, and operational information.
             </p>
-            <p style="color: #92400e; font-size: 14px; background: #fef3c7; padding: 12px; border-radius: 8px; margin-top: 12px;">
+            <p style="color: #fcd34d; font-size: 14px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); padding: 12px; border-radius: 8px; margin-top: 12px;">
                 <strong>Note:</strong> Generating a backup may take a few moments depending on the size of the database. A <code>.sql</code> file will be downloaded to your computer which can be directly imported into a standard MariaDB/MySQL instance.
             </p>
             
@@ -32,11 +32,11 @@
 
     <!-- TAB 2: System Logs -->
     <div *ngIf="activeTab === 'logs'">
-        <div class="assura-table-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+        <div class="glass-panel assura-table-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
                 <div>
-                    <h3 style="margin: 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #0f172a;">System Error Logs</h3>
-                    <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">Review technical errors and exceptions logged by the system.</p>
+                    <h3 style="margin: 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #f8fafc;">System Error Logs</h3>
+                    <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 14px;">Review technical errors and exceptions logged by the system.</p>
                 </div>
                 <div style="width: 300px;">
                     <input type="text" [(ngModel)]="searchTerm" placeholder="Search logs..." class="assura-input">
@@ -54,10 +54,10 @@
                 </thead>
                 <tbody>
                     <tr class="assura-tr-hover" *ngFor="let log of filteredLogs">
-                        <td class="assura-td" style="color: #475569;">{{ log.createdAt | date:'medium' }}</td>
+                        <td class="assura-td" style="color: #94a3b8;">{{ log.createdAt | date:'medium' }}</td>
                         <td class="assura-td"><span class="assura-badge assura-badge-warning">{{ log.entityName }}</span></td>
                         <td class="assura-td" style="color: #ef4444; font-weight: 500;">{{ log.action }}</td>
-                        <td class="assura-td" style="color: #64748b;">{{ log.createdBy || 'System' }}</td>
+                        <td class="assura-td" style="color: #94a3b8;">{{ log.createdBy || 'System' }}</td>
                     </tr>
                     <tr *ngIf="filteredLogs.length === 0">
                         <td colspan="4" class="assura-td" style="text-align: center; color: #94a3b8; padding: 32px;">No logs match your search.</td>
@@ -69,11 +69,11 @@
 
     <!-- TAB 3: Technical Support -->
     <div *ngIf="activeTab === 'support'">
-        <div class="assura-table-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+        <div class="glass-panel assura-table-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
                 <div>
-                    <h3 style="margin: 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #0f172a;">Technical Support (Help Desk)</h3>
-                    <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">Assist standard users with technical issues.</p>
+                    <h3 style="margin: 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #f8fafc;">Technical Support (Help Desk)</h3>
+                    <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 14px;">Assist standard users with technical issues.</p>
                 </div>
                 <div style="width: 300px;">
                     <input type="text" [(ngModel)]="searchTerm" placeholder="Search users..." class="assura-input">
@@ -93,7 +93,7 @@
                 <tbody>
                     <tr class="assura-tr-hover" *ngFor="let user of filteredUsers">
                         <td class="assura-td" style="font-weight: 600;">{{ user.username }}</td>
-                        <td class="assura-td" style="color: #64748b;">{{ user.email }}</td>
+                        <td class="assura-td" style="color: #94a3b8;">{{ user.email }}</td>
                         <td class="assura-td"><span class="assura-badge assura-badge-info">{{ user.role }}</span></td>
                         <td class="assura-td">
                             <span class="assura-badge" [ngClass]="user.isLocked ? 'assura-badge-danger' : 'assura-badge-success'">

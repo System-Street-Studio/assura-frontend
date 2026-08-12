@@ -17,54 +17,54 @@
     <div class="assura-grid assura-grid-cols-2">
         
         <!-- Summary Cards Row Equivalent -->
-        <div *ngFor="let stat of summaryStats" class="assura-card assura-accent-info">
+        <div *ngFor="let stat of summaryStats" class="glass-card assura-accent-info">
             <div class="assura-card-title">{{ stat.label }}</div>
-            <div class="assura-card-value">{{ stat.value }}</div>
+            <div class="assura-card-value" style="color: #f8fafc;">{{ stat.value }}</div>
         </div>
 
         <!-- 2. System Configuration & Master Data Management -->
-        <div class="assura-card assura-accent-primary">
+        <div class="glass-card assura-accent-primary">
             <div>
                 <h3 class="assura-card-title">Master Data Overview</h3>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <div style="display: flex; justify-content: space-between;">
                         <span class="assura-card-subtitle">Total Departments</span>
-                        <span style="font-weight: bold; font-family: 'Jost';">{{ stats.totalDepartments }}</span>
+                        <span style="font-weight: bold; font-family: 'Jost'; color: #f8fafc;">{{ stats.totalDepartments }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <span class="assura-card-subtitle">Active Categories</span>
-                        <span style="font-weight: bold; font-family: 'Jost';">{{ stats.activeCategories }}</span>
+                        <span style="font-weight: bold; font-family: 'Jost'; color: #f8fafc;">{{ stats.activeCategories }}</span>
                     </div>
                 </div>
             </div>
             <!-- Optional Actions -->
             <div style="margin-top: 15px; text-align: right;">
-                <button routerLink="/system-admin/master-data" style="padding: 6px 12px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer; font-family: 'Jost';">Manage Data</button>
+                <button routerLink="/system-admin/master-data" class="assura-btn assura-btn-primary">Manage Data</button>
             </div>
         </div>
 
         <!-- 3. Security & Data Management -->
-        <div class="assura-card assura-accent-warning">
+        <div class="glass-card assura-accent-warning">
             <div>
                 <h3 class="assura-card-title">Security Status</h3>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <div style="display: flex; justify-content: space-between;">
                         <span class="assura-card-subtitle">Recent Login Attempts</span>
-                        <span style="font-weight: bold; font-family: 'Jost';">{{ stats.recentLogins }}</span>
+                        <span style="font-weight: bold; font-family: 'Jost'; color: #f8fafc;">{{ stats.recentLogins }}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <span class="assura-card-subtitle">Active Sessions</span>
-                        <span style="font-weight: bold; font-family: 'Jost';">{{ stats.activeSessions }}</span>
+                        <span style="font-weight: bold; font-family: 'Jost'; color: #f8fafc;">{{ stats.activeSessions }}</span>
                     </div>
                 </div>
             </div>
              <div style="margin-top: 15px; text-align: right;">
-                <button routerLink="/system-admin/security" style="padding: 6px 12px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-family: 'Jost';">View Security Logs</button>
+                <button routerLink="/system-admin/security" class="assura-btn assura-btn-warning">View Security Logs</button>
             </div>
         </div>
 
         <!-- 4. Troubleshooting & System Maintenance -->
-        <div class="assura-card assura-accent-danger">
+        <div class="glass-card assura-accent-danger">
             <div>
                 <h3 class="assura-card-title">System Maintenance</h3>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -74,12 +74,12 @@
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <span class="assura-card-subtitle">Error Logs (24h)</span>
-                        <span style="font-weight: bold; font-family: 'Jost';" [style.color]="stats.errorLogsCount > 0 ? '#f59e0b' : 'inherit'">{{ stats.errorLogsCount }}</span>
+                        <span style="font-weight: bold; font-family: 'Jost';" [style.color]="stats.errorLogsCount > 0 ? '#f59e0b' : '#f8fafc'">{{ stats.errorLogsCount }}</span>
                     </div>
                 </div>
             </div>
             <div style="margin-top: 15px; text-align: right;">
-                <button routerLink="/system-admin/maintenance" style="padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-family: 'Jost';">Diagnose Errors</button>
+                <button routerLink="/system-admin/maintenance" class="assura-btn assura-btn-danger">Diagnose Errors</button>
             </div>
         </div>
 
