@@ -24,10 +24,10 @@
       }
     </div>
 
-    <section aria-labelledby="division-title" style="margin-top: 32px;">
+    <section aria-labelledby="division-title" style="margin-top: 32px; width: 100%; max-width: 800px; margin: 32px auto 0;">
       <h2 id="division-title" class="assura-page-title" style="font-size: 20px;">Users by Division</h2>
       
-      <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+      <div>
         <article class="glass-card assura-accent-primary">
           <div style="display: flex; flex-direction: column; gap: 12px;">
             @for (item of usersByDivision(); track item.division) {
