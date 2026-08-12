@@ -57,13 +57,6 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: conic-gradient(
-    #3b82f6 0 39%,
-    #f59e0b 39% 65%,
-    #10b981 65% 82%,
-    #ef4444 82% 92%,
-    #94a3b8 92% 100%
-  );
   position: relative;
 }
 

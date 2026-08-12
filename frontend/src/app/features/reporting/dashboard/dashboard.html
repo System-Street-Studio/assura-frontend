@@ -15,9 +15,9 @@
   <h2 class="assura-page-title">Reporting &amp; Analytics Dashboard</h2>
 
   <div class="assura-grid assura-grid-cols-4">
-    @for (metric of metrics(); track metric.label) {
+    @for (metric of metrics(); track metric.title || metric.label) {
       <div class="glass-card assura-accent-info">
-        <div class="assura-card-title">{{ metric.label }}</div>
+        <div class="assura-card-title">{{ metric.title || metric.label }}</div>
         <div class="assura-card-value">{{ metric.value }}</div>
         @if (metric.accent) {
           <i class="metric-accent" aria-hidden="true"></i>
@@ -31,7 +31,7 @@
     <article class="glass-card assura-accent-primary">
       <h3 class="assura-card-title">Assets by Category</h3>
       <div class="donut-row" style="flex: 1; display: flex; flex-direction: column;">
-        <div class="donut-chart" aria-label="Assets by category donut chart" style="height: 200px;"></div>
+        <div class="donut-chart" aria-label="Assets by category donut chart" style="height: 120px; width: 120px; flex-shrink: 0;" [style.background]="donutGradient()"></div>
         <ul class="legend-list" style="margin-top: 16px;">
           @for (item of categoryLegend(); track item.label) {
             <li style="display: flex; align-items: center; gap: 8px;">
@@ -45,11 +45,11 @@
 
     <article class="glass-card assura-accent-success">
       <h3 class="assura-card-title">Assets by Status</h3>
-      <div class="bar-chart status-chart" style="flex: 1; min-height: 200px; display: flex; align-items: flex-end; gap: 8px;">
+      <div class="bar-chart status-chart" style="flex: 1; min-height: 200px;">
         @for (bar of statusBars(); track bar.label) {
-          <div class="bar-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
-            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color" style="width: 100%; min-width: 20px; border-radius: 4px 4px 0 0; margin-top: auto;"></span>
-            <small style="margin-top: 4px; font-size: 11px; text-align: center;">{{ bar.label }}</small>
+          <div class="bar-item">
+            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
+            <small>{{ bar.label }}</small>
           </div>
         }
       </div>
@@ -57,11 +57,11 @@
 
     <article class="glass-card assura-accent-warning">
       <h3 class="assura-card-title">Assets by Division</h3>
-      <div class="bar-chart division-chart" style="flex: 1; min-height: 200px; display: flex; align-items: flex-end; gap: 8px;">
+      <div class="bar-chart division-chart" style="flex: 1; min-height: 200px;">
         @for (bar of divisionBars(); track bar.label) {
-          <div class="bar-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
-            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color" style="width: 100%; min-width: 20px; border-radius: 4px 4px 0 0; margin-top: auto;"></span>
-            <small style="margin-top: 4px; font-size: 11px; text-align: center;">{{ bar.label }}</small>
+          <div class="bar-item">
+            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
+            <small>{{ bar.label }}</small>
           </div>
         }
       </div>
@@ -69,11 +69,11 @@
 
     <article class="glass-card assura-accent-info">
       <h3 class="assura-card-title">Asset Value by Category</h3>
-      <div class="bar-chart value-chart" style="flex: 1; min-height: 200px; display: flex; align-items: flex-end; gap: 8px;">
+      <div class="bar-chart value-chart" style="flex: 1; min-height: 200px;">
         @for (bar of valueBars(); track bar.label) {
-          <div class="bar-item" style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
-            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color" style="width: 100%; min-width: 20px; border-radius: 4px 4px 0 0; margin-top: auto;"></span>
-            <small style="margin-top: 4px; font-size: 11px; text-align: center;">{{ bar.label }}</small>
+          <div class="bar-item">
+            <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
+            <small>{{ bar.label }}</small>
           </div>
         }
       </div>

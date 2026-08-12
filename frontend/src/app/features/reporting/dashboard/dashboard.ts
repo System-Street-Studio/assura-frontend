@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ReportingService } from '../services/reporting.service';
 
 @Component({
@@ -22,6 +22,22 @@ export class ReportingDashboardComponent implements OnInit {
   greeting = 'Welcome';
   firstName = 'Reporter';
   currentDate = new Date();
+
+  readonly donutGradient = computed(() => {
+    const legend = this.categoryLegend();
+    if (!legend || legend.length === 0) return 'conic-gradient(#94a3b8 0 100%)';
+    
+    let gradientParts = [];
+    let currentPercentage = 0;
+    
+    for (const item of legend) {
+      const nextPercentage = currentPercentage + (item.percentage || (100 / legend.length));
+      gradientParts.push(`${item.color} ${currentPercentage}% ${nextPercentage}%`);
+      currentPercentage = nextPercentage;
+    }
+    
+    return `conic-gradient(${gradientParts.join(', ')})`;
+  });
 
   ngOnInit(): void {
     const hour = new Date().getHours();
