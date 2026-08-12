@@ -198,4 +198,15 @@ export class AuthService {
     if (roles.includes('Employee')) return '/employee/employee-overview';
     return '/overview';
   }
+
+  isPendingUser(): boolean {
+    const hasPendingRole = this.hasRole('Pending');
+    const isSysAdmin = this.hasRole('SystemAdmin');
+    
+    // Explicitly check if it's null or undefined
+    const divisionId = this.getDivisionId();
+    const noDivision = divisionId === null || divisionId === undefined || isNaN(divisionId) || divisionId === 0;
+    
+    return hasPendingRole || (noDivision && !isSysAdmin);
+  }
 }

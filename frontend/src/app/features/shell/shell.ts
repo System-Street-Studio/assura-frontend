@@ -41,13 +41,11 @@ import { CommonModule } from '@angular/common';
 export class ShellComponent {
   isPendingUser = false;
 
-  constructor(private authService: AuthService) {
-    // If they have no division (and they are not a system admin), they are pending.
-    // Or if they explicitly have the 'Pending' role.
-    const hasPendingRole = this.authService.hasRole('Pending');
-    const isSysAdmin = this.authService.hasRole('SystemAdmin');
-    const noDivision = !this.authService.getDivisionId();
+  constructor(public authService: AuthService) {
+    this.isPendingUser = this.authService.isPendingUser();
     
-    this.isPendingUser = hasPendingRole || (noDivision && !isSysAdmin);
+    console.log('[DEBUG ShellComponent] Roles:', this.authService.getRoles());
+    console.log('[DEBUG ShellComponent] divisionId:', this.authService.getDivisionId());
+    console.log('[DEBUG ShellComponent] isPendingUser:', this.isPendingUser);
   }
 }

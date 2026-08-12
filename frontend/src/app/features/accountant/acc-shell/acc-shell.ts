@@ -15,10 +15,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 export class AccShellComponent {
   isPendingUser = false;
 
-  constructor(private authService: AuthService) {
-    const hasPendingRole = this.authService.hasRole('Pending');
-    const isSysAdmin = this.authService.hasRole('SystemAdmin');
-    const noDivision = !this.authService.getDivisionId();
-    this.isPendingUser = hasPendingRole || (noDivision && !isSysAdmin);
+  constructor(public authService: AuthService) {
+    this.isPendingUser = this.authService.isPendingUser();
   }
 }
