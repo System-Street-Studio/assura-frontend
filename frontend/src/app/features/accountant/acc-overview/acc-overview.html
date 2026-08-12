@@ -29,7 +29,7 @@
     <div class="glass-panel filter-bar" *ngIf="activeFilter !== 'all'">
         <span class="filter-label">Showing: <strong>{{ activeFilter === 'to-be-approved' ? 'To be Approved' :
                 (activeFilter | titlecase) }}</strong></span>
-        <button class="assura-btn-secondary" (click)="filterByCategory('all')">Show All</button>
+        <button class="assura-btn assura-btn-secondary" (click)="filterByCategory('all')">Show All</button>
     </div>
 
     <!-- Main Two-Column Layout -->
@@ -115,7 +115,7 @@
 
                 <div class="detail-actions"
                     *ngIf="selectedItem.category !== 'approved' && selectedItem.category !== 'reject'">
-                    <button class="assura-btn-primary btn-confirm" (click)="confirmDiscarding()">Confirm Discarding</button>
+                    <button class="assura-btn assura-btn-primary btn-confirm" (click)="confirmDiscarding()">Confirm Discarding</button>
                 </div>
             </div>
         </div>
@@ -182,8 +182,8 @@
         </div>
 
         <div class="confirm-modal-actions">
-            <button class="assura-btn-secondary" (click)="closeConfirmModal()">Cancel</button>
-            <button class="assura-btn-danger" (click)="saveAsDiscarded()">Save as Discarded</button>
+            <button class="assura-btn assura-btn-secondary" (click)="closeConfirmModal()">Cancel</button>
+            <button class="assura-btn assura-btn-danger" (click)="saveAsDiscarded()">Save as Discarded</button>
         </div>
     </div>
 </div>

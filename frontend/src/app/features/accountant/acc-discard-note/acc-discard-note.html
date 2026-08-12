@@ -21,7 +21,7 @@
                         <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{ item.status }}</span>
                     </td>
                     <td>
-                        <button class="assura-btn-secondary view-btn" (click)="viewNote(item)">View Note</button>
+                        <button class="assura-btn assura-btn-secondary view-btn" (click)="viewNote(item)">View Note</button>
                     </td>
                 </tr>
                 <tr *ngIf="notes.length === 0">
