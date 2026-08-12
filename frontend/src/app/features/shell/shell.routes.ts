@@ -36,7 +36,8 @@ export const shellRoutes: Routes = [
         ROLES.PROCUREMENT,
         ROLES.SUPERINTENDENT,
         ROLES.ACCOUNTANT,
-        ROLES.DIVISION_HEAD
+        ROLES.DIVISION_HEAD,
+        ROLES.SYSTEM_ADMIN
       ]
     },
     loadChildren: () => import('../employee/employee.routes').then(m => m.employeeRoutes)
