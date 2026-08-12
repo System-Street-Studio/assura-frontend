@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { QueueItemsService, QueueItem } from '../../services/queue-items.service';
 
+import { AuthService } from '../../core/auth/auth.service';
+
 @Component({
   selector: 'app-overview',
   standalone: true,
@@ -12,6 +14,7 @@ import { QueueItemsService, QueueItem } from '../../services/queue-items.service
   styleUrls: ['./overview.css']
 })
 export class OverviewComponent implements OnInit {
+  isPendingUser = false;
   activeFilter: string = '';
   queue: QueueItem[] = [];
   filteredQueue: QueueItem[] = [];
@@ -45,10 +48,18 @@ export class OverviewComponent implements OnInit {
   constructor(
     private queueItemsService: QueueItemsService,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.isPendingUser = this.authService.hasRole('Pending');
+    
+    if (this.isPendingUser) {
+      this.isLoading = false;
+      return;
+    }
+
     const hour = new Date().getHours();
     this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
 
