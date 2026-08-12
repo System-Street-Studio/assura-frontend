@@ -16,7 +16,7 @@
 
   <div class="assura-grid assura-grid-cols-4">
     @for (metric of metrics(); track metric.label) {
-      <div class="assura-card assura-accent-info">
+      <div class="glass-card assura-accent-info">
         <div class="assura-card-title">{{ metric.label }}</div>
         <div class="assura-card-value">{{ metric.value }}</div>
         @if (metric.accent) {
@@ -28,7 +28,7 @@
 
   <!-- Using 2 cols for panels -->
   <div class="assura-grid assura-grid-cols-2">
-    <article class="assura-card assura-accent-primary">
+    <article class="glass-card assura-accent-primary">
       <h3 class="assura-card-title">Assets by Category</h3>
       <div class="donut-row" style="flex: 1; display: flex; flex-direction: column;">
         <div class="donut-chart" aria-label="Assets by category donut chart" style="height: 200px;"></div>
@@ -43,7 +43,7 @@
       </div>
     </article>
 
-    <article class="assura-card assura-accent-success">
+    <article class="glass-card assura-accent-success">
       <h3 class="assura-card-title">Assets by Status</h3>
       <div class="bar-chart status-chart" style="flex: 1; min-height: 200px; display: flex; align-items: flex-end; gap: 8px;">
         @for (bar of statusBars(); track bar.label) {
@@ -55,7 +55,7 @@
       </div>
     </article>
 
-    <article class="assura-card assura-accent-warning">
+    <article class="glass-card assura-accent-warning">
       <h3 class="assura-card-title">Assets by Division</h3>
       <div class="bar-chart division-chart" style="flex: 1; min-height: 200px; display: flex; align-items: flex-end; gap: 8px;">
         @for (bar of divisionBars(); track bar.label) {
@@ -67,7 +67,7 @@
       </div>
     </article>
 
-    <article class="assura-card assura-accent-info">
+    <article class="glass-card assura-accent-info">
       <h3 class="assura-card-title">Asset Value by Category</h3>
       <div class="bar-chart value-chart" style="flex: 1; min-height: 200px; display: flex; align-items: flex-end; gap: 8px;">
         @for (bar of valueBars(); track bar.label) {
@@ -83,16 +83,16 @@
   <section style="margin-top: 32px;">
     <h2 class="assura-page-title" style="font-size: 20px;">Asset Anomalies</h2>
     <div class="assura-grid assura-grid-cols-2">
-      <div class="assura-card assura-accent-warning">
+      <div class="glass-card assura-accent-warning">
         <div style="display: flex; gap: 12px; align-items: center;">
           <span aria-hidden="true" style="color: #f59e0b; font-size: 24px;">△</span>
-          <strong style="color: #0f172a;">{{ anomalies().ghostAssetsDetected }} Ghost assets detected during audit</strong>
+          <strong style="color: #f8fafc;">{{ anomalies().ghostAssetsDetected }} Ghost assets detected during audit</strong>
         </div>
       </div>
-      <div class="assura-card assura-accent-danger">
+      <div class="glass-card assura-accent-danger">
         <div style="display: flex; gap: 12px; align-items: center;">
           <span aria-hidden="true" style="color: #ef4444; font-size: 24px;">△</span>
-          <strong style="color: #0f172a;">{{ anomalies().missingPhysicalVerification }} Assets missing physical verification</strong>
+          <strong style="color: #f8fafc;">{{ anomalies().missingPhysicalVerification }} Assets missing physical verification</strong>
         </div>
       </div>
     </div>

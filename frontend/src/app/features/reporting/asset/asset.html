@@ -7,89 +7,110 @@
     <div class="toolbar-actions">
       <label class="search-box">
         <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Search assets..." />
+        <input type="search" class="assura-input" style="padding-left: 36px;" placeholder="Search assets..." />
       </label>
-      <button class="filter-button" type="button">Bulk Edit</button>
-      <button class="filter-button" type="button">Columns</button>
-      <button class="filter-button" type="button">Add new asset</button>
-      <button class="new-button" type="button">
+      <button class="assura-btn assura-btn-secondary" type="button">Bulk Edit</button>
+      <button class="assura-btn assura-btn-secondary" type="button">Columns</button>
+      <button class="assura-btn assura-btn-secondary" type="button">Add new asset</button>
+      <button class="assura-btn assura-btn-primary" type="button">
         <span aria-hidden="true">+</span>
         New
       </button>
-      <button class="delete-button" type="button">
+      <button class="assura-btn assura-btn-danger" type="button">
         <span aria-hidden="true">×</span>
         Delete
       </button>
     </div>
   </header>
 
-  <div class="list-card">
-    <div class="list-header">
-      <label class="select-label">
-        <input type="checkbox" />
-        <span>{{ selectedCount() }} selected</span>
-      </label>
-      <span>ID</span>
-      <span>Product</span>
-      <span>Status</span>
-      <span>Checked by</span>
-      <span>Assura Name</span>
-      <span>Serial</span>
-      <span>Warranty</span>
-      <span>End of Life</span>
-      <span>Code Number</span>
-      @if (isAuditor()) {
-        <span>Actions</span>
-      }
-    </div>
+  <div class="glass-panel assura-table-container">
+    <table class="assura-table">
+      <thead>
+        <tr>
+          <th class="assura-th">
+            <label class="select-label">
+              <input type="checkbox" />
+              <span>{{ selectedCount() }} selected</span>
+            </label>
+          </th>
+          <th class="assura-th">ID</th>
+          <th class="assura-th">Product</th>
+          <th class="assura-th">Status</th>
+          <th class="assura-th">Checked by</th>
+          <th class="assura-th">Assura Name</th>
+          <th class="assura-th">Serial</th>
+          <th class="assura-th">Warranty</th>
+          <th class="assura-th">End of Life</th>
+          <th class="assura-th">Code Number</th>
+          @if (isAuditor()) {
+            <th class="assura-th">Actions</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (asset of assets(); track asset.id) {
+        <tr class="assura-tr-hover">
+          <td class="assura-td">
+            <label class="asset-select">
+              <input type="checkbox" [checked]="asset.selected" (change)="toggleSelect(asset)" />
+              <span class="color-dot" [style.background]="asset.swatch"></span>
+            </label>
+          </td>
 
-    @for (asset of assets(); track asset.id) {
-    <div class="asset-row">
-      <label class="asset-select">
-        <input type="checkbox" [checked]="asset.selected" (change)="toggleSelect(asset)" />
-        <span class="color-dot" [style.background]="asset.swatch"></span>
-      </label>
+          <td class="assura-td"><strong>{{ asset.assetId }}</strong></td>
 
-      <strong class="asset-id">{{ asset.assetId }}</strong>
+          <td class="assura-td">
+            <div class="product-cell">
+              <span class="product-thumb" [class]="asset.imageClass"></span>
+              <span>{{ asset.product }}</span>
+            </div>
+          </td>
 
-      <div class="product-cell">
-        <span class="product-thumb" [class]="asset.imageClass"></span>
-        <span>{{ asset.product }}</span>
-      </div>
+          <td class="assura-td">
+            <span class="assura-badge" [class.assura-badge-success]="asset.status === 'Verified'" [class.assura-badge-warning]="asset.status === 'Pending'" [class.assura-badge-danger]="asset.status === 'Flagged'">
+              {{ asset.status }}
+            </span>
+          </td>
 
-      <span class="status-pill" [class]="asset.status.toLowerCase().replace(' ', '-')">
-        {{ asset.status }}
-      </span>
+          <td class="assura-td">
+            <div class="person-cell">
+              @if (asset.checkedBy) {
+                <span>{{ asset.checkedBy }}</span>
+                <small>{{ asset.checkedRole }}</small>
+              } @else {
+                <span class="muted">--</span>
+              }
+            </div>
+          </td>
 
-      <div class="person-cell">
-        @if (asset.checkedBy) {
-          <span>{{ asset.checkedBy }}</span>
-          <small>{{ asset.checkedRole }}</small>
-        } @else {
-          <span class="muted">--</span>
+          <td class="assura-td">{{ asset.assuraName }}</td>
+          <td class="assura-td">{{ asset.serial }}</td>
+          <td class="assura-td">{{ asset.warranty }}</td>
+          <td class="assura-td">{{ asset.endOfLife }}</td>
+          <td class="assura-td">{{ asset.codeNumber }}</td>
+
+          @if (isAuditor()) {
+            <td class="assura-td">
+              <div class="actions-cell">
+                <button class="assura-btn assura-btn-secondary" style="padding: 4px 12px; font-size: 13px;" type="button" (click)="verifyAsset(asset)">
+                  Verify
+                </button>
+              </div>
+            </td>
+          }
+        </tr>
+        } @empty {
+          <tr>
+            <td colspan="11" class="assura-td" style="text-align: center; padding: 48px;">
+              <div class="empty-state">
+                <span class="empty-icon" aria-hidden="true" style="font-size: 32px; opacity: 0.5;">📭</span>
+                <p style="color: #94a3b8; margin-top: 16px;">No assets found in the system.</p>
+              </div>
+            </td>
+          </tr>
         }
-      </div>
-
-      <span>{{ asset.assuraName }}</span>
-      <span>{{ asset.serial }}</span>
-      <span>{{ asset.warranty }}</span>
-      <span>{{ asset.endOfLife }}</span>
-      <span>{{ asset.codeNumber }}</span>
-
-      @if (isAuditor()) {
-        <div class="actions-cell">
-          <button class="verify-btn" type="button" (click)="verifyAsset(asset)">
-            Verify
-          </button>
-        </div>
-      }
-    </div>
-    } @empty {
-      <div class="empty-state">
-        <span class="empty-icon" aria-hidden="true">📭</span>
-        <p>No assets found in the system.</p>
-      </div>
-    }
+      </tbody>
+    </table>
   </div>
 
   <div class="pagination-container">

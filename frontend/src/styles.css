@@ -149,6 +149,45 @@ select::-ms-expand {
     transition: color 0.2s;
 }
 
+/* =========================================
+   GLOBAL GLASSMORPHIC CARDS
+   ========================================= */
+
+.glass-card {
+    background: rgba(30, 41, 59, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.25s ease;
+    min-height: 140px;
+}
+
+.glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+}
+
+.assura-card-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #94a3b8;
+}
+
+.assura-card-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+    align-self: flex-end;
+    color: #f8fafc;
+}
+
 .global-modal-close-btn:hover {
     color: #0f172a;
 }
