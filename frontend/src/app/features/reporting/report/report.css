@@ -1,14 +1,18 @@
 :host {
   display: block;
-  min-height: 100vh;
+  height: 100vh;
   font-family: 'Jost', sans-serif;
   color: #1a1a1a;
+  overflow: hidden;
 }
 
 .report-page {
   padding: 24px 32px;
   max-width: 1400px;
   margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   animation: fadeUp 0.4s ease-out;
 }
 
@@ -67,6 +71,19 @@
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+
+.report-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.assura-table-container {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .section-title {
@@ -92,6 +109,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
 .help-button {
