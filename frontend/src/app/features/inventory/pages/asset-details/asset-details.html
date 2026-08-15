@@ -3,7 +3,7 @@
   <p style="margin: 0; font-weight: 500;">Loading Asset Details...</p>
 </div>
 
-<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;" *ngIf="!loading && asset">
+<div class="no-print" style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;" *ngIf="!loading && asset">
   <!-- Navigation link to return to the main inventory table -->
   <button class="assura-btn assura-btn-secondary" style="border: none; background: transparent; box-shadow: none; padding: 0;  margin-bottom: 24px;" (click)="goBack()">
     <mat-icon style="font-size: 18px; margin-right: 4px;">arrow_back</mat-icon>
@@ -227,10 +227,23 @@
   <!-- Result Overlay -->
   <app-result-overlay *ngIf="showResult" [type]="resultType" [title]="resultTitle" [message]="resultMessage"
     (closed)="onResultClosed()"></app-result-overlay>
+</div>
 
-  <!-- Print-only container to output only QR code and Asset ID on paper -->
-  <div style="display: none; @media print { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; height: 100vh; position: fixed; top: 0; left: 0;  z-index: 9999; }" *ngIf="qrDataUrl">
-    <img [src]="qrDataUrl" alt="QR Code Label" style="width: 200px; height: 200px; margin-bottom: 16px;" />
-    <div style="font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: bold;">{{ asset.assetCode }}</div>
+<!-- ================= DEDICATED PRINT CONTAINER (VISIBLE ONLY DURING WINDOW.PRINT) ================= -->
+<div id="printable-single-qr-sheet" class="print-only-container" *ngIf="asset">
+  <div class="qr-print-card">
+    <div class="qr-print-img-box">
+      <img *ngIf="qrDataUrl" [src]="qrDataUrl" [alt]="asset.assetCode" class="qr-print-img" />
+    </div>
+    <div class="qr-print-details">
+      <div class="qr-print-header">ASSURA ASSET TAG</div>
+      <div class="qr-print-code">{{ asset.assetCode }}</div>
+      <div class="qr-print-product" *ngIf="asset.productName">{{ asset.productName }}</div>
+      <div class="qr-print-meta">
+        <span *ngIf="asset.categoryName">{{ asset.categoryName }}</span>
+        <span *ngIf="asset.divisionName"> | {{ asset.divisionName }}</span>
+      </div>
+      <div class="qr-print-serial" *ngIf="asset.serialNumber">SN: {{ asset.serialNumber }}</div>
+    </div>
   </div>
 </div>

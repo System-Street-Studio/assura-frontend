@@ -23,6 +23,68 @@
        (ngSubmit) triggers onSave() which validates then calls the appropriate API. -->
   <form class="assura-card assura-accent-primary" style="padding: 24px;" [formGroup]="assetForm" (ngSubmit)="onSave()">
 
+    <!-- ── PURCHASE ORDER (PO) AUTO-FILL SELECTOR ── -->
+    <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px; padding: 18px 22px; margin-bottom: 28px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99, 102, 241, 0.2); color: #818cf8; display: flex; align-items: center; justify-content: center;">
+            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">receipt_long</mat-icon>
+          </div>
+          <div>
+            <div style="font-family: 'Jost'; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;">Purchase Order (Auto-Fill)</div>
+            <div style="font-size: 12px; opacity: 0.75;">Select a PO to automatically populate Supplier, Division, Product, Value & Warranty</div>
+          </div>
+        </div>
+        <span class="assura-badge assura-badge-info" style="font-size: 12px;" *ngIf="purchasingOrders.length > 0">
+          {{ purchasingOrders.length }} POs available &bull; Latest first
+        </span>
+      </div>
+
+      <div class="assura-grid" [ngStyle]="{'grid-template-columns': poItems.length > 1 ? '1fr 1fr' : '1fr', 'gap': '16px', 'margin-top': '0'}">
+        <!-- PO Selection Dropdown -->
+        <div>
+          <label class="assura-label" for="poSelect" style="font-size: 12px; margin-bottom: 6px; font-weight: 600;">
+            Select Purchase Order (PO)
+          </label>
+          <div style="position: relative;">
+            <select id="poSelect" class="assura-input custom-select" [ngModel]="selectedPoId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onPoChange($event)" style="font-weight: 500;">
+              <option [ngValue]="0">-- Select PO from Dropdown (Latest First) --</option>
+              <option *ngFor="let po of purchasingOrders" [ngValue]="po.id">
+                #{{ po.orderNumber }} - {{ po.supplierName || 'Vendor' }} ({{ po.issuedDate | date:'yyyy-MM-dd' }}) {{ po.divisionName ? '• ' + po.divisionName : '' }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PO Item Dropdown (shown when the PO contains multiple items) -->
+        <div *ngIf="poItems.length > 1">
+          <label class="assura-label" for="poItemSelect" style="font-size: 12px; margin-bottom: 6px; font-weight: 600;">
+            Select PO Item
+          </label>
+          <select id="poItemSelect" class="assura-input custom-select" [ngModel]="selectedPoItemId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onPoItemChange($event)" style="font-weight: 500;">
+            <option *ngFor="let item of poItems" [ngValue]="item.id">
+              {{ item.itemName }} {{ item.model ? '(' + item.model + ')' : '' }} - {{ (item.discountedPrice || item.unitPrice) | currency:'LKR':'symbol':'1.0-0' }} (Qty: {{ item.quantity }})
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Info Bar when PO is selected -->
+      <div *ngIf="currentPo" style="margin-top: 12px; padding: 10px 14px; background: rgba(99, 102, 241, 0.12); border-radius: 8px; font-size: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; color: #c7d2fe;">
+        <span><strong style="color: #ffffff;">Order:</strong> #{{ currentPo.orderNumber }}</span>
+        <span>&bull;</span>
+        <span><strong style="color: #ffffff;">Supplier:</strong> {{ currentPo.supplierName }}</span>
+        <span *ngIf="currentPo.divisionName">&bull;</span>
+        <span *ngIf="currentPo.divisionName"><strong style="color: #ffffff;">Division:</strong> {{ currentPo.divisionName }}</span>
+        <span>&bull;</span>
+        <span><strong style="color: #ffffff;">Total PO Value:</strong> {{ currentPo.totalAmount | currency:'LKR' }}</span>
+        <span *ngIf="loadingPoDetails" style="margin-left: auto; display: inline-flex; align-items: center; gap: 4px; color: #818cf8;">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px; animation: spin 1s linear infinite;">autorenew</mat-icon>
+          Loading PO...
+        </span>
+      </div>
+    </div>
+
     <!-- Two-column grid: left = Basic Info, right = Details -->
     <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 32px;">
 
@@ -54,7 +116,7 @@
              [ngValue]="0" is the placeholder; Validators.min(1) makes 0 an invalid selection. -->
         <div style="margin-bottom: 20px;">
           <label class="assura-label" for="productId">Product <span style="color: #ef4444;">*</span></label>
-          <select id="productId" class="assura-input custom-select" [ngStyle]="{'border-color': showError('productId') ? '#ef4444' : ''}" formControlName="productId" required>
+          <select id="productId" class="assura-input custom-select" [ngStyle]="{'border-color': showError('productId') ? '#ef4444' : ''}" formControlName="productId" (change)="onProductChange($event)" required>
             <option [ngValue]="0">Select Product</option>
             <option *ngFor="let p of products" [ngValue]="p.id">{{ p.name }}</option>
           </select>
@@ -153,10 +215,10 @@
       <!-- Cancel: navigates back without saving -->
       <button type="button" class="assura-btn assura-btn-secondary" (click)="onCancel()">Cancel</button>
 
-      <!-- Submit: disabled while saving or form is invalid.
+      <!-- Submit: disabled while saving.
            Icon swaps to a spinning 'sync' during the in-flight API call.
            Label changes contextually by mode. -->
-      <button type="submit" class="assura-btn assura-btn-primary" [disabled]="saving || assetForm.invalid">
+      <button type="submit" class="assura-btn assura-btn-primary" [disabled]="saving">
         <mat-icon style="font-size: 18px;" *ngIf="!saving">save</mat-icon>
         <mat-icon style="font-size: 18px; animation: spin 1s linear infinite;" *ngIf="saving">sync</mat-icon>
         {{ saving ? 'Saving...' : (mode === 'create' ? 'Create Asset' : mode === 'clone' ? 'Create Clone' : 'Save Changes') }}

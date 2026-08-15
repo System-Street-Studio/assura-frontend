@@ -3,7 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -21,6 +21,7 @@ import { ProductService } from '../../services/product.service';
 import { SupplierService } from '../../services/supplier.service';
 import { DivisionService } from '../../services/division.service';
 import { CategoryService } from '../../services/category.service';
+import { ProcurementService } from '../../../procurement/services/procurement.service';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Domain models
@@ -30,6 +31,7 @@ import { Product } from '../../models/product.model';
 import { Supplier } from '../../models/supplier.model';
 import { Division } from '../../models/division.model';
 import { Category } from '../../models/category.model';
+import { PurchasingOrderDto, PurchasingOrderItemDto, PurchasingOrderSummaryDto } from '../../../procurement/models/purchase-order.model';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared services & components
@@ -41,7 +43,7 @@ import { ResultOverlayComponent } from '../../../../shared/components/result-ove
   selector: 'app-asset-form',
   standalone: true,
   // ReactiveFormsModule is required for [formGroup] and formControlName bindings in the template.
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, ResultOverlayComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, MatIconModule, ResultOverlayComponent],
   templateUrl: './asset-form.html',
   styleUrls: ['./asset-form.css'],
 })
@@ -61,6 +63,7 @@ export class AssetFormComponent implements OnInit {
   private supplierService = inject(SupplierService);
   private divisionService = inject(DivisionService);
   private categoryService = inject(CategoryService);
+  private procurementService = inject(ProcurementService);
   private route = inject(ActivatedRoute);         // Reads route params (e.g., :id) and data (e.g., mode)
   private router = inject(Router);               // Navigates programmatically after save/cancel
   private location = inject(Location);           // Enables browser-native "back" navigation
@@ -112,6 +115,25 @@ export class AssetFormComponent implements OnInit {
   suppliers: Supplier[] = [];
   divisions: Division[] = [];
   categories: Category[] = [];
+
+  // ── Purchase Order Auto-Fill State ──
+  /** List of all purchasing orders loaded from backend, sorted with latest at top. */
+  purchasingOrders: PurchasingOrderSummaryDto[] = [];
+
+  /** Currently selected Purchase Order ID (0 = none selected). */
+  selectedPoId = 0;
+
+  /** Full details of selected Purchase Order. */
+  currentPo: PurchasingOrderDto | null = null;
+
+  /** Items list from the selected PO (for multi-item POs). */
+  poItems: PurchasingOrderItemDto[] = [];
+
+  /** Selected item ID from the PO items list. */
+  selectedPoItemId = 0;
+
+  /** Loading indicator while fetching PO details. */
+  loadingPoDetails = false;
 
   // ── Reactive Form Definition ──
   /**
@@ -261,7 +283,20 @@ export class AssetFormComponent implements OnInit {
 
     if (this.assetForm.invalid) {
       this.assetForm.markAllAsTouched(); // Force validation styling on all fields
-      this.toast.warning('Please fill all required fields with valid values.');
+
+      const missing: string[] = [];
+      if (this.assetForm.get('assetCode')?.invalid) missing.push('Asset Code');
+      if (this.assetForm.get('productId')?.invalid) missing.push('Product');
+      if (this.assetForm.get('categoryId')?.invalid) missing.push('Category');
+      if (this.assetForm.get('supplierId')?.invalid) missing.push('Supplier');
+      if (this.assetForm.get('divisionId')?.invalid) missing.push('Division');
+      if (this.assetForm.get('status')?.invalid) missing.push('Status');
+      if (this.assetForm.get('assetDate')?.invalid) missing.push('Asset Date');
+
+      const msg = missing.length > 0
+        ? `Please select/fill: ${missing.join(', ')}`
+        : 'Please fill all required fields marked with *';
+      this.toast.warning(msg);
       return;
     }
 
@@ -299,29 +334,291 @@ export class AssetFormComponent implements OnInit {
   }
 
   /**
-   * Loads all dropdown reference data (products, suppliers, divisions, categories) in parallel.
+   * Loads all dropdown reference data (products, suppliers, divisions, categories, purchasing orders) in parallel.
    * Uses `forkJoin` so the UI is populated in a single rendering pass.
    * Each individual stream has a `catchError` fallback to an empty array, ensuring that a
    * single failing endpoint does not prevent the others from loading.
    */
   private loadDropdownData(): void {
     forkJoin({
-      products:   this.productService.getAll().pipe(catchError(() => of([] as Product[]))),
-      suppliers:  this.supplierService.getAll().pipe(catchError(() => of([] as Supplier[]))),
-      divisions:  this.divisionService.getAll().pipe(catchError(() => of([] as Division[]))),
-      categories: this.categoryService.getAll().pipe(catchError(() => of([] as Category[]))),
-    }).subscribe(({ products, suppliers, divisions, categories }) => {
+      products:         this.productService.getAll().pipe(catchError(() => of([] as Product[]))),
+      suppliers:        this.supplierService.getAll().pipe(catchError(() => of([] as Supplier[]))),
+      divisions:        this.divisionService.getAll().pipe(catchError(() => of([] as Division[]))),
+      categories:       this.categoryService.getAll().pipe(catchError(() => of([] as Category[]))),
+      purchasingOrders: this.procurementService.getOrders().pipe(catchError(() => of([] as PurchasingOrderSummaryDto[]))),
+    }).subscribe(({ products, suppliers, divisions, categories, purchasingOrders }) => {
       this.products   = products;
       this.suppliers  = suppliers;
       this.divisions  = divisions;
       this.categories = categories;
 
-      // Warn the user if any list came back empty (likely a backend error or empty database table)
+      // Sort purchasing orders so latest PO is at the top
+      this.purchasingOrders = (purchasingOrders || []).sort((a, b) => {
+        const timeA = a.issuedDate ? new Date(a.issuedDate).getTime() : 0;
+        const timeB = b.issuedDate ? new Date(b.issuedDate).getTime() : 0;
+        if (timeB !== timeA) return timeB - timeA;
+        return (b.id || 0) - (a.id || 0);
+      });
+
+      // If in create mode and queryParams had poId, auto select
+      if (this.mode === 'create') {
+        const queryPoId = Number(this.route.snapshot.queryParams['poId']);
+        if (queryPoId && this.purchasingOrders.some(p => p.id === queryPoId)) {
+          this.onPoChange(queryPoId);
+        }
+      }
+
+      // Warn the user if any reference list came back empty
       if (!products.length)   this.toast.error('Failed to load products');
       if (!suppliers.length)  this.toast.error('Failed to load suppliers');
       if (!divisions.length)  this.toast.error('Failed to load divisions');
       if (!categories.length) this.toast.error('Failed to load categories');
     });
+  }
+
+  /**
+   * Called when a storekeeper selects a Purchase Order from the dropdown.
+   * Fetches the complete PO details and auto-fills supplier, division, date, product, warranty, and price.
+   */
+  onPoChange(poId: number | string): void {
+    const numericId = Number(poId);
+    this.selectedPoId = numericId;
+    this.poItems = [];
+    this.selectedPoItemId = 0;
+    this.currentPo = null;
+
+    if (!numericId || numericId <= 0) {
+      return;
+    }
+
+    this.loadingPoDetails = true;
+    this.procurementService.getOrderById(numericId).subscribe({
+      next: (po) => {
+        this.loadingPoDetails = false;
+        this.currentPo = po;
+        this.poItems = po.items || [];
+
+        const patchData: any = {};
+
+        // 1. Auto-match Supplier
+        if (po.supplierName && this.suppliers.length > 0) {
+          const sName = po.supplierName.trim().toLowerCase();
+          const supMatch = this.suppliers.find(
+            (s) => s.name.trim().toLowerCase() === sName ||
+                   sName.includes(s.name.trim().toLowerCase()) ||
+                   s.name.trim().toLowerCase().includes(sName)
+          );
+          if (supMatch) {
+            patchData.supplierId = Number(supMatch.id);
+          }
+        }
+
+        // 2. Auto-match Division
+        if (po.divisionId && this.divisions.some(d => Number(d.id) === Number(po.divisionId))) {
+          patchData.divisionId = Number(po.divisionId);
+        } else if (po.divisionName && this.divisions.length > 0) {
+          const dName = po.divisionName.trim().toLowerCase();
+          const divMatch = this.divisions.find(
+            (d) => d.name.trim().toLowerCase() === dName ||
+                   dName.includes(d.name.trim().toLowerCase()) ||
+                   d.name.trim().toLowerCase().includes(dName)
+          );
+          if (divMatch) {
+            patchData.divisionId = Number(divMatch.id);
+          }
+        }
+
+        // 3. Auto-match Date from PO Order Date
+        if (po.orderDate) {
+          patchData.assetDate = this.toDateInputValue(po.orderDate);
+        }
+
+        // 4. Auto-fill Item details
+        if (this.poItems.length > 0) {
+          this.selectedPoItemId = this.poItems[0].id;
+          this.applyPoItemData(this.poItems[0], po, patchData);
+        } else {
+          if (po.totalAmount && po.totalAmount > 0) {
+            patchData.purchaseValue = Number(po.totalAmount);
+          }
+          patchData.notes = `PO: #${po.orderNumber}${po.supplierName ? ' - ' + po.supplierName : ''}`;
+          this.assetForm.patchValue(patchData);
+        }
+
+        this.toast.success(`Auto-filled details from PO #${po.orderNumber}`);
+      },
+      error: () => {
+        this.loadingPoDetails = false;
+        this.toast.error('Failed to load details for selected PO');
+      },
+    });
+  }
+
+  /**
+   * Helper to detect category ID based on product/item name, model, and keywords.
+   */
+  detectCategoryId(itemName: string, modelName: string = ''): number {
+    if (!this.categories || this.categories.length === 0) return 0;
+
+    const text = `${itemName || ''} ${modelName || ''}`.toLowerCase();
+
+    // 1. Direct name match
+    for (const cat of this.categories) {
+      const catNameLower = cat.name.toLowerCase();
+      if (text.includes(catNameLower) || catNameLower.includes(text)) {
+        return Number(cat.id);
+      }
+    }
+
+    // 2. Domain keyword matching
+    const keywordMap: { match: string; keywords: string[] }[] = [
+      {
+        match: 'computer',
+        keywords: [
+          'headphone', 'headset', 'earphone', 'speaker', 'audio', 'sound', 'mic', 'microphone',
+          'laptop', 'desktop', 'computer', 'pc', 'monitor', 'screen', 'display', 'keyboard', 'mouse',
+          'dell', 'hp', 'lenovo', 'sony', 'asus', 'acer', 'apple', 'macbook', 'samsung',
+          'cable', 'adapter', 'charger', 'usb', 'hdmi', 'hard drive', 'ssd', 'hdd', 'ram',
+          'server', 'switch', 'router', 'modem', 'v720h', 'wh-', 'mdr'
+        ]
+      },
+      {
+        match: 'office',
+        keywords: [
+          'printer', 'scanner', 'photocopier', 'copier', 'projector', 'fax', 'telephone',
+          'phone', 'shredder', 'laminator', 'calculator', 'whiteboard'
+        ]
+      },
+      {
+        match: 'furniture',
+        keywords: [
+          'chair', 'table', 'desk', 'cupboard', 'cabinet', 'shelf', 'shelving', 'rack',
+          'stool', 'sofa', 'drawer', 'bench', 'podium', 'curtain', 'blind', 'furniture'
+        ]
+      },
+      {
+        match: 'vehicle',
+        keywords: [
+          'car', 'van', 'truck', 'lorry', 'bike', 'motorcycle', 'vehicle', 'jeep', 'bus', 'scooter'
+        ]
+      },
+      {
+        match: 'antenna',
+        keywords: [
+          'satellite', 'antenna', 'dish', 'receiver', 'transmitter', 'radio', 'transceiver'
+        ]
+      },
+      {
+        match: 'lab',
+        keywords: [
+          'lab', 'microscope', 'oscilloscope', 'spectrometer', 'multimeter', 'sensor',
+          'laser', 'pipette', 'centrifuge', 'tester', 'meter'
+        ]
+      },
+      {
+        match: 'book',
+        keywords: [
+          'book', 'journal', 'periodical', 'magazine', 'dictionary', 'handbook'
+        ]
+      }
+    ];
+
+    for (const entry of keywordMap) {
+      const targetCat = this.categories.find(c => c.name.toLowerCase().includes(entry.match));
+      if (targetCat && entry.keywords.some(kw => text.includes(kw))) {
+        return Number(targetCat.id);
+      }
+    }
+
+    return 0;
+  }
+
+  /**
+   * Called when the Product selection is changed.
+   * Auto-selects category if not already set.
+   */
+  onProductChange(event: any): void {
+    const selectedId = Number(event?.target?.value !== undefined ? event.target.value : event);
+    if (!selectedId || selectedId <= 0) return;
+
+    const prod = this.products.find(p => Number(p.id) === selectedId);
+    if (prod) {
+      const currentCat = Number(this.assetForm.get('categoryId')?.value || 0);
+      if (currentCat <= 0) {
+        const detectedCatId = this.detectCategoryId(prod.name, prod.modelNumber || '');
+        if (detectedCatId > 0) {
+          this.assetForm.patchValue({ categoryId: detectedCatId });
+        }
+      }
+    }
+  }
+
+  /**
+   * Applies the details of a specific PO item to the form (Product, Category, Price, Warranty, Notes).
+   */
+  applyPoItemData(item: PurchasingOrderItemDto, po: PurchasingOrderDto, existingPatch: any = {}): void {
+    const patchData = { ...existingPatch };
+
+    // 1. Match Product
+    if (item.itemName && this.products.length > 0) {
+      const iName = item.itemName.trim().toLowerCase();
+      const mName = (item.model || '').trim().toLowerCase();
+      const prodMatch = this.products.find((p) => {
+        const pName = p.name.trim().toLowerCase();
+        return (
+          pName === iName ||
+          (mName && pName.includes(mName)) ||
+          pName.includes(iName) ||
+          iName.includes(pName)
+        );
+      });
+      if (prodMatch) {
+        patchData.productId = Number(prodMatch.id);
+      }
+    }
+
+    // 2. Auto-detect Category
+    const detectedCatId = this.detectCategoryId(item.itemName, item.model || '');
+    if (detectedCatId > 0) {
+      patchData.categoryId = detectedCatId;
+    }
+
+    // 3. Purchase Value (discounted price or unit price or total price)
+    const price = item.discountedPrice || item.unitPrice || item.totalPrice || 0;
+    if (price > 0) {
+      patchData.purchaseValue = Number(price);
+    } else if (po.totalAmount && po.totalAmount > 0) {
+      patchData.purchaseValue = Number(po.totalAmount);
+    }
+
+    // 4. Warranty
+    if (item.warranty) {
+      patchData.warranty = item.warranty;
+    }
+
+    // 5. Notes
+    const noteParts = [
+      `PO: #${po.orderNumber}`,
+      item.itemName ? `Item: ${item.itemName}` : '',
+      item.model ? `Model: ${item.model}` : '',
+      item.specialNote ? `Note: ${item.specialNote}` : '',
+    ].filter(Boolean);
+    patchData.notes = noteParts.join(' | ');
+
+    this.assetForm.patchValue(patchData);
+  }
+
+  /**
+   * Triggered when storekeeper chooses a different item in multi-item PO.
+   */
+  onPoItemChange(itemId: number | string): void {
+    const numericId = Number(itemId);
+    this.selectedPoItemId = numericId;
+    const item = this.poItems.find((i) => i.id === numericId);
+    if (item && this.currentPo) {
+      this.applyPoItemData(item, this.currentPo);
+      this.toast.info(`Updated form with item: ${item.itemName}`);
+    }
   }
 
   /** Navigates back to the previous page without saving. */
