@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ReportingService } from '../services/reporting.service';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-reporting-report',
@@ -12,22 +13,53 @@ import { ReportingService } from '../services/reporting.service';
 })
 export class ReportingReportComponent implements OnInit {
   private reportingService = inject(ReportingService);
+  private toastService = inject(ToastService);
 
   readonly summaries = signal<any[]>([]);
   readonly reportItems = signal<any[]>([]);
-  readonly insights = signal<any[]>([]);
 
   readonly searchTerm = signal('');
-  
+
+  readonly selectedType = signal('All');
+  readonly selectedStatus = signal('All');
+  readonly showTypeDropdown = signal(false);
+  readonly showStatusDropdown = signal(false);
+
+  readonly availableTypes = computed(() => {
+    const defaults = ['Audit', 'Exception', 'Lifecycle', 'Finance'];
+    const fromReports = this.reportItems().map(r => r.type).filter(Boolean);
+    return ['All', ...Array.from(new Set([...defaults, ...fromReports]))];
+  });
+
+  readonly availableStatuses = computed(() => {
+    const defaults = ['Completed', 'Pending', 'Ready'];
+    const fromReports = this.reportItems().map(r => r.status).filter(Boolean);
+    return ['All', ...Array.from(new Set([...defaults, ...fromReports]))];
+  });
+
   readonly filteredReports = computed(() => {
     const term = this.searchTerm().toLowerCase().trim();
-    if (!term) return this.reportItems();
-    return this.reportItems().filter(r => 
-      r.id?.toLowerCase().includes(term) ||
-      r.title?.toLowerCase().includes(term) ||
-      r.owner?.toLowerCase().includes(term) ||
-      r.type?.toLowerCase().includes(term)
-    );
+    const type = this.selectedType();
+    const status = this.selectedStatus();
+
+    return this.reportItems().filter(r => {
+      const matchesTerm = !term ||
+        r.id?.toLowerCase().includes(term) ||
+        r.title?.toLowerCase().includes(term) ||
+        r.owner?.toLowerCase().includes(term) ||
+        r.type?.toLowerCase().includes(term);
+
+      const matchesType = type === 'All' || r.type?.toLowerCase() === type.toLowerCase();
+      
+      const rStatus = (r.status || '').toLowerCase();
+      const targetStatus = status.toLowerCase();
+      const matchesStatus = status === 'All' || 
+        rStatus === targetStatus ||
+        (targetStatus === 'completed' && rStatus === 'ready') ||
+        (targetStatus === 'ready' && rStatus === 'completed');
+
+      return matchesTerm && matchesType && matchesStatus;
+    });
   });
 
   selectedFormat = 'CSV';
@@ -40,12 +72,39 @@ export class ReportingReportComponent implements OnInit {
   newReportTitle = '';
   newReportType = 'Audit';
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown-container')) {
+      this.showTypeDropdown.set(false);
+      this.showStatusDropdown.set(false);
+    }
+  }
+
   ngOnInit(): void {
-    this.reportingService.getReports().subscribe(data => {
-      this.summaries.set(data.summaries);
-      this.reportItems.set(data.reportItems);
-      this.insights.set(data.insights);
-    });
+    this.loadReports();
+  }
+
+  toggleTypeDropdown(event?: Event): void {
+    if (event) event.stopPropagation();
+    this.showTypeDropdown.set(!this.showTypeDropdown());
+    this.showStatusDropdown.set(false);
+  }
+
+  toggleStatusDropdown(event?: Event): void {
+    if (event) event.stopPropagation();
+    this.showStatusDropdown.set(!this.showStatusDropdown());
+    this.showTypeDropdown.set(false);
+  }
+
+  selectType(type: string): void {
+    this.selectedType.set(type);
+    this.showTypeDropdown.set(false);
+  }
+
+  selectStatus(status: string): void {
+    this.selectedStatus.set(status);
+    this.showStatusDropdown.set(false);
   }
 
   exportTable(): void {
@@ -256,17 +315,23 @@ export class ReportingReportComponent implements OnInit {
   openScheduleModal(): void {
     this.showScheduleModal = true;
   }
-  
+
   closeScheduleModal(): void {
     this.showScheduleModal = false;
+    this.scheduleTitle = '';
+    this.scheduleType = 'Audit';
   }
 
+  scheduleTitle = '';
+  scheduleType = 'Audit';
   scheduleFrequency = 'Daily';
 
   scheduleReport(): void {
+    if (!this.scheduleTitle.trim()) return;
+
     const payload = {
-      title: 'Scheduled Report',
-      type: 'Audit',
+      title: this.scheduleTitle,
+      type: this.scheduleType,
       isScheduled: true,
       scheduleFrequency: this.scheduleFrequency
     };
@@ -312,11 +377,29 @@ export class ReportingReportComponent implements OnInit {
     }
   }
 
+  markCompleted(report: any): void {
+    this.reportingService.markReportCompleted(report.id).subscribe({
+      next: () => {
+        this.toastService.success('Report marked as completed.');
+        this.loadReports();
+      },
+      error: err => {
+        console.error('Failed to mark report completed:', err);
+        this.toastService.error('Failed to mark report as completed.');
+      }
+    });
+  }
+
   private loadReports(): void {
-    this.reportingService.getReports().subscribe(data => {
-      this.summaries.set(data.summaries);
-      this.reportItems.set(data.reportItems);
-      this.insights.set(data.insights);
+    this.reportingService.getReports().subscribe({
+      next: data => {
+        this.summaries.set(data.summaries);
+        this.reportItems.set(data.reportItems);
+      },
+      error: err => {
+        console.error('Failed to load reports:', err);
+        this.toastService.error('Failed to load reports. Please try again.');
+      }
     });
   }
 }

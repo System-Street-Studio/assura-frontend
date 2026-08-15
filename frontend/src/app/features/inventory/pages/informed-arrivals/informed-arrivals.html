@@ -36,7 +36,7 @@
                                 <mat-icon style="font-size: 16px;">notifications_active</mat-icon>
                                 <span>Inform</span>
                             </button>
-                            <button class="assura-btn assura-btn-secondary" style="padding: 6px; font-size: 13px;" title="Register" [disabled]="(item.status || '').toLowerCase() !== 'pending'">
+                            <button class="assura-btn assura-btn-secondary" style="padding: 6px; font-size: 13px;" title="Record a GRN for this arrival" (click)="registerArrival()" [disabled]="(item.status || '').toLowerCase() !== 'pending'">
                                 <mat-icon style="font-size: 16px;">inventory</mat-icon>
                                 <span>Register</span>
                             </button>

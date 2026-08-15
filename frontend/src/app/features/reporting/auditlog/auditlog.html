@@ -55,7 +55,7 @@
     </div>
   </header>
 
-  <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px;">
+  <div class="summary-grid">
     @for (stat of stats(); track stat.label) {
       <article class="glass-card" [class]="stat.tone">
         <span class="assura-card-title">{{ stat.label }}</span>
@@ -64,37 +64,34 @@
     }
   </div>
 
-  <div class="audit-layout">
-    <section class="timeline-card">
-      <div class="section-title">
-        <h2>Recent Activity</h2>
-        <button type="button">Refresh</button>
-      </div>
-
-      <div class="timeline">
-        @for (log of filteredLogs().slice(0, 4); track $index) {
-          <article class="timeline-item" [class]="log.status.toLowerCase()">
-            <span class="timeline-dot" aria-hidden="true"></span>
-            <div>
-              <strong>{{ log.action }}</strong>
-              <p>{{ log.detail }}</p>
-              <small>{{ log.actor }} · {{ log.date }} {{ log.time }}</small>
-            </div>
-          </article>
-        }
-        @if (filteredLogs().length === 0) {
-          <p class="no-data-msg">No recent activity found matching filters.</p>
-        }
-      </div>
-    </section>
-
-    <section class="glass-panel" style="flex: 1; padding: 24px; min-width: 0;">
+  <section class="glass-panel" style="padding: 24px;">
       <div class="section-title">
         <h2 style="color: #f8fafc; font-size: 1.25rem;">Audit Trail</h2>
         <div class="table-actions">
-          <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;">Status</button>
-          <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;">Actor</button>
-          <button type="button" class="assura-btn assura-btn-primary" style="padding: 6px 12px; font-size: 13px;">Download</button>
+          <div class="dropdown-container">
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="toggleStatusDropdown()">
+              Status: {{ selectedStatus() }}
+            </button>
+            @if (showStatusDropdown()) {
+              <div class="dropdown-menu">
+                @for (status of availableStatuses(); track status) {
+                  <button type="button" (click)="selectStatus(status)">{{ status }}</button>
+                }
+              </div>
+            }
+          </div>
+          <div class="dropdown-container">
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="toggleActorDropdown()">
+              Actor: {{ selectedActor() }}
+            </button>
+            @if (showActorDropdown()) {
+              <div class="dropdown-menu">
+                @for (actor of availableActors(); track actor) {
+                  <button type="button" (click)="selectActor(actor)">{{ actor }}</button>
+                }
+              </div>
+            }
+          </div>
         </div>
       </div>
 
@@ -146,9 +143,4 @@
         </table>
       </div>
     </section>
-  </div>
-
-  <button class="help-button" type="button" aria-label="Open help">
-    <span aria-hidden="true">?</span>
-  </button>
 </section>

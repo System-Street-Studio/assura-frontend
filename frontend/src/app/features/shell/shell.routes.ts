@@ -78,11 +78,5 @@ export const shellRoutes: Routes = [
     data: { roles: [ROLES.AUDITOR, ROLES.ADMIN] },
     loadChildren: () => import('../reporting/reporting.routes').then(m => m.reportingRoutes)
   },
-  {
-    path: 'accountant',
-    canActivate: [roleGuard],
-    data: { roles: [ROLES.ACCOUNTANT, ROLES.ADMIN] },
-    loadChildren: () => import('../accountant/accountant.routes').then(m => m.accountantRoutes)
-  },
   { path: '', redirectTo: 'overview', pathMatch: 'full' },
 ];

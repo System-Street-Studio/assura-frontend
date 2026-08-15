@@ -11,6 +11,7 @@ export interface QueueItem {
   time: string;
   assetType: string;
   specialNote: string;
+  reviewNote?: string;
 }
 
 @Injectable({ providedIn: 'root' })

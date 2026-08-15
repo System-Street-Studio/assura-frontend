@@ -14,6 +14,7 @@ interface PendingItem {
     time: string;
     assetType: string;
     currentUser: string;
+    requestedByName: string;
     specialNote: string;
     valueAtPurchasing: string;
     currentValue: string;
@@ -161,7 +162,7 @@ export class AccOverviewComponent implements OnInit {
                 assetName: this.selectedItem.name,
                 division: this.selectedItem.division,
                 date: this.selectedItem.date,
-                amount: this.selectedItem.currentValue
+                amount: parseFloat(this.selectedItem.currentValue.replace(/[^0-9.]/g, '')) || 0
             };
 
             this.receiptsService.create(newReceipt).subscribe({

@@ -11,6 +11,18 @@
         </button>
     </div>
 
+    <!-- List Action Error -->
+    <div class="list-action-error" *ngIf="listActionError">
+        <span>{{ listActionError }}</span>
+        <button class="btn-close" (click)="dismissListActionError()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+    </div>
+
     <!-- Search Bar -->
     <div class="search-bar">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999"
@@ -38,7 +50,7 @@
                     <td>{{ item.assetName }}</td>
                     <td>{{ item.division }}</td>
                     <td>{{ item.date }}</td>
-                    <td>{{ item.amount }}</td>
+                    <td>Rs. {{ item.amount | number:'1.2-2' }}</td>
                     <td>
                         <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{ item.status }}</span>
                     </td>
@@ -84,23 +96,27 @@
                     </svg>
                 </button>
             </div>
-            <div class="modal-body">
+            <form class="modal-body" [formGroup]="receiptForm" (ngSubmit)="submitReceipt()">
                 <div class="form-group">
-                    <label>Asset Name</label>
-                    <input type="text" placeholder="Enter asset name" [(ngModel)]="newReceipt.assetName" />
+                    <label for="receipt-asset-name">Asset Name</label>
+                    <input id="receipt-asset-name" type="text" placeholder="Enter asset name" formControlName="assetName" />
+                    <p class="field-error" *ngIf="isInvalid('assetName')">Asset name is required.</p>
                 </div>
                 <div class="form-group">
-                    <label>Division</label>
-                    <input type="text" placeholder="Enter division" [(ngModel)]="newReceipt.division" />
+                    <label for="receipt-division">Division</label>
+                    <input id="receipt-division" type="text" placeholder="Enter division" formControlName="division" />
+                    <p class="field-error" *ngIf="isInvalid('division')">Division is required.</p>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Date</label>
-                        <input type="text" placeholder="DD MMM YYYY" [(ngModel)]="newReceipt.date" />
+                        <label for="receipt-date">Date</label>
+                        <input id="receipt-date" type="date" formControlName="date" />
+                        <p class="field-error" *ngIf="isInvalid('date')">A valid date is required.</p>
                     </div>
                     <div class="form-group">
-                        <label>Amount</label>
-                        <input type="text" placeholder="Rs. 0" [(ngModel)]="newReceipt.amount" />
+                        <label for="receipt-amount">Amount</label>
+                        <input id="receipt-amount" type="number" min="0.01" step="0.01" placeholder="0.00" formControlName="amount" />
+                        <p class="field-error" *ngIf="isInvalid('amount')">Enter an amount greater than 0.</p>
                     </div>
                 </div>
                 <div class="form-group">
@@ -116,9 +132,10 @@
                         <span *ngIf="!selectedFileName">Click to upload or drag and drop</span>
                         <span *ngIf="selectedFileName" style="color:#0078d4;font-weight:500;">📎 {{ selectedFileName }}</span>
                     </div>
-                    <p *ngIf="uploadError" style="color:#e53935;font-size:12px;margin-top:4px;">{{ uploadError }}</p>
+                    <p class="field-error" *ngIf="fileError">{{ fileError }}</p>
+                    <p class="field-error" *ngIf="uploadError">{{ uploadError }}</p>
                 </div>
-            </div>
+            </form>
             <div class="modal-footer">
                 <button class="assura-btn assura-btn-secondary" (click)="closeAddReceipt()">Cancel</button>
                 <button class="assura-btn assura-btn-primary" (click)="submitReceipt()">Submit Receipt</button>

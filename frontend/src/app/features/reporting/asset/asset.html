@@ -7,19 +7,8 @@
     <div class="toolbar-actions">
       <label class="search-box">
         <span aria-hidden="true">⌕</span>
-        <input type="search" class="assura-input" style="padding-left: 36px;" placeholder="Search assets..." />
+        <input type="search" class="assura-input" style="padding-left: 36px;" placeholder="Search assets..." [ngModel]="searchTerm()" (ngModelChange)="onSearchInput($event)" />
       </label>
-      <button class="assura-btn assura-btn-secondary" type="button">Bulk Edit</button>
-      <button class="assura-btn assura-btn-secondary" type="button">Columns</button>
-      <button class="assura-btn assura-btn-secondary" type="button">Add new asset</button>
-      <button class="assura-btn assura-btn-primary" type="button">
-        <span aria-hidden="true">+</span>
-        New
-      </button>
-      <button class="assura-btn assura-btn-danger" type="button">
-        <span aria-hidden="true">×</span>
-        Delete
-      </button>
     </div>
   </header>
 
@@ -27,12 +16,6 @@
     <table class="assura-table">
       <thead>
         <tr>
-          <th class="assura-th">
-            <label class="select-label">
-              <input type="checkbox" />
-              <span>{{ selectedCount() }} selected</span>
-            </label>
-          </th>
           <th class="assura-th">ID</th>
           <th class="assura-th">Product</th>
           <th class="assura-th">Status</th>
@@ -42,21 +25,11 @@
           <th class="assura-th">Warranty</th>
           <th class="assura-th">End of Life</th>
           <th class="assura-th">Code Number</th>
-          @if (isAuditor()) {
-            <th class="assura-th">Actions</th>
-          }
         </tr>
       </thead>
       <tbody>
         @for (asset of assets(); track asset.id) {
         <tr class="assura-tr-hover">
-          <td class="assura-td">
-            <label class="asset-select">
-              <input type="checkbox" [checked]="asset.selected" (change)="toggleSelect(asset)" />
-              <span class="color-dot" [style.background]="asset.swatch"></span>
-            </label>
-          </td>
-
           <td class="assura-td"><strong>{{ asset.assetId }}</strong></td>
 
           <td class="assura-td">
@@ -88,20 +61,10 @@
           <td class="assura-td">{{ asset.warranty }}</td>
           <td class="assura-td">{{ asset.endOfLife }}</td>
           <td class="assura-td">{{ asset.codeNumber }}</td>
-
-          @if (isAuditor()) {
-            <td class="assura-td">
-              <div class="actions-cell">
-                <button class="assura-btn assura-btn-secondary" style="padding: 4px 12px; font-size: 13px;" type="button" (click)="verifyAsset(asset)">
-                  Verify
-                </button>
-              </div>
-            </td>
-          }
         </tr>
         } @empty {
           <tr>
-            <td colspan="11" class="assura-td" style="text-align: center; padding: 48px;">
+            <td colspan="9" class="assura-td" style="text-align: center; padding: 48px;">
               <div class="empty-state">
                 <span class="empty-icon" aria-hidden="true" style="font-size: 32px; opacity: 0.5;">📭</span>
                 <p style="color: #94a3b8; margin-top: 16px;">No assets found in the system.</p>

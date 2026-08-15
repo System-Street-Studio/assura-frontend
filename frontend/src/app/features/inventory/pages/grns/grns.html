@@ -1,0 +1,209 @@
+<div style="padding: 32px; max-width: 1400px; margin: 0 auto; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 32px;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1 class="assura-page-title" style="margin-bottom: 4px;">Goods Received Notes</h1>
+            <span style="font-size: 14px; color: #64748b;">{{ totalCount }} GRN{{ totalCount === 1 ? '' : 's' }} recorded</span>
+        </div>
+        <button class="assura-btn assura-btn-primary" (click)="openCreateModal()">
+            <mat-icon style="font-size: 18px; vertical-align: middle;">add</mat-icon>
+            New GRN
+        </button>
+    </div>
+
+    <!-- Search -->
+    <div style="display: flex; gap: 12px; align-items: center;">
+        <div style="position: relative; width: 320px;">
+            <label for="grn-search" class="assura-label" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;">Search Goods Received Notes</label>
+            <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5; font-size: 20px;">search</mat-icon>
+            <input
+                id="grn-search"
+                class="assura-input"
+                style="padding-left: 40px;"
+                placeholder="Search by GRN#, asset, PO, supplier..."
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onSearchChange()"
+            />
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <section>
+        <div class="assura-table-container">
+            @if (!loading && !loadError) {
+                @if (viewGrns.length > 0) {
+                    <table class="assura-table">
+                        <thead>
+                            <tr>
+                                <th class="assura-th">GRN Number</th>
+                                <th class="assura-th">Asset</th>
+                                <th class="assura-th">Purchasing Order</th>
+                                <th class="assura-th">Received</th>
+                                <th class="assura-th" style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (grn of viewGrns; track grn.id) {
+                                <tr class="assura-tr-hover">
+                                    <td class="assura-td">
+                                        <div style="font-weight: 600; color: #4f46e5;">{{ grn.grnNumber }}</div>
+                                    </td>
+                                    <td class="assura-td">
+                                        <div style="font-weight: 500;">{{ grn.productName }}</div>
+                                        <div style="font-size: 12px; color: #64748b;">{{ grn.assetCode }}</div>
+                                    </td>
+                                    <td class="assura-td">
+                                        <div style="font-size: 13px; font-weight: 500;">{{ grn.purchasingOrderNumber }}</div>
+                                        <div style="font-size: 12px; color: #64748b;">{{ grn.supplierName }}</div>
+                                    </td>
+                                    <td class="assura-td">
+                                        <div style="font-size: 13px; font-weight: 500;">{{ formatDate(grn.receivedDate) }}</div>
+                                        @if (grn.receivedBy) {
+                                            <div style="font-size: 12px; color: #64748b;">by {{ grn.receivedBy }}</div>
+                                        }
+                                    </td>
+                                    <td class="assura-td" style="text-align: right;">
+                                        <button class="assura-btn assura-btn-secondary" style="padding: 6px;" (click)="openDetail(grn)" title="View Details">
+                                            <mat-icon style="font-size: 16px;">visibility</mat-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                } @else {
+                    <div style="padding: 48px; text-align: center;">
+                        <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">inventory_2</mat-icon>
+                        <h3 style="margin: 0 0 8px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600;">No GRNs Found</h3>
+                        <p style="margin: 0 0 20px 0; color: #64748b;">No Goods Received Notes match your search, or none have been recorded yet.</p>
+                        <button class="assura-btn assura-btn-primary" (click)="openCreateModal()">Record a GRN</button>
+                    </div>
+                }
+            }
+
+            @if (loading) {
+                <div style="padding: 48px; text-align: center;">
+                    <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">autorenew</mat-icon>
+                    <div style="font-size: 16px; font-weight: 500;">Loading Goods Received Notes...</div>
+                </div>
+            }
+
+            @if (loadError && !loading) {
+                <div style="padding: 48px; text-align: center;">
+                    <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #ef4444;">error_outline</mat-icon>
+                    <h3 style="margin: 0 0 8px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600;">Failed to load</h3>
+                    <button class="assura-btn assura-btn-secondary" (click)="retryLoad()">Try Again</button>
+                </div>
+            }
+        </div>
+    </section>
+</div>
+
+<!-- ================= NEW GRN MODAL ================= -->
+@if (showCreateModal) {
+    <div class="modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;">
+        <div class="assura-card assura-accent-primary" style="width: 100%; max-width: 520px; padding: 0; overflow: hidden;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0;">
+                <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">New GRN</h2>
+                <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="cancelCreate()" aria-label="Close"><mat-icon>close</mat-icon></button>
+            </div>
+            <div style="padding: 24px; max-height: 65vh; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
+                <p style="margin: 0; color: #64748b; font-size: 13px;">Record that goods for a purchasing order line have been physically received and matched to an asset already registered in the system.</p>
+
+                <div>
+                    <label for="grn-po" class="assura-label">Purchasing Order *</label>
+                    <select id="grn-po" class="assura-input" [(ngModel)]="createForm.purchasingOrderId">
+                        <option [ngValue]="0">Select a purchasing order</option>
+                        @for (po of purchasingOrders; track po.id) {
+                            <option [ngValue]="po.id">{{ po.orderNumber }} — {{ po.supplierName }}</option>
+                        }
+                    </select>
+                    @if (submitted && !createForm.purchasingOrderId) {
+                        <div style="color: #ef4444; font-size: 12px; margin-top: 4px;">Purchasing order is required.</div>
+                    }
+                </div>
+
+                <div>
+                    <label for="grn-asset" class="assura-label">Asset *</label>
+                    <select id="grn-asset" class="assura-input" [(ngModel)]="createForm.assetId">
+                        <option [ngValue]="0">Select an asset</option>
+                        @for (asset of assets; track asset.id) {
+                            <option [ngValue]="asset.id">{{ asset.assetCode }} — {{ asset.productName }}</option>
+                        }
+                    </select>
+                    @if (submitted && !createForm.assetId) {
+                        <div style="color: #ef4444; font-size: 12px; margin-top: 4px;">Asset is required.</div>
+                    }
+                </div>
+
+                <div>
+                    <label for="grn-date" class="assura-label">Received Date *</label>
+                    <input id="grn-date" type="date" class="assura-input" [(ngModel)]="createForm.receivedDate" />
+                    @if (submitted && !createForm.receivedDate) {
+                        <div style="color: #ef4444; font-size: 12px; margin-top: 4px;">Received date is required.</div>
+                    }
+                </div>
+
+                <div>
+                    <label for="grn-received-by" class="assura-label">Received By</label>
+                    <input id="grn-received-by" class="assura-input" placeholder="Name of the person who received the goods" [(ngModel)]="createForm.receivedBy" />
+                </div>
+
+                <div>
+                    <label for="grn-notes" class="assura-label">Notes (optional)</label>
+                    <textarea id="grn-notes" class="assura-input" rows="3" placeholder="Condition, discrepancies, packaging notes..." [(ngModel)]="createForm.notes"></textarea>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0;">
+                <button class="assura-btn assura-btn-secondary" (click)="cancelCreate()" [disabled]="creating">Cancel</button>
+                <button class="assura-btn assura-btn-primary" (click)="confirmCreate()" [disabled]="creating">
+                    @if (!creating) {
+                        <mat-icon style="font-size: 16px; vertical-align: middle;">save</mat-icon>
+                    }
+                    {{ creating ? 'Recording...' : 'Record GRN' }}
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- ================= DETAIL DRAWER ================= -->
+@if (showDetail && detailGrn) {
+    <div class="modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;">
+        <div class="assura-card assura-accent-primary" style="width: 100%; max-width: 480px; padding: 0; overflow: hidden;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0;">
+                <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">{{ detailGrn.grnNumber }}</h2>
+                <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="closeDetail()" aria-label="Close"><mat-icon>close</mat-icon></button>
+            </div>
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">Asset</div>
+                    <div style="font-weight: 500;">{{ detailGrn.productName }} ({{ detailGrn.assetCode }})</div>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">Purchasing Order</div>
+                    <div style="font-weight: 500;">{{ detailGrn.purchasingOrderNumber }} — {{ detailGrn.supplierName }}</div>
+                </div>
+                <div style="display: flex; gap: 24px;">
+                    <div>
+                        <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">Received Date</div>
+                        <div style="font-weight: 500;">{{ formatDate(detailGrn.receivedDate) }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">Received By</div>
+                        <div style="font-weight: 500;">{{ detailGrn.receivedBy || '-' }}</div>
+                    </div>
+                </div>
+                @if (detailGrn.notes) {
+                    <div>
+                        <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">Notes</div>
+                        <div>{{ detailGrn.notes }}</div>
+                    </div>
+                }
+            </div>
+            <div style="display: flex; justify-content: flex-end; padding: 20px 24px; border-top: 1px solid #e2e8f0;">
+                <button class="assura-btn assura-btn-secondary" (click)="closeDetail()">Close</button>
+            </div>
+        </div>
+    </div>
+}

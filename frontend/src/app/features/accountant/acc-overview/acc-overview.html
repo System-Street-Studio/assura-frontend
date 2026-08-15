@@ -95,6 +95,10 @@
                         <span>{{ selectedItem.assetType }}</span>
                     </div>
                     <div class="info-item">
+                        <label>Requested By</label>
+                        <span>{{ selectedItem.requestedByName || 'Unknown' }}</span>
+                    </div>
+                    <div class="info-item">
                         <label>Current User</label>
                         <span>{{ selectedItem.currentUser }}</span>
                     </div>
@@ -154,6 +158,10 @@
             <div class="confirm-info-item">
                 <label>Asset Type</label>
                 <span>{{ selectedItem.assetType }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Requested By</label>
+                <span>{{ selectedItem.requestedByName || 'Unknown' }}</span>
             </div>
             <div class="confirm-info-item">
                 <label>Current User</label>

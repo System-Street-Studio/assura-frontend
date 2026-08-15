@@ -52,6 +52,10 @@
                         <span>{{ selectedItem.time }}</span>
                     </div>
                     <div class="detail-panel-item">
+                        <label>Requested By</label>
+                        <span>{{ selectedItem.requestedByName || 'Unknown' }}</span>
+                    </div>
+                    <div class="detail-panel-item">
                         <label>Current User</label>
                         <span>{{ selectedItem.currentUser }}</span>
                     </div>

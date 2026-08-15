@@ -1,15 +1,17 @@
 :host {
   display: block;
-  min-height: 100vh;
+  width: 100%;
   font-family: 'Jost', sans-serif;
   color: #1a1a1a;
+  box-sizing: border-box;
 }
 
 .audit-page {
-  padding: 24px 32px;
-  max-width: 1500px;
+  padding: 0;
+  max-width: 100%;
   margin: 0 auto;
   animation: fadeUp 0.4s ease-out;
+  box-sizing: border-box;
 }
 
 @keyframes fadeUp {
@@ -56,6 +58,19 @@
   color: #94a3b8;
 }
 
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .dropdown-container {
   position: relative;
 }
@@ -96,21 +111,6 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-.audit-layout {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-}
-
-.timeline-card {
-  width: 320px;
-  background: rgba(30, 41, 59, 0.65);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  border-radius: 16px;
-  padding: 24px;
-}
-
 .section-title {
   display: flex;
   justify-content: space-between;
@@ -123,67 +123,6 @@
   font-size: 1.15rem;
   color: #f8fafc;
   font-weight: 600;
-}
-
-.section-title button {
-  background: none;
-  border: none;
-  color: #3b82f6;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  position: relative;
-}
-
-.timeline::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 5px;
-  width: 2px;
-  background: rgba(148, 163, 184, 0.15);
-}
-
-.timeline-item {
-  position: relative;
-  padding-left: 24px;
-}
-
-.timeline-dot {
-  position: absolute;
-  left: 0;
-  top: 4px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #3b82f6;
-  border: 2px solid #1e293b;
-}
-
-.timeline-item.success .timeline-dot { background: #10b981; }
-.timeline-item.failure .timeline-dot { background: #ef4444; }
-
-.timeline-item strong {
-  display: block;
-  font-size: 0.95rem;
-  color: #f8fafc;
-}
-
-.timeline-item p {
-  margin: 4px 0;
-  font-size: 0.85rem;
-  color: #cbd5e1;
-}
-
-.timeline-item small {
-  font-size: 0.75rem;
-  color: #64748b;
 }
 
 .table-actions {
@@ -208,13 +147,4 @@
   font-weight: 700;
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
   cursor: pointer;
-}
-
-@media (max-width: 1024px) {
-  .audit-layout {
-    flex-direction: column;
-  }
-  .timeline-card {
-    width: 100%;
-  }
 }

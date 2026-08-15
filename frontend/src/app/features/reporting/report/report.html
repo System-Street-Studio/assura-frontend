@@ -32,9 +32,40 @@
       <div class="section-title">
         <h2 style="color: #f8fafc;">Report Library</h2>
         <div class="table-actions">
-          <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;">Type</button>
-          <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;">Date</button>
-          <button type="button" class="assura-btn assura-btn-primary" style="padding: 6px 12px; font-size: 13px;" (click)="exportTable()">Export</button>
+          <div class="dropdown-container">
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="toggleTypeDropdown($event)">
+              Type: {{ selectedType() }} <span style="font-size: 10px; margin-left: 6px; opacity: 0.7;">▼</span>
+            </button>
+            @if (showTypeDropdown()) {
+              <div class="dropdown-menu">
+                @for (type of availableTypes(); track type) {
+                  <button type="button" [class.selected]="selectedType() === type" (click)="selectType(type)">
+                    <span>{{ type }}</span>
+                    @if (selectedType() === type) {
+                      <span style="font-size: 11px;">✓</span>
+                    }
+                  </button>
+                }
+              </div>
+            }
+          </div>
+          <div class="dropdown-container">
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="toggleStatusDropdown($event)">
+              Status: {{ selectedStatus() }} <span style="font-size: 10px; margin-left: 6px; opacity: 0.7;">▼</span>
+            </button>
+            @if (showStatusDropdown()) {
+              <div class="dropdown-menu">
+                @for (status of availableStatuses(); track status) {
+                  <button type="button" [class.selected]="selectedStatus() === status" (click)="selectStatus(status)">
+                    <span>{{ status }}</span>
+                    @if (selectedStatus() === status) {
+                      <span style="font-size: 11px;">✓</span>
+                    }
+                  </button>
+                }
+              </div>
+            }
+          </div>
         </div>
       </div>
 
@@ -62,10 +93,21 @@
                 <td class="assura-td">{{ report.type }}</td>
                 <td class="assura-td">{{ report.period }}</td>
                 <td class="assura-td">{{ report.generated }}</td>
-                <td class="assura-td"><span class="assura-badge" [class.assura-badge-success]="report.status === 'Ready'" [class.assura-badge-warning]="report.status === 'Pending'">{{ report.status }}</span></td>
+                <td class="assura-td"><span class="assura-badge" [class.assura-badge-success]="report.status === 'Ready' || report.status === 'Completed'" [class.assura-badge-warning]="report.status === 'Pending'">{{ report.status }}</span></td>
                 <td class="assura-td">{{ report.size }}</td>
                 <td class="assura-td">
-                  <button class="assura-btn assura-btn-secondary" style="padding: 4px 8px;" type="button" (click)="exportSingleReport(report)" title="Export Report">↓</button>
+                  <div class="actions-cell" style="display: flex; gap: 6px;">
+                    <button class="assura-btn assura-btn-secondary" style="padding: 4px 8px;" type="button" (click)="exportSingleReport(report)" title="Export Report">↓</button>
+                    @if (report.status === 'Pending' && !report.isSystemGenerated) {
+                      <button class="assura-btn assura-btn-secondary" style="padding: 4px 8px; font-size: 12px;" type="button" (click)="markCompleted(report)" title="Mark Completed">✓ Complete</button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="9" class="assura-td" style="text-align: center; padding: 40px; color: #94a3b8; font-style: italic;">
+                  No reports found matching selected filters.
                 </td>
               </tr>
             }
@@ -75,19 +117,6 @@
     </section>
 
     <aside class="insight-panel">
-      <div class="section-title">
-        <h2 style="color: #f8fafc;">Report Insights</h2>
-      </div>
-
-      @for (insight of insights(); track insight.title) {
-        <article class="glass-card" [class]="insight.tone" style="padding: 20px; overflow: hidden;">
-          <div style="width: 100%; word-break: break-word; white-space: normal;">
-            <strong style="color: #f8fafc; display: block; line-height: 1.4;">{{ insight.title }}</strong>
-            <p style="color: #94a3b8; font-size: 14px; margin-top: 6px; line-height: 1.5;">{{ insight.detail }}</p>
-          </div>
-        </article>
-      }
-
       <div class="glass-panel" style="padding: 24px;">
         <h3 style="color: #f8fafc; font-size: 16px; font-weight: 700; margin-bottom: 16px;">Quick Export</h3>
         <label style="display: flex; flex-direction: column; gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600; margin-bottom: 16px;">
@@ -123,10 +152,6 @@
     </aside>
   </div>
 
-  <button class="help-button" type="button" aria-label="Open help">
-    <span aria-hidden="true">?</span>
-  </button>
-
   @if (showScheduleModal) {
     <div class="global-modal-backdrop">
       <div class="global-modal-panel">
@@ -136,6 +161,19 @@
         </header>
         <div class="global-modal-body">
           <p style="color: #94a3b8; font-size: 14px;">Set up automated delivery for your reports.</p>
+          <label style="display: flex; flex-direction: column; gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600;">
+            Report Title
+            <input type="text" class="assura-input" [(ngModel)]="scheduleTitle" placeholder="Enter a descriptive title" />
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600;">
+            Report Type
+            <select class="assura-input" [(ngModel)]="scheduleType">
+              <option>Audit</option>
+              <option>Exception</option>
+              <option>Lifecycle</option>
+              <option>Finance</option>
+            </select>
+          </label>
           <label style="display: flex; flex-direction: column; gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600;">
             Frequency
             <select class="assura-input" [(ngModel)]="scheduleFrequency">
@@ -147,7 +185,7 @@
         </div>
         <div class="global-modal-footer">
           <button type="button" class="assura-btn assura-btn-secondary" (click)="closeScheduleModal()">Cancel</button>
-          <button type="button" class="assura-btn assura-btn-primary" (click)="scheduleReport()">Save Schedule</button>
+          <button type="button" class="assura-btn assura-btn-primary" (click)="scheduleReport()" [disabled]="!scheduleTitle.trim()">Save Schedule</button>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { ProcurementService } from '../../../procurement/services/procurement.service';
 import { AssetInformingDto } from '../../../procurement/models/arrival.model';
 import { ToastService } from '../../../../shared/services/toast.service';
@@ -20,6 +21,7 @@ export class InformedArrivalsComponent implements OnInit {
     private checkoutService = inject(CheckoutService);
     private toast = inject(ToastService);
     private cdr = inject(ChangeDetectorRef);
+    private router = inject(Router);
 
     arrivals: AssetInformingDto[] = [];
     loading = true;
@@ -62,6 +64,14 @@ export class InformedArrivalsComponent implements OnInit {
 
     getStatusClass(status: string): string {
         return (status || 'pending').toLowerCase();
+    }
+
+    // The asset for this arrival must already be registered (via Asset > New
+    // Asset) before a GRN can be recorded against it, since a GRN links a real
+    // Purchasing Order to a real Asset — this arrival record has neither ID.
+    // This takes the storekeeper to where they record that GRN once it's in.
+    registerArrival(): void {
+        this.router.navigate(['/inventory/grns']);
     }
 
     openInformModal(item: AssetInformingDto): void {

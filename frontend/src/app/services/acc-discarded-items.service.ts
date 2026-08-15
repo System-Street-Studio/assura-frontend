@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface AccDiscardedItem {
   id: string;
@@ -9,6 +10,7 @@ export interface AccDiscardedItem {
   date: string;
   assetType: string;
   currentUser: string;
+  requestedByName: string;
   specialNote: string;
   valueAtPurchasing: string;
   currentValue: string;
@@ -17,7 +19,7 @@ export interface AccDiscardedItem {
 
 @Injectable({ providedIn: 'root' })
 export class AccDiscardedItemsService {
-  private apiUrl = '/api/AccDiscardedItems';
+  private apiUrl = `${environment.apiUrl}/AccDiscardedItems`;
 
   constructor(private http: HttpClient) {}
 

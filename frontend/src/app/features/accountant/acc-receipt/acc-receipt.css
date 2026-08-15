@@ -226,6 +226,35 @@
     flex: 1;
 }
 
+.field-error {
+    color: #e53935;
+    font-size: 12px;
+    margin: 0;
+}
+
+.list-action-error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: rgba(229, 57, 53, 0.12);
+    border: 1px solid rgba(229, 57, 53, 0.4);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    color: #e53935;
+    font-size: 13px;
+}
+
+.list-action-error .btn-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    display: flex;
+    flex-shrink: 0;
+}
+
 /* Upload Area */
 .upload-area {
     border: 2px dashed rgba(148, 163, 184, 0.4);

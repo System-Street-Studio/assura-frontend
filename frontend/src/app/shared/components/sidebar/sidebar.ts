@@ -47,6 +47,7 @@ export class SharedSidebarComponent {
     { label: 'Asset', icon: 'precision_manufacturing', link: '/inventory/assets', roles: ['Storekeeper', 'Admin'] },
     { label: 'Products', icon: 'category', link: '/inventory/products', roles: ['Storekeeper', 'Admin'] },
     { label: 'New Arrivals', icon: 'fiber_new', link: '/inventory/informed-arrivals', roles: ['Storekeeper', 'Admin'] },
+    { label: 'GRNs', icon: 'receipt_long', link: '/inventory/grns', roles: ['Storekeeper', 'Admin'] },
     { label: 'Request List', icon: 'swap_horiz', link: '/inventory/asset-requests', roles: ['Storekeeper', 'Admin'] },
     { label: 'Check Out', icon: 'exit_to_app', link: '/inventory/check-out', roles: ['Storekeeper', 'Admin'] },
     { label: 'Check In', icon: 'login', link: '/inventory/check-in', roles: ['Storekeeper', 'Admin'] },
@@ -70,10 +71,10 @@ export class SharedSidebarComponent {
     { label: 'Asset', icon: 'inventory_2', link: '/reporting/asset', roles: ['Auditor', 'Admin'] },
     { label: 'Report', icon: 'assessment', link: '/reporting/report', roles: ['Auditor', 'Admin'] },
     { label: 'Audit log', icon: 'policy', link: '/reporting/auditlog', roles: ['Auditor', 'Admin'] },
-    { label: 'Check out', icon: 'logout', link: '/reporting/export', roles: ['Auditor', 'Admin'] },
 
     // Superintendent section
     { label: 'Overview', icon: 'home', link: '/superintendent/overview', roles: ['Superintendent', 'Admin'] },
+    { label: 'Depreciation', icon: 'trending_down', link: '/superintendent/depreciation', roles: ['Superintendent', 'Admin'] },
     { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'] },
     { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'] },
 

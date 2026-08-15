@@ -98,7 +98,8 @@
       <div class="card-value">{{ totalCount }}</div>
     </div>
 
-    <div class="glass-card stat-card today">
+    <div class="glass-card stat-card today" [class.card-active]="activeFilter === 'Today'"
+         (click)="filterByStatus('Today')">
       <div class="card-header">
         <span class="label">Today</span>
         <div class="icon-wrap">
@@ -118,9 +119,9 @@
   <div class="section-header">
     <div class="section-title-group">
       <h2 class="section-title">
-        {{ activeFilter ? activeFilter + ' Queue Items' : 'All Action Items' }}
+        {{ activeFilter ? (activeFilter === 'Today' ? "Today's Action Items" : activeFilter + ' Queue Items') : 'All Action Items' }}
       </h2>
-      <span class="queue-count-badge">{{ filteredQueue.length }} records</span>
+      <span class="queue-count-badge">{{ filteredQueue.length }} {{ filteredQueue.length === 1 ? 'record' : 'records' }}</span>
     </div>
     @if (activeFilter) {
       <button class="filter-clear-btn" (click)="filterByStatus(activeFilter)">
@@ -150,7 +151,21 @@
         </div>
       } @empty {
         <div class="glass-card empty-state">
-          <p>No queue items found matching the selected filter.</p>
+          <div class="empty-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <p class="empty-title">No queue items found</p>
+          <p class="empty-subtitle">
+            {{ activeFilter === 'Today' ? 'No items submitted today.' : 'No items match the selected filter.' }}
+          </p>
+          @if (activeFilter) {
+            <button class="empty-reset-btn" (click)="filterByStatus(activeFilter)">Show All Items</button>
+          }
         </div>
       }
     </div>
@@ -193,6 +208,15 @@
             {{ selectedItem.specialNote || 'No special notes or remarks attached to this request.' }}
           </div>
         </div>
+
+        @if (selectedItem.reviewNote) {
+          <div class="special-note">
+            <label>Reviewer's Decision Note</label>
+            <div class="note-box">
+              {{ selectedItem.reviewNote }}
+            </div>
+          </div>
+        }
 
         <!-- Review Action Flow -->
         @if (selectedItem.status !== 'Discarded' && selectedItem.status !== 'Rejected' && selectedItem.status !== 'Approved') {
@@ -247,11 +271,17 @@
                   </span>
                   <span class="notes-hint">Add remarks or condition notes:</span>
                 </div>
-                <textarea class="glass-textarea" [(ngModel)]="reviewNote"
+                <textarea class="glass-textarea" [formControl]="reviewNoteControl"
+                          [class.input-invalid]="reviewNoteControl.invalid && reviewNoteControl.touched"
                           placeholder="Provide detailed feedback, disposal instructions, or reason for decision..." rows="4"></textarea>
+                @if (reviewNoteControl.invalid && reviewNoteControl.touched) {
+                  <span class="field-error">
+                    {{ reviewNoteControl.errors?.['required'] ? 'A decision note is required.' : 'Note must be at least 5 characters.' }}
+                  </span>
+                }
                 <div class="review-notes-btns">
                   <button class="cancel-link" (click)="cancelReview()">Back</button>
-                  <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()">
+                  <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()" [disabled]="reviewNoteControl.invalid">
                     {{ reviewAction === 'done' ? 'Confirm Approval' : 'Confirm Rejection' }}
                   </button>
                 </div>
@@ -262,7 +292,17 @@
       </div>
     } @else {
       <div class="glass-panel detail-view detail-empty">
-        <p>Select an item from the queue list to review details and take action.</p>
+        <div class="empty-detail-content">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M9 3v18"/>
+            <path d="M14 9h4"/>
+            <path d="M14 13h4"/>
+            <path d="M14 17h4"/>
+          </svg>
+          <p>Select an item from the queue list to review details and take action.</p>
+        </div>
       </div>
     }
   </div>
