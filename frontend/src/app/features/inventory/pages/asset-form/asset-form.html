@@ -133,6 +133,15 @@
           </select>
           <div style="color: #ef4444; font-size: 13px; margin-top: 4px;" *ngIf="showError('status')">Status is required</div>
         </div>
+
+        <!-- Assigned Employee: allows optional direct assignment to employee on registration -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="assignedUserId">Assigned Employee <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">(Optional - leave empty for Store Inventory)</span></label>
+          <select id="assignedUserId" class="assura-input custom-select" formControlName="assignedUserId" (change)="onEmployeeChange($event)">
+            <option [ngValue]="0">-- In Store Inventory (Unassigned) --</option>
+            <option *ngFor="let emp of employees" [ngValue]="+emp.id">{{ emp.name }} ({{ emp.division || 'No Division' }})</option>
+          </select>
+        </div>
       </div>
 
       <!-- ── RIGHT COLUMN: Details ── -->

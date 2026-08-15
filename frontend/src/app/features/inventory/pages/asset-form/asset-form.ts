@@ -22,6 +22,7 @@ import { SupplierService } from '../../services/supplier.service';
 import { DivisionService } from '../../services/division.service';
 import { CategoryService } from '../../services/category.service';
 import { ProcurementService } from '../../../procurement/services/procurement.service';
+import { CheckoutService } from '../../services/checkout.service';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Domain models
@@ -31,6 +32,7 @@ import { Product } from '../../models/product.model';
 import { Supplier } from '../../models/supplier.model';
 import { Division } from '../../models/division.model';
 import { Category } from '../../models/category.model';
+import { CheckoutEmployee } from '../../models/checkout.model';
 import { PurchasingOrderDto, PurchasingOrderItemDto, PurchasingOrderSummaryDto } from '../../../procurement/models/purchase-order.model';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -64,6 +66,7 @@ export class AssetFormComponent implements OnInit {
   private divisionService = inject(DivisionService);
   private categoryService = inject(CategoryService);
   private procurementService = inject(ProcurementService);
+  private checkoutService = inject(CheckoutService);
   private route = inject(ActivatedRoute);         // Reads route params (e.g., :id) and data (e.g., mode)
   private router = inject(Router);               // Navigates programmatically after save/cancel
   private location = inject(Location);           // Enables browser-native "back" navigation
@@ -115,6 +118,7 @@ export class AssetFormComponent implements OnInit {
   suppliers: Supplier[] = [];
   divisions: Division[] = [];
   categories: Category[] = [];
+  employees: CheckoutEmployee[] = [];
 
   // ── Purchase Order Auto-Fill State ──
   /** List of all purchasing orders loaded from backend, sorted with latest at top. */
@@ -147,18 +151,19 @@ export class AssetFormComponent implements OnInit {
    *  - `Validators.min(0)`       : For monetary values — prevents negative numbers.
    */
   assetForm = this.fb.nonNullable.group({
-    assetCode:     ['', [Validators.required, Validators.maxLength(50)]],
-    assetTag:      ['', [Validators.maxLength(50)]],
-    productId:     [0, [Validators.min(1)]],    // 0 = "Select Product" placeholder; min(1) enforces a real selection
-    status:        ['InStore' as AssetStatus, [Validators.required]],
-    categoryId:    [0, [Validators.min(1)]],
-    supplierId:    [0, [Validators.min(1)]],
-    divisionId:    [0, [Validators.min(1)]],
-    serialNumber:  ['', [Validators.maxLength(100)]],
-    assetDate:     [this.getTodayDateString(), [Validators.required]], // Defaults to today's date
-    purchaseValue: [0, [Validators.required, Validators.min(0)]],
-    warranty:      ['', [Validators.maxLength(200)]],
-    notes:         ['', [Validators.maxLength(1000)]],
+    assetCode:      ['', [Validators.required, Validators.maxLength(50)]],
+    assetTag:       ['', [Validators.maxLength(50)]],
+    productId:      [0, [Validators.min(1)]],    // 0 = "Select Product" placeholder; min(1) enforces a real selection
+    status:         ['InStore' as AssetStatus, [Validators.required]],
+    assignedUserId: [0],                        // 0 = Not Assigned (Store Inventory)
+    categoryId:     [0, [Validators.min(1)]],
+    supplierId:     [0, [Validators.min(1)]],
+    divisionId:     [0, [Validators.min(1)]],
+    serialNumber:   ['', [Validators.maxLength(100)]],
+    assetDate:      [this.getTodayDateString(), [Validators.required]], // Defaults to today's date
+    purchaseValue:  [0, [Validators.required, Validators.min(0)]],
+    warranty:       ['', [Validators.maxLength(200)]],
+    notes:          ['', [Validators.maxLength(1000)]],
   });
 
   /**
@@ -182,6 +187,7 @@ export class AssetFormComponent implements OnInit {
           warranty: params['warranty'] || '',
           purchaseValue: params['price'] ? Number(params['price']) : 0,
           divisionId: params['divisionId'] ? Number(params['divisionId']) : 0,
+          assignedUserId: params['assignedUserId'] ? Number(params['assignedUserId']) : 0,
         });
       });
     } else if (this.assetId) {
@@ -192,26 +198,28 @@ export class AssetFormComponent implements OnInit {
 
           // Patch all form fields with values from the fetched asset
           this.assetForm.patchValue({
-            assetCode:     a.assetCode || '',
-            assetTag:      a.assetTag || '',
-            productId:     a.productId || 0,
-            status:        a.status || 'InStore',
-            categoryId:    a.categoryId || 0,
-            supplierId:    a.supplierId || 0,
-            divisionId:    a.divisionId || 0,
-            serialNumber:  a.serialNumber || '',
-            assetDate:     this.toDateInputValue(a.assetDate),  // Normalise to 'YYYY-MM-DD' for <input type="date">
-            purchaseValue: Number(a.purchaseValue) || 0,
-            warranty:      a.warranty || '',
-            notes:         a.notes || '',
+            assetCode:      a.assetCode || '',
+            assetTag:       a.assetTag || '',
+            productId:      a.productId || 0,
+            status:         a.status || 'InStore',
+            assignedUserId: a.assignedUserId || 0,
+            categoryId:     a.categoryId || 0,
+            supplierId:     a.supplierId || 0,
+            divisionId:     a.divisionId || 0,
+            serialNumber:   a.serialNumber || '',
+            assetDate:      this.toDateInputValue(a.assetDate),  // Normalise to 'YYYY-MM-DD' for <input type="date">
+            purchaseValue:  Number(a.purchaseValue) || 0,
+            warranty:       a.warranty || '',
+            notes:          a.notes || '',
           });
 
           // For clone mode: reset the ID so a new record is created, and modify the code to signal it's a copy
           if (this.mode === 'clone') {
             this.editingAssetNumericId = 0;
             this.assetForm.patchValue({
-              assetCode:    `${a.assetCode}-COPY`,
-              serialNumber: '',  // Serial number must be unique; clear it to prevent duplicates
+              assetCode:      `${a.assetCode}-COPY`,
+              serialNumber:   '',  // Serial number must be unique; clear it to prevent duplicates
+              assignedUserId: 0,
             });
           }
         },
@@ -354,11 +362,13 @@ export class AssetFormComponent implements OnInit {
       categories:       this.categoryService.getAll().pipe(catchError(() => of([] as Category[]))),
       purchasingOrders: this.procurementService.getOrders(true).pipe(catchError(() => of([] as PurchasingOrderSummaryDto[]))),
       existingAssets:   this.assetService.getAll().pipe(catchError(() => of([] as AssetDetail[]))),
-    }).subscribe(({ products, suppliers, divisions, categories, purchasingOrders, existingAssets }) => {
+      employees:        this.checkoutService.getEmployees().pipe(catchError(() => of([] as CheckoutEmployee[]))),
+    }).subscribe(({ products, suppliers, divisions, categories, purchasingOrders, existingAssets, employees }) => {
       this.products   = products;
       this.suppliers  = suppliers;
       this.divisions  = divisions;
       this.categories = categories;
+      this.employees  = employees || [];
 
       // Extract existing asset notes to identify POs that have already been registered
       const existingNotes = (existingAssets || [])
@@ -393,6 +403,26 @@ export class AssetFormComponent implements OnInit {
       if (!divisions.length)  this.toast.error('Failed to load divisions');
       if (!categories.length) this.toast.error('Failed to load categories');
     });
+  }
+
+  /**
+   * Called when a storekeeper selects an Employee from the optional Assigned Employee dropdown.
+   * If an employee is selected, automatically sets status to 'InUse' and populates division.
+   */
+  onEmployeeChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const empId = Number(select.value);
+    if (empId > 0) {
+      this.assetForm.patchValue({ status: 'InUse' });
+      const emp = this.employees.find(e => Number(e.id) === empId);
+      if (emp && emp.divisionId && !this.assetForm.value.divisionId) {
+        this.assetForm.patchValue({ divisionId: emp.divisionId });
+      }
+    } else {
+      if (this.assetForm.value.status === 'InUse') {
+        this.assetForm.patchValue({ status: 'InStore' });
+      }
+    }
   }
 
   /**
@@ -680,21 +710,23 @@ export class AssetFormComponent implements OnInit {
   private buildAssetPayload(): Asset {
     const raw = this.assetForm.getRawValue();
     const id  = this.mode === 'edit' ? this.editingAssetNumericId : 0;
+    const assignedUserId = Number(raw.assignedUserId) > 0 ? Number(raw.assignedUserId) : undefined;
 
     return {
       id,
-      assetCode:     raw.assetCode.trim(),
-      assetTag:      raw.assetTag.trim(),
-      assetDate:     raw.assetDate,
-      status:        raw.status,
-      serialNumber:  raw.serialNumber.trim(),
-      purchaseValue: Number(raw.purchaseValue) || 0,
-      warranty:      raw.warranty.trim(),
-      notes:         raw.notes.trim(),
-      categoryId:    Number(raw.categoryId),
-      divisionId:    Number(raw.divisionId),
-      productId:     Number(raw.productId),
-      supplierId:    Number(raw.supplierId),
+      assetCode:      raw.assetCode.trim(),
+      assetTag:       raw.assetTag.trim(),
+      assetDate:      raw.assetDate,
+      status:         raw.status,
+      serialNumber:   raw.serialNumber.trim(),
+      purchaseValue:  Number(raw.purchaseValue) || 0,
+      warranty:       raw.warranty.trim(),
+      notes:          raw.notes.trim(),
+      categoryId:     Number(raw.categoryId),
+      divisionId:     Number(raw.divisionId),
+      productId:      Number(raw.productId),
+      supplierId:     Number(raw.supplierId),
+      assignedUserId: assignedUserId,
     };
   }
 
