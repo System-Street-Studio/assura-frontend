@@ -67,11 +67,21 @@ export class SharedNavbarComponent {
     let targetUrl = '';
 
     if (title.includes('arrival') || title.includes('received')) {
-      targetUrl = role === 'procurement' ? '/procurement/new-arrivals' : '/inventory/informed-arrivals';
+      if (role === 'procurement') {
+        targetUrl = '/procurement/new-arrivals';
+      } else if (role === 'storekeeper') {
+        targetUrl = '/inventory/informed-arrivals';
+      } else if (role === 'employee') {
+        targetUrl = '/employee/all-emp-requests';
+      } else if (role === 'divisionhead' || role === 'division head') {
+        targetUrl = '/approvals/requests';
+      } else {
+        targetUrl = `/${role}/dashboard`;
+      }
     } else if (title.includes('request') || title.includes('assigned') || title.includes('reserved') || title.includes('approval')) {
       if (role === 'employee') {
         targetUrl = '/employee/all-emp-requests';
-      } else if (role === 'divisionhead' || role === 'inventorymanager' || role === 'inventory manager') {
+      } else if (role === 'divisionhead' || role === 'division head' || role === 'inventorymanager' || role === 'inventory manager') {
         targetUrl = '/approvals/requests';
       } else {
         targetUrl = `/${role}/requests`;

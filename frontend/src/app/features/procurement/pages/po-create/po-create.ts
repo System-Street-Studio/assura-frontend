@@ -27,6 +27,7 @@ export class PoCreate {
   itemCount = 1;
   isSubmitting = false;
   requestId?: number;
+  divisionId?: number;
 
   poForm: FormGroup;
   itemForm: FormGroup;
@@ -59,6 +60,9 @@ export class PoCreate {
     if (navigation?.extras?.state && navigation.extras.state['request']) {
       const req = navigation.extras.state['request'];
       this.requestId = req.id;
+      if (req.divisionId) {
+        this.divisionId = req.divisionId;
+      }
       this.itemForm.patchValue({
         itemName: req.assetName || req.description || req.specifications || '',
         specialNote: req.specialNote || '',
@@ -180,6 +184,9 @@ export class PoCreate {
     const request = this.poForm.getRawValue();
     if (this.requestId) {
       request.requestId = this.requestId;
+    }
+    if (this.divisionId) {
+      request.divisionId = this.divisionId;
     }
 
     this.procurementService.createOrder(request).subscribe({

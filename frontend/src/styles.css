@@ -739,16 +739,24 @@ button:not(.assura-btn-primary):not(.assura-btn-danger) {
 /* =========================================
    GLOBAL PRINT STYLES
    ========================================= */
+.print-only-container {
+    display: none;
+}
+
 @media print {
-    /* Hide layout navigational wrappers */
+    /* Hide layout navigational wrappers & UI elements */
     app-shared-sidebar,
     app-shared-navbar,
     .sidebar,
-    .navbar {
+    .navbar,
+    .no-print,
+    .modal-overlay,
+    app-toast {
         display: none !important;
     }
     
     /* Reset main shell layout spacing constraints so label prints clean */
+    html, body,
     .shell-layout,
     .main-area,
     .main-content,
@@ -762,5 +770,10 @@ button:not(.assura-btn-primary):not(.assura-btn-danger) {
         width: 100% !important;
         height: auto !important;
         overflow: visible !important;
+        background: #ffffff !important;
+    }
+
+    .print-only-container {
+        display: grid !important;
     }
 }

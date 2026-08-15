@@ -109,14 +109,22 @@ export class CheckoutService {
     }
 
     getEmployees(): Observable<CheckoutEmployee[]> {
-        return this.http.get<{ id: number; fullName: string; division?: string; department?: string; email: string }[]>(`${this.userApiUrl}/assignable-users`).pipe(
+        return this.http.get<{ id: number; firstName?: string; lastName?: string; fullName?: string; division?: string; department?: string; divisionId?: number; divisionName?: string; email: string }[]>(`${this.userApiUrl}/assignable-users`).pipe(
             map((users) =>
-                (users || []).map((u) => ({
-                    id: String(u.id),
-                    name: u.fullName,
-                    division: u.division || u.department || 'N/A',
-                    email: u.email,
-                }))
+                (users || []).map((u) => {
+                    const fullName = (u.firstName && u.lastName)
+                        ? `${u.firstName} ${u.lastName}`.trim()
+                        : (u.fullName || u.firstName || u.lastName || 'Unknown');
+                    return {
+                        id: String(u.id),
+                        firstName: u.firstName,
+                        lastName: u.lastName,
+                        name: fullName,
+                        division: u.divisionName || u.division || u.department || 'N/A',
+                        divisionId: u.divisionId,
+                        email: u.email,
+                    };
+                })
             ),
             catchError(() => of([]))
         );

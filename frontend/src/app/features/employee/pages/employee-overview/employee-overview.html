@@ -12,6 +12,14 @@
       <p>Loading your dashboard...</p>
     </div>
   } @else {
+    <!-- ── Success Alert Banner ── -->
+    @if (confirmSuccessMessage()) {
+      <div class="confirm-success-alert">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ confirmSuccessMessage() }}</span>
+      </div>
+    }
+
     <!-- ── 2. Quick Actions ── -->
     <section class="section-block">
       <h3 class="section-title">Quick Actions</h3>
@@ -76,23 +84,109 @@
           <span class="assura-card-subtitle">Awaiting supervisor approval</span>
         </div>
 
+        <!-- Arrived Assets (Pending Confirmation) -->
+        <div class="assura-card assura-accent-success" [class.highlight-card]="pendingArrivalsCount() > 0">
+          <span class="assura-card-title">Arrived Items</span>
+          <strong class="assura-card-value">{{ pendingArrivalsCount() }}</strong>
+          <span class="assura-card-subtitle">Awaiting your confirmation</span>
+        </div>
+
         <!-- Assets In Maintenance -->
         <div class="assura-card assura-accent-danger clickable" routerLink="/employee/employee-assets">
           <span class="assura-card-title">In Maintenance</span>
           <strong class="assura-card-value">{{ maintenanceCount() }}</strong>
           <span class="assura-card-subtitle">Currently under repair/service</span>
         </div>
-
-        <!-- Temporary Transfers -->
-        <div class="assura-card assura-accent-success clickable" routerLink="/employee/transfer-page">
-          <span class="assura-card-title">Temporary Transfers</span>
-          <strong class="assura-card-value">{{ transfersCount() }}</strong>
-          <span class="assura-card-subtitle">Active cross-department movements</span>
-        </div>
       </div>
     </section>
 
-    <!-- ── 4. Pending Requests Table ── -->
+    <!-- ── 4. Arrived Assets Awaiting Confirmation Section ── -->
+    @if (arrivedAssets().length > 0) {
+      <section class="section-block">
+        <div class="glass-panel arrived-panel" [class.has-pending-arrivals]="pendingArrivalsCount() > 0">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <mat-icon class="panel-header-icon pulse-icon">notifications_active</mat-icon>
+              <div>
+                <h3 class="panel-title">New Asset Arrivals — Confirmation Required</h3>
+                <span class="panel-subtitle">Items informed by storekeeper for your collection and receipt verification</span>
+              </div>
+            </div>
+            @if (pendingArrivalsCount() > 0) {
+              <span class="badge-pill-alert">{{ pendingArrivalsCount() }} Action Required</span>
+            }
+          </div>
+
+          <div class="table-responsive">
+            <table class="assura-modern-table">
+              <thead>
+                <tr>
+                  <th>Item / Order</th>
+                  <th>Model / Specs</th>
+                  <th>Warranty</th>
+                  <th>Qty</th>
+                  <th>Arrived Date</th>
+                  <th>Store Remarks</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (arrival of arrivedAssets(); track arrival.id) {
+                  <tr [class.highlight-row]="arrival.status === 'Informed'">
+                    <td class="item-name-cell">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <mat-icon style="color: #6366f1; font-size: 20px; width: 20px; height: 20px;">inventory</mat-icon>
+                        <div>
+                          <strong>{{ arrival.itemName }}</strong>
+                          <div style="font-size: 11px; color: #94a3b8;">{{ arrival.divisionName }}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{ arrival.model || 'Standard' }}</td>
+                    <td><span class="tag-warranty">{{ arrival.warranty || 'N/A' }}</span></td>
+                    <td><span class="qty-tag">{{ arrival.quantity }}</span></td>
+                    <td class="date-cell">{{ arrival.purchasedDate | date: 'mediumDate' }}</td>
+                    <td style="max-width: 200px; font-size: 12.5px; color: #cbd5e1;">
+                      {{ arrival.remarks || 'Ready for collection at Stores' }}
+                    </td>
+                    <td>
+                      @if (arrival.status === 'Informed') {
+                        <span class="status-badge arrival-pending">
+                          <span class="status-dot"></span>
+                          Awaiting Confirmation
+                        </span>
+                      } @else {
+                        <span class="status-badge arrival-confirmed">
+                          <mat-icon style="font-size: 14px; width: 14px; height: 14px;">check_circle</mat-icon>
+                          Confirmed
+                        </span>
+                      }
+                    </td>
+                    <td style="text-align: right;">
+                      @if (arrival.status === 'Informed') {
+                        <button class="btn-confirm-receipt"
+                                [disabled]="confirmingId() === arrival.id"
+                                (click)="confirmArrival(arrival)">
+                          <mat-icon>verified</mat-icon>
+                          {{ confirmingId() === arrival.id ? 'Confirming...' : 'Confirm Receipt' }}
+                        </button>
+                      } @else {
+                        <span class="confirmed-receipt-label">
+                          <mat-icon>done_all</mat-icon> Verified
+                        </span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ── 5. Pending Requests Table ── -->
     <section class="section-block">
       <div class="glass-panel">
         <div class="panel-header">

@@ -9,6 +9,9 @@ export interface AssetInformingDto {
     status: string;
     divisionId: number;
     divisionName: string;
+    targetEmployeeId?: number;
+    targetEmployeeName?: string;
+    remarks?: string;
     createdAt: string;
 }
 

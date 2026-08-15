@@ -10,7 +10,7 @@
                 <label class="assura-label" for="purchasingOrderId">Purchasing Order (Item Name) <span style="color: #ef4444;">*</span></label>
                 <select id="purchasingOrderId" formControlName="purchasingOrderId" class="assura-input custom-select">
                     <option [ngValue]="null">Select Purchasing Order</option>
-                    <option *ngFor="let po of purchasingOrders" [value]="po.id">{{ po.orderNumber }} - {{ po.supplierName }}</option>
+                    <option *ngFor="let po of purchasingOrders" [ngValue]="po.id">{{ po.orderNumber }} - {{ po.supplierName }}</option>
                 </select>
                 <div *ngIf="f['purchasingOrderId'].invalid && f['purchasingOrderId'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
                     Purchasing Order is required
@@ -65,7 +65,7 @@
                     <label class="assura-label" for="divisionId">Division <span style="color: #ef4444;">*</span></label>
                     <select id="divisionId" formControlName="divisionId" class="assura-input custom-select">
                         <option [ngValue]="null">Select Division</option>
-                        <option *ngFor="let division of divisions" [value]="division.id">{{ division.name }}</option>
+                        <option *ngFor="let division of divisions" [ngValue]="division.id">{{ division.name }}</option>
                     </select>
                     <div *ngIf="f['divisionId'].invalid && f['divisionId'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
                         Please select a division

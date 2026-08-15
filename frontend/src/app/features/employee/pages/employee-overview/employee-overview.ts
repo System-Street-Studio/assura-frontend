@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { AssetService as EmpAssetService, AssetRequest } from '../../services/asset-request.service';
+import { AssetService as EmpAssetService, AssetRequest, EmployeeArrivedAsset } from '../../services/asset-request.service';
 import { AssetService as InvAssetService } from '../../../../features/inventory/services/asset.service';
 import { AssetDetail } from '../../../../features/inventory/models/asset.model';
+import { NotificationService } from '../../../../shared/services/notification.service';
 
 interface RequestItem {
   id: number;
@@ -28,12 +29,16 @@ export class EmployeeOverviewComponent implements OnInit {
   private authService = inject(AuthService);
   private empAssetService = inject(EmpAssetService);
   private invAssetService = inject(InvAssetService);
+  private notifService = inject(NotificationService);
 
   isPendingUser = false;
 
   isLoading = signal(true);
   pendingRequests = signal<RequestItem[]>([]);
   assignedAssets = signal<AssetDetail[]>([]);
+  arrivedAssets = signal<EmployeeArrivedAsset[]>([]);
+  confirmingId = signal<number | null>(null);
+  confirmSuccessMessage = signal<string | null>(null);
 
   greeting = '';
   firstName = '';
@@ -44,6 +49,7 @@ export class EmployeeOverviewComponent implements OnInit {
   pendingCount = computed(() => this.pendingRequests().length);
   maintenanceCount = computed(() => this.assignedAssets().filter(a => a.status === 'UnderMaintenance').length);
   transfersCount = computed(() => this.assignedAssets().filter(a => a.status === 'Transferred').length);
+  pendingArrivalsCount = computed(() => this.arrivedAssets().filter(a => a.status === 'Informed').length);
 
   ngOnInit() {
     this.firstName = this.authService.getFirstName() ?? 'Employee';
@@ -64,7 +70,22 @@ export class EmployeeOverviewComponent implements OnInit {
       return;
     }
 
-    // Fetch Requests
+    this.loadData(userId, Number(divisionId));
+  }
+
+  loadData(userId: string, divisionId?: number) {
+    this.loadedCount = 0;
+
+    // 1. Fetch Arrived Assets / Arrivals pending confirmation
+    this.empAssetService.getArrivedAssets(divisionId).subscribe({
+      next: (arrivals: EmployeeArrivedAsset[]) => {
+        this.arrivedAssets.set(arrivals || []);
+        this.checkLoadingComplete();
+      },
+      error: () => this.checkLoadingComplete()
+    });
+
+    // 2. Fetch Requests
     this.empAssetService.getEmployeeRequests(userId).subscribe({
       next: (data: AssetRequest[]) => {
         const pending = data
@@ -85,7 +106,7 @@ export class EmployeeOverviewComponent implements OnInit {
       error: () => this.checkLoadingComplete()
     });
 
-    // Fetch Assigned Assets
+    // 3. Fetch Assigned Assets
     this.invAssetService.getAll(true).subscribe({
       next: (assets: AssetDetail[]) => {
         this.assignedAssets.set(assets);
@@ -95,10 +116,37 @@ export class EmployeeOverviewComponent implements OnInit {
     });
   }
 
+  confirmArrival(asset: EmployeeArrivedAsset): void {
+    if (this.confirmingId()) return;
+
+    this.confirmingId.set(asset.id);
+    this.empAssetService.confirmArrival(asset.id, 'Received and confirmed by employee').subscribe({
+      next: () => {
+        this.confirmingId.set(null);
+        this.confirmSuccessMessage.set(`Successfully confirmed receipt of "${asset.itemName}". Storekeeper has been notified.`);
+        
+        // Update local status
+        this.arrivedAssets.update(list =>
+          list.map(a => a.id === asset.id ? { ...a, status: 'Confirmed' } : a)
+        );
+
+        this.notifService.fetchNotifications();
+
+        setTimeout(() => {
+          this.confirmSuccessMessage.set(null);
+        }, 5000);
+      },
+      error: (err) => {
+        this.confirmingId.set(null);
+        alert('Failed to confirm receipt: ' + (err.error?.message || err.message || 'Please try again.'));
+      }
+    });
+  }
+
   private loadedCount = 0;
   private checkLoadingComplete() {
     this.loadedCount++;
-    if (this.loadedCount >= 2) {
+    if (this.loadedCount >= 3) {
       this.isLoading.set(false);
     }
   }
@@ -109,4 +157,4 @@ export class EmployeeOverviewComponent implements OnInit {
     if (hour < 17) return 'Good Afternoon';
     return 'Good Evening';
   }
-}
+}

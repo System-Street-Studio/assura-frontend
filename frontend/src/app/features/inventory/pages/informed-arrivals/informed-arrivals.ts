@@ -59,26 +59,78 @@ export class InformedArrivalsComponent implements OnInit {
     loadEmployees(): void {
         this.checkoutService.getEmployees().subscribe((data) => {
             this.employees = data || [];
+            if (this.showInformModal && !this.selectedEmployeeId) {
+                this.autoFillTargetEmployee();
+                this.cdr.detectChanges();
+            }
         });
     }
 
-    getStatusClass(status: string): string {
-        return (status || 'pending').toLowerCase();
+    autoFillTargetEmployee(): void {
+        if (!this.selectedArrival || !this.employees || this.employees.length === 0) {
+            return;
+        }
+
+        const arrivalDivId = this.selectedArrival.divisionId;
+        const arrivalDivName = (this.selectedArrival.divisionName || '').trim().toLowerCase();
+
+        // 1. Match by Division ID if present
+        if (arrivalDivId) {
+            const matchById = this.employees.find(e => e.divisionId != null && Number(e.divisionId) === Number(arrivalDivId));
+            if (matchById) {
+                this.selectedEmployeeId = String(matchById.id);
+                return;
+            }
+        }
+
+        // 2. Match by Division Name
+        if (arrivalDivName) {
+            const matchByName = this.employees.find(e => {
+                const empDiv = (e.division || '').trim().toLowerCase();
+                return empDiv === arrivalDivName || empDiv.includes(arrivalDivName) || arrivalDivName.includes(empDiv);
+            });
+            if (matchByName) {
+                this.selectedEmployeeId = String(matchByName.id);
+                return;
+            }
+        }
     }
 
-    // The asset for this arrival must already be registered (via Asset > New
-    // Asset) before a GRN can be recorded against it, since a GRN links a real
-    // Purchasing Order to a real Asset — this arrival record has neither ID.
-    // This takes the storekeeper to where they record that GRN once it's in.
-    registerArrival(): void {
-        this.router.navigate(['/inventory/grns']);
+    getStatusClass(status: string): string {
+        const s = (status || 'pending').toLowerCase();
+        if (s === 'confirmed' || s === 'completed') return 'assura-badge-success';
+        if (s === 'informed') return 'assura-badge-info';
+        return 'assura-badge-warning';
+    }
+
+    registerArrival(item: AssetInformingDto): void {
+        this.router.navigate(['/inventory/grns'], {
+            queryParams: {
+                informingId: item.id,
+                po: item.itemName,
+                model: item.model || ''
+            }
+        });
+    }
+
+    checkoutArrival(item: AssetInformingDto): void {
+        this.router.navigate(['/inventory/check-out'], {
+            queryParams: {
+                informingId: item.id,
+                employeeId: item.targetEmployeeId ? String(item.targetEmployeeId) : undefined,
+                item: item.itemName
+            }
+        });
     }
 
     openInformModal(item: AssetInformingDto): void {
         this.selectedArrival = item;
-        this.selectedEmployeeId = '';
+        this.selectedEmployeeId = item.targetEmployeeId ? String(item.targetEmployeeId) : '';
         this.notifyDivisionHead = true;
-        this.informRemarks = '';
+        this.informRemarks = item.remarks || '';
+        if (!this.selectedEmployeeId) {
+            this.autoFillTargetEmployee();
+        }
         this.showInformModal = true;
     }
 
@@ -106,6 +158,7 @@ export class InformedArrivalsComponent implements OnInit {
                 this.toast.success('Stakeholders informed successfully');
                 this.informProcessing = false;
                 this.closeInformModal();
+                this.loadArrivals();
             },
             error: () => {
                 this.toast.error('Failed to inform stakeholders');

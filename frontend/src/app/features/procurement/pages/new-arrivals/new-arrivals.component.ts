@@ -51,12 +51,7 @@ export class NewArrivalsComponent implements OnInit {
         // Auto-select division and date based on PO summary
         const summary = this.purchasingOrders.find(po => po.id === Number(id));
         if (summary) {
-            if (summary.divisionName) {
-                const div = this.divisions.find(d => d.name === summary.divisionName);
-                if (div) {
-                    this.arrivalForm.patchValue({ divisionId: div.id }, { emitEvent: false });
-                }
-            }
+            this.applyDivisionFromPo(summary.divisionId, summary.divisionName);
             if (summary.issuedDate) {
                 try {
                     const dateStr = new Date(summary.issuedDate).toISOString().split('T')[0];
@@ -70,34 +65,39 @@ export class NewArrivalsComponent implements OnInit {
         // Fetch full PO details to auto-fill item fields
         this.procurementService.getOrderById(Number(id)).subscribe({
           next: (po) => {
-            if (po && po.items && po.items.length > 0) {
-              const item = po.items[0];
-              
-              let warrantyVal = null;
-              let isYears = false;
-              let isMonths = false;
-              
-              if (item.warranty) {
-                  const parts = item.warranty.trim().split(' ');
-                  if (parts.length > 0 && !isNaN(Number(parts[0]))) {
-                      warrantyVal = Number(parts[0]);
-                      if (parts.length > 1) {
-                          if (parts[1].toLowerCase().includes('year')) isYears = true;
-                          if (parts[1].toLowerCase().includes('month')) isMonths = true;
-                      } else {
-                          isYears = true; // Default
-                      }
-                  }
+            if (po) {
+              if (po.divisionId || po.divisionName) {
+                this.applyDivisionFromPo(po.divisionId, po.divisionName);
               }
+              if (po.items && po.items.length > 0) {
+                const item = po.items[0];
+                
+                let warrantyVal = null;
+                let isYears = false;
+                let isMonths = false;
+                
+                if (item.warranty) {
+                    const parts = item.warranty.trim().split(' ');
+                    if (parts.length > 0 && !isNaN(Number(parts[0]))) {
+                        warrantyVal = Number(parts[0]);
+                        if (parts.length > 1) {
+                            if (parts[1].toLowerCase().includes('year')) isYears = true;
+                            if (parts[1].toLowerCase().includes('month')) isMonths = true;
+                        } else {
+                            isYears = true; // Default
+                        }
+                    }
+                }
 
-              this.arrivalForm.patchValue({
-                model: item.model || '',
-                quantity: item.quantity || 1,
-                purchasedPrice: item.unitPrice || 0,
-                warranty: warrantyVal,
-                isYears: isYears,
-                isMonths: isMonths
-              });
+                this.arrivalForm.patchValue({
+                  model: item.model || '',
+                  quantity: item.quantity || 1,
+                  purchasedPrice: item.unitPrice || 0,
+                  warranty: warrantyVal,
+                  isYears: isYears,
+                  isMonths: isMonths
+                });
+              }
             }
           },
           error: (err) => console.error('Error fetching PO details:', err)
@@ -117,6 +117,27 @@ export class NewArrivalsComponent implements OnInit {
     });
   }
 
+  private applyDivisionFromPo(divisionId?: number, divisionName?: string) {
+    if (divisionId) {
+      const match = this.divisions.find(d => Number(d.id) === Number(divisionId));
+      if (match) {
+        this.arrivalForm.patchValue({ divisionId: match.id }, { emitEvent: false });
+        return;
+      } else {
+        this.arrivalForm.patchValue({ divisionId: Number(divisionId) }, { emitEvent: false });
+        return;
+      }
+    }
+
+    if (divisionName) {
+      const trimmedName = divisionName.trim().toLowerCase();
+      const div = this.divisions.find(d => (d.name || '').trim().toLowerCase() === trimmedName);
+      if (div) {
+        this.arrivalForm.patchValue({ divisionId: div.id }, { emitEvent: false });
+      }
+    }
+  }
+
   loadOrders() {
     this.procurementService.getOrders().subscribe({
       next: (data) => this.purchasingOrders = data.filter((po) => po.status !== 'Completed'),
@@ -126,7 +147,16 @@ export class NewArrivalsComponent implements OnInit {
 
   loadDivisions() {
     this.procurementService.getDivisions().subscribe({
-      next: (data) => this.divisions = data,
+      next: (data) => {
+        this.divisions = data;
+        const currentPoId = this.arrivalForm.get('purchasingOrderId')?.value;
+        if (currentPoId) {
+          const summary = this.purchasingOrders.find(po => po.id === Number(currentPoId));
+          if (summary) {
+            this.applyDivisionFromPo(summary.divisionId, summary.divisionName);
+          }
+        }
+      },
       error: (err) => console.error('Error loading divisions', err)
     });
   }

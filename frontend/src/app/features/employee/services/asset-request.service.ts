@@ -36,10 +36,28 @@ export interface AssetRequest {
 
 
 
+export interface EmployeeArrivedAsset {
+  id: number;
+  itemName: string;
+  model?: string;
+  warranty?: string;
+  quantity: number;
+  purchasedDate: string;
+  purchasedPrice: number;
+  status: string;
+  divisionId: number;
+  divisionName: string;
+  targetEmployeeId?: number;
+  targetEmployeeName?: string;
+  remarks?: string;
+  createdAt: string;
+}
+
 // Service to handle asset requests
 @Injectable({ providedIn: 'root' })
 export class AssetService {
   private apiUrl = `${environment.apiUrl}/AssetRequests`;
+  private informingUrl = `${environment.apiUrl}/Informing`;
   private unifiedApiUrl = `${environment.apiUrl}/requests`;
 
   constructor(private http: HttpClient) { }
@@ -109,6 +127,17 @@ export class AssetService {
         ...item
       }) as AssetRequest)
     );
+  }
+
+  // Get arrived assets informed for the employee
+  getArrivedAssets(divisionId?: number): Observable<EmployeeArrivedAsset[]> {
+    const options = divisionId ? { params: { divisionId: divisionId.toString() } } : {};
+    return this.http.get<EmployeeArrivedAsset[]>(`${this.informingUrl}/my-arrivals`, options);
+  }
+
+  // Confirm receipt of an arrived asset
+  confirmArrival(informingId: number, remarks?: string): Observable<boolean> {
+    return this.http.post<boolean>(`${this.informingUrl}/${informingId}/confirm`, { remarks });
   }
 
   

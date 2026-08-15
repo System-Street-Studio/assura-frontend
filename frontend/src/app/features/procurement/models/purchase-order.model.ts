@@ -5,6 +5,7 @@ export interface CreatePurchasingOrderRequest {
     supplierName: string;
     items: CreatePurchasingOrderItemDto[];
     requestId?: number;
+    divisionId?: number;
 }
 
 /**
@@ -31,6 +32,8 @@ export interface PurchasingOrderDto {
     totalAmount: number;
     status?: string;
     supplierName: string;
+    divisionId?: number;
+    divisionName?: string;
     items: PurchasingOrderItemDto[];
 }
 
@@ -60,7 +63,8 @@ export interface PurchasingOrderSummaryDto {
     id: number;
     orderNumber: string;
     issuedDate: Date | string;
-    divisionName: string;
+    divisionId?: number;
+    divisionName?: string;
     totalAmount?: number;
     status?: string;
     supplierName?: string;

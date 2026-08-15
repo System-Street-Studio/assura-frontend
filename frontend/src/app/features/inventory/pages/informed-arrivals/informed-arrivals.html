@@ -13,8 +13,9 @@
                     <th class="assura-th">Model</th>
                     <th class="assura-th">Qty</th>
                     <th class="assura-th">Division</th>
+                    <th class="assura-th">Assigned Employee</th>
                     <th class="assura-th">Status</th>
-                    <th class="assura-th">Actions</th>
+                    <th class="assura-th" style="text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,32 +26,77 @@
                     <td class="assura-td">{{ item.quantity }}</td>
                     <td class="assura-td">{{ item.divisionName }}</td>
                     <td class="assura-td">
+                        <span *ngIf="item.targetEmployeeName" style="display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
+                            <mat-icon style="font-size: 16px; width: 16px; height: 16px; color: #818cf8;">person</mat-icon>
+                            {{ item.targetEmployeeName }}
+                        </span>
+                        <span *ngIf="!item.targetEmployeeName" style="color: #94a3b8; font-style: italic;">Not assigned</span>
+                    </td>
+                    <td class="assura-td">
                         <span class="assura-badge" [ngClass]="getStatusClass(item.status)">
+                            <mat-icon *ngIf="(item.status || '').toLowerCase() === 'confirmed'" style="font-size: 13px; width: 13px; height: 13px; margin-right: 3px;">verified</mat-icon>
+                            <mat-icon *ngIf="(item.status || '').toLowerCase() === 'completed'" style="font-size: 13px; width: 13px; height: 13px; margin-right: 3px;">check_circle</mat-icon>
                             {{ item.status }}
                         </span>
                     </td>
-                    <td class="assura-td">
-                        <div style="display: flex; gap: 8px;">
-                            <button class="assura-btn assura-btn-secondary" style="padding: 6px; font-size: 13px;" (click)="openInformModal(item)" title="Inform Stakeholders"
-                                [disabled]="(item.status || '').toLowerCase() !== 'pending'">
-                                <mat-icon style="font-size: 16px;">notifications_active</mat-icon>
+                    <td class="assura-td" style="text-align: right;">
+                        <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                            <!-- State 1: Pending Informing -->
+                            <button *ngIf="(item.status || '').toLowerCase() === 'pending'"
+                                class="assura-btn assura-btn-primary"
+                                style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px;"
+                                (click)="openInformModal(item)"
+                                title="Inform Stakeholders">
+                                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">notifications_active</mat-icon>
                                 <span>Inform</span>
                             </button>
-                            <button class="assura-btn assura-btn-secondary" style="padding: 6px; font-size: 13px;" title="Record a GRN for this arrival" (click)="registerArrival()" [disabled]="(item.status || '').toLowerCase() !== 'pending'">
-                                <mat-icon style="font-size: 16px;">inventory</mat-icon>
-                                <span>Register</span>
+
+                            <!-- State 2: Informed / Awaiting Employee Confirmation -->
+                            <button *ngIf="(item.status || '').toLowerCase() === 'informed'"
+                                class="assura-btn assura-btn-secondary"
+                                style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px;"
+                                (click)="openInformModal(item)"
+                                title="Re-inform or update notes">
+                                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">edit_notifications</mat-icon>
+                                <span>Re-inform</span>
                             </button>
+
+                            <!-- State 3: Confirmed by Employee -> Register GRN & Checkout -->
+                            <button *ngIf="(item.status || '').toLowerCase() === 'confirmed'"
+                                class="assura-btn assura-btn-success"
+                                style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px; background: #059669; color: #fff;"
+                                (click)="registerArrival(item)"
+                                title="Record a GRN for this arrival">
+                                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">receipt_long</mat-icon>
+                                <span>Record GRN</span>
+                            </button>
+
+                            <button *ngIf="(item.status || '').toLowerCase() === 'confirmed'"
+                                class="assura-btn assura-btn-primary"
+                                style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px;"
+                                (click)="checkoutArrival(item)"
+                                title="Checkout asset to employee">
+                                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">output</mat-icon>
+                                <span>Checkout</span>
+                            </button>
+
+                            <!-- State 4: Completed / Issued -->
+                            <div *ngIf="(item.status || '').toLowerCase() === 'completed'"
+                                style="display: inline-flex; align-items: center; gap: 4px; color: #34d399; font-size: 13px; font-weight: 600; padding: 6px 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">task_alt</mat-icon>
+                                <span>Completed</span>
+                            </div>
                         </div>
                     </td>
                 </tr>
                 <tr *ngIf="arrivals.length === 0 && !loading">
-                    <td colspan="7" class="assura-td" style="text-align: center; padding: 48px;">
+                    <td colspan="8" class="assura-td" style="text-align: center; padding: 48px;">
                         <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">check_circle_outline</mat-icon>
                         <div style="font-size: 16px; font-weight: 500;">No new arrivals informed at the moment.</div>
                     </td>
                 </tr>
                 <tr *ngIf="loading">
-                    <td colspan="7" class="assura-td" style="text-align: center; padding: 48px;">
+                    <td colspan="8" class="assura-td" style="text-align: center; padding: 48px;">
                         <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1; animation: spin 1s linear infinite;">autorenew</mat-icon>
                         <div style="font-size: 16px; font-weight: 500;">Loading arrivals...</div>
                     </td>
@@ -77,7 +123,7 @@
                     <select class="assura-input custom-select" [(ngModel)]="selectedEmployeeId">
                         <option value="" disabled>Choose an employee...</option>
                         <option *ngFor="let emp of employees" [value]="emp.id">
-                            {{ emp.name }} ({{ emp.division }})
+                            {{ emp.name }}
                         </option>
                     </select>
                     <div style="font-size: 13px; margin-top: 4px; opacity: 0.75;">The employee will receive a notification.</div>

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { catchError, finalize, of, throwError, timeout } from 'rxjs';
 import { CheckoutService } from '../../services/checkout.service';
@@ -9,6 +9,7 @@ import { CheckoutRecord, CheckoutFormData, CheckoutEmployee } from '../../models
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import { ProcurementService } from '../../../procurement/services/procurement.service';
 
 @Component({
     selector: 'app-checkout',
@@ -19,9 +20,13 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 })
 export class CheckoutComponent implements OnInit {
     private svc = inject(CheckoutService);
+    private procurementService = inject(ProcurementService);
     private router = inject(Router);
+    private route = inject(ActivatedRoute);
     private toast = inject(ToastService);
     private cdr = inject(ChangeDetectorRef);
+
+    informingId: number | null = null;
 
     allRecords: CheckoutRecord[] = [];
     filteredRecords: CheckoutRecord[] = [];
@@ -122,6 +127,10 @@ export class CheckoutComponent implements OnInit {
         this.svc.getAvailableAssets().subscribe({
             next: (a) => {
                 this.availableAssets = a;
+                if (this.showCheckoutModal && !this.checkoutForm.assetId && this.availableAssets.length > 0) {
+                    this.checkoutForm.assetId = this.availableAssets[0].id;
+                }
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.availableAssets = [];
@@ -131,6 +140,15 @@ export class CheckoutComponent implements OnInit {
         this.svc.getEmployees().subscribe({
             next: (e) => {
                 this.employees = e;
+                this.route.queryParams.subscribe((params) => {
+                    if (params['informingId']) {
+                        this.informingId = Number(params['informingId']);
+                    }
+                    if (params['employeeId']) {
+                        this.openCheckoutModal(params['employeeId'], params['item']);
+                    }
+                });
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.employees = [];
@@ -264,10 +282,25 @@ export class CheckoutComponent implements OnInit {
     }
 
     /* ── New Checkout ── */
-    openCheckoutModal(): void {
+    openCheckoutModal(preselectEmpId?: string, preselectItem?: string): void {
         this.submitted = false;
         this.checkoutProcessing = false;
-        this.checkoutForm = { assetId: '', checkedOutToUserId: '', checkedOutTo: '', division: '', email: '', dueDate: '', notes: '' };
+
+        const defaultDueDate = new Date();
+        defaultDueDate.setFullYear(defaultDueDate.getFullYear() + 1);
+
+        this.checkoutForm = {
+            assetId: (this.availableAssets && this.availableAssets.length > 0) ? this.availableAssets[0].id : '',
+            checkedOutToUserId: preselectEmpId || '',
+            checkedOutTo: '',
+            division: '',
+            email: '',
+            dueDate: defaultDueDate.toISOString().slice(0, 10),
+            notes: preselectItem ? `Checked out for approved arrival: ${preselectItem}` : 'Standard employee issue.'
+        };
+        if (preselectEmpId) {
+            this.onEmployeeChange();
+        }
         this.showCheckoutModal = true;
     }
 
@@ -279,7 +312,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     onEmployeeChange(): void {
-        const emp = this.employees.find((e) => e.id === this.checkoutForm.checkedOutToUserId);
+        const emp = this.employees.find((e) => String(e.id) === String(this.checkoutForm.checkedOutToUserId));
         if (emp) {
             this.checkoutForm.checkedOutTo = emp.name;
             this.checkoutForm.division = emp.division;
@@ -327,6 +360,12 @@ export class CheckoutComponent implements OnInit {
                 this.resultMessage = `"${record.assetName}" has been checked out to ${record.checkedOutTo}.`;
                 this.showResult = true;
                 this.loadData();
+                if (this.informingId) {
+                    this.procurementService.completeArrival(this.informingId, `Checked out to ${record.checkedOutTo}`).subscribe({
+                        next: () => {},
+                        error: () => {}
+                    });
+                }
             },
             error: () => {
                 this.toast.error('Checkout failed. Please try again.');

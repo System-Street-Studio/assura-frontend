@@ -1,10 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute } from '@angular/router';
 import { catchError, finalize, throwError, timeout } from 'rxjs';
 import { GrnService } from '../../services/grn.service';
 import { AssetOption, CreateGrnRequest, Grn, PurchasingOrderOption } from '../../models/grn.model';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { ProcurementService } from '../../../procurement/services/procurement.service';
 
 @Component({
     selector: 'app-grns',
@@ -15,14 +18,18 @@ import { ToastService } from '../../../../shared/services/toast.service';
 })
 export class GrnsComponent implements OnInit {
     private svc = inject(GrnService);
+    private auth = inject(AuthService);
     private toast = inject(ToastService);
     private cdr = inject(ChangeDetectorRef);
+    private route = inject(ActivatedRoute);
+    private procurementService = inject(ProcurementService);
 
     allGrns: Grn[] = [];
     viewGrns: Grn[] = [];
     loading = true;
     loadError = false;
     searchTerm = '';
+    informingId: number | null = null;
 
     /* ── New GRN modal ── */
     showCreateModal = false;
@@ -49,6 +56,14 @@ export class GrnsComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadData();
+        this.route.queryParams.subscribe((params) => {
+            if (params['informingId']) {
+                this.informingId = Number(params['informingId']);
+            }
+            if (params['po'] || params['informingId']) {
+                this.openCreateModal(params['po'], params['model']);
+            }
+        });
     }
 
     loadData(): void {
@@ -100,25 +115,90 @@ export class GrnsComponent implements OnInit {
         this.applyFilter();
     }
 
+    onPoChange(): void {
+        const selectedPo = this.purchasingOrders.find(p => p.id === this.createForm.purchasingOrderId);
+        if (selectedPo) {
+            this.createForm.notes = `Received in good condition as per ${selectedPo.orderNumber}.`;
+        }
+    }
+
     /* ── New GRN modal ── */
-    openCreateModal(): void {
+    openCreateModal(preselectPo?: string, preselectModel?: string): void {
         this.submitted = false;
         this.creating = false;
+
+        const currentUserName = this.auth.getUserName() || this.auth.getFirstName() || 'Test Storekeeper';
+        const formattedUserName = currentUserName.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
         this.createForm = {
             purchasingOrderId: 0,
             assetId: 0,
             receivedDate: new Date().toISOString().slice(0, 10),
-            receivedBy: '',
-            notes: '',
+            receivedBy: formattedUserName,
+            notes: preselectPo ? `Received in good condition as per ${preselectPo}.` : 'Received in good condition.',
         };
         this.showCreateModal = true;
 
         this.svc.getPurchasingOrderOptions().subscribe({
-            next: (orders) => { this.purchasingOrders = orders; },
+            next: (orders) => {
+                this.purchasingOrders = orders;
+                if (preselectPo) {
+                    const cleanPo = preselectPo.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                    const rawPo = preselectPo.trim().toLowerCase();
+
+                    let match = this.purchasingOrders.find((p) => {
+                        const pClean = p.orderNumber.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                        const pRaw = p.orderNumber.trim().toLowerCase();
+                        return pRaw === rawPo || pClean === cleanPo ||
+                               pRaw.includes(rawPo) || rawPo.includes(pRaw) ||
+                               pClean.includes(cleanPo) || cleanPo.includes(pClean);
+                    });
+
+                    if (!match) {
+                        const digits = preselectPo.replace(/\D/g, '');
+                        if (digits.length >= 4) {
+                            match = this.purchasingOrders.find(p => {
+                                const pDigits = p.orderNumber.replace(/\D/g, '');
+                                return pDigits.includes(digits) || digits.includes(pDigits);
+                            });
+                        }
+                    }
+
+                    if (match) {
+                        this.createForm.purchasingOrderId = match.id;
+                        this.createForm.notes = `Received in good condition as per ${match.orderNumber}.`;
+                    } else if (this.purchasingOrders.length > 0 && !this.createForm.purchasingOrderId) {
+                        this.createForm.purchasingOrderId = this.purchasingOrders[0].id;
+                        this.createForm.notes = `Received in good condition as per ${this.purchasingOrders[0].orderNumber}.`;
+                    }
+                } else if (this.purchasingOrders.length > 0 && !this.createForm.purchasingOrderId) {
+                    this.createForm.purchasingOrderId = this.purchasingOrders[0].id;
+                }
+                this.cdr.detectChanges();
+            },
             error: () => { this.purchasingOrders = []; this.toast.error('Failed to load purchasing orders'); },
         });
+
         this.svc.getAssetOptions().subscribe({
-            next: (assets) => { this.assets = assets; },
+            next: (assets) => {
+                this.assets = assets;
+                if (this.assets.length > 0) {
+                    if (preselectModel) {
+                        const mClean = preselectModel.trim().toLowerCase();
+                        const assetMatch = this.assets.find(a => 
+                            a.productName.toLowerCase().includes(mClean) || 
+                            a.assetCode.toLowerCase().includes(mClean)
+                        );
+                        if (assetMatch) {
+                            this.createForm.assetId = assetMatch.id;
+                        }
+                    }
+                    if (!this.createForm.assetId) {
+                        this.createForm.assetId = this.assets[0].id;
+                    }
+                }
+                this.cdr.detectChanges();
+            },
             error: () => { this.assets = []; this.toast.error('Failed to load assets'); },
         });
     }
@@ -149,11 +229,14 @@ export class GrnsComponent implements OnInit {
                 this.showCreateModal = false;
                 this.toast.success(`GRN "${grn.grnNumber}" recorded for ${grn.assetCode}.`);
                 this.loadData();
+                if (this.informingId) {
+                    this.procurementService.completeArrival(this.informingId, `GRN recorded: ${grn.grnNumber}`).subscribe({
+                        next: () => {},
+                        error: () => {}
+                    });
+                }
             },
             error: (err) => {
-                // The backend's global exception middleware serializes error
-                // bodies as PascalCase (Detail/Message), unlike the rest of
-                // the API which is camelCase — check both until that's fixed.
                 const message = err?.error?.detail || err?.error?.Detail
                     || err?.error?.title || err?.error?.Message
                     || 'Failed to record GRN. Please try again.';

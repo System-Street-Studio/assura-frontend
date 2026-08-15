@@ -47,7 +47,10 @@ export interface CheckinFormData {
 
 export interface CheckoutEmployee {
     id: string;
+    firstName?: string;
+    lastName?: string;
     name: string;
     division: string;
+    divisionId?: number;
     email: string;
 }

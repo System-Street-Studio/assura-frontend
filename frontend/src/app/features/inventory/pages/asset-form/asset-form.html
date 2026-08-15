@@ -34,7 +34,13 @@
              [class.has-error] adds a red border when showError() returns true. -->
         <div style="margin-bottom: 20px;">
           <label class="assura-label" for="assetCode">Asset Code <span style="color: #ef4444;">*</span></label>
-          <input id="assetCode" type="text" class="assura-input" [ngStyle]="{'border-color': showError('assetCode') ? '#ef4444' : ''}" formControlName="assetCode" placeholder="e.g. ASSET-001" required />
+          <div style="display: flex; gap: 8px;">
+            <input id="assetCode" type="text" class="assura-input" [ngStyle]="{'border-color': showError('assetCode') ? '#ef4444' : ''}" formControlName="assetCode" placeholder="e.g. AST-20260815-1234" required />
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 0 14px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; font-size: 13px;" (click)="regenerateCode()" title="Generate new unique code">
+              <mat-icon style="font-size: 18px; width: 18px; height: 18px;">autorenew</mat-icon>
+              <span>Auto</span>
+            </button>
+          </div>
           <div style="color: #ef4444; font-size: 13px; margin-top: 4px;" *ngIf="showError('assetCode')">Asset Code is required</div>
         </div>
 
