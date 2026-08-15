@@ -90,16 +90,18 @@
     </div>
 
     <!-- Actions Panel -->
-    <div class="glass-card actions-panel">
-      <div class="action-buttons-row">
-        <button class="btn-approve" (click)="approveRequest()">
-          <mat-icon>check_circle</mat-icon> Approve Maintenance
-        </button>
-        <button class="btn-reject" (click)="rejectRequest()">
-          <mat-icon>cancel</mat-icon> Reject Request
-        </button>
+    @if (!isReadOnly() && canDivisionHeadAct()) {
+      <div class="glass-card actions-panel">
+        <div class="action-buttons-row">
+          <button class="btn-approve" (click)="approveRequest()" [disabled]="processing()">
+            <mat-icon>check_circle</mat-icon> Approve Maintenance
+          </button>
+          <button class="btn-reject" (click)="rejectRequest()" [disabled]="processing()">
+            <mat-icon>cancel</mat-icon> Reject Request
+          </button>
+        </div>
       </div>
-    </div>
+    }
   </div>
 
   <!-- Confirmation / Success Modal -->

@@ -119,6 +119,34 @@
         </div>
       </div>
 
+      <!-- ── 3b. Storekeeper Processing Info ── -->
+      @if (request()!.processedByName) {
+        <div class="glass-card full-width">
+          <div class="card-title-row">
+            <mat-icon class="section-icon">assignment_ind</mat-icon>
+            <h3 class="card-section-title">Processed by Storekeeper</h3>
+          </div>
+          <div class="spec-rows-container">
+            <div class="spec-item">
+              <span class="spec-label">Handled By</span>
+              <span class="spec-value">{{ request()!.processedByName }}</span>
+            </div>
+            @if (request()!.processedAt) {
+              <div class="spec-item">
+                <span class="spec-label">Processed On</span>
+                <span class="spec-value">{{ request()!.processedAt | date:'medium' }}</span>
+              </div>
+            }
+          </div>
+          @if (request()!.processorRemarks) {
+            <div class="spec-text-block mt-16">
+              <span class="spec-label">Storekeeper Remarks</span>
+              <p class="text-content">{{ request()!.processorRemarks }}</p>
+            </div>
+          }
+        </div>
+      }
+
       <!-- ── 4. Type-Specific Details ── -->
       <ng-container [ngSwitch]="request()!.requestType">
         <!-- New Asset -->

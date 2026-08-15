@@ -46,7 +46,7 @@ export class MaintenanceFormComponent implements OnInit {
         this.assignedAssets.set(assets);
 
         // Auto-select asset from route state
-        const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state.assetName;
+        const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state?.assetName;
         if (passedAssetName) {
           const matchedAsset = assets.find(a => a.productName === passedAssetName);
           if (matchedAsset) {
@@ -108,7 +108,6 @@ export class MaintenanceFormComponent implements OnInit {
         this.resultTitle.set('Success');
         this.resultMessage.set(res?.message || 'Maintenance Request Submitted Successfully!');
         this.showResult.set(true);
-        this.location.back();
       },
       error: (err) => {
         this.isSubmitting.set(false);

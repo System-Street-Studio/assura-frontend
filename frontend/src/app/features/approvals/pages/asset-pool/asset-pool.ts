@@ -185,11 +185,10 @@ export class AssetPoolComponent implements OnInit, OnDestroy {
 
 
   
-  // Load approved transfer requests for dropdown
+  // Load approved transfer requests for dropdown (backend scopes this to the caller's own division)
   loadApprovedTransferRequests() {
 
-    const headId = Number(this.authService.getUserId());
-    this.requestService.getApprovedTransferRequests(headId).subscribe({
+    this.requestService.getApprovedTransferRequests().subscribe({
       next: (requests: any[]) => {
         this.approvedTransferRequests.set(requests);
       },

@@ -97,16 +97,18 @@
     </div>
 
     <!-- Actions Panel -->
-    <div class="glass-card actions-panel">
-      <div class="action-buttons-row">
-        <button class="btn-approve discard-confirm-btn" (click)="approveRequest()">
-          <mat-icon>delete_forever</mat-icon> Confirm Decommission
-        </button>
-        <button class="btn-reject" (click)="rejectRequest()">
-          <mat-icon>cancel</mat-icon> Reject Request
-        </button>
+    @if (!isReadOnly() && canDivisionHeadAct()) {
+      <div class="glass-card actions-panel">
+        <div class="action-buttons-row">
+          <button class="btn-approve discard-confirm-btn" (click)="approveRequest()" [disabled]="processing()">
+            <mat-icon>delete_forever</mat-icon> Confirm Decommission
+          </button>
+          <button class="btn-reject" (click)="rejectRequest()" [disabled]="processing()">
+            <mat-icon>cancel</mat-icon> Reject Request
+          </button>
+        </div>
       </div>
-    </div>
+    }
   </div>
 
   <!-- Confirmation / Success Modal -->

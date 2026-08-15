@@ -28,6 +28,9 @@ export interface AssetRequest {
   status: string;
   submittedDate: string;
   requestType: string;
+  processedByName?: string;
+  processorRemarks?: string;
+  processedAt?: string;
   attachments?: AttachmentFile[];
 }
 
@@ -111,7 +114,6 @@ export class AssetService {
   
   normalizeStatus(status: string): string {
     switch (status) {
-      case 'PendingDivisionHeadApproval':
       case 'PendingStorekeeperReview':
       case 'PendingProcurement':
         return 'Pending';

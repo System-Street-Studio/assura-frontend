@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule ,ActivatedRoute} from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { RequestService } from '../../services/requests.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-discard-details',
@@ -15,11 +16,18 @@ export class DiscardDetailsComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private requestService = inject(RequestService);
+  private authService = inject(AuthService);
 
   request = signal<any>({});
   isLoading = signal<boolean>(true);
+  isReadOnly = signal<boolean>(false);
+  processing = signal(false);
 
   ngOnInit() {
+    // Check for readOnly query parameter — same pattern as transfer-details.
+    const readOnly = this.route.snapshot.queryParamMap.get('readOnly');
+    this.isReadOnly.set(readOnly === 'true');
+
     // Service handling
     if (this.requestService.selectedRequest) {
       console.log("received data from Service");
@@ -53,29 +61,60 @@ export class DiscardDetailsComponent implements OnInit {
   popupMessage = signal('');
   popupType = signal<'success' | 'reject'>('success');
 
+  get requestStatus(): string {
+    return (this.request().status || '').toString();
+  }
+
+  // Same status/role gate as transfer-details.ts's canDivisionHeadAct(): only a
+  // Division Head/Admin may decide a request, and only while it's still pending —
+  // otherwise an already-approved/rejected request could be re-decided.
+  canDivisionHeadAct(): boolean {
+    return this.authService.hasRole(['DivisionHead', 'Admin'])
+      && (this.requestStatus === 'PendingDivisionHeadApproval' || this.requestStatus === 'Pending');
+  }
+
   approveRequest() {
     const id = this.request().id;
+    if (!id || this.processing()) {
+      return;
+    }
+
+    this.processing.set(true);
     this.requestService.approveRequest(id).subscribe({
       next: () => {
+        this.processing.set(false);
+        this.request.set({ ...this.request(), status: 'Approved' });
         this.popupMessage.set('Request Approved Successfully');
         this.popupType.set('success');
         this.showPopup.set(true);
-        
       },
-      error: (err) => console.error("Approve error:", err)
+      error: (err) => {
+        this.processing.set(false);
+        console.error("Approve error:", err);
+      }
     });
   }
 
   rejectRequest() {
     const id = this.request().id;
-    this.requestService.rejectRequest(id).subscribe({
+    if (!id || this.processing()) {
+      return;
+    }
+
+    const remarks = window.prompt('Reason for rejection (optional):') ?? undefined;
+    this.processing.set(true);
+    this.requestService.rejectRequest(id, remarks).subscribe({
       next: () => {
+        this.processing.set(false);
+        this.request.set({ ...this.request(), status: 'Rejected' });
         this.popupMessage.set('Request Rejected Successfully!');
         this.popupType.set('reject');
         this.showPopup.set(true);
-        
       },
-      error: (err) => console.error("Reject error:", err)
+      error: (err) => {
+        this.processing.set(false);
+        console.error("Reject error:", err);
+      }
     });
   }
 

@@ -96,7 +96,7 @@ export class RequestService {
   }
 
   rejectRequest(id: number, remarks: string = ''): Observable<boolean> {
-    return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, {});
+    return this.http.put<boolean>(`${this.baseUrl}/assetrequests/${id}/reject`, { reason: remarks });
   }
 
   divisionHeadReview(id: number, approve: boolean, remarks: string = ''): Observable<void> {
@@ -132,15 +132,9 @@ export class RequestService {
     return this.http.get<any[]>(`${this.baseUrl}/assetrequests`);
   }
 
-  //get approved transfer requests
- getApprovedTransferRequests(headId?: number): Observable<any[]> {
-    let url = `${this.baseUrl}/assetrequests/approved-transfers`;
-    
-    if (headId) {
-      url += `?headId=${headId}`;
-    }
-
-    return this.http.get<any[]>(url);
+  //get approved transfer requests (backend scopes this to the caller's own division via the JWT)
+ getApprovedTransferRequests(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/assetrequests/approved-transfers`);
   }
 
   getPendingRequests(): Observable<any[]> {

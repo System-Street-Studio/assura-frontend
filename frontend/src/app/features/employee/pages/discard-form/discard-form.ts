@@ -44,7 +44,7 @@ export class DiscardFormComponent implements OnInit {
         this.assignedAssets.set(assets);
 
         // Auto-select asset from route state
-        const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state.assetName;
+        const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state?.assetName;
         if (passedAssetName) {
           // Find the matching asset and set it with full format
           const matchedAsset = assets.find(a => a.productName === passedAssetName);
@@ -107,7 +107,6 @@ export class DiscardFormComponent implements OnInit {
         this.resultTitle.set('Success');
         this.resultMessage.set(res?.message || 'Discard Request Submitted Successfully!');
         this.showResult.set(true);
-        this.location.back();
       },
       error: (err) => {
         this.isSubmitting.set(false);

@@ -1,14 +1,38 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { Location } from '@angular/common';
+import { of } from 'rxjs';
 import { TransferFormComponent } from './transfer-form';
+import { AssetService as AssetRequestService } from '../../services/asset-request.service';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { CategoryService } from '../../../inventory/services/category.service';
 
 describe('TransferFormComponent', () => {
   let component: TransferFormComponent;
   let fixture: ComponentFixture<TransferFormComponent>;
+  let assetRequestServiceSpy: jasmine.SpyObj<AssetRequestService>;
+  let locationSpy: jasmine.SpyObj<Location>;
 
   beforeEach(async () => {
+    assetRequestServiceSpy = jasmine.createSpyObj('AssetRequestService', ['createRequest']);
+    assetRequestServiceSpy.createRequest.and.returnValue(of({ message: 'ok' } as any));
+
+    const categoryServiceSpy = jasmine.createSpyObj('CategoryService', ['getAll']);
+    categoryServiceSpy.getAll.and.returnValue(of([]));
+
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['getUserId', 'getUserName']);
+    authServiceSpy.getUserId.and.returnValue('1');
+    authServiceSpy.getUserName.and.returnValue('Emp One');
+
+    locationSpy = jasmine.createSpyObj('Location', ['back']);
+
     await TestBed.configureTestingModule({
-      imports: [TransferFormComponent]
+      imports: [TransferFormComponent],
+      providers: [
+        { provide: AssetRequestService, useValue: assetRequestServiceSpy },
+        { provide: CategoryService, useValue: categoryServiceSpy },
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: Location, useValue: locationSpy }
+      ]
     })
     .compileComponents();
 
@@ -19,5 +43,31 @@ describe('TransferFormComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  // Covers the BUGS.md finding: the success overlay was dismissed before the user
+  // could see it, because onSubmit() called location.back() immediately after
+  // showing it, instead of leaving navigation to onResultClosed().
+  it('should show the success overlay without navigating away immediately on submit', () => {
+    component.assetName.set('Monitor');
+    component.category.set('IT');
+    component.reason.set('Team move');
+
+    component.onSubmit();
+
+    expect(component.showResult()).toBeTrue();
+    expect(component.resultType()).toBe('success');
+    expect(locationSpy.back).not.toHaveBeenCalled();
+  });
+
+  it('should navigate back only when the result overlay is closed', () => {
+    component.assetName.set('Monitor');
+    component.category.set('IT');
+    component.reason.set('Team move');
+
+    component.onSubmit();
+    component.onResultClosed();
+
+    expect(locationSpy.back).toHaveBeenCalledTimes(1);
   });
 });
