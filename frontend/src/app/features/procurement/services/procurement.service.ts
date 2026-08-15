@@ -20,16 +20,26 @@ export class ProcurementService {
 
     /**
      * Get all Purchasing Orders (Summary)
+     * @param unregisteredOnly If true, returns only POs not yet registered as assets
      */
-    getOrders(): Observable<PurchasingOrderSummaryDto[]> {
-        console.log(`[DEBUG] ProcurementService: Fetching orders from ${this.apiUrl}`);
-        return this.http.get<PurchasingOrderSummaryDto[]>(this.apiUrl).pipe(
+    getOrders(unregisteredOnly: boolean = false): Observable<PurchasingOrderSummaryDto[]> {
+        const url = unregisteredOnly ? `${this.apiUrl}?unregisteredOnly=true` : this.apiUrl;
+        console.log(`[DEBUG] ProcurementService: Fetching orders from ${url}`);
+        return this.http.get<PurchasingOrderSummaryDto[]>(url).pipe(
             tap(orders => console.log(`[DEBUG] ProcurementService: Successfully fetched ${orders.length} orders`)),
             catchError(err => {
                 console.error('[DEBUG] ProcurementService: Error fetching orders', err);
                 return throwError(() => err);
             })
         );
+    }
+
+    /**
+     * Mark a Purchasing Order as completed/registered after asset creation
+     */
+    completeOrder(id: number): Observable<boolean> {
+        const url = `${this.apiUrl}/${id}/complete`;
+        return this.http.put<boolean>(url, {});
     }
 
     /**

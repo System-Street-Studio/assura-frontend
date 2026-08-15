@@ -307,6 +307,14 @@ export class AssetFormComponent implements OnInit {
       // POST — create a new asset record
       this.assetService.createAsset(payload).subscribe({
         next: () => {
+          // If this asset was created from a selected PO, mark the PO as completed/registered
+          if (this.selectedPoId && this.selectedPoId > 0) {
+            this.procurementService.completeOrder(this.selectedPoId).subscribe({
+              next: () => console.log(`[PO] Order #${this.selectedPoId} marked as registered.`),
+              error: (err) => console.warn('[PO] Could not update PO status:', err)
+            });
+          }
+
           this.saving = false;
           this.showResultOverlay('success', 'Success', `Asset saved.`, ['/inventory/assets']);
         },
@@ -336,8 +344,7 @@ export class AssetFormComponent implements OnInit {
   /**
    * Loads all dropdown reference data (products, suppliers, divisions, categories, purchasing orders) in parallel.
    * Uses `forkJoin` so the UI is populated in a single rendering pass.
-   * Each individual stream has a `catchError` fallback to an empty array, ensuring that a
-   * single failing endpoint does not prevent the others from loading.
+   * Only unregistered POs are loaded to avoid duplicate asset registrations.
    */
   private loadDropdownData(): void {
     forkJoin({
@@ -345,20 +352,32 @@ export class AssetFormComponent implements OnInit {
       suppliers:        this.supplierService.getAll().pipe(catchError(() => of([] as Supplier[]))),
       divisions:        this.divisionService.getAll().pipe(catchError(() => of([] as Division[]))),
       categories:       this.categoryService.getAll().pipe(catchError(() => of([] as Category[]))),
-      purchasingOrders: this.procurementService.getOrders().pipe(catchError(() => of([] as PurchasingOrderSummaryDto[]))),
-    }).subscribe(({ products, suppliers, divisions, categories, purchasingOrders }) => {
+      purchasingOrders: this.procurementService.getOrders(true).pipe(catchError(() => of([] as PurchasingOrderSummaryDto[]))),
+      existingAssets:   this.assetService.getAll().pipe(catchError(() => of([] as AssetDetail[]))),
+    }).subscribe(({ products, suppliers, divisions, categories, purchasingOrders, existingAssets }) => {
       this.products   = products;
       this.suppliers  = suppliers;
       this.divisions  = divisions;
       this.categories = categories;
 
-      // Sort purchasing orders so latest PO is at the top
-      this.purchasingOrders = (purchasingOrders || []).sort((a, b) => {
-        const timeA = a.issuedDate ? new Date(a.issuedDate).getTime() : 0;
-        const timeB = b.issuedDate ? new Date(b.issuedDate).getTime() : 0;
-        if (timeB !== timeA) return timeB - timeA;
-        return (b.id || 0) - (a.id || 0);
-      });
+      // Extract existing asset notes to identify POs that have already been registered
+      const existingNotes = (existingAssets || [])
+        .map(a => `${a.notes || ''} ${a.assetTag || ''} ${a.orderNumber || ''}`)
+        .join(' ');
+
+      // Filter out POs that are already registered or referenced in existing assets
+      this.purchasingOrders = (purchasingOrders || [])
+        .filter(po => {
+          if (po.status === 'Completed' || po.status === 'Registered') return false;
+          if (po.orderNumber && existingNotes.includes(po.orderNumber)) return false;
+          return true;
+        })
+        .sort((a, b) => {
+          const timeA = a.issuedDate ? new Date(a.issuedDate).getTime() : 0;
+          const timeB = b.issuedDate ? new Date(b.issuedDate).getTime() : 0;
+          if (timeB !== timeA) return timeB - timeA;
+          return (b.id || 0) - (a.id || 0);
+        });
 
       // If in create mode and queryParams had poId, auto select
       if (this.mode === 'create') {
