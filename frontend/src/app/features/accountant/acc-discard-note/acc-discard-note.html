@@ -1,8 +1,8 @@
 <div class="acc-discard-note-container">
-    <h1 class="page-title">Discard Note</h1>
+    <h1 class="assura-page-title">Discard Note</h1>
 
-    <div class="table-wrapper">
-        <table class="note-table">
+    <div class="glass-panel assura-table-container">
+        <table class="assura-table note-table">
             <thead>
                 <tr>
                     <th>Asset Name</th>
@@ -21,7 +21,7 @@
                         <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{ item.status }}</span>
                     </td>
                     <td>
-                        <button class="view-btn" (click)="viewNote(item)">View Note</button>
+                        <button class="assura-btn assura-btn-secondary view-btn" (click)="viewNote(item)">View Note</button>
                     </td>
                 </tr>
                 <tr *ngIf="notes.length === 0">
@@ -33,7 +33,7 @@
 
     <!-- Note Detail Modal -->
     <div class="modal-overlay" *ngIf="selectedNote" (click)="closeNote()">
-        <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="glass-panel modal-card" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <h2>{{ selectedNote.assetName }}</h2>
                 <button class="close-btn" (click)="closeNote()">×</button>

@@ -1,29 +1,41 @@
-<section class="reporting-dashboard">
-  <header class="dashboard-header">
-    <h1>Reporting &amp; Analytics Dashboard</h1>
-  </header>
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+  
+  <!-- Greeting Banner -->
+  <section class="assura-greeting-banner" style="display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; margin-bottom: 24px;">
+    <!-- Decorative blurred circles; purely visual, pointer-events: none -->
+    <div class="banner-bg-shape"></div>
+    <div class="banner-bg-shape secondary"></div>
 
-  <div class="metrics-grid">
-    @for (metric of metrics(); track metric.label) {
-      <article class="metric-card">
-        <span>{{ metric.label }}</span>
-        <strong>{{ metric.value }}</strong>
+    <div class="welcome-left">
+      <h1 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h1>
+      <p class="assura-greeting-date">Here's your reporting overview for {{ currentDate | date:'EEEE, MMMM d, yyyy — h:mm a' }}</p>
+    </div>
+  </section>
+
+  <h2 class="assura-page-title">Reporting &amp; Analytics Dashboard</h2>
+
+  <div class="assura-grid assura-grid-cols-4">
+    @for (metric of metrics(); track metric.title || metric.label) {
+      <div class="glass-card assura-accent-info">
+        <div class="assura-card-title">{{ metric.title || metric.label }}</div>
+        <div class="assura-card-value">{{ metric.value }}</div>
         @if (metric.accent) {
           <i class="metric-accent" aria-hidden="true"></i>
         }
-      </article>
+      </div>
     }
   </div>
 
-  <div class="analytics-grid">
-    <article class="panel category-panel">
-      <h2>Assets by Category</h2>
-      <div class="donut-row">
-        <div class="donut-chart" aria-label="Assets by category donut chart"></div>
-        <ul class="legend-list">
+  <!-- Using 2 cols for panels -->
+  <div class="assura-grid assura-grid-cols-2">
+    <article class="glass-card assura-accent-primary">
+      <h3 class="assura-card-title">Assets by Category</h3>
+      <div class="donut-row" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="donut-chart" aria-label="Assets by category donut chart" style="height: 120px; width: 120px; flex-shrink: 0;" [style.background]="donutGradient()"></div>
+        <ul class="legend-list" style="margin-top: 16px;">
           @for (item of categoryLegend(); track item.label) {
-            <li>
-              <span [style.background]="item.color"></span>
+            <li style="display: flex; align-items: center; gap: 8px;">
+              <span [style.background]="item.color" style="width: 12px; height: 12px; border-radius: 50%; display: inline-block;"></span>
               {{ item.label }}
             </li>
           }
@@ -31,9 +43,9 @@
       </div>
     </article>
 
-    <article class="panel">
-      <h2>Assets by Status</h2>
-      <div class="bar-chart status-chart">
+    <article class="glass-card assura-accent-success">
+      <h3 class="assura-card-title">Assets by Status</h3>
+      <div class="bar-chart status-chart" style="flex: 1; min-height: 200px;">
         @for (bar of statusBars(); track bar.label) {
           <div class="bar-item">
             <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
@@ -43,9 +55,9 @@
       </div>
     </article>
 
-    <article class="panel">
-      <h2>Assets by Division</h2>
-      <div class="bar-chart division-chart">
+    <article class="glass-card assura-accent-warning">
+      <h3 class="assura-card-title">Assets by Division</h3>
+      <div class="bar-chart division-chart" style="flex: 1; min-height: 200px;">
         @for (bar of divisionBars(); track bar.label) {
           <div class="bar-item">
             <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
@@ -55,9 +67,9 @@
       </div>
     </article>
 
-    <article class="panel">
-      <h2>Asset Value by Category</h2>
-      <div class="bar-chart value-chart">
+    <article class="glass-card assura-accent-info">
+      <h3 class="assura-card-title">Asset Value by Category</h3>
+      <div class="bar-chart value-chart" style="flex: 1; min-height: 200px;">
         @for (bar of valueBars(); track bar.label) {
           <div class="bar-item">
             <span class="bar" [style.height.%]="bar.value" [style.background]="bar.color"></span>
@@ -67,22 +79,4 @@
       </div>
     </article>
   </div>
-
-  <section class="anomalies-section">
-    <h2>Asset Anomalies</h2>
-    <div class="anomaly-grid">
-      <article class="anomaly-card info">
-        <span aria-hidden="true">△</span>
-        <strong>{{ anomalies().ghostAssetsDetected }} Ghost assets detected during audit</strong>
-      </article>
-      <article class="anomaly-card danger">
-        <span aria-hidden="true">△</span>
-        <strong>{{ anomalies().missingPhysicalVerification }} Assets missing physical verification</strong>
-      </article>
-    </div>
-  </section>
-
-  <button class="help-button" type="button" aria-label="Open help">
-    <span aria-hidden="true">?</span>
-  </button>
-</section>
+</div>

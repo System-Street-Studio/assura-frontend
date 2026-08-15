@@ -3,23 +3,23 @@
     <div class="content-shell">
       <h1 id="pending-title" class="page-title">Pending to Assign Roles</h1>
 
-      <div class="table-panel">
-        <table>
+      <div class="glass-panel assura-table-container">
+        <table class="assura-table">
           <thead>
             <tr>
-              <th>User ID</th>
-              <th>Name</th>
-              <th>Joined Date</th>
+              <th class="assura-th">User ID</th>
+              <th class="assura-th">Name</th>
+              <th class="assura-th">Joined Date</th>
             </tr>
           </thead>
 
           <tbody>
             @for (user of pendingUsers(); track user.id) {
-            <tr tabindex="0" [class.show-details]="activeUserIdNum === user.id" (mouseenter)="showDetails(user.id)"
+            <tr class="assura-tr-hover" tabindex="0" [class.show-details]="activeUserIdNum === user.id" (mouseenter)="showDetails(user.id)"
               (mouseleave)="hideDetails()" (focusin)="showDetails(user.id)" (focusout)="hideDetails()"
               (click)="openAssignForm(user.id)">
-              <td>{{ user.userId }}</td>
-              <td>
+              <td class="assura-td">{{ user.userId }}</td>
+              <td class="assura-td">
                 <span class="name-popover">
                   <span class="name-trigger">{{ user.name }}</span>
 
@@ -57,11 +57,11 @@
                   </span>
                 </span>
               </td>
-              <td>{{ user.joinedDate }}</td>
+              <td class="assura-td">{{ user.joinedDate }}</td>
             </tr>
             } @empty {
             <tr>
-              <td class="empty-state" colspan="3" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+              <td class="assura-td empty-state" colspan="3" style="text-align: center; padding: 2rem; color: #94a3b8;">
                 No pending users found
               </td>
             </tr>

@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { RegisterRequest } from '../../models/auth.models';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
     selector: 'app-register',
@@ -17,6 +18,7 @@ export class RegisterComponent {
     private fb = inject(FormBuilder);
     private authService = inject(AuthService);
     private router = inject(Router);
+    private toastService = inject(ToastService);
 
     registerForm = this.fb.group({
         firstName: ['', Validators.required],
@@ -54,11 +56,15 @@ export class RegisterComponent {
         this.authService.register(registerData).subscribe({
             next: () => {
                 this.isLoading = false;
-                this.isSuccess = true;
+                this.toastService.success('Account Created Successfully! Please wait for an administrator to assign your role.');
+                setTimeout(() => {
+                    this.router.navigate(['/auth/login']);
+                }, 3000);
             },
             error: (err) => {
                 this.isLoading = false;
                 this.errorMessage = err.error?.message || 'Registration failed. Username or email might already exist.';
+                this.toastService.error(this.errorMessage);
                 console.error('Registration failed', err);
             }
         });

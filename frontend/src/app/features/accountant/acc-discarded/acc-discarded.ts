@@ -13,7 +13,6 @@ export class AccDiscardedComponent implements OnInit {
     discardedItems: AccDiscardedItem[] = [];
     selectedItem: AccDiscardedItem | null = null;
     showSuccessCard = false;
-    isDownloaded = false;
     isLoading = true;
 
     constructor(
@@ -38,10 +37,6 @@ export class AccDiscardedComponent implements OnInit {
 
     selectItem(item: AccDiscardedItem) {
         this.selectedItem = this.selectedItem === item ? null : item;
-    }
-
-    downloadReceipt() {
-        this.isDownloaded = true;
     }
 
     closeDetail() {

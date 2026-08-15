@@ -1,93 +1,141 @@
-<div class="main-content">
-  
-  <div class="content-padding">
-    <h1 class="section-label">Requests Hub</h1>
+<div class="requests-hub-page">
+  <!-- ── 1. Page Header ── -->
+  <div class="page-header">
+    <h1 class="assura-page-title">Requests Hub</h1>
+    <p class="page-subtitle">Submit new asset requests, maintenance tickets, or track your current request statuses.</p>
+  </div>
 
-    <!--Request summary cards-->
-    <h3 class="section-label">Overview</h3>
-    <div class="stats-grid">
-    
-      <div class="hub-card border-blue">
-        <p>All Requests<mat-icon class="assignment">assignment</mat-icon> </p>
-        <div class="hub-value">{{ totalRequests() }}</div>
+  <!-- ── 2. Request KPI Summary Cards ── -->
+  <section class="section-block">
+    <div class="assura-grid assura-grid-cols-4">
+      <div class="assura-card assura-accent-info">
+        <span class="assura-card-title">All Requests</span>
+        <strong class="assura-card-value">{{ totalRequests() }}</strong>
+        <span class="assura-card-subtitle">Lifetime submitted</span>
       </div>
 
-      <div class="hub-card border-orange">
-        <p>Pending Requests <mat-icon class="schedule">schedule</mat-icon></p>
-        <div class="hub-value">{{ pendingCount() }}</div>
+      <div class="assura-card assura-accent-warning">
+        <span class="assura-card-title">Pending</span>
+        <strong class="assura-card-value">{{ pendingCount() }}</strong>
+        <span class="assura-card-subtitle">Awaiting review</span>
       </div>
 
-      <div class="hub-card border-green">
-        <p>Approved Requests <mat-icon class="check-circle">check_circle</mat-icon></p>
-        <div class="hub-value">{{ approvedCount() }}</div>
+      <div class="assura-card assura-accent-success">
+        <span class="assura-card-title">Approved</span>
+        <strong class="assura-card-value">{{ approvedCount() }}</strong>
+        <span class="assura-card-subtitle">Successfully authorized</span>
       </div>
 
-      <div class="hub-card border-red">
-        <p>Rejected Request <mat-icon class="cancel">cancel</mat-icon></p>
-        <div class="hub-value">{{ rejectedCount() }}</div>
+      <div class="assura-card assura-accent-danger">
+        <span class="assura-card-title">Rejected</span>
+        <strong class="assura-card-value">{{ rejectedCount() }}</strong>
+        <span class="assura-card-subtitle">Declined requests</span>
       </div>
     </div>
+  </section>
 
-    <!--Initiate new requests-->
-    <h3 class="section-label mt-30">Initiate New Requests</h3>
+  <!-- ── 3. Initiate New Requests ── -->
+  <section class="section-block">
+    <h3 class="section-title">Initiate New Requests</h3>
     <div class="action-grid">
-      <button class="btn-hub" routerLink="/employee/new-asset-request"><mat-icon class="add_box">add_box</mat-icon><span>New Asset Request</span></button>
-      <button class="btn-hub" routerLink="/employee/maintenance-form"><mat-icon class="handyman">handyman</mat-icon><span>Maintenance Request</span></button>
-      <button class="btn-hub" routerLink="/employee/discard-form"><mat-icon class="delete_sweep">delete_sweep</mat-icon><span>Discard Request</span></button>
-      <button class="btn-hub" routerLink="/employee/transfer-form"><mat-icon class="move_up">move_up</mat-icon><span>Temporary Transfer Requests</span></button>
-    </div>
+      <button class="hub-action-card" routerLink="/employee/new-asset-request">
+        <div class="hub-icon blue">
+          <mat-icon>add_box</mat-icon>
+        </div>
+        <div class="hub-text">
+          <span class="hub-title">New Asset Request</span>
+          <span class="hub-desc">Request hardware, laptops, or tools</span>
+        </div>
+      </button>
 
-    <!--Recent requests list-->
-    <div class="list-section mt-30">
-      <div class="list-header">
-        <h3 class="section-label">My Recent Requests</h3>
-        <a class="view-all" routerLink="/employee/all-emp-requests">View All Requests <mat-icon class="arrow-icon">arrow_forward</mat-icon></a>
+      <button class="hub-action-card" routerLink="/employee/maintenance-form">
+        <div class="hub-icon amber">
+          <mat-icon>handyman</mat-icon>
+        </div>
+        <div class="hub-text">
+          <span class="hub-title">Maintenance Request</span>
+          <span class="hub-desc">Report damage, repairs, or service</span>
+        </div>
+      </button>
+
+      <button class="hub-action-card" routerLink="/employee/discard-form">
+        <div class="hub-icon red">
+          <mat-icon>delete_sweep</mat-icon>
+        </div>
+        <div class="hub-text">
+          <span class="hub-title">Discard Request</span>
+          <span class="hub-desc">Request disposal of broken assets</span>
+        </div>
+      </button>
+
+      <button class="hub-action-card" routerLink="/employee/transfer-form">
+        <div class="hub-icon teal">
+          <mat-icon>move_up</mat-icon>
+        </div>
+        <div class="hub-text">
+          <span class="hub-title">Transfer Request</span>
+          <span class="hub-desc">Temporary transfer between users</span>
+        </div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ── 4. Recent Requests List ── -->
+  <section class="section-block">
+    <div class="glass-panel">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <h3 class="panel-title">My Recent Requests</h3>
+        </div>
+        <a class="view-all-link" routerLink="/employee/all-emp-requests">
+          View All Requests <mat-icon>arrow_forward</mat-icon>
+        </a>
       </div>
 
-      <div class="request-list">
-        
-        <!-- Loading state -->
+      <div class="requests-list-container">
         @if (isLoading()) {
           <div class="loading-state">
             <mat-icon class="spin-animation">sync</mat-icon>
             <p>Loading your requests... Please wait.</p>
           </div>
         } @else {
-
-          <!-- List of recent requests -->
           @for (req of paginatedRequests(); track req.id) {
-            <div class="request-item">
-              <div class="req-info">
-                <div class="req-header">
-                  <span class="req-id">#{{ req.id }}</span>
-                  <span class="req-type-badge">{{ req.requestType }}</span>
+            <div class="request-item-card">
+              <div class="req-left">
+                <div class="req-meta-top">
+                  <span class="id-tag">#{{ req.id }}</span>
+                  <span class="type-badge">{{ req.requestType }}</span>
+                  <span class="date-text">{{ req.submittedDate | date:'MMM dd, yyyy' }}</span>
                 </div>
-                <p class="req-name">{{ req.assetName }}</p>
-                <span class="req-date">{{ req.submittedDate | date:'MMM dd, yyyy' }}</span>
+                <h4 class="req-asset-title">{{ req.assetName }}</h4>
               </div>
-              <div class="req-status-area">
-                <span [class]="'priority-pill ' + req.priority.toLowerCase()">{{ req.priority }}</span>
-                <span [class]="'status-pill ' + req.status.toLowerCase()">{{ req.status }}</span>
-                <button class="btn-details" (click)="viewRequestDetails(req)">
-                  <mat-icon class="eye">visibility</mat-icon> View Details
+
+              <div class="req-right">
+                <span class="priority-badge" [ngClass]="req.priority.toLowerCase()">
+                  {{ req.priority }}
+                </span>
+                <span class="status-badge" [ngClass]="req.status.toLowerCase()">
+                  <span class="status-dot"></span>
+                  {{ req.status }}
+                </span>
+                <button class="assura-btn-secondary" (click)="viewRequestDetails(req)">
+                  <mat-icon>visibility</mat-icon> Details
                 </button>
               </div>
             </div>
           } @empty {
-            <!-- No requests state -->
-            <div class="empty-state">
+            <div class="empty-state-box">
               <mat-icon class="empty-icon">layers_clear</mat-icon>
-              <h3>No Requests Found</h3>
+              <h4>No Requests Found</h4>
               <p>You haven't submitted any asset or maintenance requests yet.</p>
             </div>
           }
-
         }
       </div>
 
-      <!-- Pagination Controls -->
+      <!-- Pagination -->
       @if (totalPages() > 1) {
-        <div class="pagination-container">
+        <div class="pagination-wrapper">
           <app-pagination
             [currentPage]="currentPage()"
             [totalPages]="totalPages()"
@@ -97,7 +145,5 @@
         </div>
       }
     </div>
-
-
-  </div>
+  </section>
 </div>

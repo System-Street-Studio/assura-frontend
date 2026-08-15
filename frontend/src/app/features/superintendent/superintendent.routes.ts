@@ -6,8 +6,8 @@ export const superintendentRoutes: Routes = [
         loadComponent: () => import('../overview/overview').then(m => m.OverviewComponent)
     },
     {
-        path: 'my-assets',
-        loadComponent: () => import('../my-assets/my-assets').then(m => m.MyAssetsComponent)
+        path: 'depreciation',
+        loadComponent: () => import('./depreciation/depreciation').then(m => m.DepreciationComponent)
     },
     {
         path: 'discarded-notes',

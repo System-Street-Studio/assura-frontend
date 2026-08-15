@@ -1,251 +1,360 @@
 <div class="overview-container">
-    <!-- Summary Cards -->
-    <div class="summary-cards">
-        <div class="summary-card pending" [class.card-active]="activeFilter === 'Pending'"
-            (click)="filterByStatus('Pending')">
-            <div class="card-header">
-                <span class="label">Pending</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                </svg>
-            </div>
-            <div class="card-value">{{ pendingCount }}</div>
-        </div>
-        <div class="summary-card discarded" [class.card-active]="activeFilter === 'Discarded'"
-            (click)="filterByStatus('Discarded')">
-            <div class="card-header">
-                <span class="label">Discarded</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                </svg>
-            </div>
-            <div class="card-value">{{ discardedCount }}</div>
-        </div>
-        <div class="summary-card unread" [class.card-active]="activeFilter === 'Unread'"
-            (click)="filterByStatus('Unread')">
-            <div class="card-header">
-                <span class="label">Unread Request</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                    <polyline points="22,6 12,13 2,6" />
-                </svg>
-            </div>
-            <div class="card-value">{{ unreadCount }}</div>
-        </div>
-        <div class="summary-card rejected" [class.card-active]="activeFilter === 'Rejected'"
-            (click)="filterByStatus('Rejected')">
-            <div class="card-header">
-                <span class="label">Rejected</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="15" y1="9" x2="9" y2="15" />
-                    <line x1="9" y1="9" x2="15" y2="15" />
-                </svg>
-            </div>
-            <div class="card-value">{{ rejectedCount }}</div>
-        </div>
-        <div class="summary-card approved" [class.card-active]="activeFilter === 'Approved'"
-            (click)="filterByStatus('Approved')">
-            <div class="card-header">
-                <span class="label">Approved</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                    <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-            </div>
-            <div class="card-value">{{ approvedCount }}</div>
-        </div>
+  @if (!isPendingUser) {
+  <!-- Greeting Banner -->
+  <div class="assura-greeting-banner">
+    <h2 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h2>
+    <p class="assura-greeting-date">{{ currentDate | date:'EEEE, MMMM d, y — h:mm a' }}</p>
+  </div>
 
-        <!-- Total card -->
-        <div class="summary-card total" [class.card-active]="activeFilter === ''"
-            (click)="filterByStatus('')">
-            <div class="card-header">
-                <span class="label">Total Items</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-                </svg>
-            </div>
-            <div class="card-value">{{ totalCount }}</div>
+  <!-- Summary Cards Grid -->
+  <div class="summary-cards">
+    <div class="glass-card stat-card pending" [class.card-active]="activeFilter === 'Pending'"
+         (click)="filterByStatus('Pending')">
+      <div class="card-header">
+        <span class="label">Pending</span>
+        <div class="icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+          </svg>
         </div>
-
-        <!-- Today card -->
-        <div class="summary-card today">
-            <div class="card-header">
-                <span class="label">Today</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-            </div>
-            <div class="card-value">{{ todayCount }}</div>
-        </div>
+      </div>
+      <div class="card-value">{{ pendingCount }}</div>
     </div>
 
-    <div class="section-header">
-        <h2 class="section-title">
-            {{ activeFilter ? activeFilter + ' Items' : 'All Items' }}
-        </h2>
-        <span class="filter-badge" *ngIf="activeFilter" (click)="filterByStatus(activeFilter)">
-            Clear Filter ×
-        </span>
+    <div class="glass-card stat-card discarded" [class.card-active]="activeFilter === 'Discarded'"
+         (click)="filterByStatus('Discarded')">
+      <div class="card-header">
+        <span class="label">Discarded</span>
+        <div class="icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          </svg>
+        </div>
+      </div>
+      <div class="card-value">{{ discardedCount }}</div>
     </div>
 
-    <div class="queue-layout">
-        <!-- Queue List -->
-        <div class="queue-list">
-            <div class="queue-card" *ngFor="let item of filteredQueue" [class.active]="selectedItem?.id === item.id"
-                (click)="selectItem(item)">
-                <div class="queue-card-top">
-                    <h3 class="item-name">{{ item.name }}</h3>
-                    <span class="item-status-badge" [ngClass]="getStatusClass(item.status)">{{ item.status }}</span>
-                </div>
-                <p class="item-division">{{ item.division }}</p>
-                <p class="item-time">{{ item.time }}</p>
-            </div>
-
-            <div class="empty-state" *ngIf="filteredQueue.length === 0">
-                <p>No items found for this filter.</p>
-            </div>
+    <div class="glass-card stat-card unread" [class.card-active]="activeFilter === 'Unread'"
+         (click)="filterByStatus('Unread')">
+      <div class="card-header">
+        <span class="label">Unread Requests</span>
+        <div class="icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
         </div>
-
-        <!-- Detail View -->
-        <div class="detail-view" *ngIf="selectedItem">
-            <div class="detail-top-row">
-                <h2 class="detail-title">{{ selectedItem.name }}</h2>
-                <span class="detail-status-badge" [ngClass]="getStatusClass(selectedItem.status)">{{ selectedItem.status
-                    }}</span>
-            </div>
-            <div class="detail-divider"></div>
-
-            <div class="info-grid">
-                <div class="info-item">
-                    <label>Division</label>
-                    <span>{{ selectedItem.division }}</span>
-                </div>
-                <div class="info-item">
-                    <label>Date</label>
-                    <span>{{ selectedItem.date }}</span>
-                </div>
-                <div class="info-item">
-                    <label>Status</label>
-                    <span>{{ selectedItem.status }}</span>
-                </div>
-                <div class="info-item">
-                    <label>Time</label>
-                    <span>{{ selectedItem.time }}</span>
-                </div>
-                <div class="info-item">
-                    <label>Asset Type</label>
-                    <span>{{ selectedItem.assetType }}</span>
-                </div>
-            </div>
-
-            <div class="special-note">
-                <label>Special Note</label>
-                <div class="note-box">
-                    {{ selectedItem.specialNote }}
-                </div>
-            </div>
-
-            <!-- Review Flow -->
-            <div class="review-section"
-                *ngIf="selectedItem.status !== 'Discarded' && selectedItem.status !== 'Rejected' && selectedItem.status !== 'Approved'">
-                <!-- Step 1: Review button -->
-                <div class="actions" *ngIf="reviewStep === 'idle'">
-                    <button class="review-btn" (click)="startReview()">Review</button>
-                </div>
-
-                <!-- Step 2: Mark as Done / Reject -->
-                <div class="review-choose" *ngIf="reviewStep === 'choose'">
-                    <p class="review-prompt">Choose an action:</p>
-                    <div class="review-choose-btns">
-                        <button class="done-btn" (click)="chooseAction('done')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            Mark as Done
-                        </button>
-                        <button class="reject-btn" (click)="chooseAction('reject')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                            Reject
-                        </button>
-                    </div>
-                    <button class="cancel-link" (click)="cancelReview()">Cancel</button>
-                </div>
-
-                <!-- Step 3: Notes input -->
-                <div class="review-notes" *ngIf="reviewStep === 'notes'">
-                    <p class="review-notes-label">
-                        <span class="action-tag" [ngClass]="reviewAction">
-                            {{ reviewAction === 'done' ? '✓ Marking as Done' : '✕ Rejecting' }}
-                        </span>
-                        — Add a note:
-                    </p>
-                    <textarea class="review-textarea" [(ngModel)]="reviewNote"
-                        placeholder="Enter your notes or reason here..." rows="4"></textarea>
-                    <div class="review-notes-btns">
-                        <button class="cancel-link" (click)="cancelReview()">Cancel</button>
-                        <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()">
-                            {{ reviewAction === 'done' ? 'Approve & Submit' : 'Reject & Submit' }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Empty detail -->
-        <div class="detail-view detail-empty" *ngIf="!selectedItem">
-            <p>Select an item from the list to view details.</p>
-        </div>
+      </div>
+      <div class="card-value">{{ unreadCount }}</div>
     </div>
 
-    <!-- Success Card Overlay -->
-    <div class="feedback-overlay" *ngIf="showSuccessCard" (click)="closeSuccessCard()">
-        <div class="feedback-card" (click)="$event.stopPropagation()">
-            <div class="feedback-icon-section success-bg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
-                    stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                    <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-            </div>
-            <div class="feedback-text-section">
-                <span class="feedback-text">Approved & Submitted</span>
-            </div>
+    <div class="glass-card stat-card rejected" [class.card-active]="activeFilter === 'Rejected'"
+         (click)="filterByStatus('Rejected')">
+      <div class="card-header">
+        <span class="label">Rejected</span>
+        <div class="icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
         </div>
+      </div>
+      <div class="card-value">{{ rejectedCount }}</div>
     </div>
 
-    <!-- Reject Card Overlay -->
-    <div class="feedback-overlay" *ngIf="showRejectCard" (click)="closeRejectCard()">
-        <div class="feedback-card" (click)="$event.stopPropagation()">
-            <div class="feedback-icon-section reject-bg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
-                    stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="15" y1="9" x2="9" y2="15" />
-                    <line x1="9" y1="9" x2="15" y2="15" />
-                </svg>
-            </div>
-            <div class="feedback-text-section">
-                <span class="feedback-text">Rejected & Submitted</span>
-            </div>
+    <div class="glass-card stat-card approved" [class.card-active]="activeFilter === 'Approved'"
+         (click)="filterByStatus('Approved')">
+      <div class="card-header">
+        <span class="label">Approved</span>
+        <div class="icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
         </div>
+      </div>
+      <div class="card-value">{{ approvedCount }}</div>
     </div>
+
+    <div class="glass-card stat-card total" [class.card-active]="activeFilter === ''"
+         (click)="filterByStatus('')">
+      <div class="card-header">
+        <span class="label">Total Items</span>
+        <div class="icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-value">{{ totalCount }}</div>
+    </div>
+
+    <div class="glass-card stat-card today" [class.card-active]="activeFilter === 'Today'"
+         (click)="filterByStatus('Today')">
+      <div class="card-header">
+        <span class="label">Today</span>
+        <div class="icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-value">{{ todayCount }}</div>
+    </div>
+  </div>
+
+  <!-- Section Header -->
+  <div class="section-header">
+    <div class="section-title-group">
+      <h2 class="section-title">
+        {{ activeFilter ? (activeFilter === 'Today' ? "Today's Action Items" : activeFilter + ' Queue Items') : 'All Action Items' }}
+      </h2>
+      <span class="queue-count-badge">{{ filteredQueue.length }} {{ filteredQueue.length === 1 ? 'record' : 'records' }}</span>
+    </div>
+    @if (activeFilter) {
+      <button class="filter-clear-btn" (click)="filterByStatus(activeFilter)">
+        <span>Clear Filter: {{ activeFilter }}</span> ×
+      </button>
+    }
+  </div>
+
+  <!-- Queue Main Layout -->
+  <div class="queue-layout">
+    <!-- Queue List Left Column -->
+    <div class="queue-list">
+      @for (item of filteredQueue; track item.id) {
+        <div class="glass-card queue-card" [class.active]="selectedItem?.id === item.id"
+             (click)="selectItem(item)">
+          <div class="queue-card-top">
+            <h3 class="item-name">{{ item.name }}</h3>
+            <span class="status-badge" [ngClass]="getStatusClass(item.status)">
+              <span class="status-dot"></span> {{ item.status }}
+            </span>
+          </div>
+          <p class="item-division">{{ item.division }}</p>
+          <div class="item-bottom">
+            <span class="item-type-chip">{{ item.assetType || 'Equipment' }}</span>
+            <span class="item-time mono">{{ item.date }} {{ item.time }}</span>
+          </div>
+        </div>
+      } @empty {
+        <div class="glass-card empty-state">
+          <div class="empty-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <p class="empty-title">No queue items found</p>
+          <p class="empty-subtitle">
+            {{ activeFilter === 'Today' ? 'No items submitted today.' : 'No items match the selected filter.' }}
+          </p>
+          @if (activeFilter) {
+            <button class="empty-reset-btn" (click)="filterByStatus(activeFilter)">Show All Items</button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Detail View Right Column -->
+    @if (selectedItem) {
+      <div class="glass-panel detail-view">
+        <div class="detail-top-row">
+          <div class="detail-heading-group">
+            <span class="detail-pretitle">Disposal / Review Dossier</span>
+            <h2 class="detail-title">{{ selectedItem.name }}</h2>
+          </div>
+          <span class="status-badge large" [ngClass]="getStatusClass(selectedItem.status)">
+            <span class="status-dot"></span> {{ selectedItem.status }}
+          </span>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Originating Division</label>
+            <span class="highlight">{{ selectedItem.division }}</span>
+          </div>
+          <div class="info-item">
+            <label>Submission Date</label>
+            <span class="mono">{{ selectedItem.date }}</span>
+          </div>
+          <div class="info-item">
+            <label>Submission Time</label>
+            <span class="mono">{{ selectedItem.time }}</span>
+          </div>
+          <div class="info-item">
+            <label>Asset Category / Type</label>
+            <span>{{ selectedItem.assetType }}</span>
+          </div>
+        </div>
+
+        <div class="special-note">
+          <label>Notes & Justification</label>
+          <div class="note-box">
+            {{ selectedItem.specialNote || 'No special notes or remarks attached to this request.' }}
+          </div>
+        </div>
+
+        @if (selectedItem.reviewNote) {
+          <div class="special-note">
+            <label>Reviewer's Decision Note</label>
+            <div class="note-box">
+              {{ selectedItem.reviewNote }}
+            </div>
+          </div>
+        }
+
+        <!-- Review Action Flow -->
+        @if (selectedItem.status !== 'Discarded' && selectedItem.status !== 'Rejected' && selectedItem.status !== 'Approved') {
+          <div class="review-section">
+            <!-- Step 1: Review trigger -->
+            @if (reviewStep === 'idle') {
+              <div class="actions">
+                <button class="assura-btn-primary" (click)="startReview()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  </svg>
+                  Initiate Review
+                </button>
+              </div>
+            }
+
+            <!-- Step 2: Choose action -->
+            @if (reviewStep === 'choose') {
+              <div class="review-choose">
+                <p class="review-prompt">Select an adjudication decision for this asset:</p>
+                <div class="review-choose-btns">
+                  <button class="btn-decision approve" (click)="chooseAction('done')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                         stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Approve Request
+                  </button>
+                  <button class="btn-decision reject" (click)="chooseAction('reject')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                         stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                    Reject Request
+                  </button>
+                </div>
+                <button class="cancel-link" (click)="cancelReview()">Cancel Review</button>
+              </div>
+            }
+
+            <!-- Step 3: Decision Remarks -->
+            @if (reviewStep === 'notes') {
+              <div class="review-notes">
+                <div class="notes-header">
+                  <span class="action-tag" [ngClass]="reviewAction">
+                    {{ reviewAction === 'done' ? '✓ Approving Request' : '✕ Rejecting Request' }}
+                  </span>
+                  <span class="notes-hint">Add remarks or condition notes:</span>
+                </div>
+                <textarea class="glass-textarea" [formControl]="reviewNoteControl"
+                          [class.input-invalid]="reviewNoteControl.invalid && reviewNoteControl.touched"
+                          placeholder="Provide detailed feedback, disposal instructions, or reason for decision..." rows="4"></textarea>
+                @if (reviewNoteControl.invalid && reviewNoteControl.touched) {
+                  <span class="field-error">
+                    {{ reviewNoteControl.errors?.['required'] ? 'A decision note is required.' : 'Note must be at least 5 characters.' }}
+                  </span>
+                }
+                <div class="review-notes-btns">
+                  <button class="cancel-link" (click)="cancelReview()">Back</button>
+                  <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()" [disabled]="reviewNoteControl.invalid">
+                    {{ reviewAction === 'done' ? 'Confirm Approval' : 'Confirm Rejection' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="glass-panel detail-view detail-empty">
+        <div class="empty-detail-content">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M9 3v18"/>
+            <path d="M14 9h4"/>
+            <path d="M14 13h4"/>
+            <path d="M14 17h4"/>
+          </svg>
+          <p>Select an item from the queue list to review details and take action.</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Feedback Overlays -->
+  @if (showSuccessCard) {
+    <div class="feedback-overlay" (click)="closeSuccessCard()">
+      <div class="glass-modal feedback-card success-card" (click)="$event.stopPropagation()">
+        <div class="feedback-icon-wrap success-bg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+               stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+        </div>
+        <div class="feedback-content">
+          <h4>Successfully Approved</h4>
+          <p>The record has been updated and marked as Approved in the system.</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showRejectCard) {
+    <div class="feedback-overlay" (click)="closeRejectCard()">
+      <div class="glass-modal feedback-card reject-card" (click)="$event.stopPropagation()">
+        <div class="feedback-icon-wrap reject-bg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+               stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
+        </div>
+        <div class="feedback-content">
+          <h4>Request Rejected</h4>
+          <p>The record has been rejected and the decision has been logged.</p>
+        </div>
+      </div>
+    </div>
+  }
+  } @else {
+    <div class="pending-user-view" style="display: flex; align-items: center; justify-content: center; height: calc(100vh - 120px); text-align: center; flex-direction: column;">
+      <div class="glass-card" style="padding: 48px; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 24px; border: 1px solid rgba(245, 158, 11, 0.3);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h2 style="color: #f8fafc; font-size: 24px; font-weight: 700; margin: 0;">Account Under Review</h2>
+        <p style="color: #94a3b8; font-size: 16px; margin: 0; line-height: 1.5;">Your account is under review, wait for HR review.</p>
+      </div>
+    </div>
+  }
 </div>

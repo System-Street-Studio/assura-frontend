@@ -3,29 +3,29 @@
     <div class="content-shell">
       <h1 id="assigned-title" class="page-title">Assigned</h1>
 
-      <div class="table-panel">
-        <table>
+      <div class="glass-panel assura-table-container">
+        <table class="assura-table">
           <thead>
             <tr>
-              <th>User ID</th>
-              <th>Name</th>
-              <th>Role</th>
-              <th>Division</th>
-              <th>Joined Date</th>
-              <th>Actions</th>
+              <th class="assura-th">User ID</th>
+              <th class="assura-th">Name</th>
+              <th class="assura-th">Role</th>
+              <th class="assura-th">Division</th>
+              <th class="assura-th">Joined Date</th>
+              <th class="assura-th">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             @for (user of assignedUsers(); track user.id) {
-            <tr>
-              <td>{{ user.userId }}</td>
-              <td>{{ user.name }}</td>
-              <td>{{ user.role }}</td>
-              <td>{{ user.division }}</td>
-              <td>{{ user.joinedDate }}</td>
-              <td>
-                <button class="edit-btn" (click)="openEditForm(user.id)">Edit</button>
+            <tr class="assura-tr-hover">
+              <td class="assura-td">{{ user.userId }}</td>
+              <td class="assura-td">{{ user.name }}</td>
+              <td class="assura-td">{{ user.role }}</td>
+              <td class="assura-td">{{ user.division }}</td>
+              <td class="assura-td">{{ user.joinedDate }}</td>
+              <td class="assura-td">
+                <button class="assura-btn assura-btn-secondary" style="padding: 4px 12px; font-size: 13px;" (click)="openEditForm(user.id)">Edit</button>
               </td>
             </tr>
             }

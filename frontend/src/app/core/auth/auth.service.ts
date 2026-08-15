@@ -79,9 +79,11 @@ export class AuthService {
         decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role'] ??
         [];
       const roles = Array.isArray(raw) ? raw : [raw];
-      return roles.length > 0 ? roles : ['Employee'];
+      // Filter out any undefined or empty string roles
+      const validRoles = roles.filter(r => r && r.trim() !== '');
+      return validRoles.length > 0 ? validRoles : ['Pending'];
     } catch {
-      return ['Employee'];
+      return ['Pending'];
     }
   }
 
@@ -195,5 +197,16 @@ export class AuthService {
     if (roles.includes('DivisionHead')) return '/approvals/overview';
     if (roles.includes('Employee')) return '/employee/employee-overview';
     return '/overview';
+  }
+
+  isPendingUser(): boolean {
+    const hasPendingRole = this.hasRole('Pending');
+    const isSysAdmin = this.hasRole('SystemAdmin');
+    
+    // Explicitly check if it's null or undefined
+    const divisionId = this.getDivisionId();
+    const noDivision = divisionId === null || divisionId === undefined || isNaN(divisionId) || divisionId === 0;
+    
+    return hasPendingRole || (noDivision && !isSysAdmin);
   }
 }

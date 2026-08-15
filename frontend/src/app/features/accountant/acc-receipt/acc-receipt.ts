@@ -1,12 +1,15 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReceiptsService, Receipt } from '../../../services/receipts.service';
+
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const ALLOWED_FILE_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
 
 @Component({
     selector: 'app-acc-receipt',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule],
     templateUrl: './acc-receipt.html',
     styleUrls: ['./acc-receipt.css']
 })
@@ -20,18 +23,24 @@ export class AccReceiptComponent implements OnInit {
     selectedFileName = '';
     createdReceiptId: string | null = null;
     uploadError = '';
+    fileError = '';
+    submitAttempted = false;
+    listActionError = '';
 
-    newReceipt = {
-        assetName: '',
-        division: '',
-        date: '',
-        amount: ''
-    };
+    receiptForm: FormGroup;
 
     constructor(
         private receiptsService: ReceiptsService,
-        private cdr: ChangeDetectorRef
-    ) {}
+        private cdr: ChangeDetectorRef,
+        private fb: FormBuilder
+    ) {
+        this.receiptForm = this.fb.group({
+            assetName: ['', [Validators.required, Validators.maxLength(200)]],
+            division: ['', [Validators.required, Validators.maxLength(100)]],
+            date: ['', [Validators.required]],
+            amount: [null, [Validators.required, Validators.min(0.01)]]
+        });
+    }
 
     ngOnInit() {
         this.loadReceipts();
@@ -58,7 +67,7 @@ export class AccReceiptComponent implements OnInit {
         this.filteredReceipts = this.receipts.filter(r =>
             r.assetName.toLowerCase().includes(term) ||
             r.division.toLowerCase().includes(term) ||
-            r.amount.toLowerCase().includes(term) ||
+            r.amount.toString().includes(term) ||
             r.status.toLowerCase().includes(term)
         );
     }
@@ -67,35 +76,69 @@ export class AccReceiptComponent implements OnInit {
         return status.toLowerCase();
     }
 
+    isInvalid(controlName: string): boolean {
+        const control = this.receiptForm.get(controlName);
+        if (!control) return false;
+        return control.invalid && (control.touched || this.submitAttempted);
+    }
+
     openAddReceipt() {
         this.showAddModal = true;
         this.selectedFile = null;
         this.selectedFileName = '';
         this.createdReceiptId = null;
         this.uploadError = '';
+        this.fileError = '';
+        this.submitAttempted = false;
+        this.receiptForm.reset();
     }
 
     closeAddReceipt() {
         this.showAddModal = false;
-        this.newReceipt = { assetName: '', division: '', date: '', amount: '' };
+        this.receiptForm.reset();
         this.selectedFile = null;
         this.selectedFileName = '';
         this.createdReceiptId = null;
         this.uploadError = '';
+        this.fileError = '';
+        this.submitAttempted = false;
     }
 
     onFileSelected(event: Event) {
         const input = event.target as HTMLInputElement;
+        this.fileError = '';
         if (input.files && input.files.length > 0) {
-            this.selectedFile = input.files[0];
-            this.selectedFileName = input.files[0].name;
+            const file = input.files[0];
+
+            if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+                this.fileError = 'Only PDF, JPG, and PNG files are allowed.';
+                this.selectedFile = null;
+                this.selectedFileName = '';
+                input.value = '';
+                return;
+            }
+
+            if (file.size > MAX_UPLOAD_BYTES) {
+                this.fileError = 'File must be smaller than 5MB.';
+                this.selectedFile = null;
+                this.selectedFileName = '';
+                input.value = '';
+                return;
+            }
+
+            this.selectedFile = file;
+            this.selectedFileName = file.name;
         }
     }
 
     submitReceipt() {
-        if (!this.newReceipt.assetName || !this.newReceipt.division) return;
+        this.submitAttempted = true;
+        if (this.receiptForm.invalid) {
+            this.receiptForm.markAllAsTouched();
+            return;
+        }
 
-        this.receiptsService.create(this.newReceipt).subscribe({
+        this.receiptsService.create(this.receiptForm.value).subscribe({
             next: (created) => {
                 if (this.selectedFile) {
                     // Upload the file right after creation
@@ -124,16 +167,18 @@ export class AccReceiptComponent implements OnInit {
     }
 
     viewReceipt(item: Receipt) {
+        this.listActionError = '';
         if (item.fileUrl) {
             window.open(item.fileUrl, '_blank');
         } else {
-            alert(`No file attached to receipt for "${item.assetName}".`);
+            this.listActionError = `No file attached to receipt for "${item.assetName}".`;
         }
     }
 
     downloadReceipt(item: Receipt) {
+        this.listActionError = '';
         if (!item.fileUrl) {
-            alert(`No file attached to receipt for "${item.assetName}".`);
+            this.listActionError = `No file attached to receipt for "${item.assetName}".`;
             return;
         }
 
@@ -150,7 +195,13 @@ export class AccReceiptComponent implements OnInit {
                 a.click();
                 URL.revokeObjectURL(url);
             })
-            .catch(() => alert('Failed to download file.'));
+            .catch(() => {
+                this.listActionError = 'Failed to download file.';
+                this.cdr.markForCheck();
+            });
+    }
+
+    dismissListActionError() {
+        this.listActionError = '';
     }
 }
-

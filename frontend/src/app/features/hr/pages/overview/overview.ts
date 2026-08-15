@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HrAssignmentService } from '../../services/hr-assignment.service';
 
 export interface OverviewStat {
@@ -14,7 +15,7 @@ export interface DivisionUserCount {
 @Component({
   selector: 'app-hr-overview',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './overview.html',
   styleUrls: ['./overview.css'],
 })
@@ -23,6 +24,10 @@ export class HrOverviewComponent implements OnInit {
 
   readonly overview = this.hrAssignmentService.overview;
   readonly assignedUsers = this.hrAssignmentService.assignedUsers;
+
+  greeting = 'Welcome';
+  firstName = 'HR Manager';
+  currentDate = new Date();
 
   readonly stats = computed<OverviewStat[]>(() => {
     const data = this.overview();
@@ -51,6 +56,9 @@ export class HrOverviewComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    const hour = new Date().getHours();
+    this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
     this.hrAssignmentService.getOverview().subscribe();
     this.hrAssignmentService.getAssignedUsers().subscribe();
   }

@@ -1,29 +1,44 @@
-<div class="hr-shell">
-  <section class="overview-page" aria-labelledby="statistics-title">
-    <div class="overview-container">
-      <h1 id="statistics-title" class="page-title">Statistics</h1>
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+  
+  <!-- Greeting Banner -->
+  <section class="assura-greeting-banner" style="display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; margin-bottom: 24px;">
+    <!-- Decorative blurred circles; purely visual, pointer-events: none -->
+    <div class="banner-bg-shape"></div>
+    <div class="banner-bg-shape secondary"></div>
 
-      <div class="stats-grid" aria-label="Role assignment statistics">
-        @for (stat of stats(); track stat.label) {
-        <article class="stat-card">
-          <span class="stat-label">{{ stat.label }}</span>
-          <strong class="stat-value">{{ stat.value }}</strong>
-        </article>
-        }
-      </div>
-
-      <section class="division-panel" aria-labelledby="division-title">
-        <h2 id="division-title" class="panel-title">Users by Division</h2>
-
-        <div class="division-list">
-          @for (item of usersByDivision(); track item.division) {
-          <div class="division-row">
-            <span>{{ item.division }}</span>
-            <span class="division-count">{{ item.users }}</span>
-          </div>
-          }
-        </div>
-      </section>
+    <div class="welcome-left">
+      <h1 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h1>
+      <p class="assura-greeting-date">Here's your HR overview for {{ currentDate | date:'EEEE, MMMM d, yyyy — h:mm a' }}</p>
     </div>
+  </section>
+
+  <section aria-labelledby="statistics-title">
+    <h1 id="statistics-title" class="assura-page-title">Statistics</h1>
+
+    <div class="stats-grid" aria-label="Role assignment statistics">
+      @for (stat of stats(); track stat.label) {
+      <article class="glass-card assura-accent-info">
+        <span class="assura-card-title" style="color: #94a3b8;">{{ stat.label }}</span>
+        <strong class="assura-card-value" style="color: #f8fafc;">{{ stat.value }}</strong>
+      </article>
+      }
+    </div>
+
+    <section aria-labelledby="division-title" style="margin-top: 32px; width: 100%; max-width: 800px; margin: 32px auto 0;">
+      <h2 id="division-title" class="assura-page-title" style="font-size: 20px;">Users by Division</h2>
+      
+      <div>
+        <article class="glass-card assura-accent-primary">
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            @for (item of usersByDivision(); track item.division) {
+            <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
+              <span class="assura-card-subtitle" style="margin: 0; color: #94a3b8;">{{ item.division }}</span>
+              <span style="font-weight: bold; font-family: 'Jost'; color: #f8fafc;">{{ item.users }}</span>
+            </div>
+            }
+          </div>
+        </article>
+      </div>
+    </section>
   </section>
 </div>

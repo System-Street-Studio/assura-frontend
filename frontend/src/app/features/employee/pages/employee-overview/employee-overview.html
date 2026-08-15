@@ -1,107 +1,263 @@
-<div class="dashboard-wrapper">
-    <div class="content-padding">
-      <h1 class="page-title">Dashboard</h1>
+<div class="employee-overview-page">
+  @if (!isPendingUser) {
+  <!-- ── 1. Welcome Banner ── -->
+  <div class="assura-greeting-banner">
+    <h2 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h2>
+    <p class="assura-greeting-date">{{ today | date:'EEEE, MMMM d, y — h:mm a' }}</p>
+  </div>
 
-      
-    @if (isLoading()) {
-      <div class="loading-state">
-        <mat-icon class="spin-animation">sync</mat-icon>
-        <p>Loading your dashboard...</p>
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-icon class="spin-animation">sync</mat-icon>
+      <p>Loading your dashboard...</p>
+    </div>
+  } @else {
+    <!-- ── Success Alert Banner ── -->
+    @if (confirmSuccessMessage()) {
+      <div class="confirm-success-alert">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ confirmSuccessMessage() }}</span>
       </div>
-    } @else {
+    }
 
-<!--Quick action buttons -->
-      <section class="section">
-        <h3 class="section-label">Quick Action</h3>
-        <div class="grid-4">
-          <button class="action-btn" routerLink="/employee/new-asset-request"><mat-icon class="add_circle">add_circle</mat-icon><br>Request New Asset</button>
-          <button class="action-btn" routerLink="/employee/transfer-form"><mat-icon class="swap_horiz">swap_horiz</mat-icon><br>Request Temporary Transfer</button>
-          <button class="action-btn" routerLink="/employee/employee-assets"><mat-icon class="open_in_new">open_in_new</mat-icon><br>View My Assets</button>
-          <button class="action-btn" routerLink="/employee/all-emp-requests"><mat-icon class="assignment">assignment</mat-icon><br>View My Requests</button>
+    <!-- ── 2. Quick Actions ── -->
+    <section class="section-block">
+      <h3 class="section-title">Quick Actions</h3>
+      <div class="quick-actions-grid">
+        <button class="quick-action-card" routerLink="/employee/new-asset-request">
+          <div class="action-icon-wrapper blue">
+            <mat-icon>add_circle</mat-icon>
+          </div>
+          <div class="action-text">
+            <span class="action-title">Request New Asset</span>
+            <span class="action-desc">Submit request for equipment</span>
+          </div>
+        </button>
+
+        <button class="quick-action-card" routerLink="/employee/transfer-form">
+          <div class="action-icon-wrapper teal">
+            <mat-icon>swap_horiz</mat-icon>
+          </div>
+          <div class="action-text">
+            <span class="action-title">Temporary Transfer</span>
+            <span class="action-desc">Request asset transfer</span>
+          </div>
+        </button>
+
+        <button class="quick-action-card" routerLink="/employee/employee-assets">
+          <div class="action-icon-wrapper purple">
+            <mat-icon>inventory_2</mat-icon>
+          </div>
+          <div class="action-text">
+            <span class="action-title">My Assigned Assets</span>
+            <span class="action-desc">View your hardware & tools</span>
+          </div>
+        </button>
+
+        <button class="quick-action-card" routerLink="/employee/all-emp-requests">
+          <div class="action-icon-wrapper orange">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <div class="action-text">
+            <span class="action-title">My Requests</span>
+            <span class="action-desc">Check approvals & status</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- ── 3. Overview KPI Cards ── -->
+    <section class="section-block">
+      <h3 class="section-title">Overview</h3>
+      <div class="assura-grid assura-grid-cols-4">
+        <!-- My Assigned Assets -->
+        <div class="assura-card assura-accent-info clickable" routerLink="/employee/employee-assets">
+          <span class="assura-card-title">My Assigned Assets</span>
+          <strong class="assura-card-value">{{ myAssignedAssetsCount() }}</strong>
+          <span class="assura-card-subtitle">All active assets in your care</span>
         </div>
-      </section>
 
-      <!--overview cards--> 
-      <section class="section">
-        <h3 class="section-label">Overview</h3>
-        <div class="grid-4">
-          <div class="stat-card border-blue">
-            <div class="stat-top">My Assigned Assets </div>
-            <div class="stat-val"></div>
-            <div class="stat-sub">All assets assigned to me</div>
-          </div>
-          <div class="stat-card border-green">
-            <div class="stat-top">Pending Requests </div>
-            <div class="stat-val"></div>
-            <div class="stat-sub">Waiting for approval</div>
-          </div>
-          <div class="stat-card border-yellow">
-            <div class="stat-top">Temporary transfers </div>
-            <div class="stat-val"></div>
-            <div class="stat-sub">All temporary transfers your assets</div>
-          </div>
-          <div class="stat-card border-red">
-            <div class="stat-top">Assets in maintenance </div>
-            <div class="stat-val"></div>
-            <div class="stat-sub">Awaiting repair or service</div>
-          </div>
+        <!-- Pending Requests -->
+        <div class="assura-card assura-accent-warning clickable" routerLink="/employee/all-emp-requests">
+          <span class="assura-card-title">Pending Requests</span>
+          <strong class="assura-card-value">{{ pendingCount() }}</strong>
+          <span class="assura-card-subtitle">Awaiting supervisor approval</span>
         </div>
-      </section>
 
-    <!--Pending requests -->
-    <div class="details-layout">
-      <div class="white-panel">
-        <h3>Pending Requests  ({{ pendingRequests().length }})</h3>
-        
-        @if (pendingRequests().length > 0) {
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Request ID</th>
-                <th>Request Date</th>
-                <th>Request Type</th>
-                <th>Item</th>
-                <th>Priority</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (req of pendingRequests(); track $index) {
+        <!-- Arrived Assets (Pending Confirmation) -->
+        <div class="assura-card assura-accent-success" [class.highlight-card]="pendingArrivalsCount() > 0">
+          <span class="assura-card-title">Arrived Items</span>
+          <strong class="assura-card-value">{{ pendingArrivalsCount() }}</strong>
+          <span class="assura-card-subtitle">Awaiting your confirmation</span>
+        </div>
+
+        <!-- Assets In Maintenance -->
+        <div class="assura-card assura-accent-danger clickable" routerLink="/employee/employee-assets">
+          <span class="assura-card-title">In Maintenance</span>
+          <strong class="assura-card-value">{{ maintenanceCount() }}</strong>
+          <span class="assura-card-subtitle">Currently under repair/service</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 4. Arrived Assets Awaiting Confirmation Section ── -->
+    @if (arrivedAssets().length > 0) {
+      <section class="section-block">
+        <div class="glass-panel arrived-panel" [class.has-pending-arrivals]="pendingArrivalsCount() > 0">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <mat-icon class="panel-header-icon pulse-icon">notifications_active</mat-icon>
+              <div>
+                <h3 class="panel-title">New Asset Arrivals — Confirmation Required</h3>
+                <span class="panel-subtitle">Items informed by storekeeper for your collection and receipt verification</span>
+              </div>
+            </div>
+            @if (pendingArrivalsCount() > 0) {
+              <span class="badge-pill-alert">{{ pendingArrivalsCount() }} Action Required</span>
+            }
+          </div>
+
+          <div class="table-responsive">
+            <table class="assura-modern-table">
+              <thead>
                 <tr>
-                  <td><span class="id-badge">#{{ req.id }}</span></td>
-                  <td class="date-col">{{ req.requestDate | date: 'yyyy-MM-dd' }}</td>
-                  <td class="type-col">{{ req.requestType }}</td>
-                  <td class="item-name">{{ req.item }}</td> 
-                  <td>
-                    <span class="priority-pill" [ngClass]="req.priority.toLowerCase()">
-                      {{ req.priority }}
-                    </span>
-                  </td>
+                  <th>Item / Order</th>
+                  <th>Model / Specs</th>
+                  <th>Warranty</th>
+                  <th>Qty</th>
+                  <th>Arrived Date</th>
+                  <th>Store Remarks</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Action</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (arrival of arrivedAssets(); track arrival.id) {
+                  <tr [class.highlight-row]="arrival.status === 'Informed'">
+                    <td class="item-name-cell">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <mat-icon style="color: #6366f1; font-size: 20px; width: 20px; height: 20px;">inventory</mat-icon>
+                        <div>
+                          <strong>{{ arrival.itemName }}</strong>
+                          <div style="font-size: 11px; color: #94a3b8;">{{ arrival.divisionName }}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{ arrival.model || 'Standard' }}</td>
+                    <td><span class="tag-warranty">{{ arrival.warranty || 'N/A' }}</span></td>
+                    <td><span class="qty-tag">{{ arrival.quantity }}</span></td>
+                    <td class="date-cell">{{ arrival.purchasedDate | date: 'mediumDate' }}</td>
+                    <td style="max-width: 200px; font-size: 12.5px; color: #cbd5e1;">
+                      {{ arrival.remarks || 'Ready for collection at Stores' }}
+                    </td>
+                    <td>
+                      @if (arrival.status === 'Informed') {
+                        <span class="status-badge arrival-pending">
+                          <span class="status-dot"></span>
+                          Awaiting Confirmation
+                        </span>
+                      } @else {
+                        <span class="status-badge arrival-confirmed">
+                          <mat-icon style="font-size: 14px; width: 14px; height: 14px;">check_circle</mat-icon>
+                          Confirmed
+                        </span>
+                      }
+                    </td>
+                    <td style="text-align: right;">
+                      @if (arrival.status === 'Informed') {
+                        <button class="btn-confirm-receipt"
+                                [disabled]="confirmingId() === arrival.id"
+                                (click)="confirmArrival(arrival)">
+                          <mat-icon>verified</mat-icon>
+                          {{ confirmingId() === arrival.id ? 'Confirming...' : 'Confirm Receipt' }}
+                        </button>
+                      } @else {
+                        <span class="confirmed-receipt-label">
+                          <mat-icon>done_all</mat-icon> Verified
+                        </span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- ── 5. Pending Requests Table ── -->
+    <section class="section-block">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <h3 class="panel-title">Pending Requests</h3>
+            <span class="count-badge">{{ pendingRequests().length }}</span>
+          </div>
+          <a class="view-all-link" routerLink="/employee/all-emp-requests">
+            View All Requests <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+
+        @if (pendingRequests().length > 0) {
+          <div class="table-responsive">
+            <table class="assura-modern-table">
+              <thead>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Submitted Date</th>
+                  <th>Request Type</th>
+                  <th>Item Description</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (req of pendingRequests(); track req.id) {
+                  <tr>
+                    <td><span class="id-tag">#{{ req.id }}</span></td>
+                    <td class="date-cell">{{ req.requestDate | date: 'mediumDate' }}</td>
+                    <td>
+                      <span class="type-pill">{{ req.requestType }}</span>
+                    </td>
+                    <td class="item-name-cell">{{ req.item }}</td>
+                    <td>
+                      <span class="priority-badge" [ngClass]="req.priority.toLowerCase()">
+                        {{ req.priority }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="status-badge pending">
+                        <span class="status-dot"></span>
+                        {{ req.status }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         } @else {
-          <div class="dashboard-empty-state">
-             <mat-icon class="empty-icon">layers_clear</mat-icon>
-            <h3>No Pending Requests</h3>
+          <div class="empty-state-box">
+            <mat-icon class="empty-icon">check_circle_outline</mat-icon>
+            <h4>All Caught Up!</h4>
             <p>You don't have any pending asset or maintenance requests at the moment.</p>
           </div>
         }
       </div>
-
-<!--recent activities table-->
-    <!-- <div class="white-panel">
-          <h3>Recent Activities</h3>
-          <div class="activity-feed">
-            @for (act of recentActivities(); track $index) {
-              <div class="activity-item">
-                <p class="act-desc">{{ act.description }}</p>
-                <span class="act-time">{{ act.timestamp }}</span>
-              </div>
-            }
-          </div>
-        </div>--> 
+    </section>
+  }
+  } @else {
+    <div class="pending-user-view" style="display: flex; align-items: center; justify-content: center; height: calc(100vh - 120px); text-align: center; flex-direction: column;">
+      <div class="glass-card" style="padding: 48px; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 24px; border: 1px solid rgba(245, 158, 11, 0.3);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h2 style="color: #f8fafc; font-size: 24px; font-weight: 700; margin: 0;">Account Under Review</h2>
+        <p style="color: #94a3b8; font-size: 16px; margin: 0; line-height: 1.5;">Your account is under review, wait for HR review.</p>
       </div>
-    }
-  
+    </div>
+  }
 </div>

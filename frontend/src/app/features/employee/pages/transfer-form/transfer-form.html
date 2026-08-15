@@ -1,153 +1,194 @@
-<div class="main-content">
-  <div class="content-padding">
-    <h1 class="section-label">Requests</h1>
-    <a (click)="onCancel()" class="back-link">←</a>
-    <h2 class="page-title">Temporary Asset Transfer Requests</h2>
+<div class="request-form-page">
+  <!-- ── 1. Page Header ── -->
+  <div class="page-header">
+    <div class="back-nav">
+      <button (click)="onCancel()" class="back-link-btn">
+        <mat-icon>arrow_back</mat-icon> Back to Requests
+      </button>
+    </div>
+    <h1 class="assura-page-title">Temporary Transfer Request</h1>
+    <p class="page-subtitle">Request temporary custody and custody transfer of assets across departments or employees.</p>
+  </div>
 
-    <!-- header -->
-    <div class="form-card">
-      <div class="form-header">
-        <h3>Request Details</h3>
-        <p>Please fill out the form below to submit your asset request.</p>
+  <!-- ── 2. Glassmorphic Form Card ── -->
+  <div class="form-glass-card">
+    <div class="card-hero-header">
+      <div class="hero-icon-box teal">
+        <mat-icon>move_up</mat-icon>
       </div>
+      <div>
+        <h3 class="hero-card-title">Transfer Request Details</h3>
+        <p class="hero-card-subtitle">Fill in the required asset specifications, priority, and allocation timeframe.</p>
+      </div>
+    </div>
 
-      <form (ngSubmit)="onSubmit()" class="asset-form">
-
-        <!-- asset Name-->
-        <div class="form-group">
-          <label>Required Asset <span class="required" >*</span></label>
-          <input type="text" [ngModel]="assetName()" (ngModelChange)="assetName.set($event)" name="assetName"
-            placeholder="Type the name/description of the asset you need..." class="form-control" required>
+    <form (ngSubmit)="onSubmit()" class="modern-form">
+      <div class="form-grid-2">
+        <!-- Required Asset Name -->
+        <div class="form-field-group">
+          <label class="field-label">Required Asset / Item Name <span class="required">*</span></label>
+          <input
+            type="text"
+            [ngModel]="assetName()"
+            (ngModelChange)="assetName.set($event)"
+            name="assetName"
+            placeholder="e.g., Projector, Test Bench, or Measurement Meter"
+            class="assura-input"
+            required>
         </div>
 
-        <!-- Catagory -->
-        <div class="form-group">
-          <label>Asset Category <span class="required" >*</span></label>
-          <select [ngModel]="category()" (ngModelChange)="category.set($event)" name="category" class="form-control">
+        <!-- Asset Category -->
+        <div class="form-field-group">
+          <label class="field-label">Asset Category <span class="required">*</span></label>
+          <select [ngModel]="category()" (ngModelChange)="category.set($event)" name="category" class="assura-select" required>
             <option value="" disabled selected>Select an asset category</option>
             @for (cat of categories(); track cat.id) {
               <option [value]="cat.name">{{ cat.name }}</option>
             }
           </select>
         </div>
+      </div>
 
-        <!-- Specifications -->
-        <div class="form-group">
-          <label>Required Specifications</label>
-          <textarea [ngModel]="description()" (ngModelChange)="description.set($event)" name="description"
-            placeholder="Clearly state what the specifications of asset you request." class="form-control"
-            rows="3"></textarea>
-        </div>
-
+      <div class="form-grid-2">
         <!-- Quantity -->
-        <div class="form-group">
-          <label>Quantity</label>
-          <input type="number" [ngModel]="quantity()" (ngModelChange)="quantity.set($event)" name="quantity"
-            class="form-control">
+        <div class="form-field-group">
+          <label class="field-label">Quantity</label>
+          <input
+            type="number"
+            [ngModel]="quantity()"
+            (ngModelChange)="quantity.set($event)"
+            name="quantity"
+            class="assura-input"
+            min="1"
+            placeholder="1">
         </div>
 
         <!-- Priority -->
-        <div class="form-group">
-          <label>Priority</label>
-          <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority" class="form-control">
+        <div class="form-field-group">
+          <label class="field-label">Priority Level</label>
+          <select [ngModel]="priority()" (ngModelChange)="priority.set($event)" name="priority" class="assura-select">
             <option value="Normal">Normal</option>
             <option value="Low">Low</option>
             <option value="High">High</option>
             <option value="Critical">Critical</option>
           </select>
         </div>
+      </div>
 
-        <!-- Reason for Transfer -->
-        <div class="form-group">
-          <label>Reason for transfer <span class="required" >*</span></label>
-          <textarea [ngModel]="reason()" (ngModelChange)="reason.set($event)" name="reason"
-            placeholder="Briefly explain why this asset transfer is needed..." class="form-control" rows="3"></textarea>
-        </div>
+      <!-- Required Specifications -->
+      <div class="form-field-group full-width">
+        <label class="field-label">Required Specifications</label>
+        <textarea
+          [ngModel]="description()"
+          (ngModelChange)="description.set($event)"
+          name="description"
+          placeholder="State any specific parameters, power ratings, software versions required..."
+          class="assura-textarea"
+          rows="3">
+        </textarea>
+      </div>
 
-        <!-- Duration Selection -->
-        <div class="duration-section">
-          <label class="section-title">Select Duration</label>
+      <!-- Reason for Transfer -->
+      <div class="form-field-group full-width">
+        <label class="field-label">Reason for Transfer <span class="required">*</span></label>
+        <textarea
+          [ngModel]="reason()"
+          (ngModelChange)="reason.set($event)"
+          name="reason"
+          placeholder="Explain the project context or operational necessity for this temporary allocation..."
+          class="assura-textarea"
+          rows="3"
+          required>
+        </textarea>
+      </div>
 
-          <div class="date-picker-container">
-            <div class="date-field">
-              <label>From</label>
-              <div class="input-wrapper">
-                <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
-                <mat-datepicker #fromPicker></mat-datepicker>
-
-                <input matInput [matDatepicker]="fromPicker" placeholder="Pick a date" [ngModel]="fromDate()"
-                  (dateChange)="fromDate.set($event.value)" name="fromDate">
-
-
-              </div>
+      <!-- Duration Selection -->
+      <div class="form-field-group full-width">
+        <label class="field-label">Allocation Duration Range</label>
+        <div class="duration-grid">
+          <div class="date-input-group">
+            <span class="date-label">From Date:</span>
+            <div class="date-picker-wrap">
+              <input
+                matInput
+                [matDatepicker]="fromPicker"
+                placeholder="Pick start date"
+                [ngModel]="fromDate()"
+                (dateChange)="fromDate.set($event.value)"
+                name="fromDate"
+                class="assura-input date-input">
+              <mat-datepicker-toggle matSuffix [for]="fromPicker" class="date-toggle"></mat-datepicker-toggle>
+              <mat-datepicker #fromPicker></mat-datepicker>
             </div>
+          </div>
 
-            <div class="date-field">
-              <label>To</label>
-              <div class="input-wrapper">
-                <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
-                <mat-datepicker #toPicker></mat-datepicker>
-
-                <input matInput [matDatepicker]="toPicker" placeholder="Pick a date" [ngModel]="toDate()"
-                  (dateChange)="toDate.set($event.value)" name="toDate">
-
-              </div>
+          <div class="date-input-group">
+            <span class="date-label">To Date:</span>
+            <div class="date-picker-wrap">
+              <input
+                matInput
+                [matDatepicker]="toPicker"
+                placeholder="Pick end date"
+                [ngModel]="toDate()"
+                (dateChange)="toDate.set($event.value)"
+                name="toDate"
+                class="assura-input date-input">
+              <mat-datepicker-toggle matSuffix [for]="toPicker" class="date-toggle"></mat-datepicker-toggle>
+              <mat-datepicker #toPicker></mat-datepicker>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- File Attachment -->
-        <div class="form-group">
-          <label>Attachment (Optional)</label>
-          @if (selectedFiles().length === 0) {
-            <div class="upload-box" (click)="browseFiles()">
-              <mat-icon class="upload-icon">cloud_upload</mat-icon>
-              <p>Drag files here or <span class="browse">click to browse</span></p>
-            </div>
-          }
-
-          <!-- Display selected files -->
-          @if (selectedFiles().length > 0) {
-            <div class="selected-files">
-              <p class="files-label">Selected Files: {{ selectedFiles().length }}</p>
+      <!-- File Attachment -->
+      <div class="form-field-group full-width">
+        <label class="field-label">Attachments (Optional approval forms or project documents)</label>
+        @if (selectedFiles().length === 0) {
+          <div class="upload-dropzone" (click)="browseFiles()">
+            <mat-icon class="dropzone-icon">cloud_upload</mat-icon>
+            <p class="dropzone-text">Drag & drop files here or <span class="browse-link">browse files</span></p>
+            <span class="dropzone-sub">Supports JPG, PNG, PDF (Max 10MB)</span>
+          </div>
+        } @else {
+          <div class="files-preview-box">
+            <div class="files-list">
               @for (file of selectedFiles(); track file.name; let i = $index) {
-                <div class="file-item">
+                <div class="file-chip">
                   <mat-icon class="file-icon">attach_file</mat-icon>
                   <span class="file-name">{{ file.name }}</span>
-                  <span class="file-size">({{ (file.size / 1024).toFixed(2) }} KB)</span>
-                  <button type="button" class="remove-btn" (click)="removeFile(i); $event.stopPropagation()">
+                  <span class="file-size-tag">({{ (file.size / 1024).toFixed(1) }} KB)</span>
+                  <button type="button" class="remove-file-btn" (click)="removeFile(i); $event.stopPropagation()">
                     <mat-icon>close</mat-icon>
                   </button>
                 </div>
               }
-              <button type="button" class="add-files-btn" (click)="browseFiles(); $event.stopPropagation()">
-                <mat-icon>add_circle_outline</mat-icon>
-                Add More Files
-              </button>
             </div>
-          }
-        </div>
+            <button type="button" class="add-more-btn" (click)="browseFiles(); $event.stopPropagation()">
+              <mat-icon>add</mat-icon> Add More Files
+            </button>
+          </div>
+        }
+      </div>
 
-      <!-- file submit-->
-        <div class="form-actions">
-          <button type="button" class="cancel-btn" (click)="onCancel()" [disabled]="isSubmitting()">Cancel</button>
-          <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
-            @if (isSubmitting()) {
-              <mat-icon class="spinner">schedule</mat-icon>
-              Submitting...
-            } @else {
-              Submit Request
-            }
-          </button>
-        </div>
-      </form>
-    </div>
+      <!-- Actions -->
+      <div class="form-actions-row">
+        <button type="button" class="assura-btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">
+          Cancel
+        </button>
+        <button type="submit" class="assura-btn-primary" [disabled]="isSubmitting() || !assetName() || !reason()">
+          @if (isSubmitting()) {
+            <mat-icon class="spin-animation">sync</mat-icon> Submitting Request...
+          } @else {
+            <mat-icon>send</mat-icon> Submit Transfer Request
+          }
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
-
-// Result Overlay
-@if(showResult()){
+<!-- Result Overlay -->
+@if (showResult()) {
   <app-result-overlay
     [type]="resultType()"
     [title]="resultTitle()"

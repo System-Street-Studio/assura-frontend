@@ -1,24 +1,24 @@
 <div class="acc-overview-container">
-    <h1 class="page-title">Overview</h1>
+    <h1 class="assura-page-title">Overview</h1>
 
     <!-- Counter Cards -->
     <div class="counter-row">
-        <div class="counter-card approved" [class.active-card]="activeFilter === 'approved'"
+        <div class="glass-card counter-card approved" [class.active-card]="activeFilter === 'approved'"
             (click)="filterByCategory('approved')">
             <span class="counter-label">Approved</span>
             <span class="counter-number">{{ approvedCount }}</span>
         </div>
-        <div class="counter-card to-be-approved" [class.active-card]="activeFilter === 'to-be-approved'"
+        <div class="glass-card counter-card to-be-approved" [class.active-card]="activeFilter === 'to-be-approved'"
             (click)="filterByCategory('to-be-approved')">
             <span class="counter-label">To be Approved</span>
             <span class="counter-number">{{ toBeApprovedCount }}</span>
         </div>
-        <div class="counter-card pending" [class.active-card]="activeFilter === 'pending'"
+        <div class="glass-card counter-card pending" [class.active-card]="activeFilter === 'pending'"
             (click)="filterByCategory('pending')">
             <span class="counter-label">Pending</span>
             <span class="counter-number">{{ pendingCount }}</span>
         </div>
-        <div class="counter-card reject" [class.active-card]="activeFilter === 'reject'"
+        <div class="glass-card counter-card reject" [class.active-card]="activeFilter === 'reject'"
             (click)="filterByCategory('reject')">
             <span class="counter-label">Reject</span>
             <span class="counter-number">{{ rejectCount }}</span>
@@ -26,16 +26,16 @@
     </div>
 
     <!-- Active Filter Label -->
-    <div class="filter-bar" *ngIf="activeFilter !== 'all'">
+    <div class="glass-panel filter-bar" *ngIf="activeFilter !== 'all'">
         <span class="filter-label">Showing: <strong>{{ activeFilter === 'to-be-approved' ? 'To be Approved' :
                 (activeFilter | titlecase) }}</strong></span>
-        <button class="btn-clear-filter" (click)="filterByCategory('all')">Show All</button>
+        <button class="assura-btn assura-btn-secondary" (click)="filterByCategory('all')">Show All</button>
     </div>
 
     <!-- Main Two-Column Layout -->
     <div class="main-layout">
         <!-- Left: Discarding Confirmation Queue -->
-        <div class="queue-section">
+        <div class="glass-panel queue-section">
             <h2 class="section-title">Discarding Confirmation Queue</h2>
 
             <div class="queue-list">
@@ -66,9 +66,7 @@
 
         <!-- Right: Confirmation Request Detail -->
         <div class="detail-section" *ngIf="selectedItem">
-            <h2 class="section-title">Confirmation Request</h2>
-
-            <div class="detail-card">
+            <div class="glass-panel detail-card">
                 <div class="detail-header">
                     <h3 class="detail-name">{{ selectedItem.name }}</h3>
                     <span class="detail-status-badge" [ngClass]="selectedItem.category">{{ selectedItem.status }}</span>
@@ -97,6 +95,10 @@
                         <span>{{ selectedItem.assetType }}</span>
                     </div>
                     <div class="info-item">
+                        <label>Requested By</label>
+                        <span>{{ selectedItem.requestedByName || 'Unknown' }}</span>
+                    </div>
+                    <div class="info-item">
                         <label>Current User</label>
                         <span>{{ selectedItem.currentUser }}</span>
                     </div>
@@ -117,15 +119,14 @@
 
                 <div class="detail-actions"
                     *ngIf="selectedItem.category !== 'approved' && selectedItem.category !== 'reject'">
-                    <button class="btn-confirm" (click)="confirmDiscarding()">Confirm Discarding</button>
+                    <button class="assura-btn assura-btn-primary btn-confirm" (click)="confirmDiscarding()">Confirm Discarding</button>
                 </div>
             </div>
         </div>
 
         <!-- No Selection State -->
         <div class="detail-section empty-detail" *ngIf="!selectedItem">
-            <h2 class="section-title">Confirmation Request</h2>
-            <div class="detail-card empty-state">
+            <div class="glass-panel detail-card empty-state">
                 <p>Select an item from the queue to view details.</p>
             </div>
         </div>
@@ -134,7 +135,7 @@
 
 <!-- Confirm Discarding Modal -->
 <div class="confirm-modal-overlay" *ngIf="showConfirmModal && selectedItem" (click)="closeConfirmModal()">
-    <div class="confirm-modal-card" (click)="$event.stopPropagation()">
+    <div class="glass-panel confirm-modal-card" (click)="$event.stopPropagation()">
         <h3 class="confirm-modal-name">{{ selectedItem.name }}</h3>
 
         <div class="confirm-info-grid">
@@ -157,6 +158,10 @@
             <div class="confirm-info-item">
                 <label>Asset Type</label>
                 <span>{{ selectedItem.assetType }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Requested By</label>
+                <span>{{ selectedItem.requestedByName || 'Unknown' }}</span>
             </div>
             <div class="confirm-info-item">
                 <label>Current User</label>
@@ -185,8 +190,8 @@
         </div>
 
         <div class="confirm-modal-actions">
-            <button class="btn-cancel-modal" (click)="closeConfirmModal()">Cancel</button>
-            <button class="btn-save-discarded" (click)="saveAsDiscarded()">Save as Discarded</button>
+            <button class="assura-btn assura-btn-secondary" (click)="closeConfirmModal()">Cancel</button>
+            <button class="assura-btn assura-btn-danger" (click)="saveAsDiscarded()">Save as Discarded</button>
         </div>
     </div>
 </div>

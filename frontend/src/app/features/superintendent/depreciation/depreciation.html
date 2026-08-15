@@ -1,0 +1,447 @@
+<div class="depreciation-container">
+  <!-- Top Greeting & Header Banner -->
+  <div class="assura-greeting-banner">
+    <div class="banner-bg-shape"></div>
+    <div class="banner-bg-shape secondary"></div>
+    <div class="welcome-left">
+      <div class="banner-badge">
+        <mat-icon>calculate</mat-icon>
+        <span>Superintendent Financial Asset Engine</span>
+      </div>
+      <h1 class="assura-greeting-text">Asset Depreciation & Book Value Analysis</h1>
+      <p class="assura-greeting-date">
+        Straight-line annual depreciation calculation based on category percentages. Book values decrease annually down to a strictly enforced LKR 0.00 minimum floor.
+      </p>
+    </div>
+    <div class="banner-actions">
+      <button class="banner-btn" (click)="exportToCsv()" [disabled]="!filteredAssets.length">
+        <mat-icon>download</mat-icon>
+        Export CSV
+      </button>
+      <button class="banner-btn secondary" (click)="printReport()" [disabled]="!filteredAssets.length">
+        <mat-icon>print</mat-icon>
+        Print Report
+      </button>
+    </div>
+  </div>
+
+  <!-- Simulation & Control Toolbar -->
+  <div class="controls-panel">
+    <div class="control-group">
+      <label class="control-label">
+        <mat-icon>schedule</mat-icon>
+        Timeline:
+      </label>
+      <select class="assura-select" [(ngModel)]="selectedYear" (change)="onYearChange()">
+        @for (opt of availableYears; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">
+        <mat-icon>category</mat-icon>
+        Category:
+      </label>
+      <select class="assura-select" [(ngModel)]="selectedCategoryId" (change)="onCategoryFilterChange()">
+        <option [value]="0">All Categories</option>
+        @for (cat of categories; track cat.categoryId) {
+          <option [value]="cat.categoryId">{{ cat.categoryName }} ({{ cat.depreciationRate }}%/yr)</option>
+        }
+      </select>
+    </div>
+
+    <div class="status-filters">
+      <button 
+        class="filter-chip" 
+        [class.active]="selectedStatusFilter === 'ALL'" 
+        (click)="setStatusFilter('ALL')">
+        All Assets ({{ summary?.totalAssets || 0 }})
+      </button>
+      <button 
+        class="filter-chip active-chip" 
+        [class.active]="selectedStatusFilter === 'ACTIVE'" 
+        (click)="setStatusFilter('ACTIVE')">
+        Active Depreciating ({{ summary?.activeDepreciatingAssets || 0 }})
+      </button>
+      <button 
+        class="filter-chip zero-chip" 
+        [class.active]="selectedStatusFilter === 'DEP'" 
+        (click)="setStatusFilter('DEP')">
+        LKR 0 Floor Reached ({{ summary?.fullyDepreciatedAssets || 0 }})
+      </button>
+    </div>
+
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search code, name, serial..." 
+        [(ngModel)]="searchTerm" 
+        (input)="onSearchChange()" />
+    </div>
+  </div>
+
+  <!-- KPI Metric Cards Grid -->
+  <div class="assura-grid assura-grid-cols-4">
+    <!-- Card 1: Total Initial Acquisition Price -->
+    <div class="glass-card kpi-card">
+      <div class="kpi-top">
+        <span class="assura-card-title">Initial Acquisition Cost</span>
+        <div class="kpi-icon-badge primary">
+          <mat-icon>payments</mat-icon>
+        </div>
+      </div>
+      <div class="assura-card-value">
+        {{ summary?.totalPurchaseValue || 0 | currency:'LKR':'symbol':'1.2-2' }}
+      </div>
+      <div class="assura-card-subtitle">
+        Sum of buying price across {{ summary?.totalAssets || 0 }} assets
+      </div>
+    </div>
+
+    <!-- Card 2: Current Net Book Value -->
+    <div class="glass-card kpi-card">
+      <div class="kpi-top">
+        <span class="assura-card-title">Current Net Book Value</span>
+        <div class="kpi-icon-badge success">
+          <mat-icon>account_balance_wallet</mat-icon>
+        </div>
+      </div>
+      <div class="assura-card-value success-val">
+        {{ summary?.totalCurrentValue || 0 | currency:'LKR':'symbol':'1.2-2' }}
+      </div>
+      <div class="assura-card-subtitle">
+        @if (selectedYear > 0) {
+          <span>Simulated value at End of {{ selectedYear }}</span>
+        } @else {
+          <span>Present real-time calculated book value</span>
+        }
+      </div>
+    </div>
+
+    <!-- Card 3: Total Accumulated Depreciation -->
+    <div class="glass-card kpi-card">
+      <div class="kpi-top">
+        <span class="assura-card-title">Accumulated Depreciation</span>
+        <div class="kpi-icon-badge warning">
+          <mat-icon>trending_down</mat-icon>
+        </div>
+      </div>
+      <div class="assura-card-value warning-val">
+        {{ summary?.totalAccumulatedDepreciation || 0 | currency:'LKR':'symbol':'1.2-2' }}
+      </div>
+      <div class="assura-card-subtitle">
+        <span class="dep-percent-badge">{{ summary?.overallDepreciationPercentage || 0 }}% amortized</span>
+      </div>
+    </div>
+
+    <!-- Card 4: Portfolio Breakdown -->
+    <div class="glass-card kpi-card">
+      <div class="kpi-top">
+        <span class="assura-card-title">Portfolio Depr. Status</span>
+        <div class="kpi-icon-badge info">
+          <mat-icon>pie_chart</mat-icon>
+        </div>
+      </div>
+      <div class="kpi-stats-row">
+        <div class="kpi-stat-item">
+          <span class="stat-count">{{ summary?.activeDepreciatingAssets || 0 }}</span>
+          <span class="stat-lbl">Active</span>
+        </div>
+        <div class="kpi-stat-divider"></div>
+        <div class="kpi-stat-item">
+          <span class="stat-count zero-count">{{ summary?.fullyDepreciatedAssets || 0 }}</span>
+          <span class="stat-lbl">LKR 0 Floor</span>
+        </div>
+      </div>
+      <div class="assura-card-subtitle">
+        Enforced LKR 0 minimum value constraint
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Breakdown Grid -->
+  @if (categories.length > 0) {
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <mat-icon>dashboard_customize</mat-icon>
+          Category Rates & Allocation
+        </h2>
+        <span class="section-desc">Specific straight-line depreciation percentages per asset category</span>
+      </div>
+
+      <div class="category-grid">
+        @for (cat of categories; track cat.categoryId) {
+          <div class="category-card" [class.selected-cat]="selectedCategoryId === cat.categoryId" (click)="selectedCategoryId = selectedCategoryId === cat.categoryId ? 0 : cat.categoryId; onCategoryFilterChange()">
+            <div class="cat-card-header">
+              <span class="cat-name">{{ cat.categoryName }}</span>
+              <span class="cat-rate-badge">{{ cat.depreciationRate }}% / yr</span>
+            </div>
+            <div class="cat-card-body">
+              <div class="cat-metric-row">
+                <span class="cat-label">Assets:</span>
+                <span class="cat-val">{{ cat.totalAssets }} ({{ cat.fullyDepreciatedCount }} fully depr.)</span>
+              </div>
+              <div class="cat-metric-row">
+                <span class="cat-label">Acquired:</span>
+                <span class="cat-val">{{ cat.totalPurchaseValue | currency:'LKR':'symbol':'1.0-0' }}</span>
+              </div>
+              <div class="cat-metric-row">
+                <span class="cat-label">Current:</span>
+                <span class="cat-val highlight">{{ cat.totalCurrentValue | currency:'LKR':'symbol':'1.0-0' }}</span>
+              </div>
+
+              <!-- Progress bar of depreciation -->
+              <div class="cat-progress-wrap">
+                <div class="cat-progress-bar" [style.width.%]="cat.totalPurchaseValue > 0 ? (cat.totalAccumulatedDepreciation / cat.totalPurchaseValue) * 100 : 0"></div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Asset Table Section -->
+  <div class="section-container">
+    <div class="section-header">
+      <div class="table-header-left">
+        <h2 class="section-title">
+          <mat-icon>table_chart</mat-icon>
+          Asset Book Value Register
+        </h2>
+        <span class="section-desc">Showing {{ startIndex }}-{{ endIndex }} of {{ filteredAssets.length }} assets</span>
+      </div>
+      @if (selectedYear > 0) {
+        <div class="sim-badge">
+          <mat-icon>auto_graph</mat-icon>
+          Simulating Book Values for End of {{ selectedYear }}
+        </div>
+      }
+    </div>
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <span>Calculating depreciation values...</span>
+      </div>
+    } @else if (filteredAssets.length === 0) {
+      <div class="empty-state">
+        <mat-icon>inventory_2</mat-icon>
+        <h3>No assets found</h3>
+        <p>Try adjusting your search criteria or category filters.</p>
+      </div>
+    } @else {
+      <div class="assura-table-container">
+        <table class="assura-table">
+          <thead>
+            <tr>
+              <th class="assura-th col-asset">Asset Details</th>
+              <th class="assura-th col-category">Category & Rate</th>
+              <th class="assura-th col-date">Acquired Date</th>
+              <th class="assura-th col-price text-right">Initial Price</th>
+              <th class="assura-th col-expense text-right">Annual Expense</th>
+              <th class="assura-th col-accum text-right">Accumulated Depr.</th>
+              <th class="assura-th col-bookval text-right">Current Book Value</th>
+              <th class="assura-th col-status text-center">Status</th>
+              <th class="assura-th col-action text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (asset of paginatedAssets; track asset.id) {
+              <tr class="assura-tr-hover" [class.zero-row]="asset.isFullyDepreciated">
+                <td class="assura-td col-asset">
+                  <div class="asset-info-cell">
+                    <span class="asset-code">{{ asset.assetCode }}</span>
+                    <span class="asset-name" [title]="asset.productName || ''">{{ asset.productName }}</span>
+                    @if (asset.serialNumber) {
+                      <span class="asset-sn">SN: {{ asset.serialNumber }}</span>
+                    }
+                  </div>
+                </td>
+                <td class="assura-td col-category">
+                  <div class="cat-pill">
+                    <span class="cat-pill-name">{{ asset.categoryName }}</span>
+                    <span class="cat-pill-rate">{{ asset.depreciationRate }}%/yr</span>
+                  </div>
+                </td>
+                <td class="assura-td col-date">
+                  <div class="date-cell">
+                    <span class="date-text">{{ asset.assetDate | date:'mediumDate' }}</span>
+                    <span class="age-lbl">{{ asset.ageInYears | number:'1.1-1' }} yrs old</span>
+                  </div>
+                </td>
+                <td class="assura-td col-price text-right font-medium">
+                  {{ asset.purchaseValue | currency:'LKR':'symbol':'1.2-2' }}
+                </td>
+                <td class="assura-td col-expense text-right text-muted">
+                  {{ asset.annualDepreciation | currency:'LKR':'symbol':'1.2-2' }}
+                </td>
+                <td class="assura-td col-accum text-right text-warning font-medium">
+                  -{{ asset.accumulatedDepreciation | currency:'LKR':'symbol':'1.2-2' }}
+                </td>
+                <td class="assura-td col-bookval text-right">
+                  <div class="current-value-cell" [class.is-zero]="asset.isFullyDepreciated">
+                    <span class="val-num">{{ asset.currentValue | currency:'LKR':'symbol':'1.2-2' }}</span>
+                    @if (asset.isFullyDepreciated) {
+                      <span class="zero-badge">Min LKR 0 Floor</span>
+                    }
+                  </div>
+                </td>
+                <td class="assura-td col-status text-center">
+                  @if (asset.isFullyDepreciated) {
+                    <span class="assura-badge assura-badge-danger">Fully Depr.</span>
+                  } @else {
+                    <span class="assura-badge assura-badge-success">Active</span>
+                  }
+                </td>
+                <td class="assura-td col-action text-center">
+                  <button class="action-btn" (click)="openScheduleModal(asset)" title="View Straight-Line Depreciation Schedule">
+                    <mat-icon>query_stats</mat-icon>
+                    <span>Schedule</span>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Toolbar -->
+      <div class="pagination-bar">
+        <div class="pagination-left">
+          <span class="page-info-text">
+            Showing <strong>{{ startIndex }}</strong> - <strong>{{ endIndex }}</strong> of <strong>{{ filteredAssets.length }}</strong> assets
+          </span>
+          <div class="page-size-selector">
+            <span>Per page:</span>
+            <select class="assura-select page-size-select" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+              @for (size of pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="pagination-right">
+          <button class="page-nav-btn" [disabled]="currentPage === 1" (click)="prevPage()" title="Previous Page">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          
+          <span class="page-current-indicator">
+            Page <strong>{{ currentPage }}</strong> of <strong>{{ totalPages }}</strong>
+          </span>
+
+          <button class="page-nav-btn" [disabled]="currentPage === totalPages" (click)="nextPage()" title="Next Page">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Depreciation Schedule Modal Dialog -->
+  @if (isScheduleModalOpen) {
+    <div class="global-modal-overlay" (click)="closeScheduleModal()">
+      <div class="global-modal-card schedule-modal" (click)="$event.stopPropagation()">
+        <div class="global-modal-header">
+          <div class="modal-title-group">
+            <mat-icon class="modal-header-icon">calculate</mat-icon>
+            <div>
+              <h2>Straight-Line Depreciation Schedule</h2>
+              <span class="modal-sub">Asset {{ selectedSchedule?.assetCode }} ({{ selectedSchedule?.productName }})</span>
+            </div>
+          </div>
+          <button class="global-modal-close-btn" (click)="closeScheduleModal()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="global-modal-body">
+          @if (isLoadingSchedule) {
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <span>Generating multi-year schedule...</span>
+            </div>
+          } @else if (selectedSchedule) {
+            <!-- Modal Asset Summary Header -->
+            <div class="modal-meta-grid">
+              <div class="meta-item">
+                <span class="meta-label">Category & Rate</span>
+                <span class="meta-val">{{ selectedSchedule.categoryName }} ({{ selectedSchedule.depreciationRate }}% / yr)</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Acquisition Price</span>
+                <span class="meta-val highlight">{{ selectedSchedule.purchaseValue | currency:'LKR':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Acquired Date</span>
+                <span class="meta-val">{{ selectedSchedule.assetDate | date:'mediumDate' }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Current Book Value</span>
+                <span class="meta-val" [class.success-val]="selectedSchedule.currentValue > 0" [class.danger-val]="selectedSchedule.currentValue <= 0">
+                  {{ selectedSchedule.currentValue | currency:'LKR':'symbol':'1.2-2' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="schedule-table-wrap">
+              <table class="schedule-table">
+                <thead>
+                  <tr>
+                    <th>Year #</th>
+                    <th>Calendar Year</th>
+                    <th class="text-right">Beginning Book Value</th>
+                    <th class="text-right">Depreciation Expense</th>
+                    <th class="text-right">Accumulated Depr.</th>
+                    <th class="text-right">Ending Book Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of selectedSchedule.schedule; track row.yearNumber) {
+                    <tr [class.cur-year-row]="row.isCurrentYear" [class.zero-end-row]="row.endingValue <= 0">
+                      <td>
+                        <div class="year-num-badge">
+                          Year {{ row.yearNumber }}
+                          @if (row.isCurrentYear) {
+                            <span class="cur-tag">CURRENT</span>
+                          }
+                        </div>
+                      </td>
+                      <td><strong>{{ row.calendarYear }}</strong></td>
+                      <td class="text-right">{{ row.beginningValue | currency:'LKR':'symbol':'1.2-2' }}</td>
+                      <td class="text-right text-warning">-{{ row.depreciationExpense | currency:'LKR':'symbol':'1.2-2' }}</td>
+                      <td class="text-right">{{ row.accumulatedDepreciation | currency:'LKR':'symbol':'1.2-2' }}</td>
+                      <td class="text-right font-bold" [class.zero-val]="row.endingValue <= 0">
+                        {{ row.endingValue | currency:'LKR':'symbol':'1.2-2' }}
+                        @if (row.endingValue <= 0) {
+                          <span class="floor-tag">LKR 0 Min Floor</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="schedule-footnote">
+              <mat-icon>info</mat-icon>
+              <span>Straight-line depreciation strictly terminates when asset book value reaches <strong>LKR 0.00</strong>. Value never drops below zero.</span>
+            </div>
+          }
+        </div>
+
+        <div class="global-modal-footer">
+          <button class="assura-btn assura-btn-secondary" (click)="closeScheduleModal()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

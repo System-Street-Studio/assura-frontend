@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { ShellComponent } from './features/shell/shell';
 import { shellRoutes } from './features/shell/shell.routes';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
+import { ROLES } from './core/constants/roles';
 import { SuperintendentComponent } from './features/superintendent/superintendent';
 import { superintendentRoutes } from './features/superintendent/superintendent.routes';
 import { AccShellComponent } from './features/accountant/acc-shell/acc-shell';
@@ -30,6 +32,8 @@ export const routes: Routes = [
     {
         path: 'accountant',
         component: AccShellComponent,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [ROLES.ACCOUNTANT, ROLES.ADMIN] },
         children: accShellRoutes
     },
     {

@@ -1,7 +1,6 @@
 :host {
   display: block;
-  min-height: 100%;
-  background: #f5f7f8;
+  min-height: 100vh;
   font-family: 'Jost', sans-serif;
 }
 
@@ -23,48 +22,8 @@
   margin: 0;
   font-size: 1.55rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #f8fafc;
   letter-spacing: -0.01em;
-}
-
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 22px;
-}
-
-.metric-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(9, 61, 54, 0.04), 0 4px 12px rgba(9, 61, 54, 0.03);
-  border: 1px solid rgba(6, 71, 71, 0.05);
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s;
-}
-
-.metric-card:hover {
-  transform: translateY(-2px);
-}
-
-.metric-card span {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #6b7b7b;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  margin-bottom: 6px;
-}
-
-.metric-card strong {
-  display: block;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1;
 }
 
 .metric-accent {
@@ -79,27 +38,11 @@
   opacity: 0.6;
 }
 
-.analytics-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-  margin-bottom: 22px;
-}
-
-.panel {
-  background: #fff;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(9, 61, 54, 0.04), 0 4px 12px rgba(9, 61, 54, 0.03);
-  border: 1px solid rgba(6, 71, 71, 0.05);
-  min-height: 280px;
-}
-
 .panel h2 {
   margin: 0 0 20px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #f8fafc;
 }
 
 .donut-row {
@@ -114,13 +57,6 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: conic-gradient(
-    #0b6c78 0 39%,
-    #f59e0b 39% 65%,
-    #10b981 65% 82%,
-    #ef4444 82% 92%,
-    #6b7280 92% 100%
-  );
   position: relative;
 }
 
@@ -129,7 +65,7 @@
   position: absolute;
   inset: 24px;
   border-radius: 50%;
-  background: #fff;
+  background: #1e293b;
 }
 
 .legend-list {
@@ -145,7 +81,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #475569;
+  color: #94a3b8;
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -163,7 +99,7 @@
   align-items: end;
   gap: 16px;
   padding: 10px 10px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .status-chart { grid-template-columns: repeat(4, 1fr); }
@@ -192,7 +128,7 @@
 .bar-item small {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #64748b;
+  color: #94a3b8;
   text-align: center;
 }
 
@@ -204,43 +140,8 @@
   font-size: 1rem;
   font-weight: 700;
   margin-bottom: 16px;
-  color: #1a1a1a;
+  color: #f8fafc;
 }
-
-.anomaly-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.anomaly-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 18px 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 1px 3px rgba(9, 61, 54, 0.04), 0 4px 12px rgba(9, 61, 54, 0.03);
-  border: 1px solid rgba(6, 71, 71, 0.05);
-  transition: transform 0.2s;
-}
-
-.anomaly-card:hover {
-  transform: translateY(-2px);
-}
-
-.anomaly-card span {
-  font-size: 18px;
-}
-
-.anomaly-card strong {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #334155;
-}
-
-.anomaly-card.info { border-left: 4px solid #3b82f6; color: #3b82f6; }
-.anomaly-card.danger { border-left: 4px solid #ef4444; color: #ef4444; }
 
 .help-button {
   position: fixed;
@@ -250,29 +151,19 @@
   height: 44px;
   border: none;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0b6c78 0%, #085a63 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
   font-weight: 700;
-  box-shadow: 0 8px 24px rgba(11, 108, 120, 0.3);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
   cursor: pointer;
 }
 
 @media (max-width: 860px) {
   .reporting-dashboard {
     padding: 16px;
-  }
-
-  .metrics-grid,
-  .analytics-grid,
-  .anomaly-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .anomaly-grid {
-    gap: 12px;
   }
 }

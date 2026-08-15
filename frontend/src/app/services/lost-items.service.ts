@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface LostItem {
   id: string;
@@ -18,7 +19,7 @@ export interface LostItem {
 
 @Injectable({ providedIn: 'root' })
 export class LostItemsService {
-  private apiUrl = '/api/LostItems';
+  private apiUrl = `${environment.apiUrl}/LostItems`;
 
   constructor(private http: HttpClient) {}
 

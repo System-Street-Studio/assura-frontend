@@ -1,13 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Asset } from './models/asset.model';
 import { AssetsService } from '../../services/assets.service';
 
 @Component({
   selector: 'app-my-assets',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './my-assets.html',
   styleUrls: ['./my-assets.css']
 })
@@ -15,29 +15,50 @@ export class MyAssetsComponent implements OnInit {
   assets: Asset[] = [];
   filteredAssets: Asset[] = [];
   searchQuery: string = '';
+  statusFilter = '';
   selectedAsset: Asset | null = null;
   isLoading = true;
+
+  get activeCount() { return this.assets.filter(a => a.status === 'Active').length; }
+  get maintenanceCount() { return this.assets.filter(a => a.status === 'Maintenance').length; }
+  get assignedCount() { return this.assets.filter(a => a.status === 'Assigned').length; }
+  get totalCount() { return this.assets.length; }
   isAddAssetModalOpen = false;
   isEditAssetModalOpen = false;
-  newAsset: Partial<Asset> = {
-    name: '',
-    type: 'Laptop',
-    serialNumber: '',
-    division: '',
-    status: 'Active'
-  };
-  editingAsset: Asset | null = null;
+  addAssetForm: FormGroup;
+  editAssetForm: FormGroup;
+  editingAssetId: string | null = null;
 
   constructor(
     private assetsService: AssetsService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder
+  ) {
+    this.addAssetForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      type: ['Laptop', Validators.required],
+      serialNumber: ['', Validators.required],
+      division: ['', Validators.required],
+      status: ['Active']
+    });
+
+    this.editAssetForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      type: ['Laptop', Validators.required],
+      serialNumber: ['', Validators.required],
+      division: ['', Validators.required],
+      status: ['Active', Validators.required]
+    });
+  }
+
+  get addF() { return this.addAssetForm.controls; }
+  get editF() { return this.editAssetForm.controls; }
 
   ngOnInit() {
     this.assetsService.getAll().subscribe({
       next: (data) => {
         this.assets = data;
-        this.filteredAssets = [...this.assets];
+        this.applyFilters();
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -50,10 +71,23 @@ export class MyAssetsComponent implements OnInit {
   }
 
   onSearch() {
-    this.filteredAssets = this.assets.filter(asset =>
-      asset.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-      asset.serialNumber.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
+    this.applyFilters();
+  }
+
+  filterByStatus(status: string) {
+    this.statusFilter = this.statusFilter === status ? '' : status;
+    this.applyFilters();
+  }
+
+  private applyFilters() {
+    const query = this.searchQuery.toLowerCase();
+    this.filteredAssets = this.assets.filter(asset => {
+      const matchesSearch =
+        (asset.name ?? '').toLowerCase().includes(query) ||
+        (asset.serialNumber ?? '').toLowerCase().includes(query);
+      const matchesStatus = !this.statusFilter || asset.status === this.statusFilter;
+      return matchesSearch && matchesStatus;
+    });
   }
 
   selectAsset(asset: Asset) {
@@ -69,30 +103,22 @@ export class MyAssetsComponent implements OnInit {
   }
 
   openAddAssetModal() {
+    this.addAssetForm.reset({ name: '', type: 'Laptop', serialNumber: '', division: '', status: 'Active' });
     this.isAddAssetModalOpen = true;
   }
 
   closeAddAssetModal() {
     this.isAddAssetModalOpen = false;
-    this.newAsset = {
-      name: '',
-      type: 'Laptop',
-      serialNumber: '',
-      division: '',
-      status: 'Active'
-    };
   }
 
   submitAddAsset() {
-    console.log("Submitting new asset:", this.newAsset);
-    
-    if (!this.newAsset.name || !this.newAsset.serialNumber) {
-      alert('Please fill in the required fields (Name & Serial Number).');
+    if (this.addAssetForm.invalid) {
+      this.addAssetForm.markAllAsTouched();
       return;
     }
 
-    this.assetsService.create(this.newAsset).subscribe({
-      next: (id) => {
+    this.assetsService.create(this.addAssetForm.value).subscribe({
+      next: () => {
         // Fetch fresh list from backend
         this.assetsService.getAll().subscribe({
           next: (data) => {
@@ -112,23 +138,30 @@ export class MyAssetsComponent implements OnInit {
   }
 
   openEditAssetModal(asset: Asset) {
-    this.editingAsset = { ...asset };
+    this.editingAssetId = asset.id;
+    this.editAssetForm.reset({
+      name: asset.name,
+      type: asset.type,
+      serialNumber: asset.serialNumber,
+      division: asset.division,
+      status: asset.status
+    });
     this.isEditAssetModalOpen = true;
     this.selectedAsset = null; // Close detail modal
   }
 
   closeEditAssetModal() {
     this.isEditAssetModalOpen = false;
-    this.editingAsset = null;
+    this.editingAssetId = null;
   }
 
   submitEditAsset() {
-    if (!this.editingAsset || !this.editingAsset.name || !this.editingAsset.serialNumber) {
-      alert('Please fill in the required fields (Name & Serial Number).');
+    if (!this.editingAssetId || this.editAssetForm.invalid) {
+      this.editAssetForm.markAllAsTouched();
       return;
     }
 
-    this.assetsService.update(this.editingAsset.id, this.editingAsset).subscribe({
+    this.assetsService.update(this.editingAssetId, this.editAssetForm.value).subscribe({
       next: () => {
         this.assetsService.getAll().subscribe({
           next: (data) => {

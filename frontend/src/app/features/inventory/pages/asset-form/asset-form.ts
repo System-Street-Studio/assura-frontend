@@ -152,7 +152,17 @@ export class AssetFormComponent implements OnInit {
 
     this.loadDropdownData();
 
-    if (this.assetId) {
+    if (this.mode === 'create') {
+      this.route.queryParams.subscribe((params) => {
+        const initialCode = params['code'] || this.generateAssetCode();
+        this.assetForm.patchValue({
+          assetCode: initialCode,
+          warranty: params['warranty'] || '',
+          purchaseValue: params['price'] ? Number(params['price']) : 0,
+          divisionId: params['divisionId'] ? Number(params['divisionId']) : 0,
+        });
+      });
+    } else if (this.assetId) {
       this.assetService.getAssetById(this.assetId).subscribe({
         next: (a) => {
           // Store the numeric ID so it can be included in the update payload later
@@ -189,6 +199,22 @@ export class AssetFormComponent implements OnInit {
         },
       });
     }
+  }
+
+  /** Generates a unique, standardized asset code like AST-20260815-1234. */
+  generateAssetCode(): string {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    return `AST-${yyyy}${mm}${dd}-${rand}`;
+  }
+
+  /** Regenerates a fresh asset code on button click. */
+  regenerateCode(): void {
+    this.assetForm.patchValue({ assetCode: this.generateAssetCode() });
+    this.toast.info('New Asset Code generated');
   }
 
   // ── Computed getters (used in the template) ──

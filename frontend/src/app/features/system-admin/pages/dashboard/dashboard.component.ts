@@ -17,6 +17,10 @@ export class SystemAdminDashboardComponent implements OnInit {
     loading = true;
     errorMessage?: string;
 
+    greeting = 'Welcome';
+    firstName = 'Admin';
+    currentDate = new Date();
+
     stats: SystemAdminDashboardStats = {
         totalDepartments: 0,
         activeCategories: 0,
@@ -28,6 +32,9 @@ export class SystemAdminDashboardComponent implements OnInit {
     };
 
     ngOnInit() {
+        const hour = new Date().getHours();
+        this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
         console.log('[DEBUG] SystemAdminDashboardComponent: Fetching real stats...');
         this.systemAdminService.getDashboardStats().subscribe({
             next: (data) => {

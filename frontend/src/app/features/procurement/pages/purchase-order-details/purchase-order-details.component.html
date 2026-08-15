@@ -1,82 +1,82 @@
-<div class="po-details-container" *ngIf="order">
-    <div class="header-row">
-        <button class="back-btn" (click)="goBack()">
-            <mat-icon>arrow_back</mat-icon>
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;" *ngIf="order">
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 8px;">
+        <button class="assura-btn assura-btn-secondary" style="padding: 8px;" (click)="goBack()">
+            <mat-icon style="font-size: 20px;">arrow_back</mat-icon>
         </button>
-        <h2 class="page-title">Purchasing Order #{{ order.orderNumber }}</h2>
+        <h2 class="assura-page-title" style="margin-bottom: 0;">Purchasing Order #{{ order.orderNumber }}</h2>
     </div>
     
-    <div class="order-summary" style="margin-left: 60px; margin-bottom: 20px; color: #666; font-size: 16px;">
-        <span style="font-weight: 600; color: #333;">Supplier:</span> {{ order.supplierName || 'Unknown' }}
+    <div class="assura-card-subtitle" style="margin-left: 56px; margin-bottom: 32px; font-size: 16px;">
+        <span class="assura-card-title" style="margin: 0; font-weight: 600; font-size: 16px;">Supplier:</span> {{ order.supplierName || 'Unknown' }}
     </div>
 
-    <div class="details-card-container">
-        <div class="details-card" *ngFor="let item of order.items; let i = index">
-            <div class="details-grid">
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div class="assura-card" *ngFor="let item of order.items; let i = index" style="border-top: 4px solid #4f46e5;">
+            <div class="assura-grid assura-grid-cols-3" style="margin-top: 0; gap: 32px;">
                 <!-- Left Column: Item Details -->
-                <div class="details-column">
-                    <div class="detail-row">
-                        <span class="label">Item No:</span>
-                        <span class="value">{{ (i + 1).toString().padStart(2, '0') }}</span>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Item No</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 600; margin: 0;">{{ (i + 1).toString().padStart(2, '0') }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Item Name:</span>
-                        <span class="value">{{ item.itemName }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Item Name</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 600; margin: 0;">{{ item.itemName }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Model:</span>
-                        <span class="value">{{ item.model || 'N/A' }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Model</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ item.model || 'N/A' }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Warranty:</span>
-                        <span class="value">{{ item.warranty || 'N/A' }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Warranty</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ item.warranty || 'N/A' }}</span>
                     </div>
                 </div>
 
                 <!-- Middle Column: Pricing Breakdown -->
-                <div class="details-column pricing-column">
-                    <div class="detail-row spacing-bottom">
-                        <span class="label">Discount:</span>
-                        <span class="value">{{ item.discount }}</span>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Discount</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ item.discount }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">VAT:</span>
-                        <span class="value">{{ item.vatPercentage }}%</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">VAT</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ item.vatPercentage }}%</span>
                     </div>
                 </div>
 
                 <!-- Right Column: Amounts -->
-                <div class="details-column amounts-column">
-                    <div class="detail-row">
-                        <span class="label">Quantity:</span>
-                        <span class="value right-align">{{ item.quantity.toString().padStart(2, '0') }}</span>
+                <div class="assura-input" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; pointer-events: none; height: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Quantity</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 600; margin: 0;">{{ item.quantity.toString().padStart(2, '0') }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Unit Price (LKR):</span>
-                        <span class="value right-align">{{ item.unitPrice | number:'1.0-0' }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Unit Price (LKR)</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ item.unitPrice | number:'1.0-0' }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Amount (LKR):</span>
-                        <span class="value right-align">{{ item.amount | number:'1.0-0' }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Amount (LKR)</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ item.amount | number:'1.0-0' }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Discounted Price (LKR):</span>
-                        <span class="value right-align">{{ item.discountedPrice | number:'1.0-0' }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Discounted (LKR)</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ item.discountedPrice | number:'1.0-0' }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">VAT (LKR):</span>
-                        <span class="value right-align">{{ item.vatAmount | number:'1.0-0' }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+                        <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">VAT (LKR)</span>
+                        <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ item.vatAmount | number:'1.0-0' }}</span>
                     </div>
-                    <div class="detail-row total-row">
-                        <span class="label">Total Price (LKR):</span>
-                        <span class="value right-align">{{ item.totalPrice | number:'1.0-0' }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                        <span class="assura-card-title" style="font-size: 14px; font-weight: 700; text-transform: uppercase; margin: 0;">Total Price</span>
+                        <span style="font-size: 18px; font-weight: 700; color: #4f46e5;">{{ item.totalPrice | number:'1.0-0' }}</span>
                     </div>
                 </div>
             </div>
 
-            <div class="special-note-section">
-                <h3 class="note-title">Special Note:</h3>
-                <div class="note-box">
+            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                <h3 class="assura-card-title" style="margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">Special Note</h3>
+                <div style="background: #fef3c7; color: #92400e; padding: 16px; border-radius: 8px; font-size: 14px;">
                     {{ item.specialNote || 'No special note.' }}
                 </div>
             </div>
@@ -84,11 +84,12 @@
     </div>
 </div>
 
-<div *ngIf="isLoading" class="loading-state">
+<div *ngIf="isLoading" class="assura-card-subtitle" style="padding: 48px; text-align: center;">
     <p>Loading order details...</p>
 </div>
 
-<div *ngIf="!isLoading && !order" class="error-state">
-    <p>Order not found.</p>
-    <button (click)="goBack()">Go Back</button>
+<div class="assura-card" *ngIf="!isLoading && !order" style="padding: 48px; text-align: center; max-width: 600px; margin: 40px auto;">
+    <mat-icon style="font-size: 48px; opacity: 0.5; margin-bottom: 16px;">error_outline</mat-icon>
+    <p class="assura-card-subtitle" style="font-size: 16px; font-weight: 500; margin: 0 0 24px 0;">Order not found.</p>
+    <button class="assura-btn assura-btn-primary" (click)="goBack()">Go Back</button>
 </div>

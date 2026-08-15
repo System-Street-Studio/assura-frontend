@@ -55,16 +55,16 @@ export class RequestsMainComponent implements OnInit {
   // Computed signals for status counts
   totalRequests = computed(() => this.recentRequests().length);
   
-  pendingCount = computed(() => 
-    this.recentRequests().filter(r => r.status === 'Pending').length
+  pendingCount = computed(() =>
+    this.recentRequests().filter(r => this.assetService.normalizeStatus(r.status) === 'Pending').length
   );
-  
-  approvedCount = computed(() => 
-    this.recentRequests().filter(r => r.status === 'Approved').length
+
+  approvedCount = computed(() =>
+    this.recentRequests().filter(r => this.assetService.normalizeStatus(r.status) === 'Approved').length
   );
-  
-  rejectedCount = computed(() => 
-    this.recentRequests().filter(r => r.status === 'Rejected').length
+
+  rejectedCount = computed(() =>
+    this.recentRequests().filter(r => this.assetService.normalizeStatus(r.status) === 'Rejected').length
   );
   
   

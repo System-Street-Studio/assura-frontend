@@ -1,92 +1,257 @@
 <div class="discarded-notes-container">
-    <div class="header-section">
-        <h1>Discarded Notes</h1>
-        <div class="controls">
-            <div class="search-box">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="search-icon">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Search Employee..." />
-            </div>
-            <button class="filter-btn" (click)="toggleFilter()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                </svg>
-                Filter
-            </button>
-        </div>
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="title-area">
+      <div class="title-with-badge">
+        <h1 class="assura-page-title">Discarded Notes</h1>
+        <span class="header-badge">Superintendent Registry</span>
+      </div>
+      <p class="assura-page-subtitle">Official records and disposal notes for discarded assets and hardware.</p>
     </div>
 
-    <div class="table-card">
-        <table class="notes-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Division</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let note of filteredNotes" (click)="selectNote(note)">
-                    <td>{{ note.name }}</td>
-                    <td>{{ note.division }}</td>
-                    <td>{{ note.date }}</td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="pagination">
-            <span class="prev">« Previous</span>
-            <span class="page-num active">1</span>
-            <span class="page-num">2</span>
-            <span class="page-num">3</span>
-            <span class="next">Next »</span>
-        </div>
-    </div>
+    <div class="controls">
+      <div class="search-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="search-icon">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Search by asset name or division..." />
+      </div>
 
-    <!-- Detail Modal -->
-    <div class="detail-overlay" *ngIf="selectedNote" (click)="closeDetail()">
-        <div class="detail-card" (click)="$event.stopPropagation()">
-            <div class="detail-header">
-                <h2>Discarded Note</h2>
+      <div class="filter-box">
+        <button type="button" class="filter-toggle-btn" [class.active]="!!statusFilter" (click)="toggleFilter()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          </svg>
+          {{ statusFilter || 'Filter by Status' }}
+        </button>
+
+        @if (showFilter) {
+          <div class="filter-dropdown">
+            @for (status of statusOptions; track status) {
+              <button type="button" class="filter-option" [class.selected]="statusFilter === status"
+                      (click)="filterByStatus(status)">
+                {{ status }}
+              </button>
+            }
+            @if (statusFilter) {
+              <button type="button" class="filter-option filter-clear" (click)="clearStatusFilter()">
+                Clear Filter
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Table Card -->
+  <div class="glass-card table-card">
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading discarded asset notes...</p>
+      </div>
+    } @else {
+      <table class="notes-table">
+        <thead>
+          <tr>
+            <th>Asset Name</th>
+            <th>Originating Division</th>
+            <th>Discard Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (note of filteredNotes; track note.id) {
+            <tr (click)="selectNote(note)">
+              <td>
+                <div class="asset-cell">
+                  <span class="asset-name-text">{{ note.name }}</span>
+                  <span class="asset-type-badge">{{ note.assetType || 'Asset' }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="division-text">{{ note.division }}</span>
+              </td>
+              <td>
+                <span class="date-chip mono">{{ note.date }}</span>
+              </td>
+              <td>
+                <span class="status-badge" [ngClass]="note.status.toLowerCase()">
+                  <span class="status-dot"></span> {{ note.status }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-cell">
+                <div class="empty-state">
+                  <p>No discarded notes found matching your criteria.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Detail Modal -->
+  @if (selectedNote) {
+    <div class="detail-overlay" (click)="closeDetail()">
+      <div class="glass-modal detail-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <span class="modal-label">Disposal Record</span>
+            <h2>{{ selectedNote.name }}</h2>
+          </div>
+          <button class="close-x-btn" (click)="closeDetail()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="detail-body">
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Originating Division</label>
+              <span class="highlight">{{ selectedNote.division }}</span>
             </div>
-            <div class="detail-body">
-                <h3 class="asset-name">{{ selectedNote.name }}</h3>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <label>Division</label>
-                        <span>{{ selectedNote.division }}</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Date</label>
-                        <span>{{ selectedNote.date }}</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Status</label>
-                        <span class="status-badge">{{ selectedNote.status }}</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Time</label>
-                        <span>{{ selectedNote.time }}</span>
-                    </div>
-                    <div class="info-item">
-                        <label>Asset Type</label>
-                        <span>{{ selectedNote.assetType }}</span>
-                    </div>
-                </div>
-                <div class="special-note">
-                    <label>Special Note</label>
-                    <div class="note-box">
-                        {{ selectedNote.specialNote }}
-                    </div>
-                </div>
+            <div class="info-item">
+              <label>Record Date & Time</label>
+              <span class="mono">{{ selectedNote.date }} ({{ selectedNote.time }})</span>
+            </div>
+            <div class="info-item">
+              <label>Asset Category / Type</label>
+              <span>{{ selectedNote.assetType }}</span>
+            </div>
+            <div class="info-item">
+              <label>Disposal Status</label>
+              <span class="status-badge" [ngClass]="selectedNote.status.toLowerCase()">
+                <span class="status-dot"></span> {{ selectedNote.status }}
+              </span>
+            </div>
+          </div>
+
+          <div class="special-note">
+            <label>Disposal Justification & Notes</label>
+            <div class="note-box">
+              {{ selectedNote.specialNote || 'No additional disposal remarks recorded.' }}
+            </div>
+          </div>
+
+          @if (isReviewable(selectedNote)) {
+            <div class="review-section">
+              @if (reviewStep === 'idle') {
                 <div class="actions">
-                    <button class="close-btn" (click)="closeDetail()">Close</button>
+                  <button class="assura-btn-primary" (click)="startReview()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20h9"/>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    Review Disposal Record
+                  </button>
                 </div>
+              }
+
+              @if (reviewStep === 'choose') {
+                <div class="review-choose">
+                  <p class="review-prompt">Select a decision for this disposal record:</p>
+                  <div class="review-choose-btns">
+                    <button class="btn-decision approve" (click)="chooseAction('done')">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                           fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                           stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Mark Completed
+                    </button>
+                    <button class="btn-decision reject" (click)="chooseAction('reject')">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                           fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                           stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                      Reject Record
+                    </button>
+                  </div>
+                  <button class="cancel-link" (click)="cancelReview()">Cancel Review</button>
+                </div>
+              }
+
+              @if (reviewStep === 'notes') {
+                <div class="review-notes">
+                  <div class="notes-header">
+                    <span class="action-tag" [ngClass]="reviewAction">
+                      {{ reviewAction === 'done' ? '✓ Completing Record' : '✕ Rejecting Record' }}
+                    </span>
+                    <span class="notes-hint">Add remarks or condition notes:</span>
+                  </div>
+                  <textarea class="glass-textarea" [(ngModel)]="reviewNote"
+                            placeholder="Provide disposal outcome, condition notes, or reason for decision..." rows="4"></textarea>
+                  <div class="review-notes-btns">
+                    <button class="cancel-link" (click)="cancelReview()">Back</button>
+                    <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()">
+                      {{ reviewAction === 'done' ? 'Confirm Completion' : 'Confirm Rejection' }}
+                    </button>
+                  </div>
+                </div>
+              }
             </div>
+          }
+
+          <div class="modal-actions">
+            <button class="btn-modal-close" (click)="closeDetail()">Close Record</button>
+          </div>
         </div>
+      </div>
     </div>
+  }
+
+  <!-- Feedback Overlays -->
+  @if (showSuccessCard) {
+    <div class="feedback-overlay" (click)="showSuccessCard = false">
+      <div class="glass-modal feedback-card success-card" (click)="$event.stopPropagation()">
+        <div class="feedback-icon-wrap success-bg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+               stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+        </div>
+        <div class="feedback-content">
+          <h4>Record Completed</h4>
+          <p>The disposal record has been updated and marked as Completed.</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showRejectCard) {
+    <div class="feedback-overlay" (click)="showRejectCard = false">
+      <div class="glass-modal feedback-card reject-card" (click)="$event.stopPropagation()">
+        <div class="feedback-icon-wrap reject-bg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+               stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
+        </div>
+        <div class="feedback-content">
+          <h4>Record Rejected</h4>
+          <p>The disposal record has been rejected and the decision has been logged.</p>
+        </div>
+      </div>
+    </div>
+  }
 </div>

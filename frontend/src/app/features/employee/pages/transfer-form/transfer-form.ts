@@ -90,7 +90,6 @@ export class TransferFormComponent implements OnInit {
         this.resultType.set('success');
         this.resultTitle.set('Transfer Request Submitted');
         this.resultMessage.set('Your transfer request has been submitted successfully.');
-        this.location.back();
       },
       error: (err) => {
         this.isSubmitting.set(false);

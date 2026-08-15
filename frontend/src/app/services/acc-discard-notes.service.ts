@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface AccDiscardNote {
   id: string;
@@ -18,7 +19,7 @@ export interface AccDiscardNote {
 
 @Injectable({ providedIn: 'root' })
 export class AccDiscardNotesService {
-  private apiUrl = '/api/AccDiscardNotes';
+  private apiUrl = `${environment.apiUrl}/AccDiscardNotes`;
 
   constructor(private http: HttpClient) {}
 

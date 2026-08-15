@@ -1,140 +1,144 @@
-<div class="po-container">
+<div class="purchase-orders-page">
 
     <!-- Section 1: List of Purchasing Orders -->
-    <section class="orders-section">
-        <h2 class="section-title">List of Purchasing Orders</h2>
-
-        <div class="controls-row">
-            <div class="search-bar">
+    <section class="page-section">
+        <div class="section-header">
+            <h2 class="assura-page-title">List of Purchasing Orders</h2>
+            <div class="search-bar-wrapper">
                 <mat-icon class="search-icon">search</mat-icon>
-                <input type="text" placeholder="Search" class="search-input" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
+                <input type="text" placeholder="Search Orders..." class="glass-input search-input" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()">
             </div>
-            <!-- <div class="filter-wrapper">
-                <button class="filter-btn" (click)="toggleFilter()">
-                    <mat-icon>filter_list</mat-icon> Filter
-                </button>
-                <app-filter-dropdown *ngIf="isFilterOpen" [groups]="filterGroups"
-                    (closed)="onFilterClose($event)"></app-filter-dropdown>
-            </div> -->
         </div>
 
-        <div class="table-container">
-            <ng-container *ngIf="!isLoading">
-                <table class="orders-table" *ngIf="filteredOrders.length > 0">
-                    <thead>
-                        <tr>
-                            <th>PO ID</th>
-                            <th>Supplier</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let order of pagedOrders">
-                            <td (click)="navigateToDetails(order.id)"
-                                style="cursor: pointer; color: #000; font-weight: 500;">{{ order.orderNumber }}</td>
-                            <td>{{ order.supplierName || 'Unknown' }}</td>
-                            <td>{{ order.issuedDate | date:'dd MMM yyyy' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- Empty State -->
-                <div *ngIf="filteredOrders.length === 0" class="empty-state">
-                    No purchasing orders found.
+        <div class="glass-panel table-panel">
+            @if (isLoading) {
+                <div class="empty-state">
+                    <mat-icon class="spin-animation">sync</mat-icon>
+                    <p>Loading orders...</p>
                 </div>
-
-                <!-- Orders Pagination -->
-                <app-pagination *ngIf="filteredOrders.length > 0" [currentPage]="ordersCurrentPage"
-                    [totalPages]="ordersTotalPages" [pageNumbers]="ordersPageNumbers"
-                    (pageChange)="goToOrdersPage($event)">
-                </app-pagination>
-            </ng-container>
-
-            <!-- Loading State -->
-            <div *ngIf="isLoading" class="loading-state">
-                Loading orders...
-            </div>
+            } @else {
+                @if (filteredOrders.length > 0) {
+                    <table class="assura-table">
+                        <thead>
+                            <tr>
+                                <th>PO ID</th>
+                                <th>Supplier</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (order of pagedOrders; track order.id) {
+                                <tr class="clickable-row">
+                                    <td class="primary-col" (click)="navigateToDetails(order.id)">{{ order.orderNumber }}</td>
+                                    <td>{{ order.supplierName || 'Unknown' }}</td>
+                                    <td><span class="date-chip">{{ order.issuedDate | date:'dd MMM yyyy' }}</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    
+                    <div class="pagination-footer">
+                        <app-pagination [currentPage]="ordersCurrentPage" [totalPages]="ordersTotalPages" [pageNumbers]="ordersPageNumbers" (pageChange)="goToOrdersPage($event)"></app-pagination>
+                    </div>
+                } @else {
+                    <div class="empty-state">
+                        <p>No purchasing orders found.</p>
+                    </div>
+                }
+            }
         </div>
     </section>
 
     <!-- Section 2: Requests Area -->
-    <section class="requests-section">
-        <h2 class="section-title">Purchasing Order Requests</h2>
+    <section class="page-section">
+        <h2 class="assura-page-title">Purchasing Order Requests</h2>
 
         <div class="requests-layout">
             <!-- Left: Request List -->
-            <div class="requests-list-wrapper">
-                <div class="requests-list">
-                    <div class="request-card" *ngFor="let req of pagedRequests" (click)="selectRequest(req)"
-                        [class.active]="selectedRequest === req">
-                        <div class="req-name">{{ req.employeeName }}</div>
-                        <div class="req-dept">{{ req.divisionName }}</div>
-                        <div class="req-time">{{ req.date | date:'dd MMM' }}</div>
-                    </div>
-                    <div *ngIf="requests.length === 0" class="empty-state">
-                        No pending requests.
-                    </div>
+            <div class="requests-list">
+                <div class="queue-cards-wrapper">
+                    @for (req of pagedRequests; track req.id) {
+                        <div class="glass-card queue-card" [class.active]="selectedRequest === req" (click)="selectRequest(req)">
+                            <div class="queue-card-top">
+                                <div>
+                                    <h4 class="req-employee">{{ req.employeeName }}</h4>
+                                    <span class="req-division">{{ req.divisionName }}</span>
+                                </div>
+                                <span class="date-chip">{{ req.date | date:'dd MMM' }}</span>
+                            </div>
+                        </div>
+                    } @empty {
+                        <div class="glass-card empty-state">
+                            <p>No pending requests.</p>
+                        </div>
+                    }
                 </div>
 
-                <!-- Requests Pagination -->
-                <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
-                    [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
-                </app-pagination>
+                @if (requests.length > 0) {
+                    <div class="pagination-wrapper">
+                        <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
+                            [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
+                        </app-pagination>
+                    </div>
+                }
             </div>
 
             <!-- Right: Asset Request Details -->
-            <div class="request-details" *ngIf="selectedRequest">
-                <h3 class="details-title">Asset Request #{{ selectedRequest.id }}</h3>
-                <hr class="divider">
+            <div class="request-details">
+                @if (selectedRequest) {
+                    <div class="glass-panel detail-panel sticky-top">
+                        <div class="detail-header">
+                            <span class="pre-title">Asset Request</span>
+                            <h3>Request #{{ selectedRequest.id }}</h3>
+                        </div>
 
-                <div class="details-grid">
-                    <div class="detail-field">
-                        <label>Employee</label>
-                        <div class="value">{{ selectedRequest.employeeName }}</div>
-                    </div>
-                    <div class="detail-field">
-                        <label>Request Type</label>
-                        <div class="value">{{ selectedRequest.type || 'N/A' }}</div>
-                    </div>
-                    <div class="detail-field full-width">
-                        <label>Requested Item</label>
-                        <div class="value" style="font-weight: 600; color: #00AFB5; font-size: 16px;">{{ selectedRequest.assetName || 'N/A' }}</div>
-                    </div>
-                    <div class="detail-field">
-                        <label>Division</label>
-                        <div class="value">{{ selectedRequest.divisionName }}</div>
-                    </div>
-                    <div class="detail-field">
-                        <label>Date</label>
-                        <div class="value">{{ selectedRequest.date | date:'dd MMM yyyy, HH:mm' }}</div>
-                    </div>
-                </div>
+                        <div class="detail-info-grid">
+                            <div class="info-group">
+                                <label>Employee</label>
+                                <span>{{ selectedRequest.employeeName }}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Request Type</label>
+                                <span>{{ selectedRequest.type || 'N/A' }}</span>
+                            </div>
+                            <div class="info-group col-span-2">
+                                <label>Requested Item</label>
+                                <span class="highlight">{{ selectedRequest.assetName || 'N/A' }}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Division</label>
+                                <span>{{ selectedRequest.divisionName }}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Date</label>
+                                <span class="mono">{{ selectedRequest.date | date:'dd MMM yyyy, HH:mm' }}</span>
+                            </div>
+                        </div>
 
-                <div class="detail-field full-width" style="margin-top: 12px;">
-                    <label>Description</label>
-                    <div class="specs-box">
-                        <div class="pre-wrap">{{ selectedRequest.description || selectedRequest.specifications || 'N/A'
-                            }}</div>
+                        <div class="desc-group mt-24">
+                            <label>Description</label>
+                            <div class="glass-box text-box">
+                                {{ selectedRequest.description || selectedRequest.specifications || 'N/A' }}
+                            </div>
+                        </div>
+
+                        <div class="desc-group mt-16">
+                            <label>Special Note</label>
+                            <div class="glass-box note-box">
+                                {{ selectedRequest.specialNote || 'No special note.' }}
+                            </div>
+                        </div>
+
+                        <div class="detail-actions">
+                            <button class="assura-btn-primary" (click)="navigateToCreate(selectedRequest)">Create PO</button>
+                        </div>
                     </div>
-                </div>
-
-                <div class="detail-field full-width" style="margin-top: 12px;">
-                    <label>Special Note</label>
-                    <div class="note-box">
-                        {{ selectedRequest.specialNote || 'No special note.' }}
+                } @else {
+                    <div class="glass-panel detail-panel empty-state" [class.hidden]="requests.length === 0">
+                        <p>Select a request from the list to view details</p>
                     </div>
-                </div>
-
-                <!-- Create PO Button inside the details box -->
-                <div class="details-action-row" style="margin-top: 20px; display: flex; justify-content: flex-end;">
-                    <button class="create-po-btn" (click)="navigateToCreate(selectedRequest)">Create PO</button>
-                </div>
-
-            </div>
-            <div class="request-details empty" *ngIf="!selectedRequest && requests.length > 0">
-                <p>Select a request for details</p>
+                }
             </div>
         </div>
     </section>
-
 </div>

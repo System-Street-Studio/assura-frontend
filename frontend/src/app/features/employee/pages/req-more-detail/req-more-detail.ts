@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AssetRequest } from '../../services/asset-request.service';
+import { AssetRequest, AssetService } from '../../services/asset-request.service';
 
 @Component({
   selector: 'app-req-more-detail',
@@ -16,21 +16,42 @@ export class ReqMoreDetail implements OnInit {
   isLoading = signal(false);
   error = signal<string | null>(null);
 
- 
+
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private assetService = inject(AssetService);
 
 
   ngOnInit() {
     // Use history.state to get data passed during navigation
     const historyState = this.router.getCurrentNavigation()?.extras.state || (window.history.state as any);
-    
+
     if (historyState && historyState['request']) {
       this.request.set(historyState['request'] as AssetRequest);
       return;
     }
-    
-    // If no data passed, show error message
-    this.error.set('No request data available. Please go back and select a request.');
+
+    // Fall back to fetching by the route id (page refresh, direct link, browser
+    // back/forward — cases where navigation state is unavailable).
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : NaN;
+    if (!idParam || Number.isNaN(id)) {
+      this.error.set('No request data available. Please go back and select a request.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.assetService.getRequestById(id).subscribe({
+      next: (data) => {
+        this.isLoading.set(false);
+        this.request.set(data);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        console.error('Failed to load request', err);
+        this.error.set('Unable to load this request. Please go back and try again.');
+      }
+    });
   }
 
   //get status class for styling

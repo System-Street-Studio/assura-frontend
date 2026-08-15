@@ -21,8 +21,33 @@ import { DivisionService } from '../../../inventory/services/division.service';
     FilterDropdownComponent,
   ],
   template: `
-    <div class="page">
-      <h1 class="page-title">All Assets</h1>
+    @if (isPendingUser) {
+      <div class="pending-user-view" style="display: flex; align-items: center; justify-content: center; height: calc(100vh - 120px); text-align: center; flex-direction: column;">
+        <div class="glass-card" style="padding: 48px; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 24px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(30, 41, 59, 0.65); border-radius: 16px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <h2 style="color: #f8fafc; font-size: 24px; font-weight: 700; margin: 0;">Account Under Review</h2>
+          <p style="color: #94a3b8; font-size: 16px; margin: 0; line-height: 1.5;">Your account is under review, wait for HR review.</p>
+        </div>
+      </div>
+    } @else {
+    <div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+      <!-- Greeting Banner -->
+      <section class="assura-greeting-banner" style="display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; margin-bottom: 24px;">
+        <!-- Decorative blurred circles; purely visual, pointer-events: none -->
+        <div class="banner-bg-shape"></div>
+        <div class="banner-bg-shape secondary"></div>
+
+        <div class="welcome-left">
+          <h1 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h1>
+          <p class="assura-greeting-date">Here's your system overview for {{ currentDate | date:'EEEE, MMMM d, yyyy — h:mm a' }}</p>
+        </div>
+      </section>
+
+      <h1 class="assura-page-title">All Assets</h1>
 
       <div class="toolbar">
         <div class="toolbar-left">
@@ -58,6 +83,7 @@ import { DivisionService } from '../../../inventory/services/division.service';
         (rowClick)="onRowClick($event)"
       ></app-data-table>
     </div>
+    }
   `,
   styles: [
     `
@@ -96,7 +122,17 @@ export class OverviewComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private divisionService = inject(DivisionService);
 
+  greeting = 'Welcome';
+  firstName = 'Admin';
+  currentDate = new Date();
+  isPendingUser = false;
+
   ngOnInit(): void {
+    this.isPendingUser = this.authService.hasRole('Pending');
+    if (this.isPendingUser) return;
+    
+    const hour = new Date().getHours();
+    this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
     const dashboardUrl = this.authService.getDashboardUrl();
     if (dashboardUrl !== '/overview') {
       this.router.navigate([dashboardUrl]);

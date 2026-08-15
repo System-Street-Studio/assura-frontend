@@ -85,7 +85,7 @@ export class AllRequestsComponent implements OnInit {
       const matchesSearch = r.id.toString().includes(query) || 
                             r.requestType.toLowerCase().includes(query) ||
                             (r.assetName && r.assetName.toLowerCase().includes(query));
-      const matchesStatus = status === 'All Types' || r.status === status;
+      const matchesStatus = status === 'All Types' || this.assetService.normalizeStatus(r.status) === status;
       return matchesSearch && matchesStatus;
     });
   });
@@ -124,7 +124,13 @@ export class AllRequestsComponent implements OnInit {
   
   //cancel request
   cancelRequest(requestId: number) {
-    console.log('Cancelling request with ID:', requestId);
-    this.requests.update(reqs => reqs.map(r => r.id === requestId ? { ...r, status: 'Cancelled' } : r));
+    this.assetService.cancelRequest(requestId).subscribe({
+      next: () => {
+        this.requests.update(reqs => reqs.map(r => r.id === requestId ? { ...r, status: 'Cancelled' } : r));
+      },
+      error: (err) => {
+        console.error('Error cancelling request:', err);
+      }
+    });
   }
 }

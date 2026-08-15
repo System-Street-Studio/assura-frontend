@@ -1,22 +1,31 @@
 .asset-details-container {
     padding: 32px 40px;
-    background-color: #f7f9fb;
+    background-color: transparent;
     min-height: calc(100vh - 48px);
     font-family: 'Jost', sans-serif;
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .page-title {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #f8fafc;
     margin-bottom: 24px;
 }
 
 .details-card {
-    background: #ffffff;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 20px;
     padding: 40px 60px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     max-width: 1000px;
     margin: 0 auto;
 }
@@ -24,7 +33,7 @@
 .card-header h2 {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #000;
+    color: #f8fafc;
     margin-bottom: 40px;
 }
 
@@ -43,13 +52,13 @@
     display: block;
     font-size: 0.9rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #94a3b8;
     margin-bottom: 4px;
 }
 
 .detail-item span {
     font-size: 0.9rem;
-    color: #4b5563;
+    color: #e2e8f0;
 }
 
 /* Visual Column Styles */
@@ -61,14 +70,16 @@
     display: block;
     text-align: center;
     font-weight: 700;
+    color: #94a3b8;
     margin-bottom: 12px;
 }
 
 .qr-placeholder {
     width: 160px;
     height: 160px;
-    border: 1px solid #e5e7eb;
-    border-radius: 4px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
     margin: 0 auto;
     display: flex;
     justify-content: center;
@@ -79,7 +90,7 @@
     font-size: 120px;
     width: 120px;
     height: 120px;
-    color: #000;
+    color: #f8fafc;
 }
 
 .status-indicator {
@@ -92,12 +103,14 @@
 
 .status-indicator label {
     font-weight: 700;
+    color: #94a3b8;
 }
 
 .status-updater label {
     display: block;
     text-align: center;
     font-weight: 700;
+    color: #94a3b8;
     margin-bottom: 20px;
 }
 
@@ -113,7 +126,7 @@
     align-items: center;
     gap: 8px;
     font-size: 0.85rem;
-    color: #1a1a1a;
+    color: #e2e8f0;
     cursor: pointer;
 }
 
@@ -124,18 +137,18 @@
 .radio-custom {
     width: 14px;
     height: 14px;
-    border: 1px solid #d1d5db;
+    border: 1px solid rgba(148, 163, 184, 0.4);
     border-radius: 50%;
     display: inline-block;
     position: relative;
-    background-color: #f3f4f6;
+    background-color: rgba(30, 41, 59, 0.8);
 }
 
 .radio-label input:checked+.radio-custom::after {
     content: "";
     width: 8px;
     height: 8px;
-    background-color: #6b7280;
+    background-color: #818cf8;
     border-radius: 50%;
     position: absolute;
     top: 50%;
@@ -143,16 +156,22 @@
     transform: translate(-50%, -50%);
 }
 
+.radio-label input:checked+.radio-custom {
+    border-color: #818cf8;
+}
+
 /* Specifications Section */
 .section-title {
     font-size: 1.1rem;
     font-weight: 700;
     text-align: center;
+    color: #f8fafc;
     margin-bottom: 20px;
 }
 
 .specs-box {
-    border: 1px solid #d1d5db;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.3);
     border-radius: 12px;
     padding: 30px 40px;
     display: grid;
@@ -164,12 +183,13 @@
     display: block;
     font-weight: 700;
     font-size: 0.9rem;
+    color: #94a3b8;
     margin-bottom: 4px;
 }
 
 .spec-item span {
     font-size: 0.9rem;
-    color: #4b5563;
+    color: #e2e8f0;
 }
 
 /* Footer */
@@ -177,37 +197,37 @@
     margin-top: 40px;
     display: flex;
     justify-content: center;
+    gap: 16px;
 }
 
 .btn-close {
-    background-color: #a00000;
-    color: white;
-    border: none;
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
     padding: 10px 40px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: opacity 0.2s;
+    transition: all 0.2s ease;
 }
 
 .btn-close:hover {
-    opacity: 0.9;
+    background-color: rgba(239, 68, 68, 0.25);
 }
 
 .btn-maintenance {
-    background-color: #00AFB5;
-    color: white;
-    border: none;
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
     padding: 10px 40px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: opacity 0.2s;
-    margin-right: 20px;
+    transition: all 0.2s ease;
 }
 
 .btn-maintenance:hover {
-    opacity: 0.9;
+    background-color: rgba(59, 130, 246, 0.25);
 }
 
 @media (max-width: 768px) {

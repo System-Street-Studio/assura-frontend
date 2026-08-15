@@ -217,4 +217,12 @@ export class ProcurementService {
         const url = `${this.informingUrl}/inform-stakeholders`;
         return this.http.post<number>(url, data);
     }
+
+    /**
+     * Mark an arrival as Completed / Processed (e.g. after Checkout)
+     */
+    completeArrival(id: number, remarks?: string): Observable<boolean> {
+        const url = `${this.informingUrl}/${id}/complete`;
+        return this.http.post<boolean>(url, { remarks });
+    }
 }

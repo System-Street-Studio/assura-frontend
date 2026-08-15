@@ -148,17 +148,6 @@
     font-weight: 600;
 }
 
-.custom-select {
-    width: 100%;
-    border: 1px solid #AAAAAA;
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-family: 'Jost', sans-serif;
-    outline: none;
-    background-color: #fff;
-    cursor: pointer;
-}
 
 .error-message {
     color: #e11d48;

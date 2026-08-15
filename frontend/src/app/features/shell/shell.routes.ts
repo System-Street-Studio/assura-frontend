@@ -36,7 +36,8 @@ export const shellRoutes: Routes = [
         ROLES.PROCUREMENT,
         ROLES.SUPERINTENDENT,
         ROLES.ACCOUNTANT,
-        ROLES.DIVISION_HEAD
+        ROLES.DIVISION_HEAD,
+        ROLES.SYSTEM_ADMIN
       ]
     },
     loadChildren: () => import('../employee/employee.routes').then(m => m.employeeRoutes)
@@ -76,12 +77,6 @@ export const shellRoutes: Routes = [
     canActivate: [roleGuard],
     data: { roles: [ROLES.AUDITOR, ROLES.ADMIN] },
     loadChildren: () => import('../reporting/reporting.routes').then(m => m.reportingRoutes)
-  },
-  {
-    path: 'accountant',
-    canActivate: [roleGuard],
-    data: { roles: [ROLES.ACCOUNTANT, ROLES.ADMIN] },
-    loadChildren: () => import('../accountant/accountant.routes').then(m => m.accountantRoutes)
   },
   { path: '', redirectTo: 'overview', pathMatch: 'full' },
 ];

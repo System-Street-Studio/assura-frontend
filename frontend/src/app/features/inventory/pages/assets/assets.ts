@@ -7,6 +7,7 @@ import { AssetService } from '../../services/asset.service';
 import { AssetDetail } from '../../models/asset.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import QRCode from 'qrcode';
 
 @Component({
   selector: 'app-assets',
@@ -38,8 +39,28 @@ export class AssetsComponent implements OnInit {
   categories: string[] = [];
   pageNumbers: number[] = [1];
 
+  // ── Bulk QR Code Printing State ──
+  showBulkQrModal = false;
+  qrLoading = false;
+  bulkQrItems: Array<{ asset: AssetDetail; qrUrl: string }> = [];
+  printOptions = {
+    showProduct: true,
+    showCategory: true,
+    showSerial: true,
+    showDivision: true,
+    columns: 2
+  };
+
   get totalValue(): number {
     return this.allAssets.reduce((sum, a) => sum + (a.purchaseValue || 0), 0);
+  }
+
+  get selectedCount(): number {
+    return this.allAssets.filter((a) => a.selected).length;
+  }
+
+  get selectedAssets(): AssetDetail[] {
+    return this.allAssets.filter((a) => a.selected);
   }
 
   ngOnInit(): void {
@@ -83,17 +104,12 @@ export class AssetsComponent implements OnInit {
       );
     }
 
-    // 2. Status Filter - Robust comparison (handles both string and numeric values)
+    // 2. Status Filter - Robust comparison
     if (this.filterStatus) {
       filtered = filtered.filter((a) => {
         if (!a.status && a.status !== 0) return false;
-
-        // Convert both to string for consistent comparison
         const aStatus = a.status.toString().toLowerCase();
         const fStatus = this.filterStatus.toLowerCase();
-
-        // Handle numeric-to-string mappings if backend still sends ints
-        // 0: InUse, 1: InStore, 2: UnderMaintenance, 3: Discarded, 4: Transferred, 5: Lost
         const enumMap: Record<string, string> = {
           '0': 'inuse',
           '1': 'instore',
@@ -103,7 +119,6 @@ export class AssetsComponent implements OnInit {
           '5': 'lost',
           'deployed': 'inuse'
         };
-
         return aStatus === fStatus || enumMap[aStatus] === fStatus;
       });
     }
@@ -120,13 +135,12 @@ export class AssetsComponent implements OnInit {
     this.updateView();
   }
 
-  // Helper to filter from cards (can be used to clear category filter for better UX)
   onStatusCardClick(status: string): void {
     if (this.filterStatus === status) {
-      this.filterStatus = ''; // Toggle off
+      this.filterStatus = '';
     } else {
       this.filterStatus = status;
-      this.filterCategory = ''; // Clear category when switching main status view via cards
+      this.filterCategory = '';
     }
     this.currentPage = 1;
     this.applyFilters();
@@ -154,6 +168,19 @@ export class AssetsComponent implements OnInit {
   toggleSelectAll(ev: Event): void {
     this.allSelected = (ev.target as HTMLInputElement).checked;
     this.viewAssets.forEach((a) => (a.selected = this.allSelected));
+  }
+
+  selectAllFiltered(): void {
+    this.filteredAssets.forEach((a) => (a.selected = true));
+    this.allSelected = true;
+    this.cdr.detectChanges();
+    this.toast.info(`Selected all ${this.filteredAssets.length} filtered assets`);
+  }
+
+  clearSelection(): void {
+    this.allAssets.forEach((a) => (a.selected = false));
+    this.allSelected = false;
+    this.cdr.detectChanges();
   }
 
   onRowSelect(asset: AssetDetail, ev: Event): void {
@@ -186,12 +213,8 @@ export class AssetsComponent implements OnInit {
   }
 
   formatCurrency(value: number | undefined): string {
-    if (!value) return '—';
-    return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 0 });
-  }
-
-  get selectedCount(): number {
-    return this.allAssets.filter((a) => a.selected).length;
+    if (value === undefined || value === null) return '—';
+    return '$' + Math.round(value).toLocaleString('en-US');
   }
 
   onRowClick(asset: AssetDetail): void {
@@ -215,5 +238,80 @@ export class AssetsComponent implements OnInit {
       case 'UnderMaintenance': return 'Under Maintenance';
       default: return status;
     }
+  }
+
+  // ── Bulk QR Code Operations ──
+  async openBulkQrModal(): Promise<void> {
+    const selected = this.selectedAssets;
+    if (!selected.length) {
+      this.toast.warning('Please select at least one asset to print QR codes.');
+      return;
+    }
+
+    this.showBulkQrModal = true;
+    this.qrLoading = true;
+    this.bulkQrItems = [];
+    this.cdr.detectChanges();
+
+    const items: Array<{ asset: AssetDetail; qrUrl: string }> = [];
+    for (const asset of selected) {
+      let qrUrl = '';
+      if (asset.qrCode && asset.qrCode.trim().length > 10) {
+        qrUrl = asset.qrCode.startsWith('data:image') ? asset.qrCode : `data:image/png;base64,${asset.qrCode}`;
+      } else {
+        try {
+          qrUrl = await QRCode.toDataURL(asset.assetCode || `AST-${asset.id}`, {
+            width: 140,
+            margin: 1,
+            color: { dark: '#0f172a', light: '#ffffff' }
+          });
+        } catch {
+          qrUrl = '';
+        }
+      }
+      items.push({ asset, qrUrl });
+    }
+
+    this.bulkQrItems = items;
+    this.qrLoading = false;
+    this.cdr.detectChanges();
+  }
+
+  closeBulkQrModal(): void {
+    this.showBulkQrModal = false;
+  }
+
+  printBulkQr(): void {
+    window.print();
+  }
+
+  exportToCsv(): void {
+    const assetsToExport = this.selectedCount > 0 ? this.selectedAssets : this.filteredAssets;
+    if (!assetsToExport.length) {
+      this.toast.warning('No assets to export');
+      return;
+    }
+    const headers = ['Asset Code', 'Product Name', 'Category', 'Status', 'Assigned User', 'Division', 'Serial Number', 'Purchase Value (USD)', 'Warranty'];
+    const rows = assetsToExport.map(a => [
+      `"${a.assetCode || ''}"`,
+      `"${(a.productName || '').replace(/"/g, '""')}"`,
+      `"${a.categoryName || ''}"`,
+      `"${a.status || ''}"`,
+      `"${a.assignedUserName || ''}"`,
+      `"${a.divisionName || ''}"`,
+      `"${a.serialNumber || ''}"`,
+      a.purchaseValue || 0,
+      `"${a.warranty || ''}"`
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `Assura_Assets_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    this.toast.success(`Exported ${assetsToExport.length} assets to CSV`);
   }
 }

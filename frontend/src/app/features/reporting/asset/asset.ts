@@ -1,27 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ReportingService } from '../services/reporting.service';
-import { AuthService } from '../../../core/auth/auth.service';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
 
 @Component({
   selector: 'app-reporting-asset',
   standalone: true,
-  imports: [CommonModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent],
   templateUrl: './asset.html',
   styleUrls: ['./asset.css'],
 })
 export class ReportingAssetComponent implements OnInit {
   private reportingService = inject(ReportingService);
-  private authService = inject(AuthService);
+  private searchInput$ = new Subject<string>();
 
   Math = Math;
 
   readonly assets = signal<any[]>([]);
-  readonly selectedCount = signal(0);
   readonly totalCount = signal(0);
   readonly currentPage = signal(1);
   readonly pageSize = signal(10);
+  readonly searchTerm = signal('');
 
   totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
   pageNumbers = computed(() => {
@@ -32,17 +33,27 @@ export class ReportingAssetComponent implements OnInit {
     return pages;
   });
 
-  isAuditor = computed(() => this.authService.hasRole('Auditor') || this.authService.hasRole('Admin'));
-
   ngOnInit(): void {
     this.loadAssets();
+
+    this.searchInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(term => {
+      this.searchTerm.set(term);
+      this.currentPage.set(1);
+      this.loadAssets();
+    });
+  }
+
+  onSearchInput(term: string): void {
+    this.searchInput$.next(term);
   }
 
   loadAssets(): void {
-    this.reportingService.getAssets(this.currentPage(), this.pageSize()).subscribe(data => {
-      this.assets.set(data.assets);
-      this.selectedCount.set(data.selectedCount);
-      this.totalCount.set(data.totalCount);
+    this.reportingService.getAssets(this.currentPage(), this.pageSize(), this.searchTerm() || undefined).subscribe({
+      next: data => {
+        this.assets.set(data.assets);
+        this.totalCount.set(data.totalCount);
+      },
+      error: err => console.error('Error loading assets:', err),
     });
   }
 
@@ -50,30 +61,6 @@ export class ReportingAssetComponent implements OnInit {
     if (page < 1 || page > this.totalPages()) return;
     this.currentPage.set(page);
     this.loadAssets();
-  }
-
-  verifyAsset(asset: any): void {
-    if (!asset.id) return;
-
-    this.reportingService.verifyAsset(asset.id).subscribe({
-      next: () => {
-        alert(`Asset ${asset.assetId} verified successfully.`);
-        this.loadAssets();
-      },
-      error: (err) => {
-        console.error('Error verifying asset:', err);
-        alert('Failed to verify asset.');
-      }
-    });
-  }
-
-  toggleSelect(asset: any): void {
-    asset.selected = !asset.selected;
-    this.updateSelectedCount();
-  }
-
-  private updateSelectedCount(): void {
-    this.selectedCount.set(this.assets().filter(a => a.selected).length);
   }
 }
 

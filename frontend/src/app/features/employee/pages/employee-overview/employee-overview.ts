@@ -1,11 +1,12 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
+import { Component, signal, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { AssetService, AssetRequest } from '../../services/asset-request.service';
-import { DashboardService } from '../../../../features/inventory/services/dashboard.service';
-import { DashboardData } from '../../../../features/inventory/models/dashboard.model';
+import { AssetService as EmpAssetService, AssetRequest, EmployeeArrivedAsset } from '../../services/asset-request.service';
+import { AssetService as InvAssetService } from '../../../../features/inventory/services/asset.service';
+import { AssetDetail } from '../../../../features/inventory/models/asset.model';
+import { NotificationService } from '../../../../shared/services/notification.service';
 
 interface RequestItem {
   id: number;
@@ -17,11 +18,6 @@ interface RequestItem {
   priority: 'High' | 'Medium' | 'Low';
 }
 
-interface Activity {
-  description: string;
-  timestamp: string;
-}
-
 @Component({
   selector: 'app-overview',
   standalone: true,
@@ -31,27 +27,70 @@ interface Activity {
 })
 export class EmployeeOverviewComponent implements OnInit {
   private authService = inject(AuthService);
-  private assetService = inject(AssetService);
-  private dashboardService = inject(DashboardService);
+  private empAssetService = inject(EmpAssetService);
+  private invAssetService = inject(InvAssetService);
+  private notifService = inject(NotificationService);
+
+  isPendingUser = false;
 
   isLoading = signal(true);
   pendingRequests = signal<RequestItem[]>([]);
-  recentActivities = signal<Activity[]>([]);
+  assignedAssets = signal<AssetDetail[]>([]);
+  arrivedAssets = signal<EmployeeArrivedAsset[]>([]);
+  confirmingId = signal<number | null>(null);
+  confirmSuccessMessage = signal<string | null>(null);
+
+  greeting = '';
+  firstName = '';
+  today = new Date();
+
+  // Summary counts
+  myAssignedAssetsCount = computed(() => this.assignedAssets().length);
+  pendingCount = computed(() => this.pendingRequests().length);
+  maintenanceCount = computed(() => this.assignedAssets().filter(a => a.status === 'UnderMaintenance').length);
+  transfersCount = computed(() => this.assignedAssets().filter(a => a.status === 'Transferred').length);
+  pendingArrivalsCount = computed(() => this.arrivedAssets().filter(a => a.status === 'Informed').length);
 
   ngOnInit() {
+    this.firstName = this.authService.getFirstName() ?? 'Employee';
+    this.greeting = this.getGreeting();
     this.isLoading.set(true);
+
     const userId = this.authService.getUserId();
+    const divisionId = this.authService.getDivisionId();
+
     if (!userId) {
       this.isLoading.set(false);
       return;
     }
 
-    // Fetch Requests
-    this.assetService.getEmployeeRequests(userId).subscribe({
+    if (!divisionId) {
+      this.isPendingUser = true;
+      this.isLoading.set(false);
+      return;
+    }
+
+    this.loadData(userId, Number(divisionId));
+  }
+
+  loadData(userId: string, divisionId?: number) {
+    this.loadedCount = 0;
+
+    // 1. Fetch Arrived Assets / Arrivals pending confirmation
+    this.empAssetService.getArrivedAssets(divisionId).subscribe({
+      next: (arrivals: EmployeeArrivedAsset[]) => {
+        this.arrivedAssets.set(arrivals || []);
+        this.checkLoadingComplete();
+      },
+      error: () => this.checkLoadingComplete()
+    });
+
+    // 2. Fetch Requests
+    this.empAssetService.getEmployeeRequests(userId).subscribe({
       next: (data: AssetRequest[]) => {
         const pending = data
-          .filter(r => r.status === 'Pending')
-          .slice(0, 10) // Limit to latest 10 pending requests
+          .filter(r => r.status === 'Pending' || r.status?.toLowerCase().includes('pending'))
+          .slice(0, 10)
           .map(r => ({
             id: r.id,
             item: r.assetName,
@@ -62,35 +101,60 @@ export class EmployeeOverviewComponent implements OnInit {
             priority: (r.priority as any) || 'Medium'
           }));
         this.pendingRequests.set(pending);
-         this.isLoading.set(false);
+        this.checkLoadingComplete();
       },
-      error: () => this.isLoading.set(false)
+      error: () => this.checkLoadingComplete()
     });
 
-    // Fetch Dashboard Activity
-  /*  this.dashboardService.getDashboardData().subscribe({
-      next: (data: DashboardData) => {
-        const activities = data.recentActivity.map(a => ({
-          description: `${a.assetName} (${a.assetCode}) - ${a.action}`,
-          timestamp: this.formatTimeAgo(new Date(a.timestamp))
-        }));
-        this.recentActivities.set(activities);
-        this.isLoading.set(false);
+    // 3. Fetch Assigned Assets
+    this.invAssetService.getAll(true).subscribe({
+      next: (assets: AssetDetail[]) => {
+        this.assignedAssets.set(assets);
+        this.checkLoadingComplete();
       },
-      error: () => this.isLoading.set(false)
-    });*/
+      error: () => this.checkLoadingComplete()
+    });
   }
 
-  // Simple time ago formatter for recent activity timestamps
-  private formatTimeAgo(date: Date): string {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h ago`;
-    const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays}d ago`;
+  confirmArrival(asset: EmployeeArrivedAsset): void {
+    if (this.confirmingId()) return;
+
+    this.confirmingId.set(asset.id);
+    this.empAssetService.confirmArrival(asset.id, 'Received and confirmed by employee').subscribe({
+      next: () => {
+        this.confirmingId.set(null);
+        this.confirmSuccessMessage.set(`Successfully confirmed receipt of "${asset.itemName}". Storekeeper has been notified.`);
+        
+        // Update local status
+        this.arrivedAssets.update(list =>
+          list.map(a => a.id === asset.id ? { ...a, status: 'Confirmed' } : a)
+        );
+
+        this.notifService.fetchNotifications();
+
+        setTimeout(() => {
+          this.confirmSuccessMessage.set(null);
+        }, 5000);
+      },
+      error: (err) => {
+        this.confirmingId.set(null);
+        alert('Failed to confirm receipt: ' + (err.error?.message || err.message || 'Please try again.'));
+      }
+    });
   }
-}
+
+  private loadedCount = 0;
+  private checkLoadingComplete() {
+    this.loadedCount++;
+    if (this.loadedCount >= 3) {
+      this.isLoading.set(false);
+    }
+  }
+
+  private getGreeting(): string {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  }
+}

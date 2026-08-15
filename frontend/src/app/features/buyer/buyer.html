@@ -1,137 +1,232 @@
 <div class="buyer-container">
-    <div class="header-section">
-        <div class="title-area">
-            <h1>Buyers</h1>
-            <p>Manage your vendor and supplier relationships</p>
-        </div>
-        <button class="add-btn" (click)="openAddModal()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Add Buyer
-        </button>
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="title-area">
+      <div class="title-with-badge">
+        <h1 class="assura-page-title">Buyers & Disposal Vendors</h1>
+        <span class="header-badge">Vendor Network</span>
+      </div>
+      <p class="assura-page-subtitle">Manage certified buyers, recyclers, and procurement vendors for asset salvage.</p>
     </div>
 
+    <div class="header-actions">
+      <div class="search-bar-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="search-icon">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Search by name or category..." />
+      </div>
+      <button class="add-btn" (click)="openAddModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Add Buyer
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stat-cards-row">
+    <button type="button" class="stat-card" [class.active]="statusFilter === 'Active'" (click)="filterByStatus('Active')">
+      <span class="stat-label">Active</span>
+      <span class="stat-value">{{ activeCount }}</span>
+    </button>
+    <button type="button" class="stat-card" [class.active]="statusFilter === 'Inactive'" (click)="filterByStatus('Inactive')">
+      <span class="stat-label">Inactive</span>
+      <span class="stat-value">{{ inactiveCount }}</span>
+    </button>
+    <button type="button" class="stat-card" [class.active]="statusFilter === 'Pending'" (click)="filterByStatus('Pending')">
+      <span class="stat-label">Pending</span>
+      <span class="stat-value">{{ pendingCount }}</span>
+    </button>
+    <div class="stat-card total-card">
+      <span class="stat-label">Total</span>
+      <span class="stat-value">{{ totalCount }}</span>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="glass-card loading-state">
+      <div class="spinner"></div>
+      <p>Loading buyer directory...</p>
+    </div>
+  } @else {
+    <!-- Buyer Grid -->
     <div class="buyer-grid">
-        <div class="buyer-card" *ngFor="let buyer of buyers" (click)="selectBuyer(buyer)">
+      @for (buyer of filteredBuyers; track buyer.id) {
+        <div class="glass-card buyer-card" (click)="selectBuyer(buyer)">
+          <div class="card-header-row">
             <div class="buyer-avatar">
-                <span>{{ buyer.name.charAt(0) }}</span>
+              <span>{{ buyer.name.charAt(0) }}</span>
             </div>
-            <div class="buyer-info">
-                <div class="buyer-top">
-                    <h3>{{ buyer.name }}</h3>
-                    <span class="buyer-status" [ngClass]="buyer.status.toLowerCase()">{{ buyer.status }}</span>
-                </div>
-                <p class="buyer-contact">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                    </svg>
-                    {{ buyer.contact }}
-                </p>
-                <p class="buyer-category">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-                        <line x1="7" y1="7" x2="7.01" y2="7" />
-                    </svg>
-                    {{ buyer.category }}
-                </p>
-                <div class="buyer-actions-row">
-                    <a class="email-link" href="mailto:{{ buyer.email }}">{{ buyer.email }}</a>
-                </div>
-            </div>
-        </div>
-    </div>
+            <span class="buyer-status" [ngClass]="buyer.status.toLowerCase()">
+              <span class="status-dot"></span> {{ buyer.status }}
+            </span>
+          </div>
 
-    <!-- Detail Modal -->
-    <div class="detail-overlay" *ngIf="selectedBuyer" (click)="closeDetail()">
-        <div class="detail-card" (click)="$event.stopPropagation()">
-            <button class="detail-close-x" (click)="closeDetail()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
+          <div class="buyer-info">
+            <h3 class="buyer-name">{{ buyer.name }}</h3>
+
+            <div class="buyer-meta">
+              <p class="buyer-contact">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
                 </svg>
-            </button>
-            <div class="detail-body">
-                <div class="detail-avatar">
-                    <span>{{ selectedBuyer.name.charAt(0) }}</span>
-                </div>
+                <span>{{ buyer.contact }}</span>
+              </p>
 
-                <div class="detail-name-row">
-                    <h2>{{ selectedBuyer.name }}</h2>
-                    <span class="buyer-status" [ngClass]="selectedBuyer.status.toLowerCase()">{{ selectedBuyer.status
-                        }}</span>
-                </div>
-
-                <div class="detail-info-grid">
-                    <div class="detail-info-item">
-                        <label>Contact Person</label>
-                        <span>{{ selectedBuyer.contact }}</span>
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Category</label>
-                        <span>{{ selectedBuyer.category }}</span>
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Email</label>
-                        <span>{{ selectedBuyer.email }}</span>
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Phone</label>
-                        <span>{{ selectedBuyer.phone }}</span>
-                    </div>
-                </div>
-                <div class="detail-actions">
-                    <button class="close-detail-btn" (click)="closeDetail()">Close</button>
-                    <button class="contact-btn">Contact Buyer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Buyer Modal -->
-    <div class="detail-overlay" *ngIf="showAddModal" (click)="closeAddModal()">
-        <div class="detail-card" (click)="$event.stopPropagation()">
-            <button class="detail-close-x" (click)="closeAddModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              <p class="buyer-category">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                  <line x1="7" y1="7" x2="7.01" y2="7" />
                 </svg>
-            </button>
-            <div class="detail-body">
-                <h2 class="modal-title">Add New Buyer</h2>
-                <div class="detail-info-grid">
-                    <div class="detail-info-item">
-                        <label>Company / Buyer Name *</label>
-                        <input class="modal-input" type="text" placeholder="e.g. Techno Supplies Ltd" [value]="newBuyer.name" (input)="newBuyer.name = $any($event.target).value" />
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Contact Person *</label>
-                        <input class="modal-input" type="text" placeholder="e.g. John Perera" [value]="newBuyer.contact" (input)="newBuyer.contact = $any($event.target).value" />
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Email</label>
-                        <input class="modal-input" type="email" placeholder="e.g. info@techno.lk" [value]="newBuyer.email" (input)="newBuyer.email = $any($event.target).value" />
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Phone</label>
-                        <input class="modal-input" type="text" placeholder="e.g. 071-234-5678" [value]="newBuyer.phone" (input)="newBuyer.phone = $any($event.target).value" />
-                    </div>
-                    <div class="detail-info-item">
-                        <label>Category</label>
-                        <input class="modal-input" type="text" placeholder="e.g. Electronics, Furniture" [value]="newBuyer.category" (input)="newBuyer.category = $any($event.target).value" />
-                    </div>
-                </div>
-                <div class="detail-actions">
-                    <button class="close-detail-btn" (click)="closeAddModal()">Cancel</button>
-                    <button class="contact-btn" (click)="submitAddBuyer()" [disabled]="isSubmitting">{{ isSubmitting ? 'Saving...' : 'Add Buyer' }}</button>
-                </div>
+                <span>{{ buyer.category }}</span>
+              </p>
             </div>
+
+            <div class="buyer-actions-row">
+              <a class="email-link" href="mailto:{{ buyer.email }}" (click)="$event.stopPropagation()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+                {{ buyer.email }}
+              </a>
+            </div>
+          </div>
         </div>
+      } @empty {
+        <div class="empty-state full-grid">
+          <p>No buyers or vendors registered yet.</p>
+        </div>
+      }
     </div>
+  }
+
+  <!-- Detail Modal -->
+  @if (selectedBuyer) {
+    <div class="detail-overlay" (click)="closeDetail()">
+      <div class="glass-modal detail-card" (click)="$event.stopPropagation()">
+        <button class="detail-close-x" (click)="closeDetail()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+
+        <div class="detail-body">
+          <div class="detail-avatar">
+            <span>{{ selectedBuyer.name.charAt(0) }}</span>
+          </div>
+
+          <div class="detail-name-row">
+            <h2>{{ selectedBuyer.name }}</h2>
+            <span class="buyer-status" [ngClass]="selectedBuyer.status.toLowerCase()">
+              <span class="status-dot"></span> {{ selectedBuyer.status }}
+            </span>
+          </div>
+
+          <div class="detail-info-grid">
+            <div class="detail-info-item">
+              <label>Contact Person</label>
+              <span>{{ selectedBuyer.contact }}</span>
+            </div>
+            <div class="detail-info-item">
+              <label>Category</label>
+              <span>{{ selectedBuyer.category }}</span>
+            </div>
+            <div class="detail-info-item">
+              <label>Email Address</label>
+              <span class="mono">{{ selectedBuyer.email }}</span>
+            </div>
+            <div class="detail-info-item">
+              <label>Phone Number</label>
+              <span class="mono">{{ selectedBuyer.phone }}</span>
+            </div>
+          </div>
+
+          <div class="detail-actions">
+            <button class="close-detail-btn" (click)="closeDetail()">Close</button>
+            <a class="contact-btn" href="mailto:{{ selectedBuyer.email }}">Contact Buyer</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Add Buyer Modal -->
+  @if (showAddModal) {
+    <div class="detail-overlay" (click)="closeAddModal()">
+      <div class="glass-modal detail-card" (click)="$event.stopPropagation()">
+        <button class="detail-close-x" (click)="closeAddModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+
+        <div class="detail-body">
+          <h2 class="modal-title">Register New Buyer</h2>
+          <form [formGroup]="addBuyerForm" (ngSubmit)="submitAddBuyer()" class="form-grid">
+            <div class="form-field full-width">
+              <label for="buyerName">Company / Buyer Name *</label>
+              <input id="buyerName" class="glass-input" type="text" placeholder="e.g. Techno Supplies Ltd" formControlName="name"
+                     [class.input-invalid]="f['name'].invalid && f['name'].touched" />
+              @if (f['name'].invalid && f['name'].touched) {
+                <span class="field-error">
+                  {{ f['name'].errors?.['required'] ? 'Buyer name is required.' : 'Name must be at least 2 characters.' }}
+                </span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="buyerContact">Contact Person *</label>
+              <input id="buyerContact" class="glass-input" type="text" placeholder="e.g. John Perera" formControlName="contact"
+                     [class.input-invalid]="f['contact'].invalid && f['contact'].touched" />
+              @if (f['contact'].invalid && f['contact'].touched) {
+                <span class="field-error">Contact person is required.</span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="buyerEmail">Email Address</label>
+              <input id="buyerEmail" class="glass-input" type="email" placeholder="e.g. info@techno.lk" formControlName="email"
+                     [class.input-invalid]="f['email'].invalid && f['email'].touched" />
+              @if (f['email'].invalid && f['email'].touched) {
+                <span class="field-error">Enter a valid email address.</span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="buyerPhone">Phone Number</label>
+              <input id="buyerPhone" class="glass-input" type="text" placeholder="e.g. 071-234-5678" formControlName="phone"
+                     [class.input-invalid]="f['phone'].invalid && f['phone'].touched" />
+              @if (f['phone'].invalid && f['phone'].touched) {
+                <span class="field-error">Enter a valid phone number.</span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="buyerCategory">Specialization / Category</label>
+              <input id="buyerCategory" class="glass-input" type="text" placeholder="e.g. Electronics, Scrap, Hardware" formControlName="category" />
+            </div>
+          </form>
+
+          <div class="detail-actions">
+            <button class="close-detail-btn" (click)="closeAddModal()">Cancel</button>
+            <button class="submit-btn" (click)="submitAddBuyer()" [disabled]="isSubmitting || addBuyerForm.invalid">
+              {{ isSubmitting ? 'Saving...' : 'Register Buyer' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>

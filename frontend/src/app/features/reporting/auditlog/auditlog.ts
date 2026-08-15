@@ -20,15 +20,31 @@ export class ReportingAuditlogComponent implements OnInit {
   readonly searchTerm = signal<string>('');
   readonly selectedModule = signal<string>('All');
   readonly selectedDateRange = signal<string>('All');
+  readonly selectedStatus = signal<string>('All');
+  readonly selectedActor = signal<string>('All');
 
   // UI Dropdown states
   readonly showModuleDropdown = signal<boolean>(false);
   readonly showDateRangeDropdown = signal<boolean>(false);
   readonly showExportDropdown = signal<boolean>(false);
+  readonly showStatusDropdown = signal<boolean>(false);
+  readonly showActorDropdown = signal<boolean>(false);
 
   // Computed list of unique modules dynamically extracted from loaded logs
   readonly availableModules = computed(() => {
     const list = this.logs().map(log => log.module).filter(Boolean);
+    return ['All', ...Array.from(new Set(list))];
+  });
+
+  // Computed list of unique statuses dynamically extracted from loaded logs
+  readonly availableStatuses = computed(() => {
+    const list = this.logs().map(log => log.status).filter(Boolean);
+    return ['All', ...Array.from(new Set(list))];
+  });
+
+  // Computed list of unique actors dynamically extracted from loaded logs
+  readonly availableActors = computed(() => {
+    const list = this.logs().map(log => log.actor).filter(Boolean);
     return ['All', ...Array.from(new Set(list))];
   });
 
@@ -67,7 +83,19 @@ export class ReportingAuditlogComponent implements OnInit {
       });
     }
 
-    // 3. Search text filter
+    // 3. Status filter
+    const status = this.selectedStatus();
+    if (status !== 'All') {
+      result = result.filter(log => log.status === status);
+    }
+
+    // 4. Actor filter
+    const actor = this.selectedActor();
+    if (actor !== 'All') {
+      result = result.filter(log => log.actor === actor);
+    }
+
+    // 5. Search text filter
     if (term) {
       result = result.filter(log => 
         (log.actor && log.actor.toLowerCase().includes(term)) ||
@@ -128,6 +156,30 @@ export class ReportingAuditlogComponent implements OnInit {
   selectDateRange(range: string): void {
     this.selectedDateRange.set(range);
     this.showDateRangeDropdown.set(false);
+  }
+
+  toggleStatusDropdown(): void {
+    this.showStatusDropdown.set(!this.showStatusDropdown());
+    this.showModuleDropdown.set(false);
+    this.showDateRangeDropdown.set(false);
+    this.showActorDropdown.set(false);
+  }
+
+  selectStatus(status: string): void {
+    this.selectedStatus.set(status);
+    this.showStatusDropdown.set(false);
+  }
+
+  toggleActorDropdown(): void {
+    this.showActorDropdown.set(!this.showActorDropdown());
+    this.showModuleDropdown.set(false);
+    this.showDateRangeDropdown.set(false);
+    this.showStatusDropdown.set(false);
+  }
+
+  selectActor(actor: string): void {
+    this.selectedActor.set(actor);
+    this.showActorDropdown.set(false);
   }
 
   // Export options

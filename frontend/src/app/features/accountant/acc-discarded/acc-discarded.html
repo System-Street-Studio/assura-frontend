@@ -1,9 +1,9 @@
 <div class="acc-discarded-container">
-    <h1 class="page-title">Discarded</h1>
+    <h1 class="assura-page-title">Discarded</h1>
 
     <div class="discarded-layout">
-        <div class="table-card">
-            <table class="discarded-table">
+        <div class="glass-panel assura-table-container table-card">
+            <table class="assura-table discarded-table">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -27,7 +27,7 @@
 
         <!-- Detail Panel -->
         <div class="detail-panel" *ngIf="selectedItem">
-            <div class="detail-panel-card">
+            <div class="glass-panel detail-panel-card">
                 <div class="detail-panel-header">
                     <h3 class="detail-panel-name">{{ selectedItem.name }}</h3>
                     <button class="btn-close-detail" (click)="closeDetail()">✕</button>
@@ -50,6 +50,10 @@
                     <div class="detail-panel-item">
                         <label>Time</label>
                         <span>{{ selectedItem.time }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Requested By</label>
+                        <span>{{ selectedItem.requestedByName || 'Unknown' }}</span>
                     </div>
                     <div class="detail-panel-item">
                         <label>Current User</label>

@@ -1,9 +1,9 @@
 <div class="hr-shell">
   <section class="form-page" aria-labelledby="assign-title">
-    <div class="form-card">
+    <div class="glass-panel">
       <div class="form-header">
-        <h1 id="assign-title">Assign/Update Role and Division</h1>
-        <p>Set the division and role for the employee to complete assignment.</p>
+        <h1 id="assign-title" style="color: #f8fafc;">Assign/Update Role and Division</h1>
+        <p style="color: #94a3b8;">Set the division and role for the employee to complete assignment.</p>
       </div>
 
       <form class="assign-form" #assignForm="ngForm" (ngSubmit)="assignRole()">
@@ -20,8 +20,8 @@
 
         <div class="assignments-section">
           <div class="section-header">
-            <h3>Division & Role Assignments</h3>
-            <button type="button" class="add-assignment-btn" (click)="addAssignment()">
+            <h3 style="color: #f8fafc;">Division & Role Assignments</h3>
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="addAssignment()">
               + Add Assignment
             </button>
           </div>
@@ -48,7 +48,7 @@
               </select>
             </label>
 
-            <button type="button" class="remove-assignment-btn" (click)="removeAssignment($index)" [disabled]="form.assignments.length === 1">
+            <button type="button" class="assura-btn assura-btn-danger" style="padding: 8px 12px; height: auto;" (click)="removeAssignment($index)" [disabled]="form.assignments.length === 1">
               <span aria-hidden="true">×</span>
             </button>
           </div>
@@ -72,8 +72,8 @@
         </label>
 
         <div class="form-actions">
-          <button class="secondary-button" type="button" (click)="resetForm()">Clear</button>
-          <button class="primary-button" type="submit" [disabled]="assignForm.invalid">
+          <button class="assura-btn assura-btn-secondary" type="button" (click)="resetForm()">Clear</button>
+          <button class="assura-btn assura-btn-primary" type="submit" [disabled]="assignForm.invalid">
             {{ isUpdate ? 'Update Assignment' : 'Assign Role' }}
           </button>
         </div>

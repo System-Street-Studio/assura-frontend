@@ -1,40 +1,63 @@
-<nav class="shared-navbar">
-  <div class="navbar-title">
-    <mat-icon aria-hidden="true">dashboard</mat-icon>
-    <span>{{ pageTitle }}</span>
+<nav class="navbar-wrapper">
+  <!-- Page Title -->
+  <div class="navbar-page-title-container">
+    <mat-icon aria-hidden="true" class="navbar-page-title-icon">dashboard</mat-icon>
+    <span class="navbar-page-title-text">{{ pageTitle }}</span>
   </div>
 
-  <div class="navbar-actions">
-    <div class="notification-container">
-      <button class="notification-btn" type="button" aria-label="Notifications" (click)="toggleNotificationMenu($event)">
+  <!-- Right Actions -->
+  <div class="navbar-actions-container">
+
+    <!-- Notification Bell -->
+    <div class="navbar-notification-wrapper">
+      <button
+        class="navbar-notification-btn"
+        type="button" aria-label="Notifications" (click)="toggleNotificationMenu($event)">
         <mat-icon aria-hidden="true">notifications</mat-icon>
         @if ((unreadCount$ | async) ?? 0; as unread) {
           @if (unread > 0) {
-            <span class="notification-badge">{{ unread }}</span>
+            <span class="navbar-notification-badge">{{ unread }}</span>
           }
         }
       </button>
 
+      <!-- Notification Dropdown -->
       @if (showNotificationMenu) {
-        <div class="notification-menu" (click)="$event.stopPropagation()">
-          <div class="notification-header">
+        <div class="navbar-dropdown notification-dropdown" (click)="$event.stopPropagation()">
+          
+          <!-- Header -->
+          <div class="navbar-dropdown-header">
             <h4>Notifications</h4>
-            <button class="mark-read-btn" (click)="markAllAsRead($event)">Mark all as read</button>
+            <button class="navbar-dropdown-header-action" (click)="markAllAsRead($event)">
+              Mark all as read
+            </button>
           </div>
-          <div class="notification-list">
+
+          <!-- List -->
+          <div class="navbar-dropdown-list">
             @if ((notifications$ | async)?.length === 0) {
-              <div class="no-notifications">No notifications</div>
+              <div class="navbar-dropdown-empty">No notifications</div>
             }
             @for (note of notifications$ | async; track note.id) {
-              <div class="notification-item" [class.unread]="!note.read" (click)="markAsRead(note.id, $event)">
-                <mat-icon class="note-icon" [class]="note.type">{{ note.icon || 'info' }}</mat-icon>
-                <div class="note-content">
-                  <h5>{{ note.title }}</h5>
-                  <p>{{ note.message }}</p>
-                  <span class="note-time">{{ notificationService.formatTimeAgo(note.timestamp) }}</span>
+              <div class="navbar-dropdown-item"
+                   [class.unread-note]="!note.read"
+                   (click)="handleNotificationClick(note, $event)">
+
+                <!-- Icon -->
+                <mat-icon class="navbar-dropdown-item-icon note-icon" [class]="note.type">
+                  {{ note.icon || 'info' }}
+                </mat-icon>
+
+                <!-- Content -->
+                <div class="navbar-dropdown-item-content">
+                  <h5 class="navbar-dropdown-item-title">{{ note.title }}</h5>
+                  <p class="navbar-dropdown-item-message">{{ note.message }}</p>
+                  <span class="navbar-dropdown-item-time">{{ notificationService.formatTimeAgo(note.timestamp) }}</span>
                 </div>
+
+                <!-- Unread dot -->
                 @if (!note.read) {
-                  <div class="unread-dot"></div>
+                  <div class="navbar-dropdown-unread-dot"></div>
                 }
               </div>
             }
@@ -43,17 +66,21 @@
       }
     </div>
 
-    <button class="profile-button" type="button" aria-label="Open profile menu" (click)="toggleProfileMenu($event)">
-      <span class="profile-avatar">A</span>
+    <!-- Profile Avatar -->
+    <button
+      class="navbar-avatar-btn"
+      type="button" aria-label="Open profile menu" (click)="toggleProfileMenu($event)">
+      <span class="navbar-avatar-text">A</span>
     </button>
 
+    <!-- Profile Menu -->
     @if (showProfileMenu) {
-      <div class="profile-menu" (click)="$event.stopPropagation()">
-        <button type="button" (click)="openProfile()">
+      <div class="navbar-dropdown profile-dropdown" (click)="$event.stopPropagation()">
+        <button type="button" (click)="openProfile()" class="navbar-dropdown-action-btn">
           <mat-icon aria-hidden="true">person</mat-icon>
           Profile
         </button>
-        <button type="button" (click)="logout()">
+        <button type="button" (click)="logout()" class="navbar-dropdown-action-btn logout-btn">
           <mat-icon aria-hidden="true">logout</mat-icon>
           Sign Out
         </button>

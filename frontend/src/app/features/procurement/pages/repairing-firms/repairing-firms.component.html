@@ -1,60 +1,64 @@
-<div class="firms-container">
-    <div class="header-section">
-        <button class="back-btn" (click)="goBack()">
-            <span class="material-icons">arrow_back</span> Back
-        </button>
-        <h1 class="page-title">Repairing Firms</h1>
-        <button class="add-btn" (click)="navigateToCreate()">
-            <span class="material-icons">add</span> Add New Firm
-        </button>
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <button class="assura-btn assura-btn-secondary" style="padding: 8px;" (click)="goBack()">
+                <i class="material-icons" style="font-size: 20px;">arrow_back</i>
+            </button>
+            <h1 class="assura-page-title" style="margin-bottom: 0;">Repairing Firms</h1>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <app-search-bar (queryChange)="onSearch($event)" placeholder="Search Firms..."></app-search-bar>
+            <button class="assura-btn assura-btn-primary" (click)="navigateToCreate()">
+                <i class="material-icons" style="font-size: 18px;">add</i> Add New Firm
+            </button>
+        </div>
     </div>
 
-    <div class="controls-section">
-        <app-search-bar (queryChange)="onSearch($event)" placeholder="Search Firms..."></app-search-bar>
-        <div style="font-size: 10px; color: gray;">[DEBUG] isLoading: {{ isLoading }}, pagedFirms.length: {{
-            pagedFirms.length }}</div>
-    </div>
+    <!-- Hidden debug info -->
+    <!-- <div style="font-size: 10px; color: gray;">[DEBUG] isLoading: {{ isLoading }}, pagedFirms.length: {{ pagedFirms.length }}</div> -->
 
-    <div class="table-card">
-        <table class="firms-table">
+    <div class="assura-table-container">
+        <table class="assura-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Contact Person</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Address</th>
-                    <th>Actions</th>
+                    <th class="assura-th">Name</th>
+                    <th class="assura-th">Contact Person</th>
+                    <th class="assura-th">Email</th>
+                    <th class="assura-th">Phone</th>
+                    <th class="assura-th">Address</th>
+                    <th class="assura-th" style="width: 80px; text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngIf="isLoading">
-                    <td colspan="6" class="empty-state">
-                        <div>Loading firms...</div>
+                    <td colspan="6" class="assura-td" style="text-align: center; color: #64748b; padding: 32px;">
+                        Loading firms...
                     </td>
                 </tr>
                 <tr *ngIf="!isLoading && pagedFirms.length === 0">
-                    <td colspan="6" class="empty-state">
-                        <div>No repairing firms found.</div>
+                    <td colspan="6" class="assura-td" style="text-align: center; color: #94a3b8; padding: 32px;">
+                        No repairing firms found.
                     </td>
                 </tr>
-                <tr *ngFor="let firm of pagedFirms">
-                    <td class="firm-name">{{ firm.name }}</td>
-                    <td>{{ firm.contactPerson || '-' }}</td>
-                    <td>{{ firm.email || '-' }}</td>
-                    <td>{{ firm.phone || '-' }}</td>
-                    <td>{{ firm.address || '-' }}</td>
-                    <td>
-                        <button class="edit-action-btn" (click)="editFirm(firm.id)">
-                            <span class="material-icons" style="font-size: 18px;">edit</span>
+                <tr class="assura-tr-hover" *ngFor="let firm of pagedFirms">
+                    <td class="assura-td" style="font-weight: 600; color: #0f172a;">{{ firm.name }}</td>
+                    <td class="assura-td" style="color: #475569;">{{ firm.contactPerson || '-' }}</td>
+                    <td class="assura-td" style="color: #64748b;">{{ firm.email || '-' }}</td>
+                    <td class="assura-td" style="color: #64748b;">{{ firm.phone || '-' }}</td>
+                    <td class="assura-td" style="color: #64748b;">{{ firm.address || '-' }}</td>
+                    <td class="assura-td" style="text-align: center;">
+                        <button class="assura-btn assura-btn-secondary" style="padding: 4px 8px;" (click)="editFirm(firm.id)">
+                            <i class="material-icons" style="font-size: 18px; color: #4f46e5;">edit</i>
                         </button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pageNumbers"
-            (pageChange)="goToPage($event)">
-        </app-pagination>
+        <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0;" *ngIf="pagedFirms.length > 0">
+            <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pageNumbers"
+                (pageChange)="goToPage($event)">
+            </app-pagination>
+        </div>
     </div>
 </div>

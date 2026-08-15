@@ -1,17 +1,20 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { QueueItemsService, QueueItem } from '../../services/queue-items.service';
+
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './overview.html',
   styleUrls: ['./overview.css']
 })
 export class OverviewComponent implements OnInit {
+  isPendingUser = false;
   activeFilter: string = '';
   queue: QueueItem[] = [];
   filteredQueue: QueueItem[] = [];
@@ -25,26 +28,64 @@ export class OverviewComponent implements OnInit {
   get approvedCount() { return this.queue.filter(i => i.status === 'Approved').length; }
   get totalCount() { return this.queue.length; }
   get todayCount() {
-    const today = new Date().toISOString().slice(0, 10); // e.g. "2026-05-11"
-    return this.queue.filter(i => i.date && i.date.startsWith(today)).length;
+    return this.queue.filter(i => this.isToday(i.date)).length;
+  }
+
+  isToday(dateStr?: string): boolean {
+    if (!dateStr) return false;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const todayLocal = `${year}-${month}-${day}`;
+
+    if (dateStr.startsWith(todayLocal)) return true;
+
+    try {
+      const parsed = new Date(dateStr);
+      if (!isNaN(parsed.getTime())) {
+        const pYear = parsed.getFullYear();
+        const pMonth = String(parsed.getMonth() + 1).padStart(2, '0');
+        const pDay = String(parsed.getDate()).padStart(2, '0');
+        return `${pYear}-${pMonth}-${pDay}` === todayLocal;
+      }
+    } catch {
+      // ignore
+    }
+    return false;
   }
 
   // Review flow state
   reviewStep: 'idle' | 'choose' | 'notes' = 'idle';
   reviewAction: 'done' | 'reject' | '' = '';
-  reviewNote: string = '';
+  reviewNoteControl = new FormControl('', [Validators.required, Validators.minLength(5)]);
 
   // Feedback cards
   showSuccessCard = false;
   showRejectCard = false;
 
+  greeting = 'Welcome';
+  firstName = 'Superintendent';
+  currentDate = new Date();
+
   constructor(
     private queueItemsService: QueueItemsService,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.isPendingUser = this.authService.hasRole('Pending');
+    
+    if (this.isPendingUser) {
+      this.isLoading = false;
+      return;
+    }
+
+    const hour = new Date().getHours();
+    this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
     this.queueItemsService.getAll().subscribe({
       next: (data) => {
         this.queue = data;
@@ -82,7 +123,13 @@ export class OverviewComponent implements OnInit {
       this.filteredQueue = [...this.queue];
     } else {
       this.activeFilter = status;
-      this.filteredQueue = this.queue.filter(i => i.status === status);
+      if (status === 'Today') {
+        this.filteredQueue = this.queue.filter(i => this.isToday(i.date));
+      } else if (status === '') {
+        this.filteredQueue = [...this.queue];
+      } else {
+        this.filteredQueue = this.queue.filter(i => i.status === status);
+      }
     }
     this.selectedItem = this.filteredQueue[0] || null;
     this.resetReview();
@@ -104,22 +151,29 @@ export class OverviewComponent implements OnInit {
   chooseAction(action: 'done' | 'reject') {
     this.reviewAction = action;
     this.reviewStep = 'notes';
-    this.reviewNote = '';
+    this.reviewNoteControl.reset('');
   }
 
   submitReview() {
     if (!this.selectedItem) return;
 
+    if (this.reviewNoteControl.invalid) {
+      this.reviewNoteControl.markAsTouched();
+      return;
+    }
+
     const action = this.reviewAction;
     const newStatus = action === 'done' ? 'Approved' : 'Rejected';
 
-    this.queueItemsService.updateStatus(this.selectedItem.id, newStatus, this.reviewNote).subscribe({
+    this.queueItemsService.updateStatus(this.selectedItem.id, newStatus, this.reviewNoteControl.value ?? '').subscribe({
       next: () => {
         if (this.selectedItem) {
           this.selectedItem.status = newStatus;
         }
 
-        if (this.activeFilter) {
+        if (this.activeFilter === 'Today') {
+          this.filteredQueue = this.queue.filter(i => this.isToday(i.date));
+        } else if (this.activeFilter) {
           this.filteredQueue = this.queue.filter(i => i.status === this.activeFilter);
         } else {
           this.filteredQueue = [...this.queue];
@@ -159,6 +213,6 @@ export class OverviewComponent implements OnInit {
   private resetReview() {
     this.reviewStep = 'idle';
     this.reviewAction = '';
-    this.reviewNote = '';
+    this.reviewNoteControl.reset('');
   }
 }
