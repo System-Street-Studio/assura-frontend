@@ -45,7 +45,7 @@ export class MaintenanceNoteCreateComponent implements OnInit {
             maintenanceNumber: [{ value: '', disabled: true }],
             assetId: [null, Validators.required],
             date: ['', Validators.required],
-            repairingFirmId: [null],
+            repairingFirmId: [null, Validators.required],
             cost: [0, [Validators.required, Validators.min(0)]],
             description: ['', Validators.required],
             status: ['Scheduled', Validators.required]
