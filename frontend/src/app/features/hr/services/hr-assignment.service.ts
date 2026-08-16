@@ -52,7 +52,9 @@ export interface HrOverview {
   usersByDivision: HrDivisionCount[];
 }
 
-const SELECTED_PENDING_USER_ID_KEY = 'hrSelectedPendingUserId_dbId';
+// Used for both flows the assign-role form serves: selecting a pending user to
+// assign for the first time, and selecting an already-assigned user to edit.
+const SELECTED_USER_ID_FOR_ASSIGNMENT_KEY = 'hrSelectedUserIdForAssignment';
 
 export interface Division {
   id: number;
@@ -103,12 +105,15 @@ export class HrAssignmentService {
     return this.http.get<any>(`${this.apiUrl}/users/${id}`);
   }
 
-  selectPendingUser(id: number): void {
-    localStorage.setItem(SELECTED_PENDING_USER_ID_KEY, id.toString());
+  /** Remembers which user the assign-role form should load next, whether they're a
+   *  pending user being assigned for the first time or an already-assigned user being
+   *  edited — the form itself distinguishes the two cases once it loads the user. */
+  selectUserForAssignment(id: number): void {
+    localStorage.setItem(SELECTED_USER_ID_FOR_ASSIGNMENT_KEY, id.toString());
   }
 
-  getSelectedPendingUserId(): number | null {
-    const id = localStorage.getItem(SELECTED_PENDING_USER_ID_KEY);
+  getSelectedUserIdForAssignment(): number | null {
+    const id = localStorage.getItem(SELECTED_USER_ID_FOR_ASSIGNMENT_KEY);
     return id ? parseInt(id, 10) : null;
   }
 

@@ -6,6 +6,18 @@
         <p style="color: #94a3b8;">Set the division and role for the employee to complete assignment.</p>
       </div>
 
+      @if (loadError) {
+      <div class="global-toast-card toast-error" role="alert" style="margin-bottom: 1rem;">
+        <div class="global-toast-content">
+          <h4 class="global-toast-title">Unable to load user</h4>
+          <p class="global-toast-message">
+            Something went wrong while loading this employee's details. Please try again.
+          </p>
+        </div>
+        <button class="assura-btn assura-btn-secondary" type="button" (click)="resetForm()">Retry</button>
+      </div>
+      }
+
       <form class="assign-form" #assignForm="ngForm" (ngSubmit)="assignRole()">
         <label>
           <span>Employee ID</span>
@@ -73,6 +85,9 @@
 
         <div class="form-actions">
           <button class="assura-btn assura-btn-secondary" type="button" (click)="resetForm()">Clear</button>
+          @if (!isUpdate) {
+          <button class="assura-btn assura-btn-danger" type="button" (click)="rejectRole()">Reject</button>
+          }
           <button class="assura-btn assura-btn-primary" type="submit" [disabled]="assignForm.invalid">
             {{ isUpdate ? 'Update Assignment' : 'Assign Role' }}
           </button>

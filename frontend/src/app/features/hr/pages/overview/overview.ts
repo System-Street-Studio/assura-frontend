@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HrAssignmentService } from '../../services/hr-assignment.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 export interface OverviewStat {
   label: string;
@@ -21,12 +22,13 @@ export interface DivisionUserCount {
 })
 export class HrOverviewComponent implements OnInit {
   private hrAssignmentService = inject(HrAssignmentService);
+  private authService = inject(AuthService);
 
   readonly overview = this.hrAssignmentService.overview;
   readonly assignedUsers = this.hrAssignmentService.assignedUsers;
 
   greeting = 'Welcome';
-  firstName = 'HR Manager';
+  firstName = this.authService.getFirstName() ?? 'HR Manager';
   currentDate = new Date();
 
   readonly stats = computed<OverviewStat[]>(() => {

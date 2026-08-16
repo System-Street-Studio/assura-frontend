@@ -29,7 +29,7 @@ export class HrPendingComponent implements OnInit {
   }
 
   openAssignForm(id: number): void {
-    this.hrAssignmentService.selectPendingUser(id);
+    this.hrAssignmentService.selectUserForAssignment(id);
     this.router.navigate(['/hr/assign-role']);
   }
 }

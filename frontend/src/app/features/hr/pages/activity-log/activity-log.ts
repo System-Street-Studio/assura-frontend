@@ -17,13 +17,13 @@ export interface AuditLogEntry {
 }
 
 @Component({
-  selector: 'app-hr-myasset',
+  selector: 'app-hr-activity-log',
   standalone: true,
   imports: [],
-  templateUrl: './myasset.html',
-  styleUrls: ['./myasset.css'],
+  templateUrl: './activity-log.html',
+  styleUrls: ['./activity-log.css'],
 })
-export class HrMyAssetComponent implements OnInit {
+export class HrActivityLogComponent implements OnInit {
   private hrService = inject(HrAssignmentService);
 
   searchTerm = signal('');

@@ -4,6 +4,11 @@ import { Router } from '@angular/router';
 import { HrAssignmentService, Division } from '../../services/hr-assignment.service';
 import { CommonModule } from '@angular/common';
 
+interface RoleAssignmentResponse {
+  message?: string;
+  skippedAssignments?: { divisionId: number; role: string }[];
+}
+
 export interface AssignRoleForm {
   dbId: number;
   employeeId: string;
@@ -26,8 +31,9 @@ export class HrAssignRoleFormComponent implements OnInit {
   private hrAssignmentService = inject(HrAssignmentService);
 
   divisions = signal<Division[]>([]);
+  // Admin and SystemAdmin are deliberately excluded — HR may only assign operational
+  // roles, matching the backend allow-list in Assura.Domain.Constants.Roles.HrAssignableRoles.
   readonly roles = [
-    'Admin',
     'Procurement',
     'Maintenance',
     'Superintendent',
@@ -51,6 +57,7 @@ export class HrAssignRoleFormComponent implements OnInit {
 
   isUpdate = false;
   submitted = false;
+  loadError = false;
 
   ngOnInit(): void {
     // Load divisions
@@ -58,32 +65,39 @@ export class HrAssignRoleFormComponent implements OnInit {
       this.divisions.set(divisions);
     });
 
-    const selectedUserId = this.hrAssignmentService.getSelectedPendingUserId();
+    const selectedUserId = this.hrAssignmentService.getSelectedUserIdForAssignment();
 
     if (!selectedUserId) {
       this.router.navigate(['/hr/pending']);
       return;
     }
 
-    this.hrAssignmentService.getUserById(selectedUserId).subscribe(user => {
-      if (!user) {
-        this.router.navigate(['/hr/pending']);
-        return;
+    this.loadError = false;
+    this.hrAssignmentService.getUserById(selectedUserId).subscribe({
+      next: (user) => {
+        if (!user) {
+          this.router.navigate(['/hr/pending']);
+          return;
+        }
+
+        this.isUpdate = !!(user.assignedRole || (user.assignments && user.assignments.length > 0));
+
+        this.form = {
+          dbId: user.id,
+          employeeId: user.username,
+          employeeName: user.name,
+          assignments: user.assignments && user.assignments.length > 0
+            ? user.assignments.map((a: any) => ({ divisionId: a.divisionId, role: a.role }))
+            : [{ divisionId: user.divisionId || null, role: user.assignedRole || user.requestedRole || '' }],
+          effectiveDate: this.getTodayDate(),
+          note: '',
+          jobTitle: user.jobTitle || ''
+        };
+      },
+      error: (err) => {
+        console.error('Error loading user for role assignment:', err);
+        this.loadError = true;
       }
-
-      this.isUpdate = !!(user.assignedRole || (user.assignments && user.assignments.length > 0));
-
-      this.form = {
-        dbId: user.id,
-        employeeId: user.username,
-        employeeName: user.name,
-        assignments: user.assignments && user.assignments.length > 0 
-          ? user.assignments.map((a: any) => ({ divisionId: a.divisionId, role: a.role }))
-          : [{ divisionId: user.divisionId || null, role: user.assignedRole || user.requestedRole || '' }],
-        effectiveDate: this.getTodayDate(),
-        note: '',
-        jobTitle: user.jobTitle || ''
-      };
     });
   }
 
@@ -121,8 +135,13 @@ export class HrAssignRoleFormComponent implements OnInit {
       : this.hrAssignmentService.assignRole(this.form.dbId, payload);
 
     request.subscribe({
-      next: () => {
+      next: (response: RoleAssignmentResponse) => {
         this.submitted = true;
+        const skipped = response?.skippedAssignments;
+        if (skipped && skipped.length > 0) {
+          const details = skipped.map(a => `- Division ${a.divisionId}, Role "${a.role}"`).join('\n');
+          alert(`Some assignments were skipped because their role or division was invalid:\n${details}`);
+        }
       },
       error: (err) => {
         console.error('Error processing role:', err);
@@ -133,6 +152,11 @@ export class HrAssignRoleFormComponent implements OnInit {
 
   rejectRole(): void {
     if (this.form.dbId === 0) return;
+
+    if (!this.form.note.trim()) {
+      alert('Please add a note explaining the reason for rejection.');
+      return;
+    }
 
     if (!confirm('Are you sure you want to reject this role request?')) return;
 

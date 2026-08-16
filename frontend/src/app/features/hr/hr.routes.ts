@@ -15,7 +15,7 @@ export const hrRoutes: Routes = [
     },
     {
         path: 'activity-logs',
-        loadComponent: () => import('./pages/myasset/myasset').then((m) => m.HrMyAssetComponent),
+        loadComponent: () => import('./pages/activity-log/activity-log').then((m) => m.HrActivityLogComponent),
     },
     {
         path: 'assign-role',
