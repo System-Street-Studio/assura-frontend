@@ -63,7 +63,7 @@ export class SystemAdminService {
         return this.http.get<SystemAdminAuditLog[]>(`${this.apiUrl}/error-logs`);
     }
 
-    resetUserPassword(userId: number): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/users/${userId}/reset-password`, {});
+    resetUserPassword(userId: number): Observable<{ temporaryPassword: string }> {
+        return this.http.post<{ temporaryPassword: string }>(`${this.apiUrl}/users/${userId}/reset-password`, {});
     }
 }

@@ -96,10 +96,13 @@ export class MaintenanceComponent implements OnInit {
   }
 
   resetPassword(user: SystemAdminUser) {
-    if (confirm(`Are you sure you want to reset the password for ${user.username} to the system default?`)) {
+    if (confirm(`Are you sure you want to reset the password for ${user.username}? A new random temporary password will be generated.`)) {
       this.systemAdminService.resetUserPassword(user.id).subscribe({
-        next: () => {
-          this.toastService.show(`Password reset successful for ${user.username}`, 'success');
+        next: (result) => {
+          this.toastService.show(
+            `Password reset for ${user.username}. Temporary password: ${result.temporaryPassword} — communicate this to the user directly, it will not be shown again.`,
+            'success'
+          );
         },
         error: (err) => {
           console.error('Failed to reset password', err);
