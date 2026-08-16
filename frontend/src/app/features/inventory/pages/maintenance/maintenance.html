@@ -54,6 +54,7 @@
                     <option value="SentForRepair">Sent For Repair</option>
                     <option value="EscalatedToProcurement">Escalated to Procurement</option>
                     <option value="Completed">Completed</option>
+                    <option value="Submitted">Submitted</option>
                     <option value="Rejected">Rejected</option>
                 </select>
                 <button class="assura-btn assura-btn-secondary" style="padding: 8px;" (click)="clearFilters()" *ngIf="searchTerm || filterStatus" title="Clear Filters">
@@ -118,6 +119,12 @@
                                     <ng-container *ngIf="req.status === 'TempAssigned' || req.status === 'InProgress' || req.status === 'SentForRepair'">
                                         <button class="assura-btn assura-btn-primary" style="padding: 6px; background: #10b981; border-color: #10b981;" (click)="openAction('complete', req, $event)" title="Mark Completed">
                                             <mat-icon style="font-size: 16px;">check_circle</mat-icon>
+                                        </button>
+                                    </ng-container>
+
+                                    <ng-container *ngIf="req.status === 'Completed'">
+                                        <button class="assura-btn assura-btn-primary" style="padding: 6px; background: #6366f1; border-color: #6366f1;" [disabled]="informProcessing" (click)="informStakeholders(req, $event)" title="Inform Employee &amp; Division Head">
+                                            <mat-icon style="font-size: 16px;">campaign</mat-icon>
                                         </button>
                                     </ng-container>
 
@@ -382,7 +389,13 @@
             </div>
         </div>
         
-        <div style="padding: 24px; border-top: 1px solid #e2e8f0; position: sticky; bottom: 0;">
+        <div style="padding: 24px; border-top: 1px solid #e2e8f0; position: sticky; bottom: 0; display: flex; gap: 12px;" *ngIf="detailRequest">
+            <button class="assura-btn assura-btn-primary" style="flex: 1; justify-content: center; background: #6366f1; border-color: #6366f1;" *ngIf="detailRequest.status === 'Completed'" [disabled]="informProcessing" (click)="informStakeholders(detailRequest, $event); showDetail = false">
+                <mat-icon style="font-size: 18px;">campaign</mat-icon> Inform Employee &amp; Division Head
+            </button>
+            <button class="assura-btn assura-btn-secondary" style="flex: 1; justify-content: center;" (click)="showDetail = false">Close</button>
+        </div>
+        <div style="padding: 24px; border-top: 1px solid #e2e8f0; position: sticky; bottom: 0;" *ngIf="!detailRequest">
             <button class="assura-btn assura-btn-secondary" style="width: 100%; justify-content: center;" (click)="showDetail = false">Close</button>
         </div>
     </div>

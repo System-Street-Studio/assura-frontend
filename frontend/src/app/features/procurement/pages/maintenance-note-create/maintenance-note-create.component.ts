@@ -25,6 +25,7 @@ export class MaintenanceNoteCreateComponent implements OnInit {
     assets: AssetSummaryDto[] = [];
     repairingFirms: RepairingFirmDto[] = [];
     selectedAsset: AssetSummaryDto | null = null;
+    requestId: number | null = null;
 
     noteData = {
         maintenanceNumber: '',
@@ -80,6 +81,9 @@ export class MaintenanceNoteCreateComponent implements OnInit {
             const assetId = params['assetId'];
             const description = params['description'];
             const date = params['date'];
+            const requestId = params['requestId'];
+
+            this.requestId = requestId ? Number(requestId) : null;
 
             let foundAssetId: number | null = null;
 
@@ -153,7 +157,8 @@ export class MaintenanceNoteCreateComponent implements OnInit {
             cost: Number(formValue.cost),
             status: formValue.status,
             assetId: formValue.assetId!,
-            repairingFirmId: formValue.repairingFirmId || undefined
+            repairingFirmId: formValue.repairingFirmId || undefined,
+            requestId: this.requestId || undefined
         };
 
         console.log('Saving note:', request);

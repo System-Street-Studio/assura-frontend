@@ -58,6 +58,12 @@ export class MaintenanceService {
         return this.http.patch<void>(`${this.apiUrl}/${id}/complete`, {});
     }
 
+    // Notifies the requesting employee and their Division Head that a Completed
+    // maintenance note is done, and flips the record's status to "Submitted".
+    informStakeholders(id: number): Observable<void> {
+        return this.http.patch<void>(`${this.apiUrl}/${id}/inform-stakeholders`, {});
+    }
+
     reject(id: number, reason: string): Observable<void> {
         return this.http.patch<void>(`${this.apiUrl}/${id}/reject`, { reason });
     }

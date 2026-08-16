@@ -60,6 +60,7 @@
         <thead>
           <tr>
             <th>Asset Name</th>
+            <th>Requested By</th>
             <th>Originating Division</th>
             <th>Discard Date</th>
             <th>Status</th>
@@ -75,6 +76,9 @@
                 </div>
               </td>
               <td>
+                <span class="division-text">{{ note.requestedByName || 'N/A' }}</span>
+              </td>
+              <td>
                 <span class="division-text">{{ note.division }}</span>
               </td>
               <td>
@@ -88,7 +92,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="empty-cell">
+              <td colspan="5" class="empty-cell">
                 <div class="empty-state">
                   <p>No discarded notes found matching your criteria.</p>
                 </div>
@@ -120,6 +124,10 @@
 
         <div class="detail-body">
           <div class="info-grid">
+            <div class="info-item">
+              <label>Requested By</label>
+              <span class="highlight">{{ selectedNote.requestedByName || 'N/A' }}</span>
+            </div>
             <div class="info-item">
               <label>Originating Division</label>
               <span class="highlight">{{ selectedNote.division }}</span>

@@ -60,6 +60,9 @@ export class MaintenanceComponent implements OnInit {
     /* ── Escalate Modal ── */
     showEscalateModal = false;
 
+    /* ── Inform Stakeholders ── */
+    informProcessing = false;
+
     /* ── Detail drawer ── */
     showDetail = false;
     detailRequest: MaintenanceRequest | null = null;
@@ -304,6 +307,27 @@ export class MaintenanceComponent implements OnInit {
         });
     }
 
+    // ── Inform Stakeholders ──
+
+    informStakeholders(request: MaintenanceRequest, event: Event): void {
+        event.stopPropagation();
+        if (this.informProcessing) return;
+        this.informProcessing = true;
+
+        this.svc.informStakeholders(request.id).subscribe({
+            next: () => {
+                this.toast.success('Employee and Division Head informed');
+                this.informProcessing = false;
+                this.loadData();
+            },
+            error: () => {
+                this.toast.error('Failed to inform stakeholders');
+                this.informProcessing = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
     // ── Helpers ──
 
     closeModals(): void {
@@ -329,6 +353,7 @@ export class MaintenanceComponent implements OnInit {
             case 'SentForRepair': return 'repair';
             case 'EscalatedToProcurement': return 'escalated';
             case 'Completed': return 'completed';
+            case 'Submitted': return 'submitted';
             case 'Rejected': return 'rejected';
             default: return '';
         }
@@ -343,6 +368,7 @@ export class MaintenanceComponent implements OnInit {
             case 'SentForRepair': return 'Sent For Repair';
             case 'EscalatedToProcurement': return 'Escalated';
             case 'Completed': return 'Completed';
+            case 'Submitted': return 'Submitted';
             case 'Rejected': return 'Rejected';
             default: return status;
         }

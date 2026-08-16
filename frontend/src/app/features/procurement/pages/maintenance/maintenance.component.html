@@ -1,144 +1,149 @@
-<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 40px;">
-  
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <div>
-      <h1 class="assura-page-title" style="margin-bottom: 4px;">Maintenance</h1>
-      <span class="assura-card-subtitle" style="font-size: 14px;">Manage maintenance requests and history</span>
-    </div>
-    <div style="display: flex; gap: 12px;">
-        <button class="assura-btn assura-btn-secondary" (click)="navigateToFirms()">
-            <mat-icon style="font-size: 18px;">business</mat-icon> Manage Repairing Firms
-        </button>
-    </div>
-  </div>
+<div class="maintenance-page">
 
-  <!-- Section 1: History of Maintenance -->
-  <section>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-          <h2 class="assura-page-title" style="margin-bottom: 0;">History of Maintenance</h2>
-          <div style="position: relative; width: 300px;">
-              <app-search-bar (queryChange)="onSearch($event)" placeholder="Search History..."></app-search-bar>
-          </div>
-      </div>
+    <!-- Section 1: History of Maintenance -->
+    <section class="page-section">
+        <div class="section-header">
+            <div>
+                <h2 class="assura-page-title">History of Maintenance</h2>
+                <span class="assura-page-subtitle">Manage maintenance requests and history</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="search-bar-wrapper">
+                    <app-search-bar (queryChange)="onSearch($event)" placeholder="Search History..."></app-search-bar>
+                </div>
+                <button class="assura-btn-secondary" (click)="navigateToFirms()">
+                    <mat-icon style="font-size: 18px; height: 18px; width: 18px;">business</mat-icon> Repairing Firms
+                </button>
+            </div>
+        </div>
 
-      <div class="assura-table-container">
-          <table class="assura-table">
-              <thead>
-                  <tr>
-                      <th class="assura-th">Maintenance No</th>
-                      <th class="assura-th">Asset</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr *ngFor="let record of pagedHistory" class="assura-tr-hover">
-                      <td class="assura-td">
-                          <span style="color: #4f46e5; font-weight: 600; cursor: pointer;" (click)="navigateToNote(record.id)">{{ record.maintenanceNumber }}</span>
-                      </td>
-                      <td class="assura-td">
-                          <span class="assura-card-title" style="margin: 0; font-size: 15px;">{{ record.assetName }}</span>
-                      </td>
-                  </tr>
-                  <tr *ngIf="pagedHistory.length === 0">
-                      <td colspan="2" class="assura-td" style="text-align: center; padding: 32px;">
-                          <div style="display: flex; flex-direction: column; align-items: center;">
-                              <mat-icon style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 8px; opacity: 0.5;">history</mat-icon>
-                              <span class="assura-card-subtitle" style="margin: 0; font-size: 14px;">No history records found</span>
-                          </div>
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
+        <div class="glass-panel table-panel">
+            @if (isLoading) {
+                <div class="empty-state">
+                    <mat-icon class="spin-animation">sync</mat-icon>
+                    <p>Loading history...</p>
+                </div>
+            } @else {
+                @if (pagedHistory.length > 0) {
+                    <table class="assura-table">
+                        <thead>
+                            <tr>
+                                <th>Maintenance No</th>
+                                <th>Asset</th>
+                                <th>Requested By</th>
+                                <th>Division</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (record of pagedHistory; track record.id) {
+                                <tr class="clickable-row">
+                                    <td class="primary-col" (click)="navigateToNote(record.id)">{{ record.maintenanceNumber }}</td>
+                                    <td>{{ record.assetName }}</td>
+                                    <td>{{ record.requestedByName || 'N/A' }}</td>
+                                    <td>{{ record.requesterDivision || 'N/A' }}</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
 
-          <div *ngIf="pagedHistory.length > 0" style="padding: 16px 24px; border-top: 1px solid #e2e8f0;">
-              <app-pagination [currentPage]="historyCurrentPage" [totalPages]="historyTotalPages"
-                  [pageNumbers]="historyPageNumbers" (pageChange)="goToHistoryPage($event)">
-              </app-pagination>
-          </div>
-      </div>
-  </section>
+                    <div class="pagination-footer">
+                        <app-pagination [currentPage]="historyCurrentPage" [totalPages]="historyTotalPages" [pageNumbers]="historyPageNumbers" (pageChange)="goToHistoryPage($event)"></app-pagination>
+                    </div>
+                } @else {
+                    <div class="empty-state">
+                        <mat-icon class="empty-icon">history</mat-icon>
+                        <p>No history records found.</p>
+                    </div>
+                }
+            }
+        </div>
+    </section>
 
-  <!-- Section 2: Maintenance Requests -->
-  <section>
-      <h2 class="assura-page-title" style="margin-bottom: 24px;">Maintenance Requests</h2>
+    <!-- Section 2: Maintenance Requests -->
+    <section class="page-section">
+        <h2 class="assura-page-title">Maintenance Requests</h2>
 
-      <div style="display: flex; gap: 24px;">
-          <!-- Left: Request List -->
-          <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
-              <div style="display: flex; flex-direction: column; gap: 12px;">
-                  <div *ngFor="let request of pagedRequests" (click)="selectRequest(request)"
-                      class="assura-card" style="cursor: pointer; min-height: auto; padding: 16px; border-left: 4px solid transparent; transition: all 0.2s;"
-                      [ngStyle]="{'border-left-color': selectedRequest?.id === request.id ? '#4f46e5' : 'transparent'}">
-                      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                          <div>
-                              <div class="assura-card-title" style="font-weight: 600; font-size: 15px; margin: 0;">{{ request.assetName }}</div>
-                              <div class="assura-card-subtitle" style="display: flex; align-items: center; gap: 4px; font-size: 13px; margin-top: 4px;">
-                                  <mat-icon style="font-size: 14px; width: 14px; height: 14px;">domain</mat-icon> {{ request.division }}
-                              </div>
-                          </div>
-                          <div class="assura-card-subtitle" style="font-size: 12px; font-weight: 500; margin: 0;">{{ request.timestamp }}</div>
-                      </div>
-                  </div>
-                  <div *ngIf="pagedRequests.length === 0" class="assura-card-subtitle" style="text-align: center; padding: 32px;">
-                      No active requests
-                  </div>
-              </div>
+        <div class="requests-layout">
+            <!-- Left: Request List -->
+            <div class="requests-list">
+                <div class="queue-cards-wrapper">
+                    @for (request of pagedRequests; track request.id) {
+                        <div class="glass-card queue-card" [class.active]="selectedRequest === request" (click)="selectRequest(request)">
+                            <div class="queue-card-top">
+                                <div>
+                                    <h4 class="req-employee">{{ request.assetName }}</h4>
+                                    <span class="req-division">{{ request.division }}</span>
+                                </div>
+                                <span class="date-chip">{{ request.timestamp }}</span>
+                            </div>
+                        </div>
+                    } @empty {
+                        <div class="glass-card empty-state">
+                            <p>No active requests.</p>
+                        </div>
+                    }
+                </div>
 
-              <!-- Requests Pagination -->
-              <div *ngIf="pagedRequests.length > 0">
-                  <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
-                      [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
-                  </app-pagination>
-              </div>
-          </div>
+                @if (filteredRequests.length > 0) {
+                    <div class="pagination-wrapper">
+                        <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
+                            [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
+                        </app-pagination>
+                    </div>
+                }
+            </div>
 
-          <!-- Right: Request Details -->
-          <div style="flex: 2;">
-              <div class="assura-card" *ngIf="selectedRequest" style="position: sticky; top: 24px;">
-                  <h3 class="assura-card-title" style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px;">
-                      Request Details
-                  </h3>
-                  
-                  <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 20px;">
-                      <div style="display: flex; flex-direction: column; gap: 4px;">
-                          <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Asset</span>
-                          <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ selectedRequest.assetName }}</span>
-                      </div>
-                      <div style="display: flex; flex-direction: column; gap: 4px;">
-                          <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Division</span>
-                          <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ selectedRequest.division }}</span>
-                      </div>
-                      <div style="display: flex; flex-direction: column; gap: 4px; grid-column: 1 / -1;">
-                          <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Date</span>
-                          <span class="assura-card-title" style="font-size: 15px; font-weight: 500; margin: 0;">{{ selectedRequest.date }}</span>
-                      </div>
-                  </div>
+            <!-- Right: Request Details -->
+            <div class="request-details">
+                @if (selectedRequest) {
+                    <div class="glass-panel detail-panel sticky-top">
+                        <div class="detail-header">
+                            <span class="pre-title">Maintenance Request</span>
+                            <h3>{{ selectedRequest.assetName }}</h3>
+                        </div>
 
-                  <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 24px;">
-                      <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Specifications</span>
-                      <div class="assura-input" style="padding: 12px; height: auto; min-height: unset; pointer-events: none;">
-                          <div *ngFor="let spec of selectedRequest.specificationsArray" style="font-size: 13px; line-height: 1.5;">
-                              • {{ spec }}
-                          </div>
-                          <div *ngIf="!selectedRequest.specificationsArray.length" class="assura-card-subtitle" style="font-size: 13px; font-style: italic; margin: 0;">No specifications provided</div>
-                      </div>
-                  </div>
+                        <div class="detail-info-grid">
+                            <div class="info-group">
+                                <label>Division</label>
+                                <span>{{ selectedRequest.divisionName }}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Date</label>
+                                <span class="mono">{{ selectedRequest.timestamp }}</span>
+                            </div>
+                        </div>
 
-                  <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-                      <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 600; text-transform: uppercase; margin: 0;">Special Note</span>
-                      <textarea class="assura-input" style="height: auto; pointer-events: none;" readonly rows="3">{{ selectedRequest.specialNote || 'No special note provided.' }}</textarea>
-                  </div>
+                        <div class="desc-group mt-24">
+                            <label>Specifications</label>
+                            <div class="glass-box text-box">
+                                @for (spec of selectedRequest.specificationsArray; track spec) {
+                                    <div>• {{ spec }}</div>
+                                }
+                                @if (!selectedRequest.specificationsArray.length) {
+                                    <span style="font-style: italic; color: #94a3b8;">No specifications provided</span>
+                                }
+                            </div>
+                        </div>
 
-                  <div style="margin-top: 24px; display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-                      <button class="assura-btn assura-btn-primary" (click)="navigateToCreate()">
-                          <mat-icon style="font-size: 18px;">note_add</mat-icon> Create Maintenance Note
-                      </button>
-                  </div>
-              </div>
+                        <div class="desc-group mt-16">
+                            <label>Special Note</label>
+                            <div class="glass-box note-box">
+                                {{ selectedRequest.specialNote || 'No special note provided.' }}
+                            </div>
+                        </div>
 
-              <div class="assura-card" *ngIf="!selectedRequest && pagedRequests.length > 0" style="display: flex; align-items: center; justify-content: center; min-height: 200px;">
-                  <p class="assura-card-subtitle">Select a request from the list to view details</p>
-              </div>
-          </div>
-      </div>
-  </section>
+                        <div class="detail-actions">
+                            <button class="assura-btn-primary" (click)="navigateToCreate()">
+                                <mat-icon style="font-size: 18px; height: 18px; width: 18px;">note_add</mat-icon> Create Maintenance Note
+                            </button>
+                        </div>
+                    </div>
+                } @else {
+                    <div class="glass-panel detail-panel empty-state" [class.hidden]="filteredRequests.length === 0">
+                        <p>Select a request from the list to view details</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
 </div>

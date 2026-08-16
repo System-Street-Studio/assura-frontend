@@ -6,8 +6,9 @@
         <h2 class="assura-page-title" style="margin-bottom: 0;">Purchasing Order #{{ order.orderNumber }}</h2>
     </div>
     
-    <div class="assura-card-subtitle" style="margin-left: 56px; margin-bottom: 32px; font-size: 16px;">
-        <span class="assura-card-title" style="margin: 0; font-weight: 600; font-size: 16px;">Supplier:</span> {{ order.supplierName || 'Unknown' }}
+    <div class="assura-card-subtitle" style="margin-left: 56px; margin-bottom: 32px; font-size: 16px; display: flex; gap: 24px;">
+        <span><span class="assura-card-title" style="margin: 0; font-weight: 600; font-size: 16px;">Supplier:</span> {{ order.supplierName || 'Unknown' }}</span>
+        <span><span class="assura-card-title" style="margin: 0; font-weight: 600; font-size: 16px;">Division:</span> {{ order.divisionName || 'N/A' }}</span>
     </div>
 
     <div style="display: flex; flex-direction: column; gap: 24px;">

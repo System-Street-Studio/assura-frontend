@@ -7,4 +7,5 @@ export interface DiscardedNote {
     time: string;
     assetType: string;
     specialNote: string;
+    requestedByName?: string;
 }

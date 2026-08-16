@@ -23,6 +23,7 @@
                             <tr>
                                 <th>PO ID</th>
                                 <th>Supplier</th>
+                                <th>Division</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
@@ -31,6 +32,7 @@
                                 <tr class="clickable-row">
                                     <td class="primary-col" (click)="navigateToDetails(order.id)">{{ order.orderNumber }}</td>
                                     <td>{{ order.supplierName || 'Unknown' }}</td>
+                                    <td>{{ order.divisionName || 'N/A' }}</td>
                                     <td><span class="date-chip">{{ order.issuedDate | date:'dd MMM yyyy' }}</span></td>
                                 </tr>
                             }

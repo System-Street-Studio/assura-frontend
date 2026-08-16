@@ -10,6 +10,9 @@ export interface MaintenanceDto {
     assetName: string;
     repairingFirmId?: number;
     repairingFirmName?: string;
+    requestedByUserId?: number;
+    requestedByName?: string;
+    requesterDivision?: string;
 }
 
 export interface CreateMaintenanceRequest {
@@ -21,6 +24,9 @@ export interface CreateMaintenanceRequest {
     status?: string;
     assetId: number;
     repairingFirmId?: number;
+    // Id of the pending-procurement queue item this note was created from, if any —
+    // lets the backend clear it out of the Procurement queue once a note exists.
+    requestId?: number;
 }
 
 export interface AssetSummaryDto {

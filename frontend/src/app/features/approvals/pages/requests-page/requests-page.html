@@ -143,7 +143,8 @@
               <th>ID</th>
               <th>Submit Date</th>
               <th>Asset / Category</th>
-              <th>Requester ID</th>
+              <th>Requester</th>
+              <th>Division</th>
               <th>Status</th>
               <th>Priority</th>
               <th class="actions-th">Action</th>
@@ -167,9 +168,10 @@
                 <td class="emp-cell">
                   <div class="requester-info">
                     <mat-icon>badge</mat-icon>
-                    <span>{{ item.requesterId || item.employeeId || 'N/A' }}</span>
+                    <span>{{ item.name || item.requesterId || item.employeeId || 'N/A' }}</span>
                   </div>
                 </td>
+                <td>{{ item.division || 'N/A' }}</td>
                 <td>
                   <span class="status-badge" [ngClass]="(item.status || 'pending').toLowerCase()">
                     <span class="status-dot"></span> {{ item.status }}

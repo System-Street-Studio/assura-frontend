@@ -145,6 +145,11 @@
   color: #fbbf24;
 }
 
+.requester-line .divider {
+  color: #64748b;
+  margin: 0 4px;
+}
+
 /* Status Badge */
 .status-badge {
   display: inline-flex;

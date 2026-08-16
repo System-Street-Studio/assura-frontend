@@ -19,6 +19,9 @@
           <div class="requester-line">
             <mat-icon>person</mat-icon>
             <span><strong>{{ request().name }}</strong> (ID: {{ request().requesterId || request().employeeId || request().employee || 'N/A' }})</span>
+            <span class="divider">·</span>
+            <mat-icon>domain</mat-icon>
+            <span>{{ request().division || 'General Division' }}</span>
           </div>
         </div>
         <div class="hero-right">

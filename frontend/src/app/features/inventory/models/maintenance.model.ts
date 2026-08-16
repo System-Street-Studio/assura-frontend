@@ -1,4 +1,4 @@
-export type MaintenanceStatus = 'PendingApproval' | 'Approved' | 'InProgress' | 'TempAssigned' | 'SentForRepair' | 'EscalatedToProcurement' | 'Completed' | 'Rejected';
+export type MaintenanceStatus = 'PendingApproval' | 'Approved' | 'InProgress' | 'TempAssigned' | 'SentForRepair' | 'EscalatedToProcurement' | 'Completed' | 'Submitted' | 'Rejected';
 export type MaintenanceType = 'Preventive' | 'Corrective' | 'Routine' | 'Emergency';
 
 export interface MaintenanceRequest {
@@ -62,6 +62,7 @@ export interface MaintenanceStats {
     escalatedToProcurement: number;
     completed: number;
     rejected: number;
+    submitted: number;
 }
 
 export interface SimilarAsset {
