@@ -53,10 +53,6 @@ export class MaintenanceComponent implements OnInit {
     selectedSimilarAssetId: number | null = null;
     loadingSimilarAssets = false;
 
-    /* ── Send For Repair Modal ── */
-    showRepairModal = false;
-    selectedFirmId: number | null = null;
-
     /* ── Escalate Modal ── */
     showEscalateModal = false;
 
@@ -252,34 +248,6 @@ export class MaintenanceComponent implements OnInit {
         });
     }
 
-    // ── Send for Repair ──
-
-    openSendForRepair(request: MaintenanceRequest, event: Event): void {
-        event.stopPropagation();
-        this.actionRequest = request;
-        this.showRepairModal = true;
-        this.selectedFirmId = null;
-        this.actionNotes = '';
-    }
-
-    confirmSendForRepair(): void {
-        if (!this.actionRequest) return;
-        this.actionProcessing = true;
-
-        this.svc.sendForRepair(this.actionRequest.id, this.selectedFirmId || undefined, this.actionNotes).subscribe({
-            next: () => {
-                this.toast.success('Asset sent for repair');
-                this.closeModals();
-                this.loadData();
-            },
-            error: () => {
-                this.toast.error('Failed to update status');
-                this.actionProcessing = false;
-                this.cdr.detectChanges();
-            }
-        });
-    }
-
     // ── Escalate ──
 
     openEscalate(request: MaintenanceRequest, event: Event): void {
@@ -333,7 +301,6 @@ export class MaintenanceComponent implements OnInit {
     closeModals(): void {
         this.showActionModal = false;
         this.showAssignModal = false;
-        this.showRepairModal = false;
         this.showEscalateModal = false;
         this.actionProcessing = false;
         this.actionRequest = null;

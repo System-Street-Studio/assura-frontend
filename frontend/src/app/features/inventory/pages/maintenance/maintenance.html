@@ -108,11 +108,8 @@
                                         <button class="assura-btn assura-btn-primary" style="padding: 6px;" (click)="openAssignTemp(req, $event)" title="Assign Temp Asset">
                                             <mat-icon style="font-size: 16px;">swap_horiz</mat-icon>
                                         </button>
-                                        <button class="assura-btn assura-btn-secondary" style="padding: 6px; color: #f59e0b; border-color: #f59e0b;" (click)="openSendForRepair(req, $event)" title="Send for Repair">
+                                        <button class="assura-btn assura-btn-secondary" style="padding: 6px; color: #f59e0b; border-color: #f59e0b;" (click)="openEscalate(req, $event)" title="Send to Procurement for Repair">
                                             <mat-icon style="font-size: 16px;">local_shipping</mat-icon>
-                                        </button>
-                                        <button class="assura-btn assura-btn-secondary" style="padding: 6px; color: #ef4444; border-color: #ef4444;" (click)="openEscalate(req, $event)" title="Escalate">
-                                            <mat-icon style="font-size: 16px;">assignment_late</mat-icon>
                                         </button>
                                     </ng-container>
 
@@ -226,59 +223,30 @@
     </div>
 </div>
 
-<div class="modal-overlay" *ngIf="showRepairModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="closeModals()">
-    <div class="assura-card assura-accent-warning" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0;">
-            <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Send for External Repair</h2>
-            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="closeModals()"><mat-icon>close</mat-icon></button>
-        </div>
-        <div style="padding: 24px;">
-            <p style="margin: 0 0 20px 0; line-height: 1.5;">You are about to send <strong>{{ actionRequest?.assetName }}</strong> to an external repair firm.</p>
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
-                <label class="assura-label">Repair Firm (Optional)</label>
-                <select [(ngModel)]="selectedFirmId" class="assura-input custom-select">
-                    <option [ngValue]="null">-- Not Specified --</option>
-                    <option [ngValue]="1">TechFix Solutions</option>
-                    <option [ngValue]="2">ElectroCare Ltd</option>
-                </select>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <label class="assura-label">Notes / Issue Description</label>
-                <textarea [(ngModel)]="actionNotes" rows="3" placeholder="Describe the issue for the repair firm..." class="assura-input"></textarea>
-            </div>
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0;">
-            <button class="assura-btn assura-btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
-            <button class="assura-btn assura-btn-primary" style="background: #f59e0b; border-color: #f59e0b;" (click)="confirmSendForRepair()" [disabled]="actionProcessing">
-                {{ actionProcessing ? 'Processing...' : 'Send For Repair' }}
-            </button>
-        </div>
-    </div>
-</div>
 
 <div class="modal-overlay" *ngIf="showEscalateModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="closeModals()">
-    <div class="assura-card assura-accent-danger" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
+    <div class="assura-card assura-accent-warning" style="width: 100%; max-width: 500px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0;">
-            <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Escalate to Procurement</h2>
+            <h2 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600;">Send to Procurement for Repair</h2>
             <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="closeModals()"><mat-icon>close</mat-icon></button>
         </div>
         <div style="padding: 24px;">
             <div style="background: #fffbeb; color: #b45309; padding: 16px; border-radius: 8px; border: 1px solid #fde68a; display: flex; gap: 12px; margin-bottom: 20px; align-items: flex-start;">
-                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">warning</mat-icon>
+                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">info</mat-icon>
                 <div style="font-size: 14px; line-height: 1.5;">
-                    This action will forward the request to the Procurement division for a new purchase or specialized handling.
+                    This action will forward the maintenance request to the Procurement division to arrange an external repair.
                 </div>
             </div>
             
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <label class="assura-label">Reason for Escalation *</label>
-                <textarea [(ngModel)]="actionNotes" rows="3" placeholder="Why are you escalating this? (e.g., Unrepairable, No temp assets available)..." class="assura-input"></textarea>
+                <label class="assura-label">Notes for Procurement *</label>
+                <textarea [(ngModel)]="actionNotes" rows="3" placeholder="Enter details about the repair needed..." class="assura-input"></textarea>
             </div>
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 20px 24px; border-top: 1px solid #e2e8f0;">
             <button class="assura-btn assura-btn-secondary" (click)="closeModals()" [disabled]="actionProcessing">Cancel</button>
-            <button class="assura-btn assura-btn-primary" style="background: #ef4444; border-color: #ef4444;" (click)="confirmEscalate()" [disabled]="actionProcessing || !actionNotes">
-                {{ actionProcessing ? 'Processing...' : 'Escalate' }}
+            <button class="assura-btn assura-btn-primary" style="background: #f59e0b; border-color: #f59e0b;" (click)="confirmEscalate()" [disabled]="actionProcessing || !actionNotes">
+                {{ actionProcessing ? 'Processing...' : 'Send to Procurement' }}
             </button>
         </div>
     </div>
