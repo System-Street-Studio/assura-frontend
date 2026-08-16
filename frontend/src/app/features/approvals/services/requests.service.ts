@@ -56,8 +56,9 @@ export class RequestService {
         reason: item.reason,
         specs: item.description,
         justification: item.reason,
-        attachments: item.attachments || []
-        
+        attachments: item.attachments || [],
+        assigneeName: item.assigneeName
+
       } as RequestItem)))
     );
   }
@@ -83,7 +84,8 @@ export class RequestService {
         reason: apiData.description,
         specs: apiData.description,
         justification: apiData.reason || apiData.description,
-        attachments: apiData.attachments || []
+        attachments: apiData.attachments || [],
+        assigneeName: apiData.assigneeName
       } as RequestItem))
     );
   }

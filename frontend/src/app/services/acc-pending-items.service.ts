@@ -14,6 +14,7 @@ export interface AccPendingItem {
   assetType: string;
   currentUser: string;
   requestedByName: string;
+  assigneeName?: string;
   specialNote: string;
   valueAtPurchasing: string;
   currentValue: string;
@@ -30,9 +31,10 @@ export class AccPendingItemsService {
     return this.http.get<AccPendingItem[]>(this.apiUrl);
   }
 
-  confirmDiscard(id: string): Observable<void> {
+  confirmDiscard(id: string, receiptId?: number | string): Observable<void> {
     // Backend expects int id in route — parse to number to avoid 400 Bad Request
     const numericId = parseInt(id, 10);
-    return this.http.post<void>(`${this.apiUrl}/${numericId}/discard`, {});
+    const numericReceiptId = receiptId ? parseInt(receiptId.toString(), 10) : 0;
+    return this.http.post<void>(`${this.apiUrl}/${numericId}/discard`, { receiptId: numericReceiptId });
   }
 }

@@ -379,6 +379,22 @@
     background: rgba(99, 102, 241, 0.1);
 }
 
+.confirm-upload-area.has-error {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.08) !important;
+}
+
+.confirm-upload-error-text {
+    color: #f87171;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: fadeIn 0.2s ease;
+}
+
 .confirm-modal-actions {
     display: flex;
     justify-content: flex-end;

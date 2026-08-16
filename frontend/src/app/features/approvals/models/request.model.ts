@@ -15,5 +15,6 @@ export interface RequestItem {
   description?: string;
   priority: string;
   type: string;
+  assigneeName?: string;
 }
 

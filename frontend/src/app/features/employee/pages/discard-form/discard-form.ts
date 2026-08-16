@@ -39,7 +39,7 @@ export class DiscardFormComponent implements OnInit {
 
   // Load assigned assets on init
   ngOnInit(): void {
-    this.assetService.getAll().subscribe({
+    this.assetService.getAll(true).subscribe({
       next: (assets) => {
         this.assignedAssets.set(assets);
 

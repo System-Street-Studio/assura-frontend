@@ -243,7 +243,19 @@ export class DepreciationComponent implements OnInit {
     document.body.removeChild(link);
   }
 
+  printDate = new Date();
+
+  get selectedCategoryName(): string {
+    if (!this.selectedCategoryId || Number(this.selectedCategoryId) === 0) return 'All Asset Categories';
+    const cat = this.categories.find(c => c.categoryId === Number(this.selectedCategoryId));
+    return cat ? `${cat.categoryName} (${cat.depreciationRate}% / yr)` : 'All Asset Categories';
+  }
+
   printReport(): void {
-    window.print();
+    this.printDate = new Date();
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      window.print();
+    }, 50);
   }
 }

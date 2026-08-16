@@ -58,6 +58,11 @@
         </div>
 
         <div class="info-item">
+          <span class="info-label">Assigned To</span>
+          <span class="info-value">{{ request().assigneeName || 'Unassigned' }}</span>
+        </div>
+
+        <div class="info-item">
           <span class="info-label">Status</span>
           <span class="status-badge" [ngClass]="(request().status || 'pending').toLowerCase()">
             <span class="status-dot"></span> {{ request().status || 'Pending' }}

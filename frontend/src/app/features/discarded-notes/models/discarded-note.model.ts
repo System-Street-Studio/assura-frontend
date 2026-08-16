@@ -8,4 +8,5 @@ export interface DiscardedNote {
     assetType: string;
     specialNote: string;
     requestedByName?: string;
+    assigneeName?: string;
 }

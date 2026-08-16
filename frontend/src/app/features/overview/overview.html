@@ -281,7 +281,7 @@
                 }
                 <div class="review-notes-btns">
                   <button class="cancel-link" (click)="cancelReview()">Back</button>
-                  <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()" [disabled]="reviewNoteControl.invalid">
+                  <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()">
                     {{ reviewAction === 'done' ? 'Confirm Approval' : 'Confirm Rejection' }}
                   </button>
                 </div>
