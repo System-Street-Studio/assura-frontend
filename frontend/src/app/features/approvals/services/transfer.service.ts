@@ -67,7 +67,7 @@ export class HeadTransferService {
 
 
   rejectByHead(transferId: number, reason: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject`, { reason });
+    return this.http.post(`${this.baseUrl}/transfers/${transferId}/reject-head`, { reason });
   }
 
   returnActiveTransfer(transferId: number): Observable<any> {
