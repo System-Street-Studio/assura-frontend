@@ -496,9 +496,18 @@
   letter-spacing: 0.5px;
 }
 
+.assura-card.assura-accent-success {
+  border-top: 4px solid #10b981 !important;
+  border-left: 1px solid rgba(148, 163, 184, 0.15) !important;
+  border-right: 1px solid rgba(148, 163, 184, 0.15) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15) !important;
+}
+
 .highlight-card {
-  border: 1px solid rgba(16, 185, 129, 0.4) !important;
-  background: rgba(16, 185, 129, 0.1) !important;
+  border-top: 4px solid #10b981 !important;
+  border-left: 1px solid rgba(16, 185, 129, 0.45) !important;
+  border-right: 1px solid rgba(16, 185, 129, 0.45) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.45) !important;
 }
 
 .highlight-row {
