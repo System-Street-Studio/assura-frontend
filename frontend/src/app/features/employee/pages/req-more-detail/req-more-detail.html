@@ -39,7 +39,7 @@
           <span class="status-badge large" [ngClass]="request()!.status ? request()!.status.toLowerCase() : 'pending'">
             <span class="status-dot"></span> {{ request()!.status }}
           </span>
-          @if (request()!.requestType !== 'Discard' && request()!.priority) {
+          @if ( request()!.priority) {
             <span class="priority-badge large" [ngClass]="request()!.priority.toLowerCase()">
               {{ request()!.priority }} Priority
             </span>

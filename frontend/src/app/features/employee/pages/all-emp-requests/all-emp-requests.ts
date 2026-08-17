@@ -26,7 +26,7 @@ export class AllRequestsComponent implements OnInit {
   pageSize = 10;
   currentPage = signal(1);
   
-  filterStatus = signal<'All Types' | 'Pending' | 'Approved' | 'Rejected'>('All Types');
+  filterStatus = signal<'All Types' | 'Pending' | 'Approved' | 'Rejected' | 'PendingProcurement'>('All Types');
   isMenuOpen = signal(false);
 
   private authService = inject(AuthService);
@@ -76,6 +76,7 @@ export class AllRequestsComponent implements OnInit {
     return `status-${status.toLowerCase().replace(' ', '-')}`;
   }
 
+ 
   //filter requests
   filteredRequests = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
@@ -85,7 +86,21 @@ export class AllRequestsComponent implements OnInit {
       const matchesSearch = r.id.toString().includes(query) || 
                             r.requestType.toLowerCase().includes(query) ||
                             (r.assetName && r.assetName.toLowerCase().includes(query));
-      const matchesStatus = status === 'All Types' || this.assetService.normalizeStatus(r.status) === status;
+      
+      const rawStatus = r.status ? r.status.trim() : '';
+      
+
+      let matchesStatus = true;
+      if (status !== 'All Types') {
+        if (status === 'Pending') {
+          matchesStatus = rawStatus.toLowerCase() === 'pending';
+        } else if (status === 'PendingProcurement') {
+          matchesStatus = rawStatus.toLowerCase() === 'pendingprocurement' || rawStatus.toLowerCase() === 'pending-procurement';
+        } else {
+          matchesStatus = this.assetService.normalizeStatus(r.status) === status;
+        }
+      }
+
       return matchesSearch && matchesStatus;
     });
   });
@@ -116,7 +131,7 @@ export class AllRequestsComponent implements OnInit {
   }
 
   //filter by status 
-  setStatus(status: 'All Types' | 'Pending' | 'Approved' | 'Rejected') {
+  setStatus(status: 'All Types' | 'Pending' | 'Approved' | 'Rejected' |'PendingProcurement') {
     this.filterStatus.set(status);
     this.currentPage.set(1);
     this.isMenuOpen.set(false);

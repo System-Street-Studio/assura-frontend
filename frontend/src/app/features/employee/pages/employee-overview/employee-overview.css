@@ -324,7 +324,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-width: 92px;
+  min-width: 150px;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
@@ -340,10 +340,17 @@
   background: currentColor;
 }
 
-.status-badge.pending {
+.status-badge.status-pending{
   background: rgba(245, 158, 11, 0.12);
   color: #fbbf24;
   border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-badge.status-pendingprocurement,
+.status-badge.status-pendingprocurement {
+  background: rgba(11, 167, 245, 0.12) !important;
+  color: #24d7fb !important;
+  border: 1px solid rgba(11, 202, 245, 0.3) !important;
 }
 
 /* ── Empty State ── */

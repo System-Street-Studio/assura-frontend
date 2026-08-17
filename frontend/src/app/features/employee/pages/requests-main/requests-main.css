@@ -297,6 +297,7 @@
   letter-spacing: 0.5px;
   text-align: center;
   white-space: nowrap;
+
 }
 
 .priority-badge.high,
@@ -326,7 +327,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-width: 92px;
+  min-width: 150px;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
@@ -361,6 +362,23 @@
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
+
+
+.status-badge.pendingprocurement,
+.status-badge.pending-procurement {
+  background: rgba(11, 167, 245, 0.12) !important;
+  color: #24d7fb !important;
+  border: 1px solid rgba(11, 202, 245, 0.3) !important;
+}
+
+.status-badge.asset-issued,
+.status-badge.approvedprocurement,
+.status-badge.approved-procurement {
+  background: rgba(245, 11, 218, 0.12) !important;
+  color: #fb24f7 !important;
+  border: 1px solid rgba(245, 11, 229, 0.3) !important;
+}
+
 
 .assura-btn-secondary {
   display: inline-flex;
