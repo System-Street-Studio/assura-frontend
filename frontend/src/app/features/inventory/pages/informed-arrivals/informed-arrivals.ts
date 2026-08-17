@@ -98,7 +98,7 @@ export class InformedArrivalsComponent implements OnInit {
 
     getStatusClass(status: string): string {
         const s = (status || 'pending').toLowerCase();
-        if (s === 'confirmed' || s === 'completed') return 'assura-badge-success';
+        if (s === 'confirmed' || s === 'completed' || s === 'grn recorded' || s === 'received') return 'assura-badge-success';
         if (s === 'informed') return 'assura-badge-info';
         return 'assura-badge-warning';
     }
@@ -114,11 +114,12 @@ export class InformedArrivalsComponent implements OnInit {
     }
 
     checkoutArrival(item: AssetInformingDto): void {
+        const itemName = item.model && item.itemName.startsWith('PO-') ? item.model : item.itemName;
         this.router.navigate(['/inventory/check-out'], {
             queryParams: {
                 informingId: item.id,
                 employeeId: item.targetEmployeeId ? String(item.targetEmployeeId) : undefined,
-                item: item.itemName
+                item: itemName
             }
         });
     }

@@ -34,7 +34,7 @@
                     </td>
                     <td class="assura-td">
                         <span class="assura-badge" [ngClass]="getStatusClass(item.status)">
-                            <mat-icon *ngIf="(item.status || '').toLowerCase() === 'confirmed'" style="font-size: 13px; width: 13px; height: 13px; margin-right: 3px;">verified</mat-icon>
+                            <mat-icon *ngIf="(item.status || '').toLowerCase() === 'confirmed' || (item.status || '').toLowerCase() === 'grn recorded'" style="font-size: 13px; width: 13px; height: 13px; margin-right: 3px;">verified</mat-icon>
                             <mat-icon *ngIf="(item.status || '').toLowerCase() === 'completed'" style="font-size: 13px; width: 13px; height: 13px; margin-right: 3px;">check_circle</mat-icon>
                             {{ item.status }}
                         </span>
@@ -61,7 +61,7 @@
                                 <span>Re-inform</span>
                             </button>
 
-                            <!-- State 3: Confirmed by Employee -> Register GRN & Checkout -->
+                            <!-- State 3a: Confirmed by Employee -> Show Record GRN -->
                             <button *ngIf="(item.status || '').toLowerCase() === 'confirmed'"
                                 class="assura-btn assura-btn-success"
                                 style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px; background: #059669; color: #fff;"
@@ -71,7 +71,8 @@
                                 <span>Record GRN</span>
                             </button>
 
-                            <button *ngIf="(item.status || '').toLowerCase() === 'confirmed'"
+                            <!-- State 3b: Confirmed or GRN Recorded -> Show Checkout -->
+                            <button *ngIf="(item.status || '').toLowerCase() === 'confirmed' || (item.status || '').toLowerCase() === 'grn recorded' || (item.status || '').toLowerCase() === 'grnrecorded' || (item.status || '').toLowerCase() === 'received'"
                                 class="assura-btn assura-btn-primary"
                                 style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px;"
                                 (click)="checkoutArrival(item)"

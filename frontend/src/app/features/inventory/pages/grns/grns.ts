@@ -132,10 +132,13 @@ export class GrnsComponent implements OnInit {
 
         this.createForm = {
             purchasingOrderId: 0,
-            assetId: 0,
+            assetId: 0, // 0 = Auto-register new asset from PO
             receivedDate: new Date().toISOString().slice(0, 10),
             receivedBy: formattedUserName,
             notes: preselectPo ? `Received in good condition as per ${preselectPo}.` : 'Received in good condition.',
+            informingId: this.informingId || undefined,
+            itemName: preselectPo || undefined,
+            model: preselectModel || undefined,
         };
         this.showCreateModal = true;
 
@@ -182,25 +185,6 @@ export class GrnsComponent implements OnInit {
         this.svc.getAssetOptions().subscribe({
             next: (assets) => {
                 this.assets = assets;
-                const recordedAssetIds = new Set(this.allGrns.map(g => g.assetId));
-                const availableAssets = this.assets.filter(a => !recordedAssetIds.has(a.id));
-
-                if (preselectModel) {
-                    const mClean = preselectModel.trim().toLowerCase();
-                    const assetMatch = availableAssets.find(a => 
-                        a.productName.toLowerCase().includes(mClean) || 
-                        a.assetCode.toLowerCase().includes(mClean)
-                    );
-                    if (assetMatch) {
-                        this.createForm.assetId = assetMatch.id;
-                    }
-                }
-
-                if (!this.createForm.assetId && availableAssets.length > 0) {
-                    this.createForm.assetId = availableAssets[0].id;
-                } else if (!this.createForm.assetId) {
-                    this.createForm.assetId = 0;
-                }
                 this.cdr.detectChanges();
             },
             error: () => { this.assets = []; this.toast.error('Failed to load assets'); },
@@ -218,7 +202,7 @@ export class GrnsComponent implements OnInit {
 
     confirmCreate(): void {
         this.submitted = true;
-        if (!this.createForm.purchasingOrderId || !this.createForm.assetId || !this.createForm.receivedDate) {
+        if (!this.createForm.purchasingOrderId || !this.createForm.receivedDate) {
             return;
         }
 
@@ -235,7 +219,7 @@ export class GrnsComponent implements OnInit {
         ).subscribe({
             next: (grn) => {
                 this.showCreateModal = false;
-                this.toast.success(`GRN "${grn.grnNumber}" recorded for ${grn.assetCode}.`);
+                this.toast.success(`GRN "${grn.grnNumber}" recorded & Asset ${grn.assetCode} registered.`);
                 this.loadData();
             },
             error: (err) => {
