@@ -130,18 +130,18 @@
                 </div>
 
                 <div>
-                    <label for="grn-asset" class="assura-label" style="color: #cbd5e1; font-weight: 500; margin-bottom: 6px; display: block;">Asset Register Entry *</label>
+                    <label for="grn-asset" class="assura-label" style="color: #cbd5e1; font-weight: 500; margin-bottom: 6px; display: block;">Asset Register Entry</label>
                     <select id="grn-asset" class="assura-input" style="background: #1e293b; border-color: #334155; color: #f8fafc;" [(ngModel)]="createForm.assetId">
-                        <option [ngValue]="0" disabled>Select an asset</option>
+                        <option [ngValue]="0">✨ Auto-register new asset from PO (Recommended)</option>
                         @for (asset of assets; track asset.id) {
                             <option [ngValue]="asset.id" [disabled]="isAssetAlreadyReceived(asset.id)">
                                 {{ asset.assetCode }} — {{ asset.productName }} {{ isAssetAlreadyReceived(asset.id) ? '(GRN Already Recorded)' : '' }}
                             </option>
                         }
                     </select>
-                    @if (submitted && !createForm.assetId) {
-                        <div style="color: #f87171; font-size: 12px; margin-top: 4px;">Please select an asset that has not already had a GRN recorded.</div>
-                    }
+                    <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
+                        {{ createForm.assetId === 0 ? 'A new asset will be created in inventory and linked to this GRN.' : 'GRN will be linked to this existing asset register entry.' }}
+                    </div>
                 </div>
 
                 <div>
