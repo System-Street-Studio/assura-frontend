@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Angular core & common imports
 // ─────────────────────────────────────────────────────────────────────────────
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ElementRef } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { AbstractControl, FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -71,6 +71,7 @@ export class AssetFormComponent implements OnInit {
   private router = inject(Router);               // Navigates programmatically after save/cancel
   private location = inject(Location);           // Enables browser-native "back" navigation
   private toast = inject(ToastService);          // Shows non-blocking notification toasts
+  private hostRef = inject<ElementRef<HTMLElement>>(ElementRef); // Used to focus/scroll to the first invalid field
 
   // ── Component state ──
   /** Determines whether the form is in create, edit, or clone mode. Defaults to 'edit'. */
@@ -84,6 +85,41 @@ export class AssetFormComponent implements OnInit {
 
   /** Tracks whether the form was ever submitted; used to show validation errors even for untouched fields. */
   submitted = false;
+
+  /**
+   * True for a brief moment after a rejected submit. Drives the shake animation on invalid
+   * fields so a failed save is felt as well as seen.
+   */
+  shaking = false;
+
+  /**
+   * Asset codes already taken, lowercased. Populated from the asset list that is loaded
+   * anyway for PO filtering, so uniqueness is checked without an extra request.
+   */
+  private existingAssetCodes = new Set<string>();
+
+  /**
+   * The code this asset already had when editing. Always permitted, otherwise an asset
+   * would collide with itself the moment the form is re-saved unchanged.
+   */
+  private originalAssetCode = '';
+
+  /** Human-readable field names, used for both inline errors and the summary toast. */
+  private readonly fieldLabels: Record<string, string> = {
+    assetCode: 'Asset Code',
+    assetTag: 'Asset Tag',
+    productId: 'Product',
+    status: 'Status',
+    assignedUserId: 'Assigned Employee',
+    categoryId: 'Category',
+    supplierId: 'Supplier',
+    divisionId: 'Division',
+    serialNumber: 'Serial Number',
+    assetDate: 'Asset Date',
+    purchaseValue: 'Purchase Value',
+    warranty: 'Warranty',
+    notes: 'Notes',
+  };
 
   /**
    * The numeric database ID of the asset currently being edited.
@@ -177,6 +213,10 @@ export class AssetFormComponent implements OnInit {
     this.mode = this.route.snapshot.data['mode'] || 'edit';
     this.assetId = this.route.snapshot.paramMap.get('id') || '';
 
+    // Registered here rather than in the FormBuilder group so it can close over component
+    // state (the loaded code list) that does not exist yet at field-initialisation time.
+    this.assetForm.controls.assetCode.addValidators((c) => this.validateAssetCodeUnique(c));
+
     this.loadDropdownData();
 
     if (this.mode === 'create') {
@@ -195,6 +235,9 @@ export class AssetFormComponent implements OnInit {
         next: (a) => {
           // Store the numeric ID so it can be included in the update payload later
           this.editingAssetNumericId = Number(a.id) || Number(this.assetId) || 0;
+
+          // Only edit mode keeps the original code; a clone must claim a brand-new one.
+          this.originalAssetCode = this.mode === 'edit' ? a.assetCode || '' : '';
 
           // Patch all form fields with values from the fetched asset
           this.assetForm.patchValue({
@@ -222,6 +265,9 @@ export class AssetFormComponent implements OnInit {
               assignedUserId: 0,
             });
           }
+
+          // Re-run the uniqueness rule now that the code (and the exempt original) are known.
+          this.assetForm.controls.assetCode.updateValueAndValidity({ emitEvent: false });
         },
         error: () => {
           this.toast.error('Failed to load asset');
@@ -231,19 +277,29 @@ export class AssetFormComponent implements OnInit {
     }
   }
 
-  /** Generates a unique, standardized asset code like AST-20260815-1234. */
+  /**
+   * Generates a standardized asset code like AST-20260815-1234, retrying until it finds one
+   * that is not already taken so the Auto button cannot hand out a colliding code.
+   */
   generateAssetCode(): string {
     const now = new Date();
     const yyyy = now.getFullYear();
     const mm = String(now.getMonth() + 1).padStart(2, '0');
     const dd = String(now.getDate()).padStart(2, '0');
-    const rand = Math.floor(1000 + Math.random() * 9000);
-    return `AST-${yyyy}${mm}${dd}-${rand}`;
+
+    let code = '';
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const rand = Math.floor(1000 + Math.random() * 9000);
+      code = `AST-${yyyy}${mm}${dd}-${rand}`;
+      if (!this.existingAssetCodes.has(code.toLowerCase())) return code;
+    }
+    return code; // Exhausted the day's random space; the backend still guards uniqueness.
   }
 
   /** Regenerates a fresh asset code on button click. */
   regenerateCode(): void {
     this.assetForm.patchValue({ assetCode: this.generateAssetCode() });
+    this.assetForm.controls.assetCode.updateValueAndValidity({ emitEvent: false });
     this.toast.info('New Asset Code generated');
   }
 
@@ -277,6 +333,109 @@ export class AssetFormComponent implements OnInit {
     return !!control && control.invalid && (control.touched || this.submitted);
   }
 
+  /**
+   * Returns the message to show under a field, or '' when the field is fine.
+   * Centralised so every field reports its actual problem instead of a generic
+   * "is required" that is wrong for range and uniqueness failures.
+   */
+  errorFor(controlName: keyof typeof this.assetForm.controls): string {
+    if (!this.showError(controlName)) return '';
+
+    const control = this.assetForm.controls[controlName];
+    const errors = control.errors ?? {};
+    const label = this.fieldLabels[controlName] ?? 'This field';
+
+    if (errors['codeTaken']) {
+      return `Asset Code "${String(control.value ?? '').trim()}" already exists. Please use a different code.`;
+    }
+    if (errors['required']) {
+      return `${label} is required.`;
+    }
+    if (errors['maxlength']) {
+      return `${label} cannot be longer than ${errors['maxlength'].requiredLength} characters.`;
+    }
+    if (errors['min']) {
+      // purchaseValue uses min(0) to reject negatives; the FK dropdowns use min(1),
+      // where the failure really means "nothing was picked".
+      return controlName === 'purchaseValue'
+        ? 'Purchase Value cannot be negative.'
+        : `${label} is required.`;
+    }
+    return `${label} is not valid.`;
+  }
+
+  /** Rejects an asset code that another asset already uses. */
+  private validateAssetCodeUnique(control: AbstractControl): ValidationErrors | null {
+    const value = String(control.value ?? '').trim().toLowerCase();
+    if (!value) return null;
+    if (value === this.originalAssetCode.trim().toLowerCase()) return null;
+    return this.existingAssetCodes.has(value) ? { codeTaken: true } : null;
+  }
+
+  /** Names of every currently invalid field, for the summary toast. */
+  private get invalidFieldLabels(): string[] {
+    const names = Object.keys(this.assetForm.controls) as (keyof typeof this.assetForm.controls)[];
+    return names
+      .filter((name) => this.assetForm.controls[name].invalid)
+      .map((name) => this.fieldLabels[name] ?? String(name));
+  }
+
+  /**
+   * Flags a rejected submit: replays the shake animation on the invalid fields and moves
+   * focus to the first one so the user is taken straight to what needs fixing.
+   */
+  private triggerInvalidFeedback(): void {
+    // Cleared first so the animation restarts even on a second consecutive failed submit.
+    this.shaking = false;
+    setTimeout(() => {
+      this.shaking = true;
+      setTimeout(() => (this.shaking = false), 600);
+
+      const firstInvalid = this.hostRef.nativeElement.querySelector<HTMLElement>('.field-invalid');
+      if (firstInvalid) {
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalid.focus({ preventScroll: true });
+      }
+    });
+  }
+
+  /**
+   * Pulls a usable message out of an API error. The API's ExceptionMiddleware serialises
+   * PascalCase (`Message`/`Detail`), so camelCase-only lookups silently fell through to
+   * "Unknown error occurred". `Message` is checked first because it holds the friendly
+   * validation text while `Detail` holds the raw exception.
+   */
+  private extractApiError(err: HttpErrorResponse): string {
+    if (typeof err.error === 'string' && err.error.trim()) return err.error;
+    const body = err.error ?? {};
+    return (
+      body.Message || body.message ||
+      body.Detail  || body.detail  ||
+      body.Title   || body.title   ||
+      'Unknown error occurred'
+    );
+  }
+
+  /**
+   * Shows a failed save. When the backend reports a duplicate asset code, the error is
+   * pushed back onto the field so it turns red and shakes like a client-side failure.
+   */
+  private handleSaveError(err: HttpErrorResponse, action: string): void {
+    this.saving = false;
+    const detail = this.extractApiError(err);
+
+    if (/already exists/i.test(detail)) {
+      const codeControl = this.assetForm.controls.assetCode;
+      const code = String(codeControl.value ?? '').trim().toLowerCase();
+      if (code) this.existingAssetCodes.add(code);
+      codeControl.updateValueAndValidity({ emitEvent: false });
+      codeControl.markAsTouched();
+      this.triggerInvalidFeedback();
+    }
+
+    this.toast.error(`${action}: ${detail}`);
+  }
+
   // ── Stub methods for future image upload feature ──
   /** Handles file input changes. Placeholder — image upload not yet fully implemented. */
   onFileChange(event: any): void { }
@@ -297,19 +456,25 @@ export class AssetFormComponent implements OnInit {
 
     if (this.assetForm.invalid) {
       this.assetForm.markAllAsTouched(); // Force validation styling on all fields
+      this.triggerInvalidFeedback();
 
-      const missing: string[] = [];
-      if (this.assetForm.get('assetCode')?.invalid) missing.push('Asset Code');
-      if (this.assetForm.get('productId')?.invalid) missing.push('Product');
-      if (this.assetForm.get('categoryId')?.invalid) missing.push('Category');
-      if (this.assetForm.get('supplierId')?.invalid) missing.push('Supplier');
-      if (this.assetForm.get('divisionId')?.invalid) missing.push('Division');
-      if (this.assetForm.get('status')?.invalid) missing.push('Status');
-      if (this.assetForm.get('assetDate')?.invalid) missing.push('Asset Date');
+      // Surface the most specific problem first: a duplicate code needs a different message
+      // to a blank required field, and the old summary silently omitted Purchase Value.
+      const codeTaken = this.assetForm.controls.assetCode.hasError('codeTaken');
+      const negativeValue = this.assetForm.controls.purchaseValue.hasError('min');
+      const invalid = this.invalidFieldLabels;
 
-      const msg = missing.length > 0
-        ? `Please select/fill: ${missing.join(', ')}`
-        : 'Please fill all required fields marked with *';
+      let msg: string;
+      if (codeTaken) {
+        msg = this.errorFor('assetCode');
+      } else if (negativeValue) {
+        msg = 'Purchase Value cannot be negative.';
+      } else if (invalid.length > 0) {
+        msg = `Please check: ${invalid.join(', ')}`;
+      } else {
+        msg = 'Please fill all required fields marked with *';
+      }
+
       this.toast.warning(msg);
       return;
     }
@@ -330,27 +495,21 @@ export class AssetFormComponent implements OnInit {
           }
 
           this.saving = false;
-          this.showResultOverlay('success', 'Success', `Asset saved.`, ['/inventory/assets']);
+          const message = this.mode === 'clone'
+            ? `"${payload.assetCode}" has been created as a copy and added to inventory.`
+            : `"${payload.assetCode}" has been added to inventory.`;
+          this.showResultOverlay('success', 'Asset Created!', message, ['/inventory/assets']);
         },
-        error: (err: HttpErrorResponse) => {
-          this.saving = false;
-          // Attempt to extract a meaningful error message from common backend response shapes
-          const detail = err.error?.detail || err.error?.message || err.error?.title || 'Unknown error occurred';
-          this.toast.error(`Failed to save: ${detail}`);
-        },
+        error: (err: HttpErrorResponse) => this.handleSaveError(err, 'Failed to save'),
       });
     } else {
       // PUT — update the existing asset record
       this.assetService.updateAsset(payload).subscribe({
         next: () => {
           this.saving = false;
-          this.showResultOverlay('success', 'Updated', `Asset updated.`, ['/inventory/assets']);
+          this.showResultOverlay('success', 'Asset Updated!', `"${payload.assetCode}" has been updated.`, ['/inventory/assets']);
         },
-        error: (err: HttpErrorResponse) => {
-          this.saving = false;
-          const detail = err.error?.detail || err.error?.message || err.error?.title || 'Unknown error occurred';
-          this.toast.error(`Failed to update: ${detail}`);
-        },
+        error: (err: HttpErrorResponse) => this.handleSaveError(err, 'Failed to update'),
       });
     }
   }
@@ -375,6 +534,15 @@ export class AssetFormComponent implements OnInit {
       this.divisions  = divisions;
       this.categories = categories;
       this.employees  = employees || [];
+
+      // Reuse the asset list for client-side asset-code uniqueness. The backend validates
+      // this authoritatively too; this only gives the user immediate feedback.
+      this.existingAssetCodes = new Set(
+        (existingAssets || [])
+          .map((a) => (a.assetCode || '').trim().toLowerCase())
+          .filter(Boolean)
+      );
+      this.assetForm.controls.assetCode.updateValueAndValidity({ emitEvent: false });
 
       // Extract existing asset notes to identify POs that have already been registered
       const existingNotes = (existingAssets || [])
@@ -693,9 +861,9 @@ export class AssetFormComponent implements OnInit {
   }
 
   /**
-   * Sets up the result overlay state and auto-dismisses it after 2 seconds.
+   * Sets up the result overlay state and auto-dismisses it after 3 seconds.
    * @param type       - 'success' or 'error' — controls the overlay icon and colour.
-   * @param title      - Short headline shown on the overlay (e.g., 'Updated').
+   * @param title      - Short headline shown on the overlay (e.g., 'Asset Created!').
    * @param message    - Longer detail message shown below the title.
    * @param navigateTo - Route to navigate to when the overlay is closed.
    */
@@ -705,7 +873,7 @@ export class AssetFormComponent implements OnInit {
     this.resultMessage = message;
     this.navigateTarget = navigateTo;
     this.showResult    = true;
-    setTimeout(() => this.onResultClosed(), 2000); // Auto-close after 2 seconds
+    setTimeout(() => this.onResultClosed(), 3000); // Auto-close after 3 seconds
   }
 
   /**

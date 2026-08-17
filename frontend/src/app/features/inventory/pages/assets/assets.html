@@ -6,10 +6,51 @@
             <span style="font-size: 14px; color: #94a3b8;">{{ filteredAssets.length }} of {{ allAssets.length }} items</span>
         </div>
         <div style="display: flex; gap: 12px; align-items: center;">
-            <button class="assura-btn assura-btn-secondary" title="Export to CSV" (click)="exportToCsv()">
-                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">file_download</mat-icon>
-                Export
-            </button>
+            <div class="export-wrapper">
+                <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleExportMenu()"
+                        [attr.aria-expanded]="showExportMenu" aria-haspopup="true"
+                        title="Export asset details as PDF, Excel or CSV">
+                    <mat-icon style="font-size: 18px; width: 18px; height: 18px;">file_download</mat-icon>
+                    Export
+                    <mat-icon style="font-size: 18px; width: 18px; height: 18px;">{{ showExportMenu ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
+                </button>
+
+                @if (showExportMenu) {
+                    <div class="export-menu" role="menu" aria-label="Export format">
+                        <div class="export-menu-scope">
+                            @if (selectedCount > 0) {
+                                Exporting {{ selectedCount }} selected asset(s)
+                            } @else {
+                                Exporting {{ filteredAssets.length }} filtered asset(s)
+                            }
+                        </div>
+
+                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportAssets('pdf')">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #f87171;">picture_as_pdf</mat-icon>
+                            <span class="export-menu-text">
+                                <strong>PDF</strong>
+                                <small>Printable asset register</small>
+                            </span>
+                        </button>
+
+                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportAssets('excel')">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #34d399;">table_chart</mat-icon>
+                            <span class="export-menu-text">
+                                <strong>Excel</strong>
+                                <small>Formatted spreadsheet (.xls)</small>
+                            </span>
+                        </button>
+
+                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportAssets('csv')">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #60a5fa;">description</mat-icon>
+                            <span class="export-menu-text">
+                                <strong>CSV</strong>
+                                <small>Plain data (.csv)</small>
+                            </span>
+                        </button>
+                    </div>
+                }
+            </div>
             <button class="assura-btn assura-btn-secondary" style="border-color: #6366f1; color: #818cf8;" (click)="openBulkQrModal()" [disabled]="selectedCount === 0" title="Print QR Code labels for selected assets">
                 <mat-icon style="font-size: 18px; width: 18px; height: 18px;">qr_code_2</mat-icon>
                 Print QR Labels @if (selectedCount > 0) { ({{ selectedCount }}) }
@@ -48,9 +89,9 @@
             <strong class="assura-card-value">{{ statusCounts['Discarded'] }}</strong>
         </div>
         
-        <div class="assura-card assura-accent-primary">
-            <span class="assura-card-title">Total Value</span>
-            <strong class="assura-card-value" style="font-size: 24px;">{{ formatCurrency(totalValue) }}</strong>
+        <div class="assura-card assura-accent-primary" title="{{ formatCurrency(totalValue) }}">
+            <span class="assura-card-title">Total Value (LKR)</span>
+            <strong class="assura-card-value" style="font-size: 22px;">{{ formatNumber(totalValue) }}</strong>
         </div>
     </div>
 
