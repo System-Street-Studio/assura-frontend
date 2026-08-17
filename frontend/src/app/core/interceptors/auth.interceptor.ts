@@ -23,10 +23,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(request).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
-        // Token is invalid/expired — clear it and redirect to login
+      if (error.status === 401 && !isAuthRequest) {
+        // Token is invalid/expired or account was logged into on another device
         authService.logout();
-        router.navigate(['/auth/login']);
+        router.navigate(['/auth/login'], { queryParams: { sessionExpired: 'true' } });
       }
       return throwError(() => error);
     })
