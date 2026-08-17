@@ -110,8 +110,7 @@
                     <div class="note-box">{{ selectedItem.specialNote || 'No special note' }}</div>
                 </div>
 
-                <div class="detail-actions"
-                    *ngIf="selectedItem.category !== 'approved'">
+                <div class="detail-actions">
                     <button class="assura-btn assura-btn-primary btn-confirm" (click)="confirmDiscarding()">Confirm Discarding</button>
                 </div>
             </div>
