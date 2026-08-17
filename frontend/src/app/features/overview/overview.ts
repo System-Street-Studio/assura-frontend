@@ -23,37 +23,9 @@ export class OverviewComponent implements OnInit {
 
   get pendingCount() { return this.queue.filter(i => i.status === 'Pending').length; }
   get discardedCount() { return this.queue.filter(i => i.status === 'Discarded').length; }
-  get unreadCount() { return this.queue.filter(i => i.status === 'Unread').length; }
   get rejectedCount() { return this.queue.filter(i => i.status === 'Rejected').length; }
   get approvedCount() { return this.queue.filter(i => i.status === 'Approved').length; }
   get totalCount() { return this.queue.length; }
-  get todayCount() {
-    return this.queue.filter(i => this.isToday(i.date)).length;
-  }
-
-  isToday(dateStr?: string): boolean {
-    if (!dateStr) return false;
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const todayLocal = `${year}-${month}-${day}`;
-
-    if (dateStr.startsWith(todayLocal)) return true;
-
-    try {
-      const parsed = new Date(dateStr);
-      if (!isNaN(parsed.getTime())) {
-        const pYear = parsed.getFullYear();
-        const pMonth = String(parsed.getMonth() + 1).padStart(2, '0');
-        const pDay = String(parsed.getDate()).padStart(2, '0');
-        return `${pYear}-${pMonth}-${pDay}` === todayLocal;
-      }
-    } catch {
-      // ignore
-    }
-    return false;
-  }
 
   // Review flow state
   reviewStep: 'idle' | 'choose' | 'notes' = 'idle';
@@ -123,9 +95,7 @@ export class OverviewComponent implements OnInit {
       this.filteredQueue = [...this.queue];
     } else {
       this.activeFilter = status;
-      if (status === 'Today') {
-        this.filteredQueue = this.queue.filter(i => this.isToday(i.date));
-      } else if (status === '') {
+      if (status === '') {
         this.filteredQueue = [...this.queue];
       } else {
         this.filteredQueue = this.queue.filter(i => i.status === status);
@@ -171,9 +141,7 @@ export class OverviewComponent implements OnInit {
           this.selectedItem.status = newStatus;
         }
 
-        if (this.activeFilter === 'Today') {
-          this.filteredQueue = this.queue.filter(i => this.isToday(i.date));
-        } else if (this.activeFilter) {
+        if (this.activeFilter) {
           this.filteredQueue = this.queue.filter(i => i.status === this.activeFilter);
         } else {
           this.filteredQueue = [...this.queue];

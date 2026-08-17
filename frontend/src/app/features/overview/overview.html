@@ -37,21 +37,6 @@
       <div class="card-value">{{ discardedCount }}</div>
     </div>
 
-    <div class="glass-card stat-card unread" [class.card-active]="activeFilter === 'Unread'"
-         (click)="filterByStatus('Unread')">
-      <div class="card-header">
-        <span class="label">Unread Requests</span>
-        <div class="icon-wrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-            <polyline points="22,6 12,13 2,6" />
-          </svg>
-        </div>
-      </div>
-      <div class="card-value">{{ unreadCount }}</div>
-    </div>
-
     <div class="glass-card stat-card rejected" [class.card-active]="activeFilter === 'Rejected'"
          (click)="filterByStatus('Rejected')">
       <div class="card-header">
@@ -97,29 +82,13 @@
       </div>
       <div class="card-value">{{ totalCount }}</div>
     </div>
-
-    <div class="glass-card stat-card today" [class.card-active]="activeFilter === 'Today'"
-         (click)="filterByStatus('Today')">
-      <div class="card-header">
-        <span class="label">Today</span>
-        <div class="icon-wrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
-        </div>
-      </div>
-      <div class="card-value">{{ todayCount }}</div>
-    </div>
   </div>
 
   <!-- Section Header -->
   <div class="section-header">
     <div class="section-title-group">
       <h2 class="section-title">
-        {{ activeFilter ? (activeFilter === 'Today' ? "Today's Action Items" : activeFilter + ' Queue Items') : 'All Action Items' }}
+        {{ activeFilter ? activeFilter + ' Queue Items' : 'All Action Items' }}
       </h2>
       <span class="queue-count-badge">{{ filteredQueue.length }} {{ filteredQueue.length === 1 ? 'record' : 'records' }}</span>
     </div>

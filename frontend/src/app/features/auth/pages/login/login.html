@@ -34,8 +34,11 @@
             <div class="form-group">
                 <div class="input-wrapper">
                     <mat-icon class="input-icon">lock_outline</mat-icon>
-                    <input type="password" id="password" formControlName="password" class="form-control"
+                    <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password" class="form-control"
                         placeholder="Password" />
+                    <button type="button" class="password-toggle-btn" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" tabindex="-1">
+                        <mat-icon class="toggle-icon">{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
                 </div>
                 @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
                 <div class="error-message">Password is required</div>

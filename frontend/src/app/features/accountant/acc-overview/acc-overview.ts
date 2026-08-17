@@ -31,9 +31,7 @@ interface PendingItem {
 })
 export class AccOverviewComponent implements OnInit {
     approvedCount = 0;
-    toBeApprovedCount = 0;
     pendingCount = 0;
-    rejectCount = 0;
 
     activeFilter: string = 'all';
 
@@ -95,9 +93,7 @@ export class AccOverviewComponent implements OnInit {
 
     private updateCounts() {
         this.approvedCount = this.allItems.filter(i => i.category === 'approved').length;
-        this.toBeApprovedCount = this.allItems.filter(i => i.category === 'to-be-approved').length;
         this.pendingCount = this.allItems.filter(i => i.category === 'pending').length;
-        this.rejectCount = this.allItems.filter(i => i.category === 'reject').length;
     }
 
     filterByCategory(category: string) {
