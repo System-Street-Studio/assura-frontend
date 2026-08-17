@@ -6,10 +6,51 @@
             <span class="assura-card-subtitle" style="font-size: 14px;">{{ filteredProducts.length }} of {{ allProducts.length }} products</span>
         </div>
         <div style="display: flex; gap: 12px;">
-            <button class="assura-btn assura-btn-secondary" title="Export to CSV">
-                <i class="material-icons" style="font-size: 18px;">file_download</i>
-                Export
-            </button>
+            <div class="export-wrapper">
+                <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleExportMenu()"
+                        [attr.aria-expanded]="showExportMenu" aria-haspopup="true"
+                        title="Export products as PDF, Excel or CSV">
+                    <i class="material-icons" style="font-size: 18px;">file_download</i>
+                    Export
+                    <i class="material-icons" style="font-size: 18px;">{{ showExportMenu ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
+                </button>
+
+                @if (showExportMenu) {
+                    <div class="export-menu" role="menu" aria-label="Export format">
+                        <div class="export-menu-scope">
+                            @if (selectedCount > 0) {
+                                Exporting {{ selectedCount }} selected product(s)
+                            } @else {
+                                Exporting {{ filteredProducts.length }} filtered product(s)
+                            }
+                        </div>
+
+                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportProducts('pdf')">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #f87171;">picture_as_pdf</mat-icon>
+                            <span class="export-menu-text">
+                                <strong>PDF</strong>
+                                <small>Printable product catalog</small>
+                            </span>
+                        </button>
+
+                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportProducts('excel')">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #34d399;">table_chart</mat-icon>
+                            <span class="export-menu-text">
+                                <strong>Excel</strong>
+                                <small>Formatted spreadsheet (.xls)</small>
+                            </span>
+                        </button>
+
+                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportProducts('csv')">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #60a5fa;">description</mat-icon>
+                            <span class="export-menu-text">
+                                <strong>CSV</strong>
+                                <small>Plain data (.csv)</small>
+                            </span>
+                        </button>
+                    </div>
+                }
+            </div>
             <button class="assura-btn assura-btn-primary" [routerLink]="['/inventory/products/new']" type="button">
                 <i class="material-icons" style="font-size: 18px;">add</i>
                 New Product
@@ -34,9 +75,9 @@
         </div>
 
         <div>
-            <button class="assura-btn assura-btn-secondary" style="color: #ef4444; border-color: #fca5a5;" [disabled]="selectedCount === 0" title="Delete selected">
+            <button class="assura-btn assura-btn-secondary" style="color: #ef4444; border-color: #fca5a5;" [disabled]="selectedCount === 0" title="Delete selected" (click)="onDeleteClick()">
                 <i class="material-icons" style="font-size: 18px;">delete_outline</i>
-                Delete
+                Delete{{ selectedCount > 0 ? ' (' + selectedCount + ')' : '' }}
             </button>
         </div>
     </div>
@@ -83,3 +124,24 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Confirmation -->
+@if (showDeleteConfirm) {
+    <div class="modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="cancelDelete()">
+        <div class="assura-card assura-accent-danger" style="width: 100%; max-width: 400px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
+            <div style="padding: 32px; text-align: center;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(239, 68, 68, 0.12); color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                    <mat-icon style="font-size: 32px; width: 32px; height: 32px;">warning</mat-icon>
+                </div>
+                <h3 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700;">Delete Product{{ selectedCount > 1 ? 's' : '' }}?</h3>
+                <p style="margin: 0; font-size: 15px; line-height: 1.5;">Are you sure you want to remove <strong>{{ selectedCount }}</strong> selected product(s)? This cannot be undone.</p>
+            </div>
+            <div style="display: flex; border-top: 1px solid #e2e8f0;">
+                <button class="assura-btn" style="flex: 1; border-radius: 0; padding: 16px; background: transparent; border: none; border-right: 1px solid #e2e8f0;" (click)="cancelDelete()" [disabled]="deleting">Cancel</button>
+                <button class="assura-btn" style="flex: 1; border-radius: 0; padding: 16px; background: #ef4444; color: #ffffff; border: none;" (click)="confirmDelete()" [disabled]="deleting">
+                    {{ deleting ? 'Deleting...' : 'Delete' }}
+                </button>
+            </div>
+        </div>
+    </div>
+}
