@@ -445,7 +445,7 @@
             <p style="margin: 0 0 8px 0; font-size: 13px; color: #f59e0b; display: flex; align-items: center; gap: 4px;">
               <mat-icon style="font-size: 16px; width: 16px; height: 16px;">warning</mat-icon> No suggested assets found. Enter an asset ID manually.
             </p>
-            <input type="number" class="assura-input" placeholder="e.g. 101" [(ngModel)]="processAssetId">
+            <input type="number" class="assura-input" min="1" (keydown)="preventNegative($event)" placeholder="e.g. 101" [(ngModel)]="processAssetId">
           </div>
         </div>
 

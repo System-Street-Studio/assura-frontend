@@ -56,10 +56,12 @@
           <input
             type="number"
             [ngModel]="quantity()"
-            (ngModelChange)="quantity.set($event)"
+            (ngModelChange)="onQuantityChange($event)"
+            (keydown)="preventNegativeInput($event)"
             name="quantity"
             class="assura-input"
             min="1"
+            step="1"
             placeholder="1">
         </div>
 

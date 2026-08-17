@@ -28,7 +28,7 @@
                 <div>
                     <label class="assura-label" for="warranty">Warranty</label>
                     <div style="display: flex; gap: 16px; align-items: center;">
-                        <input type="number" id="warranty" formControlName="warranty" class="assura-input" style="width: 100px;">
+                        <input type="number" id="warranty" formControlName="warranty" min="0" (keydown)="preventNegative($event)" class="assura-input" style="width: 100px;">
                         <div style="display: flex; gap: 16px;">
                             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #475569;">
                                 <input type="checkbox" formControlName="isYears" style="width: 16px; height: 16px;">
@@ -45,7 +45,7 @@
                 <!-- Quantity -->
                 <div>
                     <label class="assura-label" for="quantity">Quantity <span style="color: #ef4444;">*</span></label>
-                    <input type="number" id="quantity" formControlName="quantity" class="assura-input">
+                    <input type="number" id="quantity" formControlName="quantity" min="1" step="1" (keydown)="preventNegative($event)" class="assura-input">
                     <div *ngIf="f['quantity'].invalid && f['quantity'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
                         Quantity must be at least 1
                     </div>
@@ -76,7 +76,7 @@
             <!-- Purchased Price -->
             <div style="max-width: 50%;">
                 <label class="assura-label" for="purchasedPrice">Purchased Price (LKR) <span style="color: #ef4444;">*</span></label>
-                <input type="number" id="purchasedPrice" formControlName="purchasedPrice" class="assura-input">
+                <input type="number" id="purchasedPrice" formControlName="purchasedPrice" min="0" (keydown)="preventNegative($event)" class="assura-input">
                 <div *ngIf="f['purchasedPrice'].invalid && f['purchasedPrice'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
                     Valid purchased price is required
                 </div>

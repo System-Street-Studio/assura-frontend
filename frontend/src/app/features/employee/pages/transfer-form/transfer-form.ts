@@ -62,10 +62,29 @@ export class TransferFormComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
 
+  preventNegativeInput(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
+      event.preventDefault();
+    }
+  }
+
+  onQuantityChange(value: any) {
+    const num = Number(value);
+    if (isNaN(num) || num < 1) {
+      this.quantity.set(1);
+    } else {
+      this.quantity.set(Math.floor(num));
+    }
+  }
+
   // Methods
   onSubmit() {
     if (!this.assetName() || !this.category() || !this.reason()) {
       alert('Failed to create transfer request. Please fill all required fields.');
+      return;
+    }
+    if (!this.quantity() || this.quantity() < 1) {
+      alert('Quantity must be at least 1.');
       return;
     }
     this.isSubmitting.set(true);

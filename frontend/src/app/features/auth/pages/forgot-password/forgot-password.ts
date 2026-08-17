@@ -36,10 +36,6 @@ export class ForgotPasswordComponent {
             next: (response) => {
                 this.isLoading = false;
                 this.message = response.message || 'If an account exists, a reset link has been sent.';
-                // Optional: show token in console for development if needed, but the backend already returns it in my implementation
-                if (response.token) {
-                    console.log('Reset Token (Dev only):', response.token);
-                }
             },
             error: (err) => {
                 this.isLoading = false;

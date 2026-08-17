@@ -60,6 +60,12 @@ export class AssetRequestsComponent implements OnInit {
   showDetail = false;
   detailRequest: AssetRequest | null = null;
 
+  preventNegative(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
+      event.preventDefault();
+    }
+  }
+
   /* ── Stats ── */
   get totalCount(): number {
     return this.allRequests().length;

@@ -41,6 +41,12 @@ export class NewArrivalsComponent implements OnInit {
     return this.arrivalForm.controls;
   }
 
+  preventNegative(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
+      event.preventDefault();
+    }
+  }
+
   ngOnInit() {
     this.loadDivisions();
     this.loadHistory();

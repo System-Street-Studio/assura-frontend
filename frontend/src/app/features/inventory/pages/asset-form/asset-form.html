@@ -206,7 +206,7 @@
           <label class="assura-label" for="purchaseValue">Purchase Value</label>
           <div style="display: flex; align-items: stretch;">
             <span style="  padding: 10px 16px; border: 1px solid #cbd5e1; border-right: none; border-radius: 8px 0 0 8px; font-weight: 500; font-size: 14px; display: flex; align-items: center;">LKR</span>
-            <input id="purchaseValue" type="number" class="assura-input" style="border-radius: 0 8px 8px 0; flex-grow: 1;" formControlName="purchaseValue" placeholder="0" min="0" step="1" />
+            <input id="purchaseValue" type="number" class="assura-input" style="border-radius: 0 8px 8px 0; flex-grow: 1;" formControlName="purchaseValue" placeholder="0" min="0" (keydown)="preventNegative($event)" step="1" />
           </div>
         </div>
       </div>

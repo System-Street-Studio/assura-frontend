@@ -247,6 +247,12 @@ export class AssetFormComponent implements OnInit {
     this.toast.info('New Asset Code generated');
   }
 
+  preventNegative(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
+      event.preventDefault();
+    }
+  }
+
   // ── Computed getters (used in the template) ──
 
   /** Returns a human-readable page title based on the current mode. */

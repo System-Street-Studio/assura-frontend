@@ -68,8 +68,26 @@ export class NewAssetRequestComponent implements OnInit {
   }
 }
 
+  preventNegativeInput(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
+      event.preventDefault();
+    }
+  }
+
+  onQuantityChange(value: any) {
+    const num = Number(value);
+    if (isNaN(num) || num < 1) {
+      this.requestData.quantity = 1;
+    } else {
+      this.requestData.quantity = Math.floor(num);
+    }
+  }
+
   // Handle form submission
   onSubmit(): void {
+    if (!this.requestData.quantity || this.requestData.quantity < 1) {
+      this.requestData.quantity = 1;
+    }
     this.isSubmitting.set(true);
 
     const requestPayload = {

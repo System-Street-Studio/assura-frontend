@@ -59,12 +59,15 @@
         <div class="form-field-group">
           <label class="field-label">Quantity <span class="required">*</span></label>
           <input
-            [(ngModel)]="requestData.quantity"
+            [ngModel]="requestData.quantity"
+            (ngModelChange)="onQuantityChange($event)"
+            (keydown)="preventNegativeInput($event)"
             name="quantity"
             class="assura-input"
             required
             type="number"
             min="1"
+            step="1"
             #quantity="ngModel">
           @if (quantity.invalid && quantity.touched) {
             <div class="validation-msg">Quantity is required (minimum 1).</div>

@@ -31,7 +31,6 @@ export class LoginComponent {
     onSubmit(): void {
         if (this.loginForm.invalid) return;
 
-        console.log('[DEBUG] Login submission started');
         this.isLoading = true;
         this.errorMessage = null;
         this.cdr.detectChanges(); // Force update to show loading overlay
@@ -41,25 +40,19 @@ export class LoginComponent {
             password: this.loginForm.value.password!
         };
 
-        console.log('[DEBUG] Calling authService.login for:', credentials.username);
-
         this.authService.login(credentials)
             .pipe(
                 finalize(() => {
-                    console.log('[DEBUG] Login request finalized');
                     this.isLoading = false;
                     this.cdr.detectChanges(); // Force update to hide loading overlay
                 })
             )
             .subscribe({
                 next: (response) => {
-                    console.log('[DEBUG] Login successful');
                     const dashboardUrl = this.authService.getDashboardUrl();
                     this.router.navigate([dashboardUrl]);
                 },
                 error: (err: HttpErrorResponse) => {
-                    console.error('[DEBUG] Login error response:', err);
-
                     const backendMessage = err.error?.message || err.error?.Message;
 
                     if (backendMessage) {
