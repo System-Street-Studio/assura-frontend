@@ -30,6 +30,8 @@ export class ResetPasswordComponent implements OnInit {
     isLoading = false;
     message = '';
     errorMessage = '';
+    showNewPassword = false;
+    showConfirmPassword = false;
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {

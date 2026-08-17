@@ -64,9 +64,18 @@
             <div class="buyer-avatar">
               <span>{{ buyer.name.charAt(0) }}</span>
             </div>
-            <span class="buyer-status" [ngClass]="buyer.status.toLowerCase()">
-              <span class="status-dot"></span> {{ buyer.status }}
-            </span>
+            <div class="card-header-actions">
+              <span class="buyer-status" [ngClass]="buyer.status.toLowerCase()">
+                <span class="status-dot"></span> {{ buyer.status }}
+              </span>
+              <button class="card-edit-btn" title="Edit Buyer" (click)="openEditModal(buyer, $event)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div class="buyer-info">
@@ -157,6 +166,14 @@
 
           <div class="detail-actions">
             <button class="close-detail-btn" (click)="closeDetail()">Close</button>
+            <button class="edit-detail-btn" (click)="openEditModal(selectedBuyer)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              Edit Details
+            </button>
             <a class="contact-btn" href="mailto:{{ selectedBuyer.email }}">Contact Buyer</a>
           </div>
         </div>
@@ -185,7 +202,7 @@
                      [class.input-invalid]="f['name'].invalid && f['name'].touched" />
               @if (f['name'].invalid && f['name'].touched) {
                 <span class="field-error">
-                  {{ f['name'].errors?.['required'] ? 'Buyer name is required.' : 'Name must be at least 2 characters.' }}
+                  {{ f['name'].errors?.['required'] ? 'Buyer name is required.' : (f['name'].errors?.['minlength'] ? 'Name must be at least 2 characters.' : 'Name cannot exceed 100 characters.') }}
                 </span>
               }
             </div>
@@ -194,35 +211,135 @@
               <input id="buyerContact" class="glass-input" type="text" placeholder="e.g. John Perera" formControlName="contact"
                      [class.input-invalid]="f['contact'].invalid && f['contact'].touched" />
               @if (f['contact'].invalid && f['contact'].touched) {
-                <span class="field-error">Contact person is required.</span>
+                <span class="field-error">
+                  {{ f['contact'].errors?.['required'] ? 'Contact person is required.' : (f['contact'].errors?.['minlength'] ? 'Contact person must be at least 2 characters.' : 'Contact person cannot exceed 100 characters.') }}
+                </span>
               }
             </div>
             <div class="form-field">
-              <label for="buyerEmail">Email Address</label>
+              <label for="buyerEmail">Email Address *</label>
               <input id="buyerEmail" class="glass-input" type="email" placeholder="e.g. info@techno.lk" formControlName="email"
                      [class.input-invalid]="f['email'].invalid && f['email'].touched" />
               @if (f['email'].invalid && f['email'].touched) {
-                <span class="field-error">Enter a valid email address.</span>
+                <span class="field-error">
+                  {{ f['email'].errors?.['required'] ? 'Email address is required.' : 'Enter a valid email address.' }}
+                </span>
               }
             </div>
             <div class="form-field">
-              <label for="buyerPhone">Phone Number</label>
-              <input id="buyerPhone" class="glass-input" type="text" placeholder="e.g. 071-234-5678" formControlName="phone"
+              <label for="buyerPhone">Phone Number *</label>
+              <input id="buyerPhone" class="glass-input" type="tel" placeholder="e.g. 0712345678" maxlength="10"
+                     formControlName="phone" (keydown)="allowOnlyNumbers($event)"
                      [class.input-invalid]="f['phone'].invalid && f['phone'].touched" />
               @if (f['phone'].invalid && f['phone'].touched) {
-                <span class="field-error">Enter a valid phone number.</span>
+                <span class="field-error">
+                  {{ f['phone'].errors?.['required'] ? 'Phone number is required.' : 'Phone number must start with 0 and be exactly 10 digits.' }}
+                </span>
               }
             </div>
             <div class="form-field">
-              <label for="buyerCategory">Specialization / Category</label>
-              <input id="buyerCategory" class="glass-input" type="text" placeholder="e.g. Electronics, Scrap, Hardware" formControlName="category" />
+              <label for="buyerCategory">Specialization / Category *</label>
+              <input id="buyerCategory" class="glass-input" type="text" placeholder="e.g. Electronics, Scrap, Hardware" formControlName="category"
+                     [class.input-invalid]="f['category'].invalid && f['category'].touched" />
+              @if (f['category'].invalid && f['category'].touched) {
+                <span class="field-error">
+                  {{ f['category'].errors?.['required'] ? 'Specialization / Category is required.' : (f['category'].errors?.['minlength'] ? 'Category must be at least 2 characters.' : 'Category cannot exceed 100 characters.') }}
+                </span>
+              }
             </div>
           </form>
 
           <div class="detail-actions">
-            <button class="close-detail-btn" (click)="closeAddModal()">Cancel</button>
+            <button class="close-detail-btn" (click)="closeAddModal()" [disabled]="isSubmitting">Cancel</button>
             <button class="submit-btn" (click)="submitAddBuyer()" [disabled]="isSubmitting || addBuyerForm.invalid">
               {{ isSubmitting ? 'Saving...' : 'Register Buyer' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Edit Buyer Modal -->
+  @if (showEditModal) {
+    <div class="detail-overlay" (click)="closeEditModal()">
+      <div class="glass-modal detail-card" (click)="$event.stopPropagation()">
+        <button class="detail-close-x" (click)="closeEditModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+
+        <div class="detail-body">
+          <h2 class="modal-title">Edit Buyer Details</h2>
+          <form [formGroup]="editBuyerForm" (ngSubmit)="submitEditBuyer()" class="form-grid">
+            <div class="form-field full-width">
+              <label for="editBuyerName">Company / Buyer Name *</label>
+              <input id="editBuyerName" class="glass-input" type="text" placeholder="e.g. Techno Supplies Ltd" formControlName="name"
+                     [class.input-invalid]="editF['name'].invalid && editF['name'].touched" />
+              @if (editF['name'].invalid && editF['name'].touched) {
+                <span class="field-error">
+                  {{ editF['name'].errors?.['required'] ? 'Buyer name is required.' : (editF['name'].errors?.['minlength'] ? 'Name must be at least 2 characters.' : 'Name cannot exceed 100 characters.') }}
+                </span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="editBuyerContact">Contact Person *</label>
+              <input id="editBuyerContact" class="glass-input" type="text" placeholder="e.g. John Perera" formControlName="contact"
+                     [class.input-invalid]="editF['contact'].invalid && editF['contact'].touched" />
+              @if (editF['contact'].invalid && editF['contact'].touched) {
+                <span class="field-error">
+                  {{ editF['contact'].errors?.['required'] ? 'Contact person is required.' : (editF['contact'].errors?.['minlength'] ? 'Contact person must be at least 2 characters.' : 'Contact person cannot exceed 100 characters.') }}
+                </span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="editBuyerEmail">Email Address *</label>
+              <input id="editBuyerEmail" class="glass-input" type="email" placeholder="e.g. info@techno.lk" formControlName="email"
+                     [class.input-invalid]="editF['email'].invalid && editF['email'].touched" />
+              @if (editF['email'].invalid && editF['email'].touched) {
+                <span class="field-error">
+                  {{ editF['email'].errors?.['required'] ? 'Email address is required.' : 'Enter a valid email address.' }}
+                </span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="editBuyerPhone">Phone Number *</label>
+              <input id="editBuyerPhone" class="glass-input" type="tel" placeholder="e.g. 0712345678" maxlength="10"
+                     formControlName="phone" (keydown)="allowOnlyNumbers($event)"
+                     [class.input-invalid]="editF['phone'].invalid && editF['phone'].touched" />
+              @if (editF['phone'].invalid && editF['phone'].touched) {
+                <span class="field-error">
+                  {{ editF['phone'].errors?.['required'] ? 'Phone number is required.' : 'Phone number must start with 0 and be exactly 10 digits.' }}
+                </span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="editBuyerCategory">Specialization / Category *</label>
+              <input id="editBuyerCategory" class="glass-input" type="text" placeholder="e.g. Electronics, Scrap, Hardware" formControlName="category"
+                     [class.input-invalid]="editF['category'].invalid && editF['category'].touched" />
+              @if (editF['category'].invalid && editF['category'].touched) {
+                <span class="field-error">
+                  {{ editF['category'].errors?.['required'] ? 'Specialization / Category is required.' : (editF['category'].errors?.['minlength'] ? 'Category must be at least 2 characters.' : 'Category cannot exceed 100 characters.') }}
+                </span>
+              }
+            </div>
+            <div class="form-field">
+              <label for="editBuyerStatus">Status *</label>
+              <select id="editBuyerStatus" class="glass-input glass-select" formControlName="status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+          </form>
+
+          <div class="detail-actions">
+            <button class="close-detail-btn" (click)="closeEditModal()" [disabled]="isSubmitting">Cancel</button>
+            <button class="submit-btn" (click)="submitEditBuyer()" [disabled]="isSubmitting || editBuyerForm.invalid">
+              {{ isSubmitting ? 'Saving Changes...' : 'Save Changes' }}
             </button>
           </div>
         </div>

@@ -60,7 +60,10 @@
             <div class="form-group">
                 <div class="input-wrapper">
                     <mat-icon class="input-icon">lock_outline</mat-icon>
-                    <input type="password" formControlName="password" class="form-control" placeholder="Password" />
+                    <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control" placeholder="Password" />
+                    <button type="button" class="password-toggle-btn" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'" tabindex="-1">
+                        <mat-icon class="toggle-icon">{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
                 </div>
                 @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
                 <div class="error-message">Password is required (min 6 chars)</div>
@@ -71,8 +74,11 @@
             <div class="form-group">
                 <div class="input-wrapper">
                     <mat-icon class="input-icon">lock_outline</mat-icon>
-                    <input type="password" formControlName="confirmPassword" class="form-control"
+                    <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" class="form-control"
                         placeholder="Confirm Password" />
+                    <button type="button" class="password-toggle-btn" (click)="showConfirmPassword = !showConfirmPassword" [attr.aria-label]="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'" tabindex="-1">
+                        <mat-icon class="toggle-icon">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
                 </div>
                 @if (registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.invalid) {
                 <div class="error-message">Passwords must match</div>

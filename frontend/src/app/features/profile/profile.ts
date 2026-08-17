@@ -88,6 +88,9 @@ export class ProfileComponent implements OnInit {
     profileForm: FormGroup;
     isEditing = false;
     saving = false;
+    showCurrentPassword = false;
+    showNewPassword = false;
+    showConfirmPassword = false;
 
     constructor() {
         this.profileForm = this.fb.group({
@@ -139,6 +142,9 @@ export class ProfileComponent implements OnInit {
 
     toggleEdit(): void {
         this.isEditing = !this.isEditing;
+        this.showCurrentPassword = false;
+        this.showNewPassword = false;
+        this.showConfirmPassword = false;
         if (!this.isEditing && this.profile()) {
             const data = this.profile()!;
             this.profileForm.patchValue({
@@ -168,6 +174,9 @@ export class ProfileComponent implements OnInit {
             next: () => {
                 this.isEditing = false;
                 this.saving = false;
+                this.showCurrentPassword = false;
+                this.showNewPassword = false;
+                this.showConfirmPassword = false;
                 this.toastService.show('Profile updated successfully', 'success');
             },
             error: (err: any) => {
