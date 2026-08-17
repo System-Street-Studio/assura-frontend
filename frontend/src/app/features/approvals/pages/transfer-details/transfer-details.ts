@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { Location } from '@angular/common';
-import { RequestService, SuggestedAsset } from '../../services/requests.service';
+import { RequestService } from '../../services/requests.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 
 
@@ -38,14 +38,12 @@ export class TransferDetailsComponent implements OnInit {
     if (this.requestService.selectedRequest) {
       console.log("received data from Service ");
       this.request.set(this.requestService.selectedRequest);
-      this.loadSuggestedAssets();
       this.isLoading.set(false);
     } else {
-      // Refresh 
+      // Refresh
       const id = this.route.snapshot.paramMap.get('id');
       console.log("Route ID parameter:", id);
       if (id) {
-        this.loadSuggestedAssets(Number(id));
         console.log("get request by ID:", id);
 
         this.requestService.getRequestById(+id).subscribe({
@@ -72,8 +70,6 @@ export class TransferDetailsComponent implements OnInit {
   popupMessage = signal('');
   popupType = signal<'success' | 'reject'>('success');
   processing = signal(false);
-  suggestedAssets = signal<SuggestedAsset[]>([]);
-  selectedSuggestedAssetId = signal<number | null>(null);
 
   get requestStatus(): string {
     return (this.request().status || '').toString();
@@ -81,39 +77,6 @@ export class TransferDetailsComponent implements OnInit {
 
   canDivisionHeadAct(): boolean {
     return this.authService.hasRole(['DivisionHead', 'Admin']) && (this.requestStatus === 'PendingDivisionHeadApproval' || this.requestStatus === 'Pending');
-  }
-
-  canStorekeeperProcess(): boolean {
-    return this.authService.hasRole(['Storekeeper', 'Admin']) && this.requestStatus === 'PendingStorekeeperReview';
-  }
-
-  canStorekeeperConfirm(): boolean {
-    return this.authService.hasRole(['Storekeeper', 'Admin']) && this.requestStatus === 'TemporaryAssigned';
-  }
-
-  loadSuggestedAssets(requestId?: number) {
-    const id = requestId ?? Number(this.request().id);
-    if (!Number.isFinite(id) || id <= 0 || !this.authService.hasRole(['Storekeeper', 'Admin'])) {
-      this.suggestedAssets.set([]);
-      this.selectedSuggestedAssetId.set(null);
-      return;
-    }
-
-    this.requestService.getSuggestedAssetsForRequest(id).subscribe({
-      next: (assets) => {
-        this.suggestedAssets.set(assets || []);
-        this.selectedSuggestedAssetId.set((assets && assets.length > 0) ? assets[0].id : null);
-      },
-      error: (err) => {
-        console.error('Suggested assets load error:', err);
-        this.suggestedAssets.set([]);
-        this.selectedSuggestedAssetId.set(null);
-      }
-    });
-  }
-
-  selectSuggestedAsset(assetId: number) {
-    this.selectedSuggestedAssetId.set(assetId);
   }
 
   getStatusClass(status: string): string {
@@ -145,11 +108,16 @@ export class TransferDetailsComponent implements OnInit {
     this.requestService.approveRequest(id).subscribe({
       next: () => {
         this.processing.set(false);
-        this.request.set({ ...this.request(), status: 'PendingStorekeeperReview' });
+        // ApproveAssetRequestCommand always sets the backend status to Approved —
+        // it never transitions through PendingStorekeeperReview/TemporaryAssigned
+        // (those belong to a different, New-Asset-only fulfillment path). Once
+        // Approved, the request is picked up from the asset-pool screen's
+        // "approved transfer requests" list to create the actual Transfer record.
+        this.request.set({ ...this.request(), status: 'Approved' });
         this.popupMessage.set('Request Approved Successfully');
         this.popupType.set('success');
         this.showPopup.set(true);
-       
+
       },
       error: (err) => {
         this.processing.set(false);
@@ -181,83 +149,6 @@ export class TransferDetailsComponent implements OnInit {
       }
     });
   }
-
-  processInStock() {
-    const id = this.request().id;
-    if (!id || this.processing()) {
-      return;
-    }
-
-    const assetId = this.selectedSuggestedAssetId() ?? Number(this.request().assetId);
-    if (!Number.isFinite(assetId) || assetId <= 0) {
-      window.alert('Please select a suggested asset first.');
-      return;
-    }
-
-    const remarks = window.prompt('Storekeeper note (optional):') ?? undefined;
-    this.processing.set(true);
-    this.requestService.processByStorekeeper(id, true, assetId, remarks).subscribe({
-      next: () => {
-        this.processing.set(false);
-        this.request.set({ ...this.request(), status: 'TemporaryAssigned', assetId });
-        this.popupMessage.set('Asset reserved temporarily. Waiting for pickup confirmation.');
-        this.popupType.set('success');
-        this.showPopup.set(true);
-      },
-      error: (err) => {
-        this.processing.set(false);
-        console.error('In-stock processing error:', err);
-      }
-    });
-  }
-
-  processOutOfStock() {
-    const id = this.request().id;
-    if (!id || this.processing()) {
-      return;
-    }
-
-    const remarks = window.prompt('Procurement escalation reason:') ?? undefined;
-    this.processing.set(true);
-    this.requestService.processByStorekeeper(id, false, undefined, remarks).subscribe({
-      next: () => {
-        this.processing.set(false);
-        this.request.set({ ...this.request(), status: 'PendingProcurement' });
-        this.popupMessage.set('Escalated to procurement successfully.');
-        this.popupType.set('success');
-        this.showPopup.set(true);
-      },
-      error: (err) => {
-        this.processing.set(false);
-        console.error('Out-of-stock processing error:', err);
-      }
-    });
-  }
-
-  confirmTemporaryAssignment() {
-    const id = this.request().id;
-    if (!id || this.processing()) {
-      return;
-    }
-
-    const remarks = window.prompt('Handover confirmation note (optional):') ?? undefined;
-    this.processing.set(true);
-    this.requestService.confirmTemporaryAssignment(id, remarks).subscribe({
-      next: () => {
-        this.processing.set(false);
-        this.request.set({ ...this.request(), status: 'Approved' });
-        this.popupMessage.set('Temporary assignment confirmed and finalized.');
-        this.popupType.set('success');
-        this.showPopup.set(true);
-      },
-      error: (err) => {
-        this.processing.set(false);
-        console.error('Confirm temporary assignment error:', err);
-      }
-    });
-  }
-
-  
 
   getTransferDates() {
     const reason = this.request().justification || this.request().reason || '';

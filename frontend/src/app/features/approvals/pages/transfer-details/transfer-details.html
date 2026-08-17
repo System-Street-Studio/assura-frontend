@@ -121,50 +121,6 @@
       </div>
     }
 
-    <!-- Storekeeper actions -->
-    @if (!isReadOnly() && canStorekeeperProcess()) {
-      <div class="glass-card actions-panel">
-        @if (suggestedAssets().length > 0) {
-          <div class="suggestion-panel">
-            <span class="suggestion-title">Suggested In-Store Assets for Transfer:</span>
-            <div class="suggestion-list">
-              @for (asset of suggestedAssets(); track asset.id) {
-                <button type="button" class="suggestion-item"
-                  [class.selected]="selectedSuggestedAssetId() === asset.id" (click)="selectSuggestedAsset(asset.id)">
-                  <div class="suggestion-main">
-                    <strong>{{ asset.productName }}</strong>
-                    <span>{{ asset.assetCode }} · {{ asset.categoryName }}</span>
-                  </div>
-                  <div class="suggestion-side">
-                    <span class="score">Match: {{ asset.score }}</span>
-                    <small>{{ asset.serialNumber || 'No serial' }}</small>
-                  </div>
-                </button>
-              }
-            </div>
-          </div>
-        }
-
-        <div class="action-buttons-row">
-          <button class="btn-approve" (click)="processInStock()" [disabled]="processing()">
-            <mat-icon>inventory_2</mat-icon> In Stock - Reserve Asset
-          </button>
-          <button class="btn-secondary-action" (click)="processOutOfStock()" [disabled]="processing()">
-            <mat-icon>local_shipping</mat-icon> Out Of Stock - Send Procurement
-          </button>
-        </div>
-      </div>
-    }
-
-    <!-- Storekeeper Handover -->
-    @if (!isReadOnly() && canStorekeeperConfirm()) {
-      <div class="glass-card actions-panel">
-        <button class="btn-approve full-width" (click)="confirmTemporaryAssignment()" [disabled]="processing()">
-          <mat-icon>verified</mat-icon> Confirm Physical Handover
-        </button>
-      </div>
-    }
-
     <!-- Read-only View in Pool -->
     @if (isReadOnly()) {
       <div class="glass-card actions-panel">
