@@ -114,9 +114,10 @@
               <input
                 matInput
                 [matDatepicker]="fromPicker"
+                [min]="minDate"
                 placeholder="Pick start date"
                 [ngModel]="fromDate()"
-                (dateChange)="fromDate.set($event.value)"
+                (dateChange)="onFromDateChange($event.value)"
                 name="fromDate"
                 class="assura-input date-input">
               <mat-datepicker-toggle matSuffix [for]="fromPicker" class="date-toggle"></mat-datepicker-toggle>
@@ -130,9 +131,10 @@
               <input
                 matInput
                 [matDatepicker]="toPicker"
+                [min]="minToDate"
                 placeholder="Pick end date"
                 [ngModel]="toDate()"
-                (dateChange)="toDate.set($event.value)"
+                (dateChange)="onToDateChange($event.value)"
                 name="toDate"
                 class="assura-input date-input">
               <mat-datepicker-toggle matSuffix [for]="toPicker" class="date-toggle"></mat-datepicker-toggle>
@@ -140,6 +142,11 @@
             </div>
           </div>
         </div>
+        @if (dateError()) {
+          <div style="color: #ef4444; font-size: 13px; margin-top: 6px; font-weight: 500;">
+            {{ dateError() }}
+          </div>
+        }
       </div>
 
       <!-- File Attachment -->

@@ -62,6 +62,19 @@ export class TransferFormComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private authService = inject(AuthService);
 
+  // Minimum date allowed for From Date (today)
+  minDate: Date = (() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  })();
+
+  get minToDate(): Date {
+    return this.fromDate() || this.minDate;
+  }
+
+  dateError = signal('');
+
   preventNegativeInput(event: KeyboardEvent) {
     if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
       event.preventDefault();
@@ -77,6 +90,45 @@ export class TransferFormComponent implements OnInit {
     }
   }
 
+  onFromDateChange(date: Date | null) {
+    if (date) {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      if (d < this.minDate) {
+        this.dateError.set('From Date cannot be in the past.');
+        this.fromDate.set(this.minDate);
+      } else {
+        this.dateError.set('');
+        this.fromDate.set(d);
+      }
+    } else {
+      this.fromDate.set(null);
+    }
+
+    if (this.fromDate() && this.toDate()) {
+      if (this.toDate()! < this.fromDate()!) {
+        this.toDate.set(this.fromDate());
+      }
+    }
+  }
+
+  onToDateChange(date: Date | null) {
+    if (date) {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      const minAllowed = this.fromDate() || this.minDate;
+      if (d < minAllowed) {
+        this.dateError.set('To Date cannot be earlier than From Date.');
+        this.toDate.set(minAllowed);
+      } else {
+        this.dateError.set('');
+        this.toDate.set(d);
+      }
+    } else {
+      this.toDate.set(null);
+    }
+  }
+
   // Methods
   onSubmit() {
     if (!this.assetName() || !this.category() || !this.reason()) {
@@ -86,6 +138,24 @@ export class TransferFormComponent implements OnInit {
     if (!this.quantity() || this.quantity() < 1) {
       alert('Quantity must be at least 1.');
       return;
+    }
+    if (this.fromDate()) {
+      const f = new Date(this.fromDate()!);
+      f.setHours(0, 0, 0, 0);
+      if (f < this.minDate) {
+        alert('From Date cannot be in the past.');
+        return;
+      }
+    }
+    if (this.fromDate() && this.toDate()) {
+      const f = new Date(this.fromDate()!);
+      f.setHours(0, 0, 0, 0);
+      const t = new Date(this.toDate()!);
+      t.setHours(0, 0, 0, 0);
+      if (t < f) {
+        alert('To Date cannot be earlier than From Date.');
+        return;
+      }
     }
     this.isSubmitting.set(true);
     const requestPayload = {
