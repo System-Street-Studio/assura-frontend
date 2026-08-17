@@ -44,12 +44,24 @@ export class EmployeeOverviewComponent implements OnInit {
   firstName = '';
   today = new Date();
 
+  isAwaitingConfirmation(status?: string): boolean {
+    if (!status) return true;
+    const s = status.trim().toLowerCase();
+    return s === 'informed' || s === 'pending';
+  }
+
+  isConfirmedOrCompleted(status?: string): boolean {
+    if (!status) return false;
+    const s = status.trim().toLowerCase();
+    return s === 'confirmed' || s === 'completed';
+  }
+
   // Summary counts
   myAssignedAssetsCount = computed(() => this.assignedAssets().length);
   pendingCount = computed(() => this.pendingRequests().length);
   maintenanceCount = computed(() => this.assignedAssets().filter(a => a.status === 'UnderMaintenance').length);
   transfersCount = computed(() => this.assignedAssets().filter(a => a.status === 'Transferred').length);
-  pendingArrivalsCount = computed(() => this.arrivedAssets().filter(a => a.status === 'Informed').length);
+  pendingArrivalsCount = computed(() => this.arrivedAssets().filter(a => this.isAwaitingConfirmation(a.status)).length);
 
   ngOnInit() {
     this.firstName = this.authService.getFirstName() ?? 'Employee';

@@ -134,11 +134,13 @@
                     <select id="grn-asset" class="assura-input" style="background: #1e293b; border-color: #334155; color: #f8fafc;" [(ngModel)]="createForm.assetId">
                         <option [ngValue]="0" disabled>Select an asset</option>
                         @for (asset of assets; track asset.id) {
-                            <option [ngValue]="asset.id">{{ asset.assetCode }} — {{ asset.productName }}</option>
+                            <option [ngValue]="asset.id" [disabled]="isAssetAlreadyReceived(asset.id)">
+                                {{ asset.assetCode }} — {{ asset.productName }} {{ isAssetAlreadyReceived(asset.id) ? '(GRN Already Recorded)' : '' }}
+                            </option>
                         }
                     </select>
                     @if (submitted && !createForm.assetId) {
-                        <div style="color: #f87171; font-size: 12px; margin-top: 4px;">Asset is required.</div>
+                        <div style="color: #f87171; font-size: 12px; margin-top: 4px;">Please select an asset that has not already had a GRN recorded.</div>
                     }
                 </div>
 

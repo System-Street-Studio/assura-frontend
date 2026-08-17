@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { catchError, finalize, of, throwError, timeout } from 'rxjs';
+import { catchError, finalize, forkJoin, of, throwError, timeout } from 'rxjs';
 import { CheckoutService } from '../../services/checkout.service';
 import { CheckoutRecord, CheckoutFormData, CheckoutEmployee } from '../../models/checkout.model';
 import { ToastService } from '../../../../shared/services/toast.service';
@@ -124,34 +124,48 @@ export class CheckoutComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadData();
-        this.svc.getAvailableAssets().subscribe({
-            next: (a) => {
-                this.availableAssets = a;
-                if (this.showCheckoutModal && !this.checkoutForm.assetId && this.availableAssets.length > 0) {
-                    this.checkoutForm.assetId = this.availableAssets[0].id;
-                }
-                this.cdr.detectChanges();
-            },
-            error: () => {
-                this.availableAssets = [];
-                this.toast.error('Failed to load available assets');
-            },
-        });
-        this.svc.getEmployees().subscribe({
-            next: (e) => {
-                this.employees = e;
+        forkJoin({
+            assets: this.svc.getAvailableAssets().pipe(catchError(() => of([]))),
+            employees: this.svc.getEmployees().pipe(catchError(() => of([]))),
+            arrivals: this.procurementService.getAssetInformings().pipe(catchError(() => of([]))),
+        }).subscribe({
+            next: ({ assets, employees, arrivals }) => {
+                this.availableAssets = assets;
+                this.employees = employees;
+
                 this.route.queryParams.subscribe((params) => {
                     if (params['informingId']) {
                         this.informingId = Number(params['informingId']);
                     }
-                    if (params['employeeId']) {
-                        this.openCheckoutModal(params['employeeId'], params['item']);
+                    if (params['informingId'] || params['employeeId'] || params['item']) {
+                        let empId = params['employeeId'];
+                        let itemName = params['item'];
+
+                        if (!empId && this.informingId && arrivals && arrivals.length > 0) {
+                            const arrival = arrivals.find(a => a.id === this.informingId);
+                            if (arrival) {
+                                if (arrival.targetEmployeeId) {
+                                    empId = String(arrival.targetEmployeeId);
+                                } else if (arrival.divisionId || arrival.divisionName) {
+                                    const divName = (arrival.divisionName || '').trim().toLowerCase();
+                                    const match = this.employees.find(e =>
+                                        (arrival.divisionId && e.divisionId === arrival.divisionId) ||
+                                        (divName && e.division && e.division.toLowerCase() === divName)
+                                    );
+                                    if (match) {
+                                        empId = String(match.id);
+                                    }
+                                }
+                                if (!itemName) {
+                                    itemName = arrival.itemName;
+                                }
+                            }
+                        }
+
+                        this.openCheckoutModal(empId, itemName);
                     }
                 });
                 this.cdr.detectChanges();
-            },
-            error: () => {
-                this.employees = [];
             },
         });
     }
@@ -289,8 +303,24 @@ export class CheckoutComponent implements OnInit {
         const defaultDueDate = new Date();
         defaultDueDate.setFullYear(defaultDueDate.getFullYear() + 1);
 
+        let preselectedAssetId = '';
+        if (preselectItem && this.availableAssets.length > 0) {
+            const cleanItem = preselectItem.trim().toLowerCase();
+            const match = this.availableAssets.find(a =>
+                a.name.toLowerCase().includes(cleanItem) ||
+                cleanItem.includes(a.name.toLowerCase()) ||
+                a.serial.toLowerCase().includes(cleanItem)
+            );
+            if (match) {
+                preselectedAssetId = match.id;
+            }
+        }
+        if (!preselectedAssetId && this.availableAssets && this.availableAssets.length > 0) {
+            preselectedAssetId = this.availableAssets[0].id;
+        }
+
         this.checkoutForm = {
-            assetId: (this.availableAssets && this.availableAssets.length > 0) ? this.availableAssets[0].id : '',
+            assetId: preselectedAssetId,
             checkedOutToUserId: preselectEmpId || '',
             checkedOutTo: '',
             division: '',
@@ -367,8 +397,11 @@ export class CheckoutComponent implements OnInit {
                     });
                 }
             },
-            error: () => {
-                this.toast.error('Checkout failed. Please try again.');
+            error: (err) => {
+                const message = err?.error?.detail || err?.error?.Detail
+                    || err?.error?.title || err?.error?.Message
+                    || 'Checkout failed. Please try again.';
+                this.toast.error(message);
             },
         });
     }

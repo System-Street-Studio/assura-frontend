@@ -182,25 +182,33 @@ export class GrnsComponent implements OnInit {
         this.svc.getAssetOptions().subscribe({
             next: (assets) => {
                 this.assets = assets;
-                if (this.assets.length > 0) {
-                    if (preselectModel) {
-                        const mClean = preselectModel.trim().toLowerCase();
-                        const assetMatch = this.assets.find(a => 
-                            a.productName.toLowerCase().includes(mClean) || 
-                            a.assetCode.toLowerCase().includes(mClean)
-                        );
-                        if (assetMatch) {
-                            this.createForm.assetId = assetMatch.id;
-                        }
+                const recordedAssetIds = new Set(this.allGrns.map(g => g.assetId));
+                const availableAssets = this.assets.filter(a => !recordedAssetIds.has(a.id));
+
+                if (preselectModel) {
+                    const mClean = preselectModel.trim().toLowerCase();
+                    const assetMatch = availableAssets.find(a => 
+                        a.productName.toLowerCase().includes(mClean) || 
+                        a.assetCode.toLowerCase().includes(mClean)
+                    );
+                    if (assetMatch) {
+                        this.createForm.assetId = assetMatch.id;
                     }
-                    if (!this.createForm.assetId) {
-                        this.createForm.assetId = this.assets[0].id;
-                    }
+                }
+
+                if (!this.createForm.assetId && availableAssets.length > 0) {
+                    this.createForm.assetId = availableAssets[0].id;
+                } else if (!this.createForm.assetId) {
+                    this.createForm.assetId = 0;
                 }
                 this.cdr.detectChanges();
             },
             error: () => { this.assets = []; this.toast.error('Failed to load assets'); },
         });
+    }
+
+    isAssetAlreadyReceived(assetId: number): boolean {
+        return this.allGrns.some(g => g.assetId === assetId);
     }
 
     cancelCreate(): void {
@@ -229,12 +237,6 @@ export class GrnsComponent implements OnInit {
                 this.showCreateModal = false;
                 this.toast.success(`GRN "${grn.grnNumber}" recorded for ${grn.assetCode}.`);
                 this.loadData();
-                if (this.informingId) {
-                    this.procurementService.completeArrival(this.informingId, `GRN recorded: ${grn.grnNumber}`).subscribe({
-                        next: () => {},
-                        error: () => {}
-                    });
-                }
             },
             error: (err) => {
                 const message = err?.error?.detail || err?.error?.Detail
