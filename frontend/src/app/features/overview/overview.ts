@@ -28,9 +28,10 @@ export class OverviewComponent implements OnInit {
   get totalCount() { return this.queue.length; }
 
   // Review flow state
+  isSubmitting = false;
   reviewStep: 'idle' | 'choose' | 'notes' = 'idle';
   reviewAction: 'done' | 'reject' | '' = '';
-  reviewNoteControl = new FormControl('', [Validators.required, Validators.minLength(5)]);
+  reviewNoteControl = new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(1000)]);
 
   // Feedback cards
   showSuccessCard = false;
@@ -125,18 +126,27 @@ export class OverviewComponent implements OnInit {
   }
 
   submitReview() {
-    if (!this.selectedItem) return;
+    if (!this.selectedItem || this.isSubmitting) return;
 
     if (this.reviewNoteControl.invalid) {
       this.reviewNoteControl.markAsTouched();
       return;
     }
 
+    const note = (this.reviewNoteControl.value ?? '').trim();
+    if (note.length < 5) {
+      this.reviewNoteControl.setErrors({ minlength: true });
+      this.reviewNoteControl.markAsTouched();
+      return;
+    }
+
+    this.isSubmitting = true;
     const action = this.reviewAction;
     const newStatus = action === 'done' ? 'Approved' : 'Rejected';
 
-    this.queueItemsService.updateStatus(this.selectedItem.id, newStatus, this.reviewNoteControl.value ?? '').subscribe({
+    this.queueItemsService.updateStatus(this.selectedItem.id, newStatus, note).subscribe({
       next: () => {
+        this.isSubmitting = false;
         if (this.selectedItem) {
           this.selectedItem.status = newStatus;
         }
@@ -161,6 +171,7 @@ export class OverviewComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to update status:', err);
+        this.isSubmitting = false;
         this.cdr.markForCheck();
       }
     });

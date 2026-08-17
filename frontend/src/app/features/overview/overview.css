@@ -601,6 +601,18 @@
   background: #dc2626;
 }
 
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cancel-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ── Feedback Overlays ── */
 .feedback-overlay {
   position: fixed;

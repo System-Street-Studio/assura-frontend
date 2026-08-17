@@ -245,13 +245,13 @@
                           placeholder="Provide detailed feedback, disposal instructions, or reason for decision..." rows="4"></textarea>
                 @if (reviewNoteControl.invalid && reviewNoteControl.touched) {
                   <span class="field-error">
-                    {{ reviewNoteControl.errors?.['required'] ? 'A decision note is required.' : 'Note must be at least 5 characters.' }}
+                    {{ reviewNoteControl.errors?.['required'] ? 'A decision note is required.' : (reviewNoteControl.errors?.['minlength'] ? 'Note must be at least 5 characters.' : 'Note cannot exceed 1000 characters.') }}
                   </span>
                 }
                 <div class="review-notes-btns">
-                  <button class="cancel-link" (click)="cancelReview()">Back</button>
-                  <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()">
-                    {{ reviewAction === 'done' ? 'Confirm Approval' : 'Confirm Rejection' }}
+                  <button class="cancel-link" (click)="cancelReview()" [disabled]="isSubmitting">Back</button>
+                  <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()" [disabled]="isSubmitting || reviewNoteControl.invalid">
+                    {{ isSubmitting ? 'Submitting...' : (reviewAction === 'done' ? 'Confirm Approval' : 'Confirm Rejection') }}
                   </button>
                 </div>
               </div>
