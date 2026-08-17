@@ -27,6 +27,7 @@ export class LoginComponent {
 
     errorMessage: string | null = null;
     isLoading = false;
+    showPassword = false;
 
     onSubmit(): void {
         if (this.loginForm.invalid) return;
