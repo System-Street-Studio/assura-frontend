@@ -70,4 +70,17 @@ describe('DiscardFormComponent', () => {
 
     expect(locationSpy.back).toHaveBeenCalledTimes(1);
   });
+
+  it('should show a validation message when the discard reason is empty', () => {
+    const reasonField = fixture.nativeElement.querySelector('textarea[name="reason"]');
+
+    if (reasonField) {
+      reasonField.value = '';
+      reasonField.dispatchEvent(new Event('blur'));
+      reasonField.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Discard reason is required.');
+    }
+  });
 });

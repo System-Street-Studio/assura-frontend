@@ -72,4 +72,17 @@ describe('MaintenanceFormComponent', () => {
 
     expect(locationSpy.back).toHaveBeenCalledTimes(1);
   });
+
+  it('should show a validation message when the required asset field is left empty', () => {
+    const assetSelect = fixture.nativeElement.querySelector('select[name="asset"]');
+
+    if (assetSelect) {
+      assetSelect.value = '';
+      assetSelect.dispatchEvent(new Event('blur'));
+      assetSelect.dispatchEvent(new Event('change'));
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Please select an assigned asset.');
+    }
+  });
 });

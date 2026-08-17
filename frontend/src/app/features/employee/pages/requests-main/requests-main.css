@@ -285,13 +285,18 @@
 
 /* Priority Badges */
 .priority-badge {
-  display: inline-block;
-  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  padding: 4px 10px;
   border-radius: 20px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .priority-badge.high,
@@ -319,11 +324,15 @@
 .status-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  min-width: 92px;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .status-dot {
