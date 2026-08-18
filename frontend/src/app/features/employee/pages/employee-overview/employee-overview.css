@@ -629,3 +629,7 @@
   border-color: rgba(99, 102, 241, 0.6);
   box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
 }
+
+.pagination-wrapper {
+  margin-top: 8px;
+}

@@ -22,6 +22,10 @@ export class RequestsMainComponent implements OnInit {
   itemsPerPage = 10;
   maxRequests = 20; // Show only latest 20 requests
 
+  private sortByRequestOrderDesc(a: AssetRequest, b: AssetRequest): number {
+    return Number(b.id) - Number(a.id);
+  }
+
   // Computed signal for total pages
   totalPages = computed(() => Math.ceil(this.recentRequests().length / this.itemsPerPage));
 
@@ -85,9 +89,10 @@ export class RequestsMainComponent implements OnInit {
     // Fetch requests for the logged-in employee
     this.assetService.getEmployeeRequests(empId).subscribe({
       next: (data: AssetRequest[]) => {
-
-          // Keep only the latest 20 requests
-        const limitedData = data.slice(0, this.maxRequests);
+        // Keep only the latest 20 requests after sorting newest-first.
+        const limitedData = [...data]
+          .sort((a, b) => this.sortByRequestOrderDesc(a, b))
+          .slice(0, this.maxRequests);
         this.recentRequests.set(limitedData);
         this.currentPage.set(1);
         this.isLoading.set(false);
