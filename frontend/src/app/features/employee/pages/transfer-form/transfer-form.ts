@@ -11,7 +11,7 @@ import { AssetService as AssetRequestService } from '../../services/asset-reques
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CategoryService } from '../../../inventory/services/category.service';
 import { Category } from '../../../inventory/models/category.model';
-import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-transfer-form',
@@ -24,8 +24,7 @@ import { ResultOverlayComponent } from '../../../../shared/components/result-ove
     MatDatepickerModule,
     MatNativeDateModule,
     MatFormFieldModule,
-    MatInputModule,
-    ResultOverlayComponent
+    MatInputModule
   ],
   templateUrl: './transfer-form.html',
   styleUrl: './transfer-form.css',
@@ -44,23 +43,19 @@ export class TransferFormComponent implements OnInit {
     selectedFiles = signal<File[]>([]);
     isSubmitting = signal(false);
 
-      // Result overlay signals
-    showResult = signal(false);
-    resultType = signal<'success' | 'error'>('success');
-    resultTitle = signal('');
-    resultMessage = signal('');
-
     // Services
+  private location = inject(Location);
+  private assetRequestService = inject(AssetRequestService);
+  private categoryService = inject(CategoryService);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
+
     ngOnInit(): void {
       this.categoryService.getAll().subscribe({
         next: (cats) => this.categories.set(cats),
         error: (err) => console.error('Failed to load categories', err)
       });
     }
-  private location = inject(Location);
-  private assetRequestService = inject(AssetRequestService);
-  private categoryService = inject(CategoryService);
-  private authService = inject(AuthService);
 
   // Minimum date allowed for From Date (today)
   minDate: Date = (() => {
@@ -175,18 +170,15 @@ export class TransferFormComponent implements OnInit {
     this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
       next: () => {
         this.isSubmitting.set(false);
-        this.showResult.set(true);
-        this.resultType.set('success');
-        this.resultTitle.set('Transfer Request Submitted');
-        this.resultMessage.set('Your transfer request has been submitted successfully.');
+        this.toastService.success('Transfer request submitted successfully');
+        setTimeout(() => {
+          this.location.back();
+        }, 1000);
       },
       error: (err) => {
         this.isSubmitting.set(false);
         console.error('Submission failed', err);
-        this.showResult.set(true);
-        this.resultType.set('error');
-        this.resultTitle.set('Failed to Submit Request');
-        this.resultMessage.set('Failed to submit request. Please try again.');
+        this.toastService.error('Failed to submit request. Please try again.');
       }
     });
   }
@@ -196,16 +188,7 @@ export class TransferFormComponent implements OnInit {
     this.location.back();
   }
 
-  // Handle result overlay close
-  onResultClosed(): void {
-  this.showResult.set(false);
-
-  if (this.resultType() === 'success') {
-    this.location.back();
-  }
-}
-
-// File attachment methods
+  // File attachment methods
   onFileSelected(event: any): void {
     const files = event.target.files;
     if (files) {

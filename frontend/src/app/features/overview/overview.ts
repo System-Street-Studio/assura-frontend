@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { QueueItemsService, QueueItem } from '../../services/queue-items.service';
-
+import { ToastService } from '../../shared/services/toast.service';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
@@ -33,10 +33,6 @@ export class OverviewComponent implements OnInit {
   reviewAction: 'done' | 'reject' | '' = '';
   reviewNoteControl = new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(1000)]);
 
-  // Feedback cards
-  showSuccessCard = false;
-  showRejectCard = false;
-
   greeting = 'Welcome';
   firstName = 'Superintendent';
   currentDate = new Date();
@@ -45,7 +41,8 @@ export class OverviewComponent implements OnInit {
     private queueItemsService: QueueItemsService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -161,28 +158,19 @@ export class OverviewComponent implements OnInit {
         this.selectedItem = this.filteredQueue[0] || null;
 
         if (action === 'done') {
-          this.showSuccessCard = true;
-          setTimeout(() => { this.showSuccessCard = false; this.cdr.markForCheck(); }, 3000);
+          this.toastService.success('The record has been updated and marked as Approved');
         } else {
-          this.showRejectCard = true;
-          setTimeout(() => { this.showRejectCard = false; this.cdr.markForCheck(); }, 3000);
+          this.toastService.success('The request has been rejected and the decision has been logged');
         }
         this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Failed to update status:', err);
+        this.toastService.error('Failed to update the record. Please try again.');
         this.isSubmitting = false;
         this.cdr.markForCheck();
       }
     });
-  }
-
-  closeSuccessCard() {
-    this.showSuccessCard = false;
-  }
-
-  closeRejectCard() {
-    this.showRejectCard = false;
   }
 
   cancelReview() {

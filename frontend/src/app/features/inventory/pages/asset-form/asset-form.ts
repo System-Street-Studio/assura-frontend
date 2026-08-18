@@ -39,13 +39,12 @@ import { PurchasingOrderDto, PurchasingOrderItemDto, PurchasingOrderSummaryDto }
 // Shared services & components
 // ─────────────────────────────────────────────────────────────────────────────
 import { ToastService } from '../../../../shared/services/toast.service';
-import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 
 @Component({
   selector: 'app-asset-form',
   standalone: true,
   // ReactiveFormsModule is required for [formGroup] and formControlName bindings in the template.
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, MatIconModule, ResultOverlayComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, MatIconModule],
   templateUrl: './asset-form.html',
   styleUrls: ['./asset-form.css'],
 })
@@ -135,15 +134,6 @@ export class AssetFormComponent implements OnInit {
   /** Dropdown options for the audit schedule field. Currently reserved for future use. */
   auditSchedules = ['Monthly', 'Quarterly', 'Semi-Annually', 'Annually'];
 
-  // ── Result overlay state ──
-  /** Controls visibility of the full-screen success/error result overlay. */
-  showResult = false;
-  resultType: 'success' | 'error' = 'success';
-  resultTitle = '';
-  resultMessage = '';
-
-  /** Route path to navigate to after the result overlay is dismissed. */
-  private navigateTarget: string[] = [];
 
   // ── Dropdown data ──
   /** All possible asset lifecycle statuses. */
@@ -498,7 +488,10 @@ export class AssetFormComponent implements OnInit {
           const message = this.mode === 'clone'
             ? `"${payload.assetCode}" has been created as a copy and added to inventory.`
             : `"${payload.assetCode}" has been added to inventory.`;
-          this.showResultOverlay('success', 'Asset Created!', message, ['/inventory/assets']);
+          this.toast.success(message);
+          setTimeout(() => {
+            this.router.navigate(['/inventory/assets']);
+          }, 1000);
         },
         error: (err: HttpErrorResponse) => this.handleSaveError(err, 'Failed to save'),
       });
@@ -507,7 +500,10 @@ export class AssetFormComponent implements OnInit {
       this.assetService.updateAsset(payload).subscribe({
         next: () => {
           this.saving = false;
-          this.showResultOverlay('success', 'Asset Updated!', `"${payload.assetCode}" has been updated.`, ['/inventory/assets']);
+          this.toast.success(`"${payload.assetCode}" has been updated.`);
+          setTimeout(() => {
+            this.router.navigate(['/inventory/assets']);
+          }, 1000);
         },
         error: (err: HttpErrorResponse) => this.handleSaveError(err, 'Failed to update'),
       });
@@ -847,33 +843,6 @@ export class AssetFormComponent implements OnInit {
   /** Navigates back to the previous page without saving. */
   onCancel(): void {
     this.location.back();
-  }
-
-  /**
-   * Called when the result overlay is dismissed by the user.
-   * Hides the overlay and performs the pending navigation (e.g., back to assets list).
-   */
-  onResultClosed(): void {
-    this.showResult = false;
-    if (this.navigateTarget.length) {
-      this.router.navigate(this.navigateTarget);
-    }
-  }
-
-  /**
-   * Sets up the result overlay state and auto-dismisses it after 3 seconds.
-   * @param type       - 'success' or 'error' — controls the overlay icon and colour.
-   * @param title      - Short headline shown on the overlay (e.g., 'Asset Created!').
-   * @param message    - Longer detail message shown below the title.
-   * @param navigateTo - Route to navigate to when the overlay is closed.
-   */
-  private showResultOverlay(type: 'success' | 'error', title: string, message: string, navigateTo: string[]): void {
-    this.resultType    = type;
-    this.resultTitle   = title;
-    this.resultMessage = message;
-    this.navigateTarget = navigateTo;
-    this.showResult    = true;
-    setTimeout(() => this.onResultClosed(), 3000); // Auto-close after 3 seconds
   }
 
   /**
