@@ -34,8 +34,8 @@ export class AssetRequestsComponent implements OnInit {
   filterDivision = '';
 
   currentPage = 1;
-  pageSize = 10;
-  pageSizes = [5, 10, 25, 50];
+  pageSize = 20;
+  pageSizes = [5, 20, 25, 50];
   pages: number[] = [1];
   divisions: string[] = [];
 

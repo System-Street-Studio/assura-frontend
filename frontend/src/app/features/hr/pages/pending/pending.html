@@ -10,58 +10,64 @@
               <th class="assura-th">User ID</th>
               <th class="assura-th">Name</th>
               <th class="assura-th">Joined Date</th>
+              <th class="assura-th" style="text-align: right;">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             @for (user of pendingUsers(); track user.id) {
-            <tr class="assura-tr-hover" tabindex="0" [class.show-details]="activeUserIdNum === user.id" (mouseenter)="showDetails(user.id)"
-              (mouseleave)="hideDetails()" (focusin)="showDetails(user.id)" (focusout)="hideDetails()"
-              (click)="openAssignForm(user.id)">
+            <tr class="assura-tr-hover" tabindex="0" [class.show-details]="activeUserIdNum === user.id"
+              (mouseenter)="showDetails(user.id)" (mouseleave)="hideDetails()"
+              (focusin)="showDetails(user.id)" (focusout)="hideDetails()">
               <td class="assura-td">{{ user.userId }}</td>
               <td class="assura-td">
-                <span class="name-popover">
-                  <span class="name-trigger">{{ user.name }}</span>
+                <div class="name-popover">
+                  <span class="name-trigger" (click)="openAssignForm(user.id)">{{ user.name }}</span>
 
-                  <span class="detail-card" role="tooltip">
-                    <span class="detail-header">
+                  <div class="detail-card" role="tooltip">
+                    <div class="detail-header">
                       <span class="detail-avatar">{{ user.name.charAt(0) }}</span>
-                      <span>
+                      <div>
                         <strong>{{ user.name }}</strong>
                         <small>{{ user.userId }}</small>
-                      </span>
-                    </span>
+                      </div>
+                    </div>
 
-                    <span class="detail-grid">
-                      <span>
+                    <div class="detail-grid">
+                      <div>
                         <b>Email</b>
-                        {{ user.email }}
-                      </span>
-                      <span>
+                        <span>{{ user.email || '—' }}</span>
+                      </div>
+                      <div>
                         <b>Division</b>
-                        {{ user.department }}
-                      </span>
-                      <span>
+                        <span>{{ user.department || 'Not Assigned' }}</span>
+                      </div>
+                      <div>
                         <b>Requested Role</b>
-                        {{ user.requestedRole }}
-                      </span>
-                      <span>
+                        <span>{{ user.requestedRole || 'Not Specified' }}</span>
+                      </div>
+                      <div>
                         <b>Phone</b>
-                        {{ user.phone }}
-                      </span>
-                      <span>
+                        <span>{{ user.phone || '—' }}</span>
+                      </div>
+                      <div>
                         <b>Status</b>
-                        {{ user.status }}
-                      </span>
-                    </span>
-                  </span>
-                </span>
+                        <span class="status-pill">{{ user.status || 'Pending' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </td>
               <td class="assura-td">{{ user.joinedDate }}</td>
+              <td class="assura-td" style="text-align: right;">
+                <button class="assura-btn assura-btn-primary" style="padding: 6px 14px; font-size: 13px;" (click)="openAssignForm(user.id)">
+                  Assign Role
+                </button>
+              </td>
             </tr>
             } @empty {
             <tr>
-              <td class="assura-td empty-state" colspan="3" style="text-align: center; padding: 2rem; color: #94a3b8;">
+              <td class="assura-td empty-state" colspan="4" style="text-align: center; padding: 2rem; color: #94a3b8;">
                 No pending users found
               </td>
             </tr>

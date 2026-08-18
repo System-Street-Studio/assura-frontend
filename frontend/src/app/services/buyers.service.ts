@@ -20,6 +20,16 @@ export interface CreateBuyerRequest {
   category: string;
 }
 
+export interface UpdateBuyerRequest {
+  id: number;
+  name: string;
+  contact: string;
+  email: string;
+  phone: string;
+  category: string;
+  status?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class BuyersService {
   private apiUrl = '/api/Buyers';
@@ -32,5 +42,9 @@ export class BuyersService {
 
   create(buyer: CreateBuyerRequest): Observable<number> {
     return this.http.post<number>(this.apiUrl, buyer);
+  }
+
+  update(id: string | number, buyer: UpdateBuyerRequest): Observable<boolean> {
+    return this.http.put<boolean>(`${this.apiUrl}/${id}`, buyer);
   }
 }

@@ -37,21 +37,6 @@
       <div class="card-value">{{ discardedCount }}</div>
     </div>
 
-    <div class="glass-card stat-card unread" [class.card-active]="activeFilter === 'Unread'"
-         (click)="filterByStatus('Unread')">
-      <div class="card-header">
-        <span class="label">Unread Requests</span>
-        <div class="icon-wrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-            <polyline points="22,6 12,13 2,6" />
-          </svg>
-        </div>
-      </div>
-      <div class="card-value">{{ unreadCount }}</div>
-    </div>
-
     <div class="glass-card stat-card rejected" [class.card-active]="activeFilter === 'Rejected'"
          (click)="filterByStatus('Rejected')">
       <div class="card-header">
@@ -97,29 +82,13 @@
       </div>
       <div class="card-value">{{ totalCount }}</div>
     </div>
-
-    <div class="glass-card stat-card today" [class.card-active]="activeFilter === 'Today'"
-         (click)="filterByStatus('Today')">
-      <div class="card-header">
-        <span class="label">Today</span>
-        <div class="icon-wrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
-        </div>
-      </div>
-      <div class="card-value">{{ todayCount }}</div>
-    </div>
   </div>
 
   <!-- Section Header -->
   <div class="section-header">
     <div class="section-title-group">
       <h2 class="section-title">
-        {{ activeFilter ? (activeFilter === 'Today' ? "Today's Action Items" : activeFilter + ' Queue Items') : 'All Action Items' }}
+        {{ activeFilter ? activeFilter + ' Queue Items' : 'All Action Items' }}
       </h2>
       <span class="queue-count-badge">{{ filteredQueue.length }} {{ filteredQueue.length === 1 ? 'record' : 'records' }}</span>
     </div>
@@ -276,13 +245,13 @@
                           placeholder="Provide detailed feedback, disposal instructions, or reason for decision..." rows="4"></textarea>
                 @if (reviewNoteControl.invalid && reviewNoteControl.touched) {
                   <span class="field-error">
-                    {{ reviewNoteControl.errors?.['required'] ? 'A decision note is required.' : 'Note must be at least 5 characters.' }}
+                    {{ reviewNoteControl.errors?.['required'] ? 'A decision note is required.' : (reviewNoteControl.errors?.['minlength'] ? 'Note must be at least 5 characters.' : 'Note cannot exceed 1000 characters.') }}
                   </span>
                 }
                 <div class="review-notes-btns">
-                  <button class="cancel-link" (click)="cancelReview()">Back</button>
-                  <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()">
-                    {{ reviewAction === 'done' ? 'Confirm Approval' : 'Confirm Rejection' }}
+                  <button class="cancel-link" (click)="cancelReview()" [disabled]="isSubmitting">Back</button>
+                  <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()" [disabled]="isSubmitting || reviewNoteControl.invalid">
+                    {{ isSubmitting ? 'Submitting...' : (reviewAction === 'done' ? 'Confirm Approval' : 'Confirm Rejection') }}
                   </button>
                 </div>
               </div>
@@ -307,43 +276,6 @@
     }
   </div>
 
-  <!-- Feedback Overlays -->
-  @if (showSuccessCard) {
-    <div class="feedback-overlay" (click)="closeSuccessCard()">
-      <div class="glass-modal feedback-card success-card" (click)="$event.stopPropagation()">
-        <div class="feedback-icon-wrap success-bg">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-               stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-          </svg>
-        </div>
-        <div class="feedback-content">
-          <h4>Successfully Approved</h4>
-          <p>The record has been updated and marked as Approved in the system.</p>
-        </div>
-      </div>
-    </div>
-  }
-
-  @if (showRejectCard) {
-    <div class="feedback-overlay" (click)="closeRejectCard()">
-      <div class="glass-modal feedback-card reject-card" (click)="$event.stopPropagation()">
-        <div class="feedback-icon-wrap reject-bg">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-               stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="15" y1="9" x2="9" y2="15" />
-            <line x1="9" y1="9" x2="15" y2="15" />
-          </svg>
-        </div>
-        <div class="feedback-content">
-          <h4>Request Rejected</h4>
-          <p>The record has been rejected and the decision has been logged.</p>
-        </div>
-      </div>
-    </div>
-  }
   } @else {
     <div class="pending-user-view" style="display: flex; align-items: center; justify-content: center; height: calc(100vh - 120px); text-align: center; flex-direction: column;">
       <div class="glass-card" style="padding: 48px; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 24px; border: 1px solid rgba(245, 158, 11, 0.3);">

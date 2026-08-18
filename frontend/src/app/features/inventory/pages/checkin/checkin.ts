@@ -7,12 +7,11 @@ import { catchError, finalize, throwError, timeout } from 'rxjs';
 import { CheckoutService } from '../../services/checkout.service';
 import { CheckoutRecord, CheckinFormData } from '../../models/checkout.model';
 import { ToastService } from '../../../../shared/services/toast.service';
-import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 
 @Component({
     selector: 'app-checkin',
     standalone: true,
-    imports: [CommonModule, FormsModule, MatIconModule, ResultOverlayComponent],
+    imports: [CommonModule, FormsModule, MatIconModule],
     templateUrl: './checkin.html',
     styleUrls: ['./checkin.css'],
 })
@@ -41,13 +40,6 @@ export class CheckinComponent implements OnInit, OnDestroy {
     };
 
     evidenceFileError = '';
-
-    /* Result overlay */
-    showResult = false;
-    resultType: 'success' | 'error' = 'success';
-    resultTitle = '';
-    resultMessage = '';
-    private resultAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
 
     ngOnInit(): void {
         this.route.queryParamMap.subscribe((params) => {
@@ -173,16 +165,10 @@ export class CheckinComponent implements OnInit, OnDestroy {
             })
         ).subscribe({
             next: (updated) => {
-                this.resultType = 'success';
-                this.resultTitle = 'Checked In!';
-                this.resultMessage = `"${updated.assetName}" has been returned by ${updated.checkedOutTo}.`;
-                this.showResult = true;
-                if (this.resultAutoCloseTimer) {
-                    clearTimeout(this.resultAutoCloseTimer);
-                }
-                this.resultAutoCloseTimer = setTimeout(() => {
-                    this.onResultClosed();
-                }, 2000);
+                this.toast.success(`"${updated.assetName}" has been returned by ${updated.checkedOutTo}.`);
+                setTimeout(() => {
+                    this.router.navigate(['/inventory/check-in']);
+                }, 1000);
                 setTimeout(() => this.cdr.detectChanges(), 0);
             },
             error: () => {
@@ -239,20 +225,7 @@ export class CheckinComponent implements OnInit, OnDestroy {
         return this.checkinForm.condition === 'Damaged' || this.checkinForm.repairNeeded;
     }
 
-    onResultClosed(): void {
-        if (this.resultAutoCloseTimer) {
-            clearTimeout(this.resultAutoCloseTimer);
-            this.resultAutoCloseTimer = null;
-        }
-        this.showResult = false;
-        this.router.navigate(['/inventory/check-in']);
-    }
-
     ngOnDestroy(): void {
-        if (this.resultAutoCloseTimer) {
-            clearTimeout(this.resultAutoCloseTimer);
-            this.resultAutoCloseTimer = null;
-        }
     }
 
     /* ── Helpers ── */

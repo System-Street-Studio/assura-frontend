@@ -1,7 +1,7 @@
-import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -14,10 +14,11 @@ import { finalize } from 'rxjs';
     templateUrl: './login.html',
     styleUrls: ['./login.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
     private fb = inject(FormBuilder);
     private authService = inject(AuthService);
     private router = inject(Router);
+    private route = inject(ActivatedRoute);
     private cdr = inject(ChangeDetectorRef);
 
     loginForm = this.fb.group({
@@ -27,6 +28,16 @@ export class LoginComponent {
 
     errorMessage: string | null = null;
     isLoading = false;
+    showPassword = false;
+
+    ngOnInit(): void {
+        this.route.queryParams.subscribe(params => {
+            if (params['sessionExpired'] === 'true') {
+                this.errorMessage = 'You have been logged out because this account was logged into on another device.';
+                this.cdr.detectChanges();
+            }
+        });
+    }
 
     onSubmit(): void {
         if (this.loginForm.invalid) return;

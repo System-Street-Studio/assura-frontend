@@ -6,13 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { AssetService } from '../../services/asset.service';
 import { AssetDetail } from '../../models/asset.model';
 import { ToastService } from '../../../../shared/services/toast.service';
-import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 import QRCode from 'qrcode';
 
 @Component({
   selector: 'app-asset-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, ResultOverlayComponent],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './asset-details.html',
   styleUrls: ['./asset-details.css'],
 })
@@ -35,11 +34,6 @@ export class AssetDetailsComponent implements OnInit {
   showDeleteConfirm = false;
   deleting = false;
   qrDataUrl = '';
-
-  showResult = false;
-  resultType: 'success' | 'error' = 'success';
-  resultTitle = '';
-  resultMessage = '';
 
   /* ── Check-in modal ── */
   showCheckinModal = false;
@@ -168,10 +162,7 @@ export class AssetDetailsComponent implements OnInit {
             assignedUserName: undefined,
           };
 
-          this.resultType = 'success';
-          this.resultTitle = 'Checked In!';
-          this.resultMessage = `Asset ${this.asset.assetCode} has been checked in successfully.`;
-          this.showResult = true;
+          this.toast.success(`Asset ${this.asset.assetCode} has been checked in successfully.`);
         },
         error: () => {
           this.checkinProcessing = false;
@@ -195,7 +186,7 @@ export class AssetDetailsComponent implements OnInit {
 
   /**
    * Confirms and executes the asset deletion.
-   * Displays a success overlay on completion before navigating away.
+   * Displays a success toast on completion before navigating away.
    */
   confirmDelete(): void {
     this.deleting = true;
@@ -203,11 +194,10 @@ export class AssetDetailsComponent implements OnInit {
       next: () => {
         this.showDeleteConfirm = false;
         this.deleting = false;
-        this.resultType = 'success';
-        this.resultTitle = 'Deleted!';
-        this.resultMessage = `Asset ${this.asset.assetCode} has been removed.`;
-        this.showResult = true;
-        setTimeout(() => this.onResultClosed(), 2000);
+        this.toast.success(`Asset ${this.asset.assetCode} has been removed.`);
+        setTimeout(() => {
+          this.router.navigate(['/inventory/assets']);
+        }, 1000);
       },
       error: () => {
         this.showDeleteConfirm = false;
@@ -232,10 +222,5 @@ export class AssetDetailsComponent implements OnInit {
       case '3': return 'Under Maintenance';
       default: return s;
     }
-  }
-
-  onResultClosed(): void {
-    this.showResult = false;
-    this.router.navigate(['/inventory/assets']);
   }
 }

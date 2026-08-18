@@ -220,6 +220,33 @@ button.stat-card:hover {
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
+.card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card-edit-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #818cf8;
+  transform: scale(1.05);
+}
+
 .buyer-status {
   display: inline-flex;
   align-items: center;
@@ -480,15 +507,43 @@ button.stat-card:hover {
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
+.edit-detail-btn {
+  flex: 1.5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #a5b4fc;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.edit-detail-btn:hover {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.5);
+  color: #ffffff;
+}
+
 .contact-btn:hover,
 .submit-btn:hover {
   background: #4f46e5;
   box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
 }
 
+.close-detail-btn:disabled,
+.edit-detail-btn:disabled,
 .submit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* ── Form in Modal ── */
@@ -534,6 +589,22 @@ button.stat-card:hover {
   transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
+}
+
+.glass-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.glass-select option {
+  background: #0f172a;
+  color: #f8fafc;
 }
 
 .glass-input:focus {

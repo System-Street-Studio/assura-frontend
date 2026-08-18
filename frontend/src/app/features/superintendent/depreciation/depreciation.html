@@ -313,9 +313,9 @@
           </table>
         </div>
 
-        <!-- Pagination Toolbar -->
-        <div class="pagination-bar">
-          <div class="pagination-left">
+        <!-- Pagination Controls -->
+        <div class="pagination-controls">
+          <div class="pagination-info">
             <span class="page-info-text">
               Showing <strong>{{ startIndex }}</strong> - <strong>{{ endIndex }}</strong> of <strong>{{ filteredAssets.length }}</strong> assets
             </span>
@@ -329,19 +329,12 @@
             </div>
           </div>
 
-          <div class="pagination-right">
-            <button class="page-nav-btn" [disabled]="currentPage === 1" (click)="prevPage()" title="Previous Page">
-              <mat-icon>chevron_left</mat-icon>
-            </button>
-            
-            <span class="page-current-indicator">
-              Page <strong>{{ currentPage }}</strong> of <strong>{{ totalPages }}</strong>
-            </span>
-
-            <button class="page-nav-btn" [disabled]="currentPage === totalPages" (click)="nextPage()" title="Next Page">
-              <mat-icon>chevron_right</mat-icon>
-            </button>
-          </div>
+          <app-pagination
+            [currentPage]="currentPage"
+            [totalPages]="totalPages"
+            [pageNumbers]="getPageNumbers()"
+            (pageChange)="onPageChange($event)">
+          </app-pagination>
         </div>
       }
     </div>

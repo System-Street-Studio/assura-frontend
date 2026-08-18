@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -7,10 +7,10 @@ import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
     selector: 'app-reset-password',
-    standalone: true,
     imports: [CommonModule, ReactiveFormsModule, RouterLink, MatIconModule],
     templateUrl: './reset-password.html',
-    styleUrls: ['./reset-password.css']
+    styleUrls: ['./reset-password.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResetPasswordComponent implements OnInit {
     private fb = inject(FormBuilder);
@@ -25,19 +25,25 @@ export class ResetPasswordComponent implements OnInit {
         confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
 
-    token = '';
-    email = '';
-    isLoading = false;
-    message = '';
-    errorMessage = '';
+    isLoading = signal(false);
+    message = signal('');
+    errorMessage = signal('');
+    showNewPassword = signal(false);
+    showConfirmPassword = signal(false);
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
             const token = params['token'] || '';
             const email = params['email'] || '';
 
-            if (token && email) {
-                this.resetForm.patchValue({ token, email });
+            // Patch whichever of the two survived - an email client stripping or
+            // truncating the link's query string shouldn't leave the form fully
+            // blank with no indication that autofill was attempted.
+            if (token) {
+                this.resetForm.patchValue({ token });
+            }
+            if (email) {
+                this.resetForm.patchValue({ email });
             }
         });
     }
@@ -51,9 +57,9 @@ export class ResetPasswordComponent implements OnInit {
     onSubmit(): void {
         if (this.resetForm.invalid) return;
 
-        this.isLoading = true;
-        this.message = '';
-        this.errorMessage = '';
+        this.isLoading.set(true);
+        this.message.set('');
+        this.errorMessage.set('');
 
         const data = {
             email: this.resetForm.value.email,
@@ -63,13 +69,13 @@ export class ResetPasswordComponent implements OnInit {
 
         this.authService.resetPassword(data).subscribe({
             next: (response) => {
-                this.isLoading = false;
-                this.message = response.message || 'Password has been successfully reset.';
+                this.isLoading.set(false);
+                this.message.set(response.message || 'Password has been successfully reset.');
                 setTimeout(() => this.router.navigate(['/auth/login']), 3000);
             },
             error: (err) => {
-                this.isLoading = false;
-                this.errorMessage = err.error?.message || 'Failed to reset password. The link may have expired.';
+                this.isLoading.set(false);
+                this.errorMessage.set(err.error?.message || 'Failed to reset password. The link may have expired.');
             }
         });
     }

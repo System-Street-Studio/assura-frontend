@@ -25,7 +25,7 @@ export class SuppliersComponent implements OnInit {
     isLoading = false;
 
     // Pagination
-    pageSize = 5;
+    pageSize = 20;
     currentPage = 1;
 
     ngOnInit(): void {

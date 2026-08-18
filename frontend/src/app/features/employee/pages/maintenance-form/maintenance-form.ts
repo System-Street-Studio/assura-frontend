@@ -7,12 +7,12 @@ import { AssetService as AssetRequestService } from '../../services/asset-reques
 import { AssetService } from '../../../inventory/services/asset.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { AssetDetail } from '../../../inventory/models/asset.model';
-import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-maintenance-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, ResultOverlayComponent],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './maintenance-form.html',
   styleUrls: ['./maintenance-form.css']
 })
@@ -22,12 +22,7 @@ export class MaintenanceFormComponent implements OnInit {
   private assetService = inject(AssetService);
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
-
-  // Result Signals
-  showResult = signal(false);
-  resultType = signal<'success' | 'error'>('success');
-  resultTitle = signal('');
-  resultMessage = signal('');
+  private toastService = inject(ToastService);
 
   // Form Signals
   assignedAssets = signal<AssetDetail[]>([]);
@@ -104,37 +99,23 @@ export class MaintenanceFormComponent implements OnInit {
     this.assetRequestService.createRequest(requestData, this.selectedFiles()).subscribe({
       next: (res: any) => {
         this.isSubmitting.set(false);
-        this.resultType.set('success');
-        this.resultTitle.set('Success');
-        this.resultMessage.set(res?.message || 'Maintenance Request Submitted Successfully!');
-        this.showResult.set(true);
+        this.toastService.success(res?.message || 'Maintenance Request Submitted Successfully!');
+        setTimeout(() => {
+          this.location.back();
+        }, 1000);
       },
       error: (err) => {
         this.isSubmitting.set(false);
         console.error('Save failed', err);
-        this.resultType.set('error');
-        this.resultTitle.set('Submission Failed');
-        this.resultMessage.set(
-          err?.error?.message || 'Error submitting request. Please try again.'
-        );
-        this.showResult.set(true);
+        this.toastService.error(err?.error?.message || 'Error submitting request. Please try again.');
       }
     });
   }
 
-  // Cancel button logic 
+  // Cancel button logic
   onCancel() {
     this.location.back();
   }
-
-    // Handle result overlay close
-  onResultClosed(): void {
-  this.showResult.set(false);
-
-  if (this.resultType() === 'success') {
-    this.location.back();
-  }
-}
 
 // File attachment logic
   onFileSelected(event: any): void {

@@ -32,6 +32,8 @@ export class RegisterComponent {
     isLoading = false;
     isSuccess = false;
     errorMessage = '';
+    showPassword = false;
+    showConfirmPassword = false;
 
     passwordMatchValidator(g: any) {
         return g.get('password').value === g.get('confirmPassword').value

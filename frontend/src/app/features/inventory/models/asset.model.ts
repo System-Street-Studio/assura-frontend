@@ -44,6 +44,8 @@ export interface AssetDetail extends Asset {
   divisionName: string;
   supplierName: string;
   assignedUserName?: string;
+  lastVerifiedAt?: string;
+  lastVerifiedByName?: string;
   checkedInBy?: string;
   checkedOutBy?: string;
   checkoutDate?: string;

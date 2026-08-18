@@ -4,6 +4,7 @@ export interface Product {
   manufacturer?: string;
   modelNumber?: string;
   description?: string;
+  imageUrl?: string;
   selected?: boolean;
 }
 

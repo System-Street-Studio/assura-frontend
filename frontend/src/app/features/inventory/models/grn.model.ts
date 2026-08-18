@@ -15,10 +15,13 @@ export interface Grn {
 
 export interface CreateGrnRequest {
     purchasingOrderId: number;
-    assetId: number;
+    assetId?: number;
     receivedDate: string;
     receivedBy?: string;
     notes?: string;
+    informingId?: number;
+    itemName?: string;
+    model?: string;
 }
 
 export interface PurchasingOrderOption {
