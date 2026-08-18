@@ -32,7 +32,8 @@ describe('HrAssignRoleFormComponent', () => {
       'getUserById',
       'assignRole',
       'updateUser',
-      'rejectUser'
+      'rejectUser',
+      'markRecentlyAssignedUser'
     ]);
     hrAssignmentServiceSpy.getDivisions.and.returnValue(of([{ id: 1, name: 'Finance' }]));
     hrAssignmentServiceSpy.getSelectedUserIdForAssignment.and.returnValue(7);
