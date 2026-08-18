@@ -8,7 +8,6 @@ import { RequestService } from '../../services/requests.service';
 import { HeadTransferService } from '../../services/transfer.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 
-
 // Interfaces
 interface Category { id: number; name: string; }
 interface Division { id: number; name: string; }
@@ -49,12 +48,11 @@ export class AssetPoolComponent implements OnInit, OnDestroy {
   selectedTransferRequest = signal<any>(null);
   categories = signal<Category[]>([]);
   specifications = signal<AssetSpecification[]>([]);
-  divisions = signal<Division[]>([]); // All divisions for dropdown
+  divisions = signal<Division[]>([]);
   
-  //
   allAssets = signal<Asset[]>([]); 
-  employeesList = signal<{ id: string; name: string }[]>([]); // Unique employees from filtered assets
-  allEmployees = signal<Employee[]>([]); // All assignable employees for dropdown
+  employeesList = signal<{ id: string; name: string }[]>([]);
+  allEmployees = signal<Employee[]>([]);
 
   // --- Filter Signals ---
   searchQuery = signal<string>('');
@@ -69,227 +67,154 @@ export class AssetPoolComponent implements OnInit, OnDestroy {
   itemsPerPage = signal(10);
   totalItems = signal(0);
 
-  // --- Computed Properties ---
+  
+  showPopup = signal(false);
+  popupMessage = signal('');
+  popupType = signal<'success' | 'reject' | 'confirm'>('success');
+  
+  
+  isProcessing = signal(false);
+  
+  private confirmCallback: (() => void) | null = null;
 
+  // --- Computed Properties ---
   categoryNames = computed(() => this.categories().map(c => c.name));
 
   availableSpecifications = computed(() => {
     const selectedCat = this.selectedCategory();
     if (!selectedCat) return [];
-    
     const categoryObj = this.categories().find(c => c.name === selectedCat);
     if (!categoryObj) return [];
-    
     return this.specifications()
       .filter(s => s.categoryId === categoryObj.id)
       .map(s => s.name);
   });
 
- // Calculate total pages based on the number of filtered assets
   totalPages = computed(() => {
     const count = this.totalItems();
     return Math.ceil(count / this.itemsPerPage());
   });
 
-  // Get the assets to display on the current page
   paginatedAssets = computed(() => this.allAssets());
 
-  // --- Lifecycle Hooks ---
-
   ngOnInit() {
-
     this.setupDebouncing();
     this.loadDropdownOptions();
     this.loadApprovedTransferRequests();
     this.loadFilteredAssets(); 
   }
 
-  
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-
-  // --- Initialization & Setup ---
-
   private setupDebouncing() {
-
-    // Search input debouncing
     this.searchSubject.pipe(
       debounceTime(400),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
     ).subscribe(value => {
-      console.log(' Debounced search triggered:', value);
       this.searchQuery.set(value);
       this.currentPage.set(1);
       this.loadFilteredAssets();
     });
 
-    // Specification value input debouncing
     this.specValueSubject.pipe(
       debounceTime(400),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
     ).subscribe(value => {
-      console.log(' Debounced spec value triggered:', value);
       this.specificationValue.set(value);
       this.currentPage.set(1);
       this.loadFilteredAssets();
     });
   }
 
-
-
   private loadDropdownOptions() {
-
-    // Load categories from backend
     this.assetPoolService.getCategories().subscribe({
-      next: (cats) => {
-        this.categories.set(cats);
-      },
-      error: (err) => {
-        console.error('✗ Failed to load categories:', err);
-        this.errorMessage.set('Failed to load categories');
-      }
+      next: (cats) => this.categories.set(cats),
+      error: (err) => console.error('Failed to load categories:', err)
     });
 
-    // Load assigned divisions from backend 
     this.assetPoolService.getAssignedDivisions().subscribe({
-      next: (divs) => {
-        this.divisions.set(divs);
-      },
-      error: (err) => {
-        console.error('✗ Failed to load assigned divisions:', err);
-        this.errorMessage.set('Failed to load divisions');
-      }
+      next: (divs) => this.divisions.set(divs),
+      error: (err) => console.error('Failed to load divisions:', err)
     });
 
-
-    // Load assigned employees from backend 
     this.assetPoolService.getAssignedEmployees().subscribe({
       next: (emps) => {
-        this.employeesList.set(emps.map(emp => ({ 
-          id: emp.id.toString(), 
-          name: emp.name 
-        })));
+        this.employeesList.set(emps.map(emp => ({ id: emp.id.toString(), name: emp.name })));
       },
-      error: (err) => {
-        console.error('✗ Failed to load assigned employees:', err);
-        this.errorMessage.set('Failed to load employees');
-      }
+      error: (err) => console.error('Failed to load employees:', err)
     });
-
   }
 
-
-  
-  // Load approved transfer requests for dropdown (backend scopes this to the caller's own division)
   loadApprovedTransferRequests() {
-
     this.requestService.getApprovedTransferRequests().subscribe({
-      next: (requests: any[]) => {
-        this.approvedTransferRequests.set(requests);
-      },
-      error: (err) => {
-        console.error('Error loading approved transfer requests:', err);
-      }
+      next: (requests: any[]) => this.approvedTransferRequests.set(requests),
+      error: (err) => console.error('Error loading approved transfer requests:', err)
     });
   }
-
-
-  // --- Backend Filtering Logic (Core Function) ---
 
   loadFilteredAssets() {
     this.isLoading.set(true);
-    
     const filterParams: any = {
       page: this.currentPage(),
       pageSize: this.itemsPerPage(),
-      
     };
     
-    // Add optional filters only if they have values
-   
-  if (this.searchQuery()?.trim()) filterParams.search = this.searchQuery().trim();
-  if (this.selectedCategory()?.trim()) filterParams.category = this.selectedCategory().trim();
-  if (this.selectedDivision()?.trim()) filterParams.division = this.selectedDivision().trim();
-  if (this.selectedEmployee()?.toString().trim()) filterParams.employeeId = this.selectedEmployee();
-  
-  if (this.selectedSpecification()?.trim() && this.specificationValue()?.trim()) {
-    filterParams.specName = this.selectedSpecification().trim();
-    filterParams.specValue = this.specificationValue().trim();
-  }
-
-   
-   // Log the final filter parameters being sent to the API
-    this.assetPoolService.getFilteredAssets(filterParams).subscribe({
-    next: (response: any) => {
-      if (response.success && response.data) {
-        const assets = response.data.assets || [];
-        
-        const transformed = assets.map((asset: any) => ({
-          ...asset,
-          assignedTo: asset.assignedUserName || 'Unassigned',
-          empId: asset.assignedUserId?.toString() || '',
-          displayName: asset.productName || asset.assetCode || 'Unknown',
-          specifications: asset.notes || 'N/A'
-        }));
-
-        this.allAssets.set(transformed);
-        
-        
-        this.totalItems.set(response.data.totalCount|| 0);
-      }
-      this.isLoading.set(false);
-    },
-    error: (err: any) => {
-      console.error('❌ API Error:', err);
-      this.errorMessage.set('Could not load assets. Please try again later.');
-      this.allAssets.set([]);
-      this.isLoading.set(false);
+    if (this.searchQuery()?.trim()) filterParams.search = this.searchQuery().trim();
+    if (this.selectedCategory()?.trim()) filterParams.category = this.selectedCategory().trim();
+    if (this.selectedDivision()?.trim()) filterParams.division = this.selectedDivision().trim();
+    if (this.selectedEmployee()?.toString().trim()) filterParams.employeeId = this.selectedEmployee();
+    
+    if (this.selectedSpecification()?.trim() && this.specificationValue()?.trim()) {
+      filterParams.specName = this.selectedSpecification().trim();
+      filterParams.specValue = this.specificationValue().trim();
     }
-  });
-}
 
-
-  // change handlers for filters and pagination
-
-  onSearchChange(value: string) {
-    this.searchSubject.next(value);
+    this.assetPoolService.getFilteredAssets(filterParams).subscribe({
+      next: (response: any) => {
+        if (response.success && response.data) {
+          const assets = response.data.assets || [];
+          const transformed = assets.map((asset: any) => ({
+            ...asset,
+            assignedTo: asset.assignedUserName || 'Unassigned',
+            empId: asset.assignedUserId?.toString() || '',
+            displayName: asset.productName || asset.assetCode || 'Unknown',
+            specifications: asset.notes || 'N/A'
+          }));
+          this.allAssets.set(transformed);
+          this.totalItems.set(response.data.totalCount || 0);
+        }
+        this.isLoading.set(false);
+      },
+      error: (err: any) => {
+        console.error('❌ API Error:', err);
+        this.errorMessage.set('Could not load assets. Please try again later.');
+        this.allAssets.set([]);
+        this.isLoading.set(false);
+      }
+    });
   }
 
-  onSpecValueChange(value: string) {
-    this.specValueSubject.next(value);
-  }
+  onSearchChange(value: string) { this.searchSubject.next(value); }
+  onSpecValueChange(value: string) { this.specValueSubject.next(value); }
 
   onCategoryChange(categoryName: string) {
     this.selectedCategory.set(categoryName);
-    
-    // Only load specifications if category is selected (not empty)
     if (categoryName && categoryName.trim()) {
-      
-      // Find category ID from loaded categories
       const selectedCat = this.categories().find(c => c.name === categoryName);
-      
       if (selectedCat) {
-        // Use category ID to fetch specifications
         this.assetPoolService.getSpecificationsByCategory(selectedCat.id).subscribe({
-          next: (specs) => {
-            this.specifications.set(specs);
-          },
-          error: (err) => {
-            console.error(' Error loading specifications by category:', err);
-            this.specifications.set([]);
-          }
+          next: (specs) => this.specifications.set(specs),
+          error: () => this.specifications.set([])
         });
       }
     } else {
-      console.log(' Category is empty, clearing specifications');
       this.specifications.set([]);
     }
-    
     this.specificationValue.set(''); 
     this.currentPage.set(1);
     this.loadFilteredAssets();
@@ -321,55 +246,71 @@ export class AssetPoolComponent implements OnInit, OnDestroy {
     this.selectedTransferRequest.set(selected);
   }
 
-
-
   // --- Action Methods ---
 
   selectForTransfer(asset: Asset) {
     const request = this.selectedTransferRequest();
     if (!request) {
-      alert('Please select an approved transfer request from the dropdown first.');
+      this.popupMessage.set('Please select an approved transfer request from the dropdown first.');
+      this.popupType.set('reject');
+      this.confirmCallback = null;
+      this.isProcessing.set(false);
+      this.showPopup.set(true);
       return;
     }
     
-    if (confirm(`Are you sure you want to select "${asset.productName || asset.assetCode}" for transfer?`)) {
+    // Confirmation Pop-up
+    this.popupMessage.set(`Are you sure you want to select "${asset.productName || asset.assetCode}" for transfer?`);
+    this.popupType.set('confirm');
+    this.isProcessing.set(false); // මුලදී ඩිසේබල් වී නැත
+    
+    this.confirmCallback = () => {
+      this.isProcessing.set(true); // <-- Yes ක්ලික් කළ වහාම බටන් ඩිසේබල් වේ
+      
       this.transferService.createTransferRecord({
         assetId: Number(asset.id),
         assetRequestId: request.id,
         userId: Number(this.authService.getUserId()) 
       }).subscribe({
-        next: () => alert('Transfer record created successfully!'),
-        error: () => alert('Failed to create transfer record. Please try again.')
+        next: () => {
+          this.isProcessing.set(false); // වැඩේ අවසන් වූ පසු 
+          this.popupMessage.set('Transfer record created successfully!');
+          this.popupType.set('success');
+          this.confirmCallback = null;
+          this.showPopup.set(true);
+        },
+        error: (err) => {
+          this.isProcessing.set(false); // ඩොස් එකක් ආවත් නැවත නිදහස් කරයි
+          this.popupMessage.set('Failed to create transfer record. Please try again.');
+          this.popupType.set('reject');
+          this.confirmCallback = null;
+          this.showPopup.set(true);
+          console.error("Reject error:", err);
+        }
       });
+    };
+
+    this.showPopup.set(true);
+  }
+
+  onPopupAction() {
+    if (this.popupType() === 'confirm' && this.confirmCallback) {
+      this.confirmCallback();
+    } else {
+      this.closePopup();
     }
   }
 
-
+  closePopup() {
+    if (this.isProcessing()) return; // ප්‍රොසෙස් වෙන අතරතුර ක්ලෝස් වීම වළකයි
+    this.showPopup.set(false);
+    this.confirmCallback = null;
+    this.isProcessing.set(false);
+  }
 
   // --- Pagination Controls ---
-  
-  onPageChange(page: number) { 
-    this.currentPage.set(page); 
-    this.loadFilteredAssets();
-  }
-  
-  onPreviousPage() { 
-    if (this.currentPage() > 1) {
-      this.currentPage.set(this.currentPage() - 1); 
-      this.loadFilteredAssets();
-    }
-  }
-  
-  onNextPage() { 
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.set(this.currentPage() + 1); 
-      this.loadFilteredAssets();
-    }
-  }
-
-  getPageNumbers(): number[] {
-    return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
-  }
-
-  
+  onPageChange(page: number) { this.currentPage.set(page); this.loadFilteredAssets(); }
+  onPreviousPage() { if (this.currentPage() > 1) { this.currentPage.set(this.currentPage() - 1); this.loadFilteredAssets(); } }
+  onNextPage() { if (this.currentPage() < this.totalPages()) { this.currentPage.set(this.currentPage() + 1); this.loadFilteredAssets(); } }
+  getPageNumbers(): number[] { return Array.from({ length: this.totalPages() }, (_, i) => i + 1); }
 }

@@ -283,13 +283,18 @@
 
 /* Priority Badges */
 .priority-badge {
-  display: inline-block;
-  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  padding: 4px 10px;
   border-radius: 20px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .priority-badge.high,
@@ -317,11 +322,15 @@
 .status-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  min-width: 150px;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .status-dot {
@@ -331,10 +340,17 @@
   background: currentColor;
 }
 
-.status-badge.pending {
+.status-badge.status-pending{
   background: rgba(245, 158, 11, 0.12);
   color: #fbbf24;
   border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-badge.status-pendingprocurement,
+.status-badge.status-pendingprocurement {
+  background: rgba(11, 167, 245, 0.12) !important;
+  color: #24d7fb !important;
+  border: 1px solid rgba(11, 202, 245, 0.3) !important;
 }
 
 /* ── Empty State ── */
@@ -487,9 +503,18 @@
   letter-spacing: 0.5px;
 }
 
+.assura-card.assura-accent-success {
+  border-top: 4px solid #10b981 !important;
+  border-left: 1px solid rgba(148, 163, 184, 0.15) !important;
+  border-right: 1px solid rgba(148, 163, 184, 0.15) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15) !important;
+}
+
 .highlight-card {
-  border: 1px solid rgba(16, 185, 129, 0.4) !important;
-  background: rgba(16, 185, 129, 0.1) !important;
+  border-top: 4px solid #10b981 !important;
+  border-left: 1px solid rgba(16, 185, 129, 0.45) !important;
+  border-right: 1px solid rgba(16, 185, 129, 0.45) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.45) !important;
 }
 
 .highlight-row {

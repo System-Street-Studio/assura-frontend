@@ -26,7 +26,13 @@
       <!-- Select Asset -->
       <div class="form-field-group full-width">
         <label class="field-label">Select Assigned Asset <span class="required">*</span></label>
-        <select [ngModel]="asset()" (ngModelChange)="onAssetSelected($event)" name="asset" class="assura-select" required>
+        <select
+          [ngModel]="asset()"
+          (ngModelChange)="onAssetSelected($event)"
+          name="asset"
+          class="assura-select"
+          required
+          #assetField="ngModel">
           <option value="" disabled selected>Select an asset to discard</option>
           @for (a of assignedAssets(); track a.id) {
             <option [value]="a.productName + ' (' + a.assetCode + ')'">
@@ -34,6 +40,9 @@
             </option>
           }
         </select>
+        @if (assetField.invalid && assetField.touched) {
+          <div class="validation-msg">Please select an assigned asset.</div>
+        }
       </div>
 
       <!-- Reason for Discard -->
@@ -46,8 +55,12 @@
           placeholder="Briefly explain why this asset should be discarded (e.g. beyond economical repair, obsolete, severe physical defect)..."
           class="assura-textarea"
           rows="3"
-          required>
+          required
+          #reasonField="ngModel">
         </textarea>
+        @if (reasonField.invalid && reasonField.touched) {
+          <div class="validation-msg">Discard reason is required.</div>
+        }
       </div>
 
       <!-- Attachment Dropzone -->

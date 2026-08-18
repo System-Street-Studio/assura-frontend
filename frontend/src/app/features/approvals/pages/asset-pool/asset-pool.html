@@ -272,4 +272,52 @@
       </div>
     }
   }
+
+ <!-- Glass Modal Popup -->
+@if (showPopup()) {
+  <div class="overlay" (click)="closePopup()">
+    <div class="glass-modal" [class.reject]="popupType() === 'reject'" [class.confirm]="popupType() === 'confirm'" (click)="$event.stopPropagation()">
+      <div class="modal-icon-badge">
+        <mat-icon>
+          @if (popupType() === 'success') {
+            check_circle
+          } @else if (popupType() === 'reject') {
+            error
+          } @else {
+            help_outline
+          }
+        </mat-icon>
+      </div>
+      <div class="modal-body-text">
+        <h3>
+          @if (popupType() === 'success') {
+            Success
+          } @else if (popupType() === 'reject') {
+            Attention / Error
+          } @else {
+            Are you sure?
+          }
+        </h3>
+        <p>{{ popupMessage() }}</p>
+      </div>
+
+      <!-- Actions with [disabled] binding -->
+      <div class="modal-actions" style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 15px;">
+        @if (popupType() === 'confirm') {
+          <button class="modal-done-btn" style="background-color: #334155;" [disabled]="isProcessing()" (click)="closePopup()">No</button>
+          <button class="modal-done-btn" [disabled]="isProcessing()" (click)="onPopupAction()">
+            @if (isProcessing()) {
+              Processing...
+            } @else {
+              Yes
+            }
+          </button>
+        } @else {
+          <button class="modal-done-btn" (click)="closePopup()">Done</button>
+        }
+      </div>
+    </div>
+  </div>
+}
+
 </div>

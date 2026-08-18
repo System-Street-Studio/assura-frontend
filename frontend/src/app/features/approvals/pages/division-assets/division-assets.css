@@ -129,6 +129,9 @@
   gap: 20px;
   margin-bottom: 24px;
   flex-wrap: wrap;
+  position: relative; 
+  z-index: 10;
+  
 }
 
 .search-box {
@@ -186,11 +189,15 @@
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
+  position: relative; 
+  z-index: 20;
+  
 }
 
 .styled-select {
   position: relative;
   min-width: 170px;
+  z-index: 1000;
 }
 
 .filter-btn {
@@ -246,7 +253,7 @@
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 10px;
   box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.5);
-  z-index: 50;
+  z-index: 999999 !important;
   max-height: 220px;
   overflow-y: auto;
 }
@@ -460,6 +467,8 @@
   border-radius: 20px;
   font-size: 11.5px;
   font-weight: 600;
+  min-width: 90px;
+ 
 }
 
 .status-dot {

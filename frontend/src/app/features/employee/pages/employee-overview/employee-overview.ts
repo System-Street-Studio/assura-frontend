@@ -88,6 +88,8 @@ export class EmployeeOverviewComponent implements OnInit {
   loadData(userId: string, divisionId?: number) {
     this.loadedCount = 0;
 
+    
+
     // 1. Fetch Arrived Assets / Arrivals pending confirmation
     this.empAssetService.getArrivedAssets(divisionId).subscribe({
       next: (arrivals: EmployeeArrivedAsset[]) => {
@@ -169,4 +171,15 @@ export class EmployeeOverviewComponent implements OnInit {
     if (hour < 17) return 'Good Afternoon';
     return 'Good Evening';
   }
-}
+
+  getStatusClass(status: string): string {
+    if (!status) return 'status-unknown';
+    const s = status.trim().toLowerCase();
+    
+    if (s === 'pendingprocurement' || s === 'pending-procurement') {
+      return 'status-pendingprocurement';
+    }
+    
+    return `status-${s}`;
+  }
+}
