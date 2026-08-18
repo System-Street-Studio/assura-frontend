@@ -160,20 +160,45 @@
 
               <div class="card-footer-row">
                 @if (activeTab() === 'incoming') {
-                  <div class="action-buttons-group">
-                    <button class="assura-btn-danger" (click)="rejectTransfer(+item.id)">
-                      <mat-icon>close</mat-icon> Reject
-                    </button>
-                    <button class="assura-btn-success" (click)="acceptTransfer(+item.id)">
-                      <mat-icon>check</mat-icon> Accept Transfer
-                    </button>
-                  </div>
-                } @else {
-                  <span class="status-badge pending">
-                    <span class="status-dot"></span> Pending Approval
-                  </span>
+                  @if (item.status === 'Rejected') {
+                    <span class="status-badge rejected">
+                      <span class="status-dot"></span> Rejected
+                    </span>
+                  } @else {
+                    <div class="action-buttons-group">
+                      <button class="assura-btn-danger" (click)="rejectTransfer(+item.id)">
+                        <mat-icon>close</mat-icon> Reject
+                      </button>
+                      <button class="assura-btn-success" (click)="acceptTransfer(+item.id)">
+                        <mat-icon>check</mat-icon> Accept Transfer
+                      </button>
+                    </div>
+                  }
+                } @else if (activeTab() === 'pending') {
+                  <!-- Handling all pending statuses appropriately -->
+                  @if (item.status === 'PendingOwnerDivisionHeadApproval') {
+                    <span class="status-badge pending">
+                      <span class="status-dot"></span> Pending Approval
+                    </span>
+                  } @else if (item.status === 'WaitingForFinalConfirmation') {
+                    <span class="status-badge pending">
+                      <span class="status-dot"></span> Waiting For Confirmation
+                    </span>
+                  } @else if (item.status === 'RejectedByDivisionHead') {
+                    <span class="status-badge rejected">
+                      <span class="status-dot"></span> Rejected By Division Head
+                    </span>
+                  } @else if (item.status === 'RejectedConfirmation') {
+                    <span class="status-badge rejected">
+                      <span class="status-dot"></span> Rejected Confirmation
+                    </span>
+                  } @else {
+                    <span class="status-badge pending">
+                      <span class="status-dot"></span> Pending Approval
+                    </span>
+                  }
                 }
-              </div>
+                </div >
             </div>
           }
 
@@ -323,4 +348,19 @@
       </div>
     }
   </div>
+
+  @if (showPopup()) {
+    <div class="overlay" (click)="closePopup()">
+      <div class="glass-modal" [class.reject]="popupType() === 'reject'" (click)="$event.stopPropagation()">
+        <div class="modal-icon-badge">
+          <mat-icon>{{ popupType() === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+        </div>
+        <div class="modal-body-text">
+          <h3>{{ popupType() === 'success' ? 'Transfer Action Completed' : 'Transfer Action Failed' }}</h3>
+          <p>{{ popupMessage() }}</p>
+        </div>
+        <button class="modal-done-btn" (click)="closePopup()">Done</button>
+      </div>
+    </div>
+  }
 </div>

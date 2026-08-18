@@ -43,6 +43,9 @@ interface TransferData {
 export class TransferPageComponent implements OnInit, OnDestroy {
   // Component signals
   isLoading = signal(false);
+  showPopup = signal(false);
+  popupMessage = signal('');
+  popupType = signal<'success' | 'reject'>('success');
   activeTab = signal<'outgoing' | 'incoming' | 'pending' | 'active' | 'completed'>('outgoing');
   filterType = signal<'all' | 'Incoming Active' | 'Outgoing Active'>('all');
   searchQuery = signal<string>('');
@@ -164,8 +167,12 @@ returnAsset(id: string) {
           this.loadTransfers();
           this.loadAllCounts();
           this.expandedItemId.set(null);
+          this.showActionPopup('Asset returned successfully to the originating division.', 'success');
         },
-        error: (err) => console.error('Error returning asset:', err)
+        error: (err) => {
+          console.error('Error returning asset:', err);
+          this.showActionPopup('Failed to return asset. Please try again.', 'reject');
+        }
       });
     }
   }
@@ -192,33 +199,71 @@ returnAsset(id: string) {
 
   // Action functions for approve, reject, confirm
   approveTransfer(id: string) {
-    this.transferService.approveByHead(Number(id)).subscribe(() => {
-      this.loadTransfers();
-      this.loadAllCounts(); 
+    this.transferService.approveByHead(Number(id)).subscribe({
+      next: () => {
+        this.loadTransfers();
+        this.loadAllCounts(); 
+        this.showActionPopup('Transfer approved successfully.', 'success');
+      },
+      error: (err) => {
+        console.error('Error approving transfer:', err);
+        this.showActionPopup('Failed to approve transfer. Please try again.', 'reject');
+      }
     });
   }
 
   confirmTransfer(id: string) {
-    this.transferService.confirmByHead(Number(id)).subscribe(() => {
-      this.loadTransfers();
-      this.loadAllCounts(); 
+    this.transferService.confirmByHead(Number(id)).subscribe({
+      next: () => {
+        this.loadTransfers();
+        this.loadAllCounts(); 
+        this.showActionPopup('Transfer handover confirmed successfully.', 'success');
+      },
+      error: (err) => {
+        console.error('Error confirming transfer:', err);
+        this.showActionPopup('Failed to confirm transfer handover. Please try again.', 'reject');
+      }
     });
   }
 
   cancelTransfer(id: string) {
-    this.transferService.cancelByHead(Number(id)).subscribe(() => {
-      this.loadTransfers();
-      this.loadAllCounts(); 
+    this.transferService.cancelByHead(Number(id)).subscribe({
+      next: () => {
+        this.loadTransfers();
+        this.loadAllCounts(); 
+        this.showActionPopup('Transfer request cancelled successfully.', 'success');
+      },
+      error: (err) => {
+        console.error('Error cancelling transfer:', err);
+        this.showActionPopup('Failed to cancel transfer request. Please try again.', 'reject');
+      }
     }); 
   }
 
   rejectTransfer(id: string) {
     const reason = prompt('Please enter a reason for rejection:');
     if (reason === null) return;
-    this.transferService.rejectByHead(Number(id), reason || 'No reason provided').subscribe(() => {
-      this.loadTransfers();
-      this.loadAllCounts(); 
+    this.transferService.rejectByHead(Number(id), reason || 'No reason provided').subscribe({
+      next: () => {
+        this.loadTransfers();
+        this.loadAllCounts(); 
+        this.showActionPopup('Transfer rejected successfully.', 'success');
+      },
+      error: (err) => {
+        console.error('Error rejecting transfer:', err);
+        this.showActionPopup('Failed to reject transfer. Please try again.', 'reject');
+      }
     });
+  }
+
+  closePopup() {
+    this.showPopup.set(false);
+  }
+
+  private showActionPopup(message: string, type: 'success' | 'reject') {
+    this.popupMessage.set(message);
+    this.popupType.set(type);
+    this.showPopup.set(true);
   }
 
   
@@ -320,7 +365,7 @@ returnAsset(id: string) {
     }
   
 
-      pageSize = 20;
+      pageSize = 10;
       currentPage = signal(1);
 
       totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));
