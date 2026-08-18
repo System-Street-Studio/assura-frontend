@@ -30,9 +30,11 @@ export interface UpdateBuyerRequest {
   status?: string;
 }
 
+import { environment } from '../../environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class BuyersService {
-  private apiUrl = '/api/Buyers';
+  private apiUrl = `${environment.apiUrl}/Buyers`;
 
   constructor(private http: HttpClient) {}
 

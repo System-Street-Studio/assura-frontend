@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 export interface QueueItem {
   id: string;
   name: string;
@@ -16,7 +18,7 @@ export interface QueueItem {
 
 @Injectable({ providedIn: 'root' })
 export class QueueItemsService {
-  private apiUrl = '/api/QueueItems';
+  private apiUrl = `${environment.apiUrl}/QueueItems`;
 
   constructor(private http: HttpClient) {}
 
