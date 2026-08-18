@@ -26,6 +26,10 @@ export class NewAssetDetailsComponent implements OnInit {
   selectedSuggestedAssetId = signal<number | null>(null);
   isReadOnly = signal<boolean>(false);
 
+  // Reject Modal සඳහා අවශ්‍ය signals
+  showRejectModal = signal(false);
+  rejectReason = signal('');
+
   ngOnInit() {
     // Check for readOnly query parameter
     const readOnly = this.route.snapshot.queryParamMap.get('readOnly');
@@ -159,22 +163,45 @@ export class NewAssetDetailsComponent implements OnInit {
     });
   }
 
+  
   rejectRequest() {
     const id = this.request().id;
     if (!id || this.processing()) {
       return;
     }
+    this.rejectReason.set('');
+    this.showRejectModal.set(true);
+  }
 
-    const remarks = window.prompt('Reason for rejection (optional):') ?? undefined;
+
+  onRejectReasonChange(event: any) {
+    this.rejectReason.set(event.target.value);
+  }
+
+  
+  closeRejectModal() {
+    if (this.processing()) return;
+    this.showRejectModal.set(false);
+  }
+
+ 
+  submitRejectTransfer() {
+    const id = this.request().id;
+    if (!id || this.processing()) {
+      return;
+    }
+
+    const remarks = this.rejectReason().trim() || undefined;
     this.processing.set(true);
+
     this.requestService.rejectRequest(id, remarks).subscribe({
       next: () => {
         this.processing.set(false);
+        this.showRejectModal.set(false);
         this.request.set({ ...this.request(), status: 'Rejected' });
         this.popupMessage.set('Request Rejected Successfully!');
         this.popupType.set('reject');
         this.showPopup.set(true);
-        
       },
       error: (err) => {
         this.processing.set(false);

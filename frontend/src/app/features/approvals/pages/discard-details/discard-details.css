@@ -433,6 +433,22 @@
   color: #f8fafc;
 }
 
+button:disabled,
+.suggestion-item:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: grayscale(30%);
+}
+
+
+.download-icon-btn:disabled {
+  background: rgba(99, 102, 241, 0.05) !important;
+  border-color: rgba(148, 163, 184, 0.1) !important;
+  color: #64748b !important;
+}
+
 /* Modal Overlay */
 .overlay {
   position: fixed;
@@ -529,4 +545,83 @@
   .action-buttons-row {
     flex-direction: column;
   }
+}
+
+
+/* ── Reject Reason Modal Specific Styles ── */
+.reject-reason-modal {
+  max-width: 460px;
+  text-align: left;
+  align-items: stretch;
+}
+
+.modal-icon-badge.reject {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  align-self: center;
+}
+
+.reject-reason-textarea {
+  width: 100%;
+  height: 110px;
+  padding: 12px 14px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  color: #f8fafc;
+  font-size: 13.5px;
+  font-family: inherit;
+  resize: vertical;
+  margin-top: 12px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.reject-reason-textarea:focus {
+  outline: none;
+  border-color: #ef4444;
+  background: rgba(15, 23, 42, 0.85);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.modal-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.modal-cancel-btn,
+.modal-submit-reject-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.modal-cancel-btn {
+  background: rgba(148, 163, 184, 0.12);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.modal-cancel-btn:hover {
+  background: rgba(148, 163, 184, 0.2);
+  color: #f8fafc;
+}
+
+.modal-submit-reject-btn {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.modal-submit-reject-btn:hover {
+  background: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
 }

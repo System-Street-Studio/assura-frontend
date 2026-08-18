@@ -111,10 +111,10 @@
     @if (!isReadOnly() && canDivisionHeadAct()) {
       <div class="glass-card actions-panel">
         <div class="action-buttons-row">
-          <button class="btn-approve" (click)="approveRequest()" [disabled]="processing()">
+          <button class="btn-approve" (click)="approveRequest()" [disabled]="processing() || showPopup()">
             <mat-icon>check_circle</mat-icon> Approve Request
           </button>
-          <button class="btn-reject" (click)="rejectRequest()" [disabled]="processing()">
+          <button class="btn-reject" (click)="rejectRequest()" [disabled]="processing() || showPopup()">
             <mat-icon>cancel</mat-icon> Reject with Reason
           </button>
         </div>
@@ -130,6 +130,37 @@
       </div>
     }
   </div>
+
+  <!-- Reject Reason Input Modal -->
+  @if (showRejectModal()) {
+    <div class="overlay" (click)="closeRejectModal()">
+      <div class="glass-modal reject-reason-modal" (click)="$event.stopPropagation()">
+        <div class="modal-icon-badge reject">
+          <mat-icon>report_problem</mat-icon>
+        </div>
+        <div class="modal-body-text">
+          <h3>Reject Transfer Request</h3>
+          <p>Please provide a reason or justification for rejecting this asset transfer.</p>
+          <textarea 
+            class="reject-reason-textarea" 
+            placeholder="Type your rejection reason here..." 
+            [value]="rejectReason()" 
+            (input)="onRejectReasonChange($event)">
+          </textarea>
+        </div>
+        <div class="modal-actions-row">
+          <button class="modal-cancel-btn" [disabled]="processing()" (click)="closeRejectModal()">Cancel</button>
+          <button class="modal-submit-reject-btn" [disabled]="processing()" (click)="submitRejectTransfer()">
+            @if (processing()) {
+              <mat-icon class="spin-animation">sync</mat-icon> Processing...
+            } @else {
+              Confirm Rejection
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- Confirmation / Success Modal -->
   @if (showPopup()) {

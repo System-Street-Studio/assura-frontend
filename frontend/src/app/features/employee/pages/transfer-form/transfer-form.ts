@@ -124,9 +124,10 @@ export class TransferFormComponent implements OnInit {
     }
   }
 
+ 
   // Methods
   onSubmit() {
-    if (!this.assetName() || !this.category() || !this.reason()) {
+    if (!this.assetName() || !this.category() || !this.reason() || !this.fromDate() || !this.toDate()) {
       alert('Failed to create transfer request. Please fill all required fields.');
       return;
     }

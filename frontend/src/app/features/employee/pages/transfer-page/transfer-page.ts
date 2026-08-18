@@ -89,7 +89,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   private allTransfers = signal<TransferDataLocal[]>([]);
   private refreshInterval: any;
 
-  
+  isProcessing = signal(false); // Actions disable 
 
   constructor(
     private employeeTransferService: EmployeeTransferService,
@@ -122,24 +122,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  //return transfered assets 
-  returnAsset(id: string) {
-    if (confirm('Are you sure you want to return this asset? This will change asset status to "In Use" and complete the transfer.')) {
-      this.employeeTransferService.returnActiveTransfer(Number(id)).subscribe({
-        next: () => {
-          this.loadTransfers();
-          this.loadAllCounts();
-          this.expandedItemId.set(null);
-          this.showActionPopup('Asset returned successfully. Transfer has been completed.', 'success');
-        },
-        error: (err) => {
-          console.error('Error returning asset:', err);
-          this.showActionPopup('Failed to return asset. Please try again.', 'reject');
-        }
-      });
-    }
-  }
-
+  
   //set tabs 
   setTab(tab: 'incoming' | 'pending' | 'active' | 'completed') {
     this.activeTab.set(tab);
@@ -278,31 +261,64 @@ export class TransferPageComponent implements OnInit, OnDestroy {
     this.currentPage.set(1);
   }
 
-  // Action methods for Accept
+  // returnAsset
+  returnAsset(id: string) {
+    if (this.isProcessing()) return;
+
+    if (confirm('Are you sure you want to return this asset? This will change asset status to "In Use" and complete the transfer.')) {
+      this.isProcessing.set(true);
+      this.employeeTransferService.returnActiveTransfer(Number(id)).subscribe({
+        next: () => {
+          this.loadTransfers();
+          this.loadAllCounts();
+          this.expandedItemId.set(null);
+          this.isProcessing.set(false);
+          this.showActionPopup('Asset returned successfully. Transfer has been completed.', 'success');
+        },
+        error: (err) => {
+          console.error('Error returning asset:', err);
+          this.isProcessing.set(false);
+          this.showActionPopup('Failed to return asset. Please try again.', 'reject');
+        }
+      });
+    }
+  }
+
+  // acceptTransfer
   acceptTransfer(id: number) {
+    if (this.isProcessing()) return;
+    this.isProcessing.set(true);
+
     this.employeeTransferService.acceptTransfer(id).subscribe({
       next: () => {
         this.loadTransfers(); 
         this.loadAllCounts(); 
+        this.isProcessing.set(false);
         this.showActionPopup('Transfer accepted successfully.', 'success');
       },
       error: (err) => {
         console.error('Error updating status', err);
+        this.isProcessing.set(false);
         this.showActionPopup('Failed to accept transfer. Please try again.', 'reject');
       }
     });
   }
 
-  // Similar methods for  reject can be implemented here
+  // rejectTransfer
   rejectTransfer(id: number) {
+    if (this.isProcessing()) return;
+    this.isProcessing.set(true);
+
     this.employeeTransferService.rejectTransfer(id).subscribe({
       next: () => {
         this.loadTransfers();
         this.loadAllCounts(); 
+        this.isProcessing.set(false);
         this.showActionPopup('Transfer rejected successfully.', 'success');
       },
       error: (err) => {
         console.error('Error rejecting transfer', err);
+        this.isProcessing.set(false);
         this.showActionPopup('Failed to reject transfer. Please try again.', 'reject');
       }
     });

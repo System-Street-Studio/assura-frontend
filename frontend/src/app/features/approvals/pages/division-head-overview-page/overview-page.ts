@@ -1,10 +1,11 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit,computed} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { DivisionHeadDashboardService, DivisionOverviewSummary } from '../../services/division-head-dashboard.service';
 import { RequestService } from '../../services/requests.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 interface PendingRequest {
   item: string;
@@ -16,7 +17,7 @@ interface PendingRequest {
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIconModule],
+  imports: [CommonModule, RouterModule, MatIconModule,PaginationComponent],
   templateUrl: './overview-page.html',
   styleUrls: ['./overview-page.css']
 })
@@ -34,6 +35,9 @@ export class DivisionHeadOverviewComponent implements OnInit {
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
   pendingRequests = signal<PendingRequest[]>([]);
+
+  pendingRequestsCurrentPage = signal(1);
+  pageSize = signal(5);
 
   ngOnInit() {
     this.loadDashboardData();
@@ -118,6 +122,30 @@ export class DivisionHeadOverviewComponent implements OnInit {
       return date.toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' });
     } catch {
       return dateString;
+    }
+  }
+
+  // Paginated Pending Requests Computed Signal
+  paginatedPendingRequests = computed(() => {
+    const startIndex = (this.pendingRequestsCurrentPage() - 1) * this.pageSize();
+    return this.pendingRequests().slice(startIndex, startIndex + this.pageSize());
+  });
+
+  // Total Pages Computed Signal
+  pendingRequestsTotalPages = computed(() => {
+    return Math.ceil(this.pendingRequests().length / this.pageSize()) || 1;
+  });
+
+  // Page Numbers Array Computed Signal
+  pendingRequestsPageNumbers = computed(() => {
+    const total = this.pendingRequestsTotalPages();
+    return Array.from({ length: total }, (_, i) => i + 1);
+  });
+
+  // Page Change Handler Method
+  onPendingRequestsPageChange(page: number) {
+    if (page >= 1 && page <= this.pendingRequestsTotalPages()) {
+      this.pendingRequestsCurrentPage.set(page);
     }
   }
 }

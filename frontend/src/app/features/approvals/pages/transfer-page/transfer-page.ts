@@ -58,10 +58,17 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   activeCount = signal(0);
   completedCount = signal(0);
 
+  // Reject Modal Signals
+  showRejectModal = signal<boolean>(false);
+  rejectingItemId = signal<string | null>(null);
+  rejectReason = signal<string>('');
+
   expandedItemId = signal<string | null>(null);
 
   private allData = signal<TransferData[]>([]);
   private refreshInterval: any;
+
+  isProcessing = signal(false);
 
   constructor(
     private transferService: HeadTransferService,
@@ -159,18 +166,23 @@ toggleDetails(id: string) {
   }
 
   // Function to return an active transfer (used in active transfers tab)
-returnAsset(id: string) {
+// Return Asset
+  returnAsset(id: string) {
+    if (this.isProcessing()) return;
+    
     if (confirm('Are you sure you want to return this asset? This will change asset status to "In Use" and complete the transfer.')) {
+      this.isProcessing.set(true);
       this.transferService.returnActiveTransfer(Number(id)).subscribe({
         next: () => {
-         
           this.loadTransfers();
           this.loadAllCounts();
           this.expandedItemId.set(null);
+          this.isProcessing.set(false);
           this.showActionPopup('Asset returned successfully to the originating division.', 'success');
         },
         error: (err) => {
           console.error('Error returning asset:', err);
+          this.isProcessing.set(false);
           this.showActionPopup('Failed to return asset. Please try again.', 'reject');
         }
       });
@@ -198,59 +210,109 @@ returnAsset(id: string) {
   }
 
   // Action functions for approve, reject, confirm
+  // Approve Transfer
   approveTransfer(id: string) {
+    if (this.isProcessing()) return;
+    this.isProcessing.set(true);
+
     this.transferService.approveByHead(Number(id)).subscribe({
       next: () => {
         this.loadTransfers();
         this.loadAllCounts(); 
+        this.isProcessing.set(false);
         this.showActionPopup('Transfer approved successfully.', 'success');
       },
       error: (err) => {
         console.error('Error approving transfer:', err);
+        this.isProcessing.set(false);
         this.showActionPopup('Failed to approve transfer. Please try again.', 'reject');
       }
     });
   }
 
+  // Confirm Transfer
   confirmTransfer(id: string) {
+    if (this.isProcessing()) return;
+    this.isProcessing.set(true);
+
     this.transferService.confirmByHead(Number(id)).subscribe({
       next: () => {
         this.loadTransfers();
         this.loadAllCounts(); 
+        this.isProcessing.set(false);
         this.showActionPopup('Transfer handover confirmed successfully.', 'success');
       },
       error: (err) => {
         console.error('Error confirming transfer:', err);
+        this.isProcessing.set(false);
         this.showActionPopup('Failed to confirm transfer handover. Please try again.', 'reject');
       }
     });
   }
 
+  // Cancel Transfer
   cancelTransfer(id: string) {
+    if (this.isProcessing()) return;
+    this.isProcessing.set(true);
+
     this.transferService.cancelByHead(Number(id)).subscribe({
       next: () => {
         this.loadTransfers();
         this.loadAllCounts(); 
+        this.isProcessing.set(false);
         this.showActionPopup('Transfer request cancelled successfully.', 'success');
       },
       error: (err) => {
         console.error('Error cancelling transfer:', err);
+        this.isProcessing.set(false);
         this.showActionPopup('Failed to cancel transfer request. Please try again.', 'reject');
       }
-    }); 
+    });
   }
 
-  rejectTransfer(id: string) {
-    const reason = prompt('Please enter a reason for rejection:');
-    if (reason === null) return;
-    this.transferService.rejectByHead(Number(id), reason || 'No reason provided').subscribe({
+ // Open Reject Modal
+  openRejectModal(id: string) {
+    if (this.isProcessing()) return;
+    this.rejectingItemId.set(id);
+    this.rejectReason.set('');
+    this.showRejectModal.set(true);
+  }
+
+  // Close Reject Modal
+  closeRejectModal() {
+    if (this.isProcessing()) return;
+    this.showRejectModal.set(false);
+    this.rejectingItemId.set(null);
+    this.rejectReason.set('');
+  }
+
+  // Handle input change on the reject reason textarea
+  onRejectReasonChange(event: Event) {
+    this.rejectReason.set((event.target as HTMLInputElement).value);
+  }
+
+ 
+  // Submit Reject Transfer
+  submitRejectTransfer() {
+    if (this.isProcessing()) return;
+    const id = this.rejectingItemId();
+    if (!id) return;
+
+    const reason = this.rejectReason().trim() || 'No reason provided';
+    this.isProcessing.set(true);
+
+    this.transferService.rejectByHead(Number(id), reason).subscribe({
       next: () => {
         this.loadTransfers();
         this.loadAllCounts(); 
+        this.isProcessing.set(false);
+        this.closeRejectModal();
         this.showActionPopup('Transfer rejected successfully.', 'success');
       },
       error: (err) => {
         console.error('Error rejecting transfer:', err);
+        this.isProcessing.set(false);
+        this.closeRejectModal();
         this.showActionPopup('Failed to reject transfer. Please try again.', 'reject');
       }
     });

@@ -166,10 +166,10 @@
                     </span>
                   } @else {
                     <div class="action-buttons-group">
-                      <button class="assura-btn-danger" (click)="rejectTransfer(+item.id)">
+                      <button class="assura-btn-danger" [disabled]="isProcessing()" (click)="rejectTransfer(+item.id)">
                         <mat-icon>close</mat-icon> Reject
                       </button>
-                      <button class="assura-btn-success" (click)="acceptTransfer(+item.id)">
+                      <button class="assura-btn-success" [disabled]="isProcessing()" (click)="acceptTransfer(+item.id)">
                         <mat-icon>check</mat-icon> Accept Transfer
                       </button>
                     </div>
@@ -316,7 +316,7 @@
                           <p>Once your project or usage duration is completed, initiate return to mark the transfer finished.</p>
                         </div>
                       </div>
-                      <button class="assura-btn-primary" (click)="returnAsset(item.id)">
+                      <button class="assura-btn-primary" [disabled]="isProcessing()" (click)="returnAsset(item.id)">
                         <mat-icon>keyboard_return</mat-icon> Return Asset
                       </button>
                     </div>

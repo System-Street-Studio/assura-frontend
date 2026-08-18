@@ -45,7 +45,7 @@ export class RequestsPageComponent implements OnInit {
   discardRequests = signal<RequestItem[]>([]);
 
   // Pagination
-  pageSize = 20;
+  pageSize = 10;
   currentPage = signal(1);
 
   // Summary Counts

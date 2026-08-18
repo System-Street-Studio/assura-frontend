@@ -28,6 +28,9 @@ export class TransferDetailsComponent implements OnInit {
   error = signal<string>('');
   isReadOnly = signal<boolean>(false);
 
+  showRejectModal = signal(false);
+  rejectReason = signal('');
+
   ngOnInit() {
     // Check for readOnly query parameter
     const readOnly = this.route.snapshot.queryParamMap.get('readOnly');
@@ -126,22 +129,45 @@ export class TransferDetailsComponent implements OnInit {
     });
   }
 
+ 
   rejectRequest() {
     const id = this.request().id;
     if (!id || this.processing()) {
       return;
     }
+    this.rejectReason.set('');
+    this.showRejectModal.set(true);
+  }
 
-    const remarks = window.prompt('Reason for rejection (optional):') ?? undefined;
+ 
+  onRejectReasonChange(event: any) {
+    this.rejectReason.set(event.target.value);
+  }
+
+  
+  closeRejectModal() {
+    if (this.processing()) return;
+    this.showRejectModal.set(false);
+  }
+
+  
+  submitRejectTransfer() {
+    const id = this.request().id;
+    if (!id || this.processing()) {
+      return;
+    }
+
+    const remarks = this.rejectReason().trim() || undefined;
     this.processing.set(true);
+
     this.requestService.rejectRequest(id, remarks).subscribe({
       next: () => {
         this.processing.set(false);
+        this.showRejectModal.set(false); 
         this.request.set({ ...this.request(), status: 'Rejected' });
         this.popupMessage.set('Request Rejected Successfully!');
         this.popupType.set('reject');
         this.showPopup.set(true);
-        
       },
       error: (err) => {
         this.processing.set(false);
@@ -206,8 +232,7 @@ export class TransferDetailsComponent implements OnInit {
 
   closePopup() {
     this.showPopup.set(false);
-    const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'transfer';
-    this.router.navigate(['approvals/requests'], { queryParams: { tab: returnTab } });
+    
   }
 
   private mapRequestForView(data: any): any {

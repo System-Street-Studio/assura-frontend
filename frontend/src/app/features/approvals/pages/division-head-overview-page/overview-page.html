@@ -135,7 +135,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (req of pendingRequests(); track $index) {
+              @for (req of paginatedPendingRequests(); track $index) {
                 <tr class="table-row" routerLink="/approvals/requests">
                   <td class="item-name-cell">
                     <div class="item-info">
@@ -168,6 +168,18 @@
             </tbody>
           </table>
         </div>
+        
+        <!-- Pagination Component -->
+        @if (pendingRequestsTotalPages() > 1) {
+          <div class="pagination-wrapper">
+            <app-pagination
+              [currentPage]="pendingRequestsCurrentPage()"
+              [totalPages]="pendingRequestsTotalPages()"
+              [pageNumbers]="pendingRequestsPageNumbers()"
+              (pageChange)="onPendingRequestsPageChange($event)">
+            </app-pagination>
+          </div>
+        }
       </div>
     </section>
   }
