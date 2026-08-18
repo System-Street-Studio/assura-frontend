@@ -44,8 +44,10 @@ export class EmployeeOverviewComponent implements OnInit {
   firstName = '';
   today = new Date();
 
+  activeArrivalFilter = signal<'all' | 'pending' | 'confirmed'>('all');
+
   isAwaitingConfirmation(status?: string): boolean {
-    if (!status) return true;
+    if (!status) return false;
     const s = status.trim().toLowerCase();
     return s === 'informed' || s === 'pending' || s === 'grn recorded' || s === 'grnrecorded' || s === 'received';
   }
@@ -62,6 +64,23 @@ export class EmployeeOverviewComponent implements OnInit {
   maintenanceCount = computed(() => this.assignedAssets().filter(a => a.status === 'UnderMaintenance').length);
   transfersCount = computed(() => this.assignedAssets().filter(a => a.status === 'Transferred').length);
   pendingArrivalsCount = computed(() => this.arrivedAssets().filter(a => this.isAwaitingConfirmation(a.status)).length);
+  confirmedArrivalsCount = computed(() => this.arrivedAssets().filter(a => this.isConfirmedOrCompleted(a.status)).length);
+
+  filteredArrivedAssets = computed(() => {
+    const list = this.arrivedAssets();
+    const filter = this.activeArrivalFilter();
+    if (filter === 'pending') {
+      return list.filter(a => this.isAwaitingConfirmation(a.status));
+    }
+    if (filter === 'confirmed') {
+      return list.filter(a => this.isConfirmedOrCompleted(a.status));
+    }
+    return list;
+  });
+
+  setArrivalFilter(filter: 'all' | 'pending' | 'confirmed') {
+    this.activeArrivalFilter.set(filter);
+  }
 
   ngOnInit() {
     this.firstName = this.authService.getFirstName() ?? 'Employee';
@@ -140,7 +159,7 @@ export class EmployeeOverviewComponent implements OnInit {
       next: () => {
         this.confirmingId.set(null);
         this.confirmSuccessMessage.set(`Successfully confirmed receipt of "${asset.itemName}". Storekeeper has been notified.`);
-        
+
         // Update local status
         this.arrivedAssets.update(list =>
           list.map(a => a.id === asset.id ? { ...a, status: 'Confirmed' } : a)
@@ -177,11 +196,11 @@ export class EmployeeOverviewComponent implements OnInit {
   getStatusClass(status: string): string {
     if (!status) return 'status-unknown';
     const s = status.trim().toLowerCase();
-    
+
     if (s === 'pendingprocurement' || s === 'pending-procurement') {
       return 'status-pendingprocurement';
     }
-    
+
     return `status-${s}`;
   }
 }
