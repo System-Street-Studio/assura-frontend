@@ -1,8 +1,5 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// Angular core imports
-// ─────────────────────────────────────────────────────────────────────────────
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -11,296 +8,324 @@ import { MatIconModule } from '@angular/material/icon';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Feature services & models
-// ─────────────────────────────────────────────────────────────────────────────
 import { DashboardService } from '../../services/dashboard.service';
-import { Kpi, ChartDatasets, RecentActivity, WarrantyAlert, DashboardData } from '../../models/dashboard.model';
+import { ChartDatasets, DashboardData, Kpi, RecentActivity, WarrantyAlert } from '../../models/dashboard.model';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
+/** Shared axis/tick styling so every chart reads as one system on the dark surface. */
+const AXIS_TICK = { color: '#94a3b8', font: { family: 'Jost', size: 12 } } as const;
+const GRID_LINE = 'rgba(148, 163, 184, 0.14)';
+
+const EMPTY_KPI: Kpi = {
+  totalAssets: 0,
+  checkedOut: 0,
+  available: 0,
+  totalAssetValue: 'LKR 0',
+  pendingRequests: 0,
+  maintenanceDue: 0,
+  temporaryAssignedAssets: 0,
+  awaitingPickupConfirmations: 0,
+  procurementEscalations: 0,
+};
+
+const EMPTY_CHARTS: ChartDatasets = {
+  assetsByCategory: { labels: [], data: [], colors: [] },
+  assetsByStatus: { labels: [], data: [], colors: [] },
+  assetsByDivision: { labels: [], data: [], colors: [] },
+  checkoutTrend: { labels: [], data: [] },
+  anomalies: { ghostAssets: 0, missingAssets: 0, maintenanceDue: 0 },
+};
+
+const ACTION_LABELS: Record<string, string> = {
+  checked_out: 'Checked Out',
+  checked_in: 'Checked In',
+  registered: 'Registered',
+  maintenance: 'Sent to Maintenance',
+  disposed: 'Disposed',
+  transferred: 'Transferred',
+};
+
+const SEVERITY_LABELS: Record<string, string> = {
+  critical: 'Expiring Soon',
+  warning: 'Upcoming',
+  info: 'Scheduled',
+};
+
+const SEVERITY_ICONS: Record<string, string> = {
+  critical: 'error',
+  warning: 'warning',
+  info: 'info',
+};
+
+/**
+ * Inventory dashboard — the Storekeeper landing page.
+ *
+ * All figures come from one `DashboardService.getDashboardData()` call. The service keeps a
+ * short-lived cache, so on a repeat visit this component paints the previous payload straight
+ * away and quietly refreshes in the background instead of showing a skeleton again.
+ */
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
-  // BaseChartDirective must be imported to use <canvas baseChart> elements in the template
-  imports: [CommonModule, RouterLink, MatIconModule, BaseChartDirective],
+  imports: [DatePipe, DecimalPipe, RouterLink, MatIconModule, BaseChartDirective],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-/**
- * DashboardComponent is the main landing page for the Storekeeper role.
- * It fetches all KPIs, chart data, recent activity, and warranty alerts
- * from a single `DashboardService.getDashboardData()` call, then distributes
- * the response into separate data structures consumed by individual
- * Chart.js canvas elements and UI sections.
- */
 export class DashboardComponent implements OnInit {
-  // ── Dependency injection ──
-  private svc   = inject(DashboardService);   // Fetches all dashboard data in one API call
-  private toast = inject(ToastService);       // Non-blocking toast notifications
-  private cdr   = inject(ChangeDetectorRef);  // Manual change detection after async updates
+  private readonly svc = inject(DashboardService);
+  private readonly toast = inject(ToastService);
+  private readonly auth = inject(AuthService);
 
-  /** True while the API call is in-flight; the template shows skeleton cards during this period. */
-  loading = true;
+  /** True only for a first-ever load, when there is nothing cached to show. */
+  readonly loading = signal(true);
 
-  /**
-   * Key Performance Indicators shown in the card grid at the top of the page.
-   * Initialised with zero-state defaults so the template never crashes on undefined access.
-   */
-  kpis: Kpi = {
-    totalAssets: 0,
-    checkedOut: 0,
-    available: 0,
-    totalAssetValue: '$0',
-    pendingRequests: 0,
-    maintenanceDue: 0,
-    temporaryAssignedAssets: 0,
-    awaitingPickupConfirmations: 0,
-    procurementEscalations: 0,
-  };
+  /** True while a background refresh runs over already-visible data. */
+  readonly refreshing = signal(false);
 
-  /**
-   * Raw chart datasets returned by the API.
-   * These are processed by `prepareCharts()` into Chart.js-compatible data structures.
-   */
-  charts: ChartDatasets = {
-    assetsByCategory: { labels: [], data: [], colors: [] },
-    assetsByStatus:   { labels: [], data: [], colors: [] },
-    assetsByDivision: { labels: [], data: [], colors: [] },
-    checkoutTrend:    { labels: [], data: [] },
-    anomalies:        { ghostAssets: 0, missingAssets: 0, maintenanceDue: 0 },
-  };
+  /** Set when the last fetch failed and no cached data could be shown. */
+  readonly loadFailed = signal(false);
 
-  /** Timeline feed shown in the "Recent Activity" panel. Timestamps are parsed to Date objects on load. */
-  recentActivity: RecentActivity[] = [];
+  /** When the currently displayed numbers were fetched. */
+  readonly lastUpdated = signal<Date | null>(null);
 
-  /** Warranties expiring soon, shown in the right-side panel with severity indicators. */
-  warrantyAlerts: WarrantyAlert[] = [];
+  readonly kpis = signal<Kpi>(EMPTY_KPI);
+  readonly charts = signal<ChartDatasets>(EMPTY_CHARTS);
+  readonly recentActivity = signal<RecentActivity[]>([]);
+  readonly warrantyAlerts = signal<WarrantyAlert[]>([]);
 
-  /** Asset anomaly counts displayed in the bottom anomaly cards. Sourced from `charts.anomalies`. */
-  anomalies = { ghostAssets: 0, missingAssets: 0, maintenanceDue: 0 };
+  readonly anomalies = computed(() => this.charts().anomalies ?? EMPTY_CHARTS.anomalies);
 
-  /** Used in the welcome banner to show a time-of-day greeting and the current date. */
-  today = new Date();
-  greeting = 'Welcome';
-  firstName = 'Inventory Manager';
+  readonly today = new Date();
+  readonly greeting = signal('Welcome');
+  readonly firstName = signal('there');
 
-  // ── Computed KPI ratios used by the progress bars on KPI cards ──
+  /** Placeholder rows for the skeleton view; `@for` needs a real collection to iterate. */
+  readonly skeletonKpis = [0, 1, 2, 3, 4, 5, 6];
+  readonly skeletonCharts = [0, 1, 2, 3];
 
-  /**
-   * Percentage of total assets that are currently checked out.
-   * Guards against division-by-zero when totalAssets is 0.
-   */
-  get utilizationRate(): number {
-    return this.kpis.totalAssets > 0
-      ? Math.round((this.kpis.checkedOut / this.kpis.totalAssets) * 100)
-      : 0;
-  }
+  /** Share of the fleet currently checked out, used by the utilisation meter. */
+  readonly utilizationRate = computed(() => this.rate(this.kpis().checkedOut));
 
-  /**
-   * Percentage of total assets that are currently available (in store).
-   * Guards against division-by-zero when totalAssets is 0.
-   */
-  get availableRate(): number {
-    return this.kpis.totalAssets > 0
-      ? Math.round((this.kpis.available / this.kpis.totalAssets) * 100)
-      : 0;
-  }
+  /** Share of the fleet sitting in store and ready to issue. */
+  readonly availableRate = computed(() => this.rate(this.kpis().available));
 
-  // ── Chart.js data & option objects ──
-  // Each chart binds to a separate `[data]` and `[options]` input on its <canvas baseChart> element.
+  /** Share of the fleet held in maintenance. */
+  readonly maintenanceRate = computed(() => this.rate(this.kpis().maintenanceDue));
 
-  /** Data for the "Assets by Category" doughnut chart — populated in prepareCharts(). */
-  doughnutData: ChartConfiguration<'doughnut'>['data'] = { labels: [], datasets: [{ data: [] }] };
+  // ── Chart.js data & options ────────────────────────────────────────────────
 
-  /** Options for the doughnut chart: 65% cutout gives it the "ring" appearance; legend on the right. */
-  doughnutOptions: ChartOptions<'doughnut'> = {
+  readonly doughnutData = computed<ChartConfiguration<'doughnut'>['data']>(() => {
+    const cat = this.charts().assetsByCategory;
+    return {
+      labels: cat?.labels ?? [],
+      datasets: [
+        {
+          data: cat?.data ?? [],
+          backgroundColor: cat?.colors ?? [],
+          hoverOffset: 10,
+          borderWidth: 2,
+          borderColor: '#0f172a', // Matches the card surface, so segments read as separated.
+        },
+      ],
+    };
+  });
+
+  readonly doughnutOptions: ChartOptions<'doughnut'> = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: '65%',
+    cutout: '68%',
     plugins: {
-      legend: { position: 'right', labels: { boxWidth: 12, padding: 14, font: { family: 'Jost' } } },
+      legend: {
+        position: 'right',
+        labels: { boxWidth: 10, boxHeight: 10, padding: 14, color: '#cbd5e1', font: { family: 'Jost', size: 12 } },
+      },
+      tooltip: { backgroundColor: '#1e293b', titleFont: { family: 'Jost' }, bodyFont: { family: 'Jost' } },
     },
   };
 
-  /**
-   * Shared options for all bar charts (Assets by Status, Assets by Division).
-   * Grid lines only on Y axis; X axis labels use the Jost font to match the design system.
-   */
-  barOptions: ChartOptions<'bar'> = {
+  readonly barOptions: ChartOptions<'bar'> = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
-      x: { grid: { display: false }, ticks: { color: '#6b7b7b', font: { family: 'Jost' } } },
-      y: { grid: { color: '#f0f4f4' }, ticks: { color: '#6b7b7b', font: { family: 'Jost' } } },
+      x: { grid: { display: false }, border: { display: false }, ticks: AXIS_TICK },
+      y: {
+        beginAtZero: true,
+        grid: { color: GRID_LINE },
+        border: { display: false },
+        ticks: { ...AXIS_TICK, precision: 0 },
+      },
     },
-    plugins: { legend: { display: false } }, // No legend needed; labels are on the X axis
+    plugins: {
+      legend: { display: false }, // Labels already sit on the X axis.
+      tooltip: { backgroundColor: '#1e293b', titleFont: { family: 'Jost' }, bodyFont: { family: 'Jost' } },
+    },
   };
 
-  /** Data for the "Checkout Trend" line chart — populated in prepareCharts(). */
-  lineData: ChartConfiguration<'line'>['data'] = { labels: [], datasets: [{ data: [] }] };
+  readonly assetsByStatusData = computed<ChartConfiguration<'bar'>['data']>(() =>
+    this.toBarData(this.charts().assetsByStatus),
+  );
 
-  /**
-   * Options for the line chart. `tension: 0.4` creates smooth bezier curves.
-   * Point radius is small by default (4px) but expands on hover (6px).
-   */
-  lineOptions: ChartOptions<'line'> = {
+  readonly assetsByDivisionData = computed<ChartConfiguration<'bar'>['data']>(() =>
+    this.toBarData(this.charts().assetsByDivision),
+  );
+
+  readonly lineData = computed<ChartConfiguration<'line'>['data']>(() => {
+    const trend = this.charts().checkoutTrend;
+    return {
+      labels: trend?.labels ?? [],
+      datasets: [
+        {
+          data: trend?.data ?? [],
+          borderColor: '#38bdf8',
+          backgroundColor: 'rgba(56, 189, 248, 0.16)',
+          fill: true,
+          borderWidth: 2,
+          pointBackgroundColor: '#38bdf8',
+          pointBorderColor: '#0f172a',
+          pointBorderWidth: 2,
+        },
+      ],
+    };
+  });
+
+  readonly lineOptions: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
-      x: { grid: { display: false }, ticks: { color: '#6b7b7b', font: { family: 'Jost' } } },
-      y: { grid: { color: '#f0f4f4' }, ticks: { color: '#6b7b7b', font: { family: 'Jost' } } },
+      x: { grid: { display: false }, border: { display: false }, ticks: AXIS_TICK },
+      y: {
+        beginAtZero: true,
+        grid: { color: GRID_LINE },
+        border: { display: false },
+        ticks: { ...AXIS_TICK, precision: 0 },
+      },
     },
-    plugins: { legend: { display: false } },
+    plugins: {
+      legend: { display: false },
+      tooltip: { backgroundColor: '#1e293b', titleFont: { family: 'Jost' }, bodyFont: { family: 'Jost' } },
+    },
     elements: {
-      line:  { tension: 0.4 },              // Smooth curve instead of straight lines
-      point: { radius: 4, hoverRadius: 6 },
+      line: { tension: 0.4 }, // Smooth curve rather than straight segments.
+      point: { radius: 3, hoverRadius: 6 },
     },
   };
 
-  /** Data for the "Assets by Status" bar chart. */
-  assetsByStatusData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [{ data: [] }] };
-
-  /** Data for the "Assets by Division" bar chart. */
-  assetsByDivisionData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [{ data: [] }] };
-
-  /**
-   * Lifecycle hook — fetches all dashboard data on component init.
-   * A try/catch inside the `next` handler ensures that a bug in chart processing
-   * does not prevent the loading state from being cleared.
-   */
   ngOnInit(): void {
     const hour = new Date().getHours();
-    this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+    this.greeting.set(hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening');
+    this.firstName.set(this.auth.getFirstName() ?? 'there');
 
-    this.svc.getDashboardData().subscribe({
-      next: (data: DashboardData) => {
+    // Paint whatever the service already holds, so a repeat visit shows real numbers
+    // immediately and only the "refreshing" hint moves.
+    const snapshot = this.svc.snapshot();
+    if (snapshot) {
+      this.apply(snapshot.data, snapshot.fetchedAt);
+      this.loading.set(false);
+    }
+
+    this.load();
+  }
+
+  /** Re-fetches from the API, bypassing the cache. */
+  refresh(): void {
+    if (this.refreshing()) return;
+    this.load(true);
+  }
+
+  formatActionLabel(action: string): string {
+    return ACTION_LABELS[action] ?? action;
+  }
+
+  getSeverityLabel(severity: string): string {
+    return SEVERITY_LABELS[severity] ?? severity;
+  }
+
+  getSeverityIcon(severity: string): string {
+    return SEVERITY_ICONS[severity] ?? 'info';
+  }
+
+  /** Converts a past date into a short relative string: 'Just now', '5m ago', '3d ago'. */
+  formatTimeAgo(date: Date): string {
+    const time = new Date(date).getTime();
+    if (Number.isNaN(time)) return '';
+    const mins = Math.floor((Date.now() - time) / 60_000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ago`;
+    return `${Math.floor(hours / 24)}d ago`;
+  }
+
+  /**
+   * Machine-readable timestamp for the <time> element.
+   * Returns null on an unparseable date, because `toISOString()` throws on one and an
+   * exception raised from the template would take the whole page down.
+   */
+  toIso(date: Date): string | null {
+    const parsed = new Date(date);
+    return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+  }
+
+  /** Translucent tint of an activity/severity colour, used for icon and badge backgrounds. */
+  tint(color: string): string {
+    return `${color}1f`;
+  }
+
+  private load(forceRefresh = false): void {
+    const hasVisibleData = !this.loading();
+    if (hasVisibleData) {
+      this.refreshing.set(true);
+    }
+
+    this.svc.getDashboardData(forceRefresh).subscribe({
+      next: (data) => {
         try {
-          this.kpis           = data.kpis || this.kpis;
-          this.charts         = data.charts || this.charts;
-          // Parse timestamp strings to Date objects so `formatTimeAgo()` can do math on them
-          this.recentActivity = (data.recentActivity || []).map(a => ({ ...a, timestamp: new Date(a.timestamp) }));
-          this.warrantyAlerts = data.warrantyAlerts || [];
-          this.anomalies      = this.charts.anomalies || this.anomalies;
-          this.prepareCharts();  // Transform raw API data into Chart.js dataset structures
+          this.apply(data, new Date());
+          this.loadFailed.set(false);
         } catch (err) {
           console.error('Error processing dashboard data:', err);
           this.toast.error('Error rendering dashboard components');
         } finally {
-          this.loading = false;
-          this.cdr.detectChanges(); // Force UI update — needed when running outside Angular zone
+          this.loading.set(false);
+          this.refreshing.set(false);
         }
       },
-      error: (err) => {
+      error: (err: unknown) => {
         console.error('API Error:', err);
-        this.loading = false;
-        this.cdr.detectChanges();
+        this.loading.set(false);
+        this.refreshing.set(false);
+        this.loadFailed.set(true);
         this.toast.error('Failed to load dashboard data');
       },
     });
   }
 
-  /**
-   * Converts a past Date into a human-readable relative time string.
-   * Examples: 'Just now', '5m ago', '2h ago', '3d ago'.
-   * @param date - A Date object representing when the activity occurred.
-   */
-  formatTimeAgo(date: Date): string {
-    const now  = Date.now();
-    const diff = now - date.getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1)  return 'Just now';
-    if (mins < 60) return `${mins}m ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    return `${days}d ago`;
+  private apply(data: DashboardData, fetchedAt: Date): void {
+    this.kpis.set(data.kpis ?? EMPTY_KPI);
+    this.charts.set(data.charts ?? EMPTY_CHARTS);
+    // Timestamps arrive as ISO strings; parse them so formatTimeAgo can do arithmetic.
+    this.recentActivity.set((data.recentActivity ?? []).map((a) => ({ ...a, timestamp: new Date(a.timestamp) })));
+    this.warrantyAlerts.set(data.warrantyAlerts ?? []);
+    this.lastUpdated.set(fetchedAt);
   }
 
-  /**
-   * Maps internal action enum strings (e.g. 'checked_out') to user-friendly labels
-   * (e.g. 'Checked Out') for display in the Recent Activity feed.
-   * Falls back to the raw action string if no mapping is found.
-   */
-  formatActionLabel(action: string): string {
-    const map: Record<string, string> = {
-      checked_out: 'Checked Out',
-      checked_in:  'Checked In',
-      registered:  'Registered',
-      maintenance: 'Sent to Maintenance',
-      disposed:    'Disposed',
-      transferred: 'Transferred',
-    };
-    return map[action] || action;
+  private rate(part: number): number {
+    const total = this.kpis().totalAssets;
+    return total > 0 ? Math.round((part / total) * 100) : 0;
   }
 
-  /**
-   * Maps warranty severity codes to human-readable labels shown in the Warranty panel badge.
-   * @param severity - 'critical' | 'warning' | 'info'
-   */
-  getSeverityLabel(severity: string): string {
-    const map: Record<string, string> = { critical: 'Expiring Soon', warning: 'Upcoming', info: 'Scheduled' };
-    return map[severity] || severity;
-  }
-
-  /**
-   * Transforms the raw API `ChartDatasets` into Chart.js `ChartConfiguration` data objects.
-   * Must be called after `this.charts` is populated.
-   *
-   * Patterns used:
-   * - `|| []` / `|| 0` guards handle the case where the backend returns partial data.
-   * - `borderRadius: 6` on bar datasets gives rounded bar tops.
-   * - `fill: true` on the line dataset adds the shaded area beneath the line.
-   */
-  private prepareCharts(): void {
-    const cat    = this.charts?.assetsByCategory;
-    const status = this.charts?.assetsByStatus;
-    const dept   = this.charts?.assetsByDivision;
-    const trend  = this.charts?.checkoutTrend;
-
-    // Doughnut: Assets by Category
-    this.doughnutData = {
-      labels: cat?.labels || [],
-      datasets: [{
-        data:            cat?.data || [],
-        backgroundColor: cat?.colors || [],
-        hoverOffset:     8,       // Segment pops out slightly on hover
-        borderWidth:     2,
-        borderColor:     '#fff',  // White gap between segments
-      }],
-    };
-
-    // Bar: Assets by Status
-    this.assetsByStatusData = {
-      labels: status?.labels || [],
-      datasets: [{
-        data:            status?.data || [],
-        backgroundColor: status?.colors || [],
-        borderRadius:    6,
-      }],
-    };
-
-    // Bar: Assets by Division
-    this.assetsByDivisionData = {
-      labels: dept?.labels || [],
-      datasets: [{
-        data:            dept?.data || [],
-        backgroundColor: dept?.colors || [],
-        borderRadius:    6,
-      }],
-    };
-
-    // Line: Checkout Trend (monthly volume)
-    this.lineData = {
-      labels: trend?.labels || [],
-      datasets: [{
-        data:                trend?.data || [],
-        borderColor:         '#0b6c78',
-        backgroundColor:     'rgba(11, 108, 120, 0.08)', // Translucent fill under the line
-        fill:                true,
-        pointBackgroundColor:'#0b6c78',
-        pointBorderColor:    '#fff',
-        pointBorderWidth:    2,
-      }],
+  private toBarData(source: { labels: string[]; data: number[]; colors: string[] } | undefined) {
+    return {
+      labels: source?.labels ?? [],
+      datasets: [
+        {
+          data: source?.data ?? [],
+          backgroundColor: source?.colors ?? [],
+          borderRadius: 6,
+          maxBarThickness: 44,
+        },
+      ],
     };
   }
 }

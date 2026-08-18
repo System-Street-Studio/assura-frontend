@@ -144,6 +144,11 @@
             <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
         </select>
 
+        <select class="assura-input custom-select" style="width: 170px;" [(ngModel)]="sortOrder" (change)="applyFilters()" title="Order the list by when each asset was created" aria-label="Sort assets by">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+        </select>
+
         <button class="assura-btn assura-btn-secondary" style="border: none; background: transparent; box-shadow: none;" *ngIf="search || filterStatus || filterCategory" (click)="clearFilters()">
             <i class="material-icons" style="font-size: 18px;">filter_list_off</i> Clear
         </button>
