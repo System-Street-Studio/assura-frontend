@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HrAssignmentService, Division } from '../../services/hr-assignment.service';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { ConfirmationService } from '../../../../shared/services/confirmation.service';
 import { CommonModule } from '@angular/common';
 
 interface RoleAssignmentResponse {
@@ -31,6 +32,7 @@ export class HrAssignRoleFormComponent implements OnInit {
   private router = inject(Router);
   private hrAssignmentService = inject(HrAssignmentService);
   private toastService = inject(ToastService);
+  private confirmationService = inject(ConfirmationService);
 
   divisions = signal<Division[]>([]);
   // Admin and SystemAdmin are deliberately excluded — HR may only assign operational
@@ -165,18 +167,23 @@ export class HrAssignRoleFormComponent implements OnInit {
       return;
     }
 
-    if (!confirm('Are you sure you want to reject this role request?')) return;
-
-    this.hrAssignmentService.rejectUser(this.form.dbId, this.form.note).subscribe({
-      next: () => {
-        this.toastService.success('User rejected successfully.');
-        setTimeout(() => {
-          this.router.navigate(['/hr/pending']);
-        }, 1000);
-      },
-      error: (err) => {
-        console.error('Error rejecting user:', err);
-        this.toastService.error('Failed to reject user.');
+    this.confirmationService.confirm(
+      'Reject Role Request',
+      'Are you sure you want to reject this role request?'
+    ).subscribe(confirmed => {
+      if (confirmed) {
+        this.hrAssignmentService.rejectUser(this.form.dbId, this.form.note).subscribe({
+          next: () => {
+            this.toastService.success('User rejected successfully.');
+            setTimeout(() => {
+              this.router.navigate(['/hr/pending']);
+            }, 1000);
+          },
+          error: (err) => {
+            console.error('Error rejecting user:', err);
+            this.toastService.error('Failed to reject user.');
+          }
+        });
       }
     });
   }
