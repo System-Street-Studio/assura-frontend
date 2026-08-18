@@ -10,15 +10,31 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProfileService } from '../../core/services/profile.service';
 import { ToastService } from '../../shared/services/toast.service';
+import { UpdateProfileRequest } from './models/profile.models';
+
+function optionalPasswordValidator(control: AbstractControl): ValidationErrors | null {
+    const val = control.value;
+    if (!val || (typeof val === 'string' && val.trim() === '')) {
+        return null;
+    }
+    if (val.length < 8) {
+        return { minlength: { requiredLength: 8, actualLength: val.length } };
+    }
+    const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!pattern.test(val)) {
+        return { pattern: true };
+    }
+    return null;
+}
 
 function passwordValidator(group: AbstractControl): ValidationErrors | null {
     const currentPasswordCtrl = group.get('currentPassword');
     const passwordCtrl = group.get('password');
     const confirmPasswordCtrl = group.get('confirmPassword');
 
-    const currentPassword = currentPasswordCtrl?.value;
-    const password = passwordCtrl?.value;
-    const confirmPassword = confirmPasswordCtrl?.value;
+    const currentPassword = (currentPasswordCtrl?.value || '').trim();
+    const password = (passwordCtrl?.value || '').trim();
+    const confirmPassword = (confirmPasswordCtrl?.value || '').trim();
 
     let hasError = false;
 
@@ -26,21 +42,17 @@ function passwordValidator(group: AbstractControl): ValidationErrors | null {
         if (!currentPassword) {
             currentPasswordCtrl?.setErrors({ ...currentPasswordCtrl.errors, required: true });
             hasError = true;
-        } else {
-            if (currentPasswordCtrl?.hasError('required')) {
-                const { required, ...otherErrors } = currentPasswordCtrl.errors || {};
-                currentPasswordCtrl.setErrors(Object.keys(otherErrors).length ? otherErrors : null);
-            }
+        } else if (currentPasswordCtrl?.hasError('required')) {
+            const { required, ...otherErrors } = currentPasswordCtrl.errors || {};
+            currentPasswordCtrl.setErrors(Object.keys(otherErrors).length ? otherErrors : null);
         }
 
         if (password !== confirmPassword) {
             confirmPasswordCtrl?.setErrors({ ...confirmPasswordCtrl.errors, mismatch: true });
             hasError = true;
-        } else {
-            if (confirmPasswordCtrl?.hasError('mismatch')) {
-                const { mismatch, ...otherErrors } = confirmPasswordCtrl.errors || {};
-                confirmPasswordCtrl.setErrors(Object.keys(otherErrors).length ? otherErrors : null);
-            }
+        } else if (confirmPasswordCtrl?.hasError('mismatch')) {
+            const { mismatch, ...otherErrors } = confirmPasswordCtrl.errors || {};
+            confirmPasswordCtrl.setErrors(Object.keys(otherErrors).length ? otherErrors : null);
         }
     } else {
         // Clear errors if neither password nor confirmPassword has a value
@@ -100,7 +112,7 @@ export class ProfileComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             phoneNumber: [''],
             currentPassword: [''],
-            password: ['', [Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)]],
+            password: ['', [optionalPasswordValidator]],
             confirmPassword: ['']
         }, { validators: passwordValidator });
 
@@ -109,11 +121,11 @@ export class ProfileComponent implements OnInit {
             const data = this.profile();
             if (data && !this.isEditing) {
                 this.profileForm.patchValue({
-                    username: data.username,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    email: data.email,
-                    phoneNumber: data.phoneNumber,
+                    username: data.username || '',
+                    firstName: data.firstName || '',
+                    lastName: data.lastName || '',
+                    email: data.email || '',
+                    phoneNumber: data.phoneNumber || '',
                     currentPassword: '',
                     password: '',
                     confirmPassword: ''
@@ -131,7 +143,6 @@ export class ProfileComponent implements OnInit {
     }
 
     loadProfile(): void {
-        // Just call getProfile, the service handles caching and loading state signal
         this.profileService.getProfile().subscribe({
             error: (err: any) => {
                 console.error('Error loading profile', err);
@@ -146,54 +157,69 @@ export class ProfileComponent implements OnInit {
         this.showNewPassword = false;
         this.showConfirmPassword = false;
 
-        if (this.isEditing && this.profile()) {
-            // Entering edit mode - clear password fields explicitly
-            const data = this.profile()!;
+        const data = this.profile();
+        if (data) {
             this.profileForm.patchValue({
-                username: data.username,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                phoneNumber: data.phoneNumber,
+                username: data.username || '',
+                firstName: data.firstName || '',
+                lastName: data.lastName || '',
+                email: data.email || '',
+                phoneNumber: data.phoneNumber || '',
                 currentPassword: '',
                 password: '',
                 confirmPassword: ''
             });
-
-            // Force clear password fields to prevent autofill issues
-            setTimeout(() => {
-                this.profileForm.get('currentPassword')?.setValue('');
-                this.profileForm.get('password')?.setValue('');
-                this.profileForm.get('confirmPassword')?.setValue('');
-                this.profileForm.get('currentPassword')?.markAsUntouched();
-                this.profileForm.get('password')?.markAsUntouched();
-                this.profileForm.get('confirmPassword')?.markAsUntouched();
-            }, 0);
-        } else if (!this.isEditing && this.profile()) {
-            // Exiting edit mode - reset form
-            const data = this.profile()!;
-            this.profileForm.patchValue({
-                username: data.username,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                phoneNumber: data.phoneNumber,
-                currentPassword: '',
-                password: '',
-                confirmPassword: ''
-            });
+            this.profileForm.get('currentPassword')?.setErrors(null);
+            this.profileForm.get('password')?.setErrors(null);
+            this.profileForm.get('confirmPassword')?.setErrors(null);
+            this.profileForm.markAsPristine();
+            this.profileForm.markAsUntouched();
         }
     }
 
     saveProfile(): void {
         const currentProfile = this.profile();
-        if (this.profileForm.invalid || !currentProfile) return;
+        if (!currentProfile) {
+            this.toastService.show('Profile data not loaded', 'error');
+            return;
+        }
+
+        if (this.profileForm.invalid) {
+            this.profileForm.markAllAsTouched();
+            
+            if (this.profileForm.get('firstName')?.invalid || this.profileForm.get('lastName')?.invalid) {
+                this.toastService.show('Please provide a valid first and last name', 'error');
+            } else if (this.profileForm.get('email')?.invalid) {
+                this.toastService.show('Please provide a valid email address', 'error');
+            } else if (this.profileForm.get('username')?.invalid) {
+                this.toastService.show('Please provide a valid username', 'error');
+            } else if (this.profileForm.get('currentPassword')?.hasError('required')) {
+                this.toastService.show('Current password is required to set a new password', 'error');
+            } else if (this.profileForm.get('confirmPassword')?.hasError('mismatch')) {
+                this.toastService.show('New passwords do not match', 'error');
+            } else if (this.profileForm.get('password')?.invalid) {
+                this.toastService.show('Password must be 8+ chars and contain uppercase, lowercase, number & special char', 'error');
+            } else {
+                this.toastService.show('Please check all fields and try again', 'error');
+            }
+            return;
+        }
 
         this.saving = true;
-        const request = {
+        const formVal = this.profileForm.value;
+        const request: UpdateProfileRequest = {
             userId: currentProfile.id,
-            ...this.profileForm.value
+            username: formVal.username?.trim() || '',
+            firstName: formVal.firstName?.trim() || '',
+            lastName: formVal.lastName?.trim() || '',
+            email: formVal.email?.trim() || '',
+            phoneNumber: formVal.phoneNumber?.trim() || ''
         };
+
+        if (formVal.password && formVal.password.trim().length > 0) {
+            request.currentPassword = formVal.currentPassword;
+            request.password = formVal.password;
+        }
 
         this.profileService.updateProfile(request).subscribe({
             next: () => {
@@ -206,7 +232,7 @@ export class ProfileComponent implements OnInit {
             },
             error: (err: any) => {
                 console.error('Error updating profile', err);
-                const errorMessage = typeof err.error === 'string' ? err.error : 'Failed to update profile';
+                const errorMessage = typeof err.error === 'string' ? err.error : (err.error?.message || 'Failed to update profile');
                 this.toastService.show(errorMessage, 'error');
                 this.saving = false;
             }
@@ -216,6 +242,6 @@ export class ProfileComponent implements OnInit {
     get initials(): string {
         const data = this.profile();
         if (!data) return 'U';
-        return (data.firstName[0] || '') + (data.lastName[0] || '');
+        return (data.firstName?.[0] || '') + (data.lastName?.[0] || '');
     }
 }
