@@ -100,7 +100,7 @@ export class ProfileComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             phoneNumber: [''],
             currentPassword: [''],
-            password: ['', [Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)]],
+            password: ['', [Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)]],
             confirmPassword: ['']
         }, { validators: passwordValidator });
 
@@ -145,7 +145,32 @@ export class ProfileComponent implements OnInit {
         this.showCurrentPassword = false;
         this.showNewPassword = false;
         this.showConfirmPassword = false;
-        if (!this.isEditing && this.profile()) {
+
+        if (this.isEditing && this.profile()) {
+            // Entering edit mode - clear password fields explicitly
+            const data = this.profile()!;
+            this.profileForm.patchValue({
+                username: data.username,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                phoneNumber: data.phoneNumber,
+                currentPassword: '',
+                password: '',
+                confirmPassword: ''
+            });
+
+            // Force clear password fields to prevent autofill issues
+            setTimeout(() => {
+                this.profileForm.get('currentPassword')?.setValue('');
+                this.profileForm.get('password')?.setValue('');
+                this.profileForm.get('confirmPassword')?.setValue('');
+                this.profileForm.get('currentPassword')?.markAsUntouched();
+                this.profileForm.get('password')?.markAsUntouched();
+                this.profileForm.get('confirmPassword')?.markAsUntouched();
+            }, 0);
+        } else if (!this.isEditing && this.profile()) {
+            // Exiting edit mode - reset form
             const data = this.profile()!;
             this.profileForm.patchValue({
                 username: data.username,

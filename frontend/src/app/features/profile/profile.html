@@ -82,35 +82,36 @@
           <div class="input-group">
             <label>Current Password</label>
             <div class="input-wrapper-profile">
-              <input [type]="showCurrentPassword ? 'text' : 'password'" class="glass-input" formControlName="currentPassword" placeholder="Current Password" autocomplete="new-password">
+              <input [type]="showCurrentPassword ? 'text' : 'password'" class="glass-input" formControlName="currentPassword" placeholder="Current Password" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')">
               <button type="button" class="password-toggle-btn" (click)="showCurrentPassword = !showCurrentPassword" [attr.aria-label]="showCurrentPassword ? 'Hide current password' : 'Show current password'" tabindex="-1">
                 <mat-icon class="toggle-icon">{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
             </div>
-            <span class="error-text" *ngIf="profileForm.get('currentPassword')?.hasError('required')">Required when changing password</span>
+            <span class="error-text" *ngIf="profileForm.get('currentPassword')?.touched && profileForm.get('currentPassword')?.hasError('required')">Required when changing password</span>
           </div>
 
           <div class="input-group">
             <label>New Password</label>
             <div class="input-wrapper-profile">
-              <input [type]="showNewPassword ? 'text' : 'password'" class="glass-input" formControlName="password" placeholder="Leave blank to keep current" autocomplete="new-password">
+              <input [type]="showNewPassword ? 'text' : 'password'" class="glass-input" formControlName="password" placeholder="Leave blank to keep current" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')">
               <button type="button" class="password-toggle-btn" (click)="showNewPassword = !showNewPassword" [attr.aria-label]="showNewPassword ? 'Hide new password' : 'Show new password'" tabindex="-1">
                 <mat-icon class="toggle-icon">{{ showNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
             </div>
             <span class="hint-text">Leave blank to keep your current password</span>
-            <span class="error-text" *ngIf="profileForm.get('password')?.hasError('pattern')">Must be at least 8 chars with uppercase, lowercase, number, and special char.</span>
+            <span class="error-text" *ngIf="profileForm.get('password')?.touched && profileForm.get('password')?.hasError('minLength')">Password must be at least 8 characters</span>
+            <span class="error-text" *ngIf="profileForm.get('password')?.touched && profileForm.get('password')?.hasError('pattern')">Must include uppercase, lowercase, number, and special char (@$!%*?&)</span>
           </div>
 
           <div class="input-group">
             <label>Confirm New Password</label>
             <div class="input-wrapper-profile">
-              <input [type]="showConfirmPassword ? 'text' : 'password'" class="glass-input" formControlName="confirmPassword" placeholder="Confirm New Password" autocomplete="new-password">
+              <input [type]="showConfirmPassword ? 'text' : 'password'" class="glass-input" formControlName="confirmPassword" placeholder="Confirm New Password" autocomplete="off" readonly onfocus="this.removeAttribute('readonly')">
               <button type="button" class="password-toggle-btn" (click)="showConfirmPassword = !showConfirmPassword" [attr.aria-label]="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'" tabindex="-1">
                 <mat-icon class="toggle-icon">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
             </div>
-            <span class="error-text" *ngIf="profileForm.get('confirmPassword')?.hasError('mismatch')">Passwords do not match</span>
+            <span class="error-text" *ngIf="profileForm.get('confirmPassword')?.touched && profileForm.get('confirmPassword')?.hasError('mismatch')">Passwords do not match</span>
           </div>
         </div>
       </form>
