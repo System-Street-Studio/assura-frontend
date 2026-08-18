@@ -61,6 +61,7 @@ export class HrAssignRoleFormComponent implements OnInit {
 
   isUpdate = false;
   loadError = false;
+  submitted = false;
 
   ngOnInit(): void {
     // Load divisions
@@ -139,13 +140,14 @@ export class HrAssignRoleFormComponent implements OnInit {
 
     request.subscribe({
       next: (response: RoleAssignmentResponse) => {
+        this.submitted = true;
         const successMessage = `${this.form.employeeName || 'Selected employee'} has been successfully assigned to ${this.form.assignments.length} division(s) with their respective roles.`;
         this.toastService.success(successMessage);
 
         const skipped = response?.skippedAssignments;
         if (skipped && skipped.length > 0) {
           const details = skipped.map(a => `Division ${a.divisionId}, Role "${a.role}"`).join(', ');
-          this.toastService.warning(`Some assignments were skipped: ${details}`);
+          alert(`Some assignments were skipped: ${details}`);
         }
 
         setTimeout(() => {
@@ -162,8 +164,8 @@ export class HrAssignRoleFormComponent implements OnInit {
   rejectRole(): void {
     if (this.form.dbId === 0) return;
 
-    if (!this.form.note.trim()) {
-      this.toastService.error('Please add a note explaining the reason for rejection.');
+    if (!this.form.note?.trim()) {
+      alert('Please add a note explaining the reason for rejection.');
       return;
     }
 

@@ -1,15 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { DiscardDetailsComponent } from './discard-details';
 import { RequestService } from '../../services/requests.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 
-// Covers the BUGS.md Division Head finding: "Maintenance/Discard approve-reject
-// buttons have no status or role gating in the UI" — they rendered unconditionally
-// regardless of request status or viewer role, unlike New-Asset/Transfer detail pages
-// which gate via canDivisionHeadAct()/isReadOnly(). This adds the same gate here.
 describe('DiscardDetailsComponent', () => {
   let component: DiscardDetailsComponent;
   let fixture: ComponentFixture<DiscardDetailsComponent>;
@@ -27,6 +23,7 @@ describe('DiscardDetailsComponent', () => {
     TestBed.configureTestingModule({
       imports: [DiscardDetailsComponent],
       providers: [
+        provideRouter([]),
         { provide: RequestService, useValue: requestServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         {

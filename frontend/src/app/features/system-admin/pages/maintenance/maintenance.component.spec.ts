@@ -3,17 +3,14 @@ import { of, throwError } from 'rxjs';
 import { MaintenanceComponent } from './maintenance.component';
 import { SystemAdminService, SystemAdminUser } from '../../services/system-admin.service';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { ConfirmationService } from '../../../../shared/services/confirmation.service';
 
-// Covers the BUGS.md Admin finding: "Password reset silently sets a hardcoded default
-// password with no notification" — ResetUserPasswordCommand now generates a random
-// temporary password and returns it in the response instead of resetting everyone to the
-// literal "Password@123". These tests confirm the UI surfaces that returned password to the
-// admin (who must relay it out-of-band) instead of just showing a generic success toast.
 describe('MaintenanceComponent', () => {
   let component: MaintenanceComponent;
   let fixture: ComponentFixture<MaintenanceComponent>;
   let systemAdminServiceSpy: jasmine.SpyObj<SystemAdminService>;
   let toastServiceSpy: jasmine.SpyObj<ToastService>;
+  let confirmationServiceSpy: jasmine.SpyObj<ConfirmationService>;
 
   const user: SystemAdminUser = {
     id: 5,
@@ -30,12 +27,14 @@ describe('MaintenanceComponent', () => {
       'getUsers'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    confirmationServiceSpy = jasmine.createSpyObj('ConfirmationService', ['confirmPasswordReset']);
 
     await TestBed.configureTestingModule({
       imports: [MaintenanceComponent],
       providers: [
         { provide: SystemAdminService, useValue: systemAdminServiceSpy },
-        { provide: ToastService, useValue: toastServiceSpy }
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: ConfirmationService, useValue: confirmationServiceSpy }
       ]
     }).compileComponents();
 
@@ -44,7 +43,7 @@ describe('MaintenanceComponent', () => {
   });
 
   it('should show the returned temporary password in the success toast', () => {
-    spyOn(window, 'confirm').and.returnValue(true);
+    confirmationServiceSpy.confirmPasswordReset.and.returnValue(of(true));
     systemAdminServiceSpy.resetUserPassword.and.returnValue(of({ temporaryPassword: 'Xy9!zQmR2@Kp' }));
 
     component.resetPassword(user);
@@ -57,7 +56,7 @@ describe('MaintenanceComponent', () => {
   });
 
   it('should not call the backend if the confirmation dialog is dismissed', () => {
-    spyOn(window, 'confirm').and.returnValue(false);
+    confirmationServiceSpy.confirmPasswordReset.and.returnValue(of(false));
 
     component.resetPassword(user);
 
@@ -65,7 +64,7 @@ describe('MaintenanceComponent', () => {
   });
 
   it('should show an error toast if the reset call fails', () => {
-    spyOn(window, 'confirm').and.returnValue(true);
+    confirmationServiceSpy.confirmPasswordReset.and.returnValue(of(true));
     systemAdminServiceSpy.resetUserPassword.and.returnValue(throwError(() => new Error('network error')));
 
     component.resetPassword(user);

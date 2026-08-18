@@ -1,20 +1,24 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { HeadTransferService } from './transfer.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { environment } from '../../../../environments/environment';
 
-// Covers the newly-found bug: the Division Head "Reject" button on the main
-// Transfer list called rejectByHead(), but that method POSTed to
-// /transfers/{id}/reject — the asset-holder reject endpoint, which requires
-// CurrentHolderId === callerId and a Division Head is never the holder, so this
-// always 403'd. The correct, division-scoped endpoint is /transfers/{id}/reject-head.
 describe('HeadTransferService', () => {
   let service: HeadTransferService;
   let httpMock: HttpTestingController;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
 
   beforeEach(() => {
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['getUserId']);
+
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: AuthService, useValue: authServiceSpy }
+      ]
     });
     service = TestBed.inject(HeadTransferService);
     httpMock = TestBed.inject(HttpTestingController);

@@ -42,6 +42,21 @@ export class TransferFormComponent implements OnInit {
     toDate = signal<Date | null>(null);
     selectedFiles = signal<File[]>([]);
     isSubmitting = signal(false);
+    resultVisible = signal(false);
+    result = signal<'success' | 'error' | null>(null);
+
+    showResult(): boolean {
+      return this.resultVisible();
+    }
+
+    resultType(): 'success' | 'error' | null {
+      return this.result();
+    }
+
+    onResultClosed(): void {
+      this.resultVisible.set(false);
+      this.location.back();
+    }
 
     // Services
   private location = inject(Location);
@@ -170,13 +185,14 @@ export class TransferFormComponent implements OnInit {
     this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
       next: () => {
         this.isSubmitting.set(false);
+        this.resultVisible.set(true);
+        this.result.set('success');
         this.toastService.success('Transfer request submitted successfully');
-        setTimeout(() => {
-          this.location.back();
-        }, 1000);
       },
       error: (err) => {
         this.isSubmitting.set(false);
+        this.resultVisible.set(true);
+        this.result.set('error');
         console.error('Submission failed', err);
         this.toastService.error('Failed to submit request. Please try again.');
       }

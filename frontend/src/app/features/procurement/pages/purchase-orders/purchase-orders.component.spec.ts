@@ -6,14 +6,36 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { FilterDropdownComponent } from '../../../../shared/components/filter-dropdown/filter-dropdown';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import { ProcurementService } from '../../services/procurement.service';
+import { DivisionService } from '../../../inventory/services/division.service';
+import { of } from 'rxjs';
 
 describe('PurchaseOrdersComponent', () => {
     let component: PurchaseOrdersComponent;
     let fixture: ComponentFixture<PurchaseOrdersComponent>;
     let routerSpy: jasmine.SpyObj<Router>;
+    let procurementServiceSpy: jasmine.SpyObj<ProcurementService>;
+    let divisionServiceSpy: jasmine.SpyObj<DivisionService>;
+
+    const mockOrders = [
+        { id: 1, orderNumber: 'PO-001', supplierName: 'Supplier A', status: 'Pending', totalAmount: 100 },
+        { id: 2, orderNumber: 'PO-002', supplierName: 'Supplier B', status: 'Approved', totalAmount: 200 },
+        { id: 3, orderNumber: 'PO-003', supplierName: 'Supplier C', status: 'Delivered', totalAmount: 300 }
+    ];
+
+    const mockRequests = [
+        { id: 1, type: 'NewAsset', assetName: 'Laptop', requestedBy: 'User A' },
+        { id: 2, type: 'NewAsset', assetName: 'Desk', requestedBy: 'User B' }
+    ];
 
     beforeEach(async () => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        procurementServiceSpy = jasmine.createSpyObj('ProcurementService', ['getOrders', 'getPendingRequests']);
+        procurementServiceSpy.getOrders.and.returnValue(of(mockOrders as any));
+        procurementServiceSpy.getPendingRequests.and.returnValue(of(mockRequests as any));
+
+        divisionServiceSpy = jasmine.createSpyObj('DivisionService', ['getAll']);
+        divisionServiceSpy.getAll.and.returnValue(of([{ id: 1, name: 'IT' }] as any));
 
         await TestBed.configureTestingModule({
             imports: [
@@ -25,7 +47,9 @@ describe('PurchaseOrdersComponent', () => {
                 PaginationComponent
             ],
             providers: [
-                { provide: Router, useValue: routerSpy }
+                { provide: Router, useValue: routerSpy },
+                { provide: ProcurementService, useValue: procurementServiceSpy },
+                { provide: DivisionService, useValue: divisionServiceSpy }
             ]
         })
             .compileComponents();
@@ -97,6 +121,7 @@ describe('PurchaseOrdersComponent', () => {
 
     it('goToOrdersPage should advance the page', () => {
         component.ordersPageSize = 2;
+        component.ordersCurrentPage = 1;
         component.goToOrdersPage(2);
         expect(component.ordersCurrentPage).toBe(2);
     });

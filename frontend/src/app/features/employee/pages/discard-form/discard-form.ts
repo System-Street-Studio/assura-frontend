@@ -31,6 +31,21 @@ export class DiscardFormComponent implements OnInit {
   reason = signal('');
   selectedFiles = signal<File[]>([]);
   isSubmitting = signal(false);
+  resultVisible = signal(false);
+  result = signal<'success' | 'error' | null>(null);
+
+  showResult(): boolean {
+    return this.resultVisible();
+  }
+
+  resultType(): 'success' | 'error' | null {
+    return this.result();
+  }
+
+  onResultClosed(): void {
+    this.resultVisible.set(false);
+    this.location.back();
+  }
 
   // Load assigned assets on init
   ngOnInit(): void {
@@ -98,13 +113,14 @@ export class DiscardFormComponent implements OnInit {
     this.assetRequestService.createRequest(requestData, this.selectedFiles()).subscribe({
       next: (res: any) => {
         this.isSubmitting.set(false);
+        this.resultVisible.set(true);
+        this.result.set('success');
         this.toastService.success(res?.message || 'Discard request submitted successfully');
-        setTimeout(() => {
-          this.location.back();
-        }, 1000);
       },
       error: (err) => {
         this.isSubmitting.set(false);
+        this.resultVisible.set(true);
+        this.result.set('error');
         console.error('Save failed', err);
         this.toastService.error('Error submitting request. Please try again.');
       }

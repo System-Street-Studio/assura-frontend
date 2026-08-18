@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { RegisterComponent } from './register';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Router, provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('RegisterComponent', () => {
     let component: RegisterComponent;
@@ -10,6 +11,7 @@ describe('RegisterComponent', () => {
 
     beforeEach(async () => {
         authServiceSpy = jasmine.createSpyObj('AuthService', ['register']);
+        authServiceSpy.register.and.returnValue(of({ message: 'ok' }));
 
         await TestBed.configureTestingModule({
             imports: [RegisterComponent],
@@ -39,8 +41,6 @@ describe('RegisterComponent', () => {
             password: 'password123',
             confirmPassword: 'password123'
         });
-        // Other fields are required so form is still invalid, but let's check the password match error specifically
-        // The validator is on the group level
         expect(form.hasError('mismatch')).toBeFalse();
 
         form.patchValue({
@@ -63,12 +63,10 @@ describe('RegisterComponent', () => {
         expect(form.valid).toBeTrue();
     });
 
-    it('should simulate submission logic', fakeAsync(() => {
-        spyOn(window, 'alert').and.stub(); // Stub alert to prevent popup
+    it('should call authService.register on submit', fakeAsync(() => {
         const router = TestBed.inject(Router);
         const navigateSpy = spyOn(router, 'navigate');
 
-        // Mock valid form
         component.registerForm.patchValue({
             firstName: 'John',
             lastName: 'Doe',
@@ -79,12 +77,9 @@ describe('RegisterComponent', () => {
         });
 
         component.onSubmit();
-        expect(component.isLoading).toBeTrue();
+        expect(authServiceSpy.register).toHaveBeenCalled();
 
-        tick(1500);
-
-        expect(component.isLoading).toBeFalse();
-        expect(window.alert).toHaveBeenCalledWith('Registration simulated!');
+        tick(3000);
         expect(navigateSpy).toHaveBeenCalledWith(['/auth/login']);
     }));
 });

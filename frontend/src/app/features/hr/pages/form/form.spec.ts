@@ -1,14 +1,18 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { HrAssignRoleFormComponent } from './form';
 import { HrAssignmentService } from '../../services/hr-assignment.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { ConfirmationService } from '../../../../shared/services/confirmation.service';
 
 describe('HrAssignRoleFormComponent', () => {
   let component: HrAssignRoleFormComponent;
   let fixture: ComponentFixture<HrAssignRoleFormComponent>;
   let hrAssignmentServiceSpy: jasmine.SpyObj<HrAssignmentService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let toastServiceSpy: jasmine.SpyObj<ToastService>;
+  let confirmationServiceSpy: jasmine.SpyObj<ConfirmationService>;
 
   const pendingUser = {
     id: 7,
@@ -36,12 +40,17 @@ describe('HrAssignRoleFormComponent', () => {
     hrAssignmentServiceSpy.rejectUser.and.returnValue(of({}));
 
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['success', 'error', 'info', 'warning']);
+    confirmationServiceSpy = jasmine.createSpyObj('ConfirmationService', ['confirm']);
+    confirmationServiceSpy.confirm.and.returnValue(of(true));
 
     await TestBed.configureTestingModule({
       imports: [HrAssignRoleFormComponent],
       providers: [
         { provide: HrAssignmentService, useValue: hrAssignmentServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: ConfirmationService, useValue: confirmationServiceSpy }
       ]
     }).compileComponents();
 
@@ -60,28 +69,28 @@ describe('HrAssignRoleFormComponent', () => {
   // "Failed to reject user" error from the backend's 400 response.
   it('should block rejection and alert when no note is provided', () => {
     spyOn(window, 'alert');
-    spyOn(window, 'confirm');
     component.form.note = '   ';
 
     component.rejectRole();
 
     expect(window.alert).toHaveBeenCalledWith('Please add a note explaining the reason for rejection.');
-    expect(window.confirm).not.toHaveBeenCalled();
+    expect(confirmationServiceSpy.confirm).not.toHaveBeenCalled();
     expect(hrAssignmentServiceSpy.rejectUser).not.toHaveBeenCalled();
   });
 
-  it('should reject the pending user and navigate to the pending list on confirm', () => {
-    spyOn(window, 'confirm').and.returnValue(true);
+  it('should reject the pending user and navigate to the pending list on confirm', fakeAsync(() => {
+    confirmationServiceSpy.confirm.and.returnValue(of(true));
     component.form.note = 'Incomplete documentation';
 
     component.rejectRole();
+    tick(1000);
 
     expect(hrAssignmentServiceSpy.rejectUser).toHaveBeenCalledWith(7, 'Incomplete documentation');
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/hr/pending']);
-  });
+  }));
 
   it('should not call the backend if rejection is not confirmed', () => {
-    spyOn(window, 'confirm').and.returnValue(false);
+    confirmationServiceSpy.confirm.and.returnValue(of(false));
     component.form.note = 'Incomplete documentation';
 
     component.rejectRole();

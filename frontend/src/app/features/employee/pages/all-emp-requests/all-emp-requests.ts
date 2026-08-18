@@ -60,6 +60,7 @@ export class AllRequestsComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error fetching requests:', err);
+          this.error.set('Failed to load requests. Please try again later.');
           this.isLoading.set(false);
         }
       });
@@ -93,7 +94,7 @@ export class AllRequestsComponent implements OnInit {
       let matchesStatus = true;
       if (status !== 'All Types') {
         if (status === 'Pending') {
-          matchesStatus = rawStatus.toLowerCase() === 'pending';
+          matchesStatus = this.assetService.normalizeStatus(r.status) === 'Pending';
         } else if (status === 'PendingProcurement') {
           matchesStatus = rawStatus.toLowerCase() === 'pendingprocurement' || rawStatus.toLowerCase() === 'pending-procurement';
         } else {

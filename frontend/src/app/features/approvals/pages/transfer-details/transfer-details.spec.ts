@@ -1,22 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { TransferDetailsComponent } from './transfer-details';
 import { RequestService } from '../../services/requests.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 
-// Covers the newly-found bug: after approveRequest() succeeds, the component
-// optimistically set the local status to 'PendingStorekeeperReview' and showed a
-// "Storekeeper Actions" panel gated on that status. But the real backend command
-// (ApproveAssetRequestCommand) always sets the status to 'Approved' — it never
-// transitions through PendingStorekeeperReview/TemporaryAssigned for Transfer
-// requests (that intermediate flow only applies to New-Asset requests). So the
-// storekeeper panel here could never actually be reached with real data; it was
-// dead code kept alive only by the wrong optimistic update. Both the dead
-// panel/methods and the wrong optimistic status have been removed/fixed — a
-// Transfer request now correctly shows 'Approved' after approval, matching the
-// real backend, at which point it's picked up from the asset-pool screen.
 describe('TransferDetailsComponent', () => {
   let component: TransferDetailsComponent;
   let fixture: ComponentFixture<TransferDetailsComponent>;
@@ -34,6 +23,7 @@ describe('TransferDetailsComponent', () => {
     TestBed.configureTestingModule({
       imports: [TransferDetailsComponent],
       providers: [
+        provideRouter([]),
         { provide: RequestService, useValue: requestServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         {
