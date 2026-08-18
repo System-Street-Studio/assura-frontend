@@ -1,8 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination';
 import { AccPendingItemsService, AccPendingItem } from '../../../services/acc-pending-items.service';
 import { ReceiptsService } from '../../../services/receipts.service';
+import { ToastService } from '../../../shared/services/toast.service';
 
 interface PendingItem {
     id: string;
@@ -25,7 +27,7 @@ interface PendingItem {
 @Component({
     selector: 'app-acc-overview',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, PaginationComponent],
     templateUrl: './acc-overview.html',
     styleUrls: ['./acc-overview.css']
 })
@@ -41,9 +43,6 @@ export class AccOverviewComponent implements OnInit {
     currentPage = 1;
     totalPages = 3;
     showConfirmModal = false;
-    showSuccessCard = false;
-    showErrorCard = false;
-    errorMessage = '';
     fileError = false;
     fileErrorMessage = '';
     isSaving = false;
@@ -55,7 +54,8 @@ export class AccOverviewComponent implements OnInit {
         private accPendingItemsService: AccPendingItemsService,
         private receiptsService: ReceiptsService,
         private route: ActivatedRoute,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private toastService: ToastService
     ) {}
 
     ngOnInit() {
@@ -115,7 +115,6 @@ export class AccOverviewComponent implements OnInit {
         if (!this.selectedItem) return;
         this.fileError = false;
         this.fileErrorMessage = '';
-        this.showErrorCard = false;
         this.showConfirmModal = true;
     }
 
@@ -135,7 +134,6 @@ export class AccOverviewComponent implements OnInit {
             this.selectedFileName = input.files[0].name;
             this.fileError = false;
             this.fileErrorMessage = '';
-            this.showErrorCard = false;
             this.cdr.markForCheck();
         }
     }
@@ -147,12 +145,7 @@ export class AccOverviewComponent implements OnInit {
         if (!this.selectedFile) {
             this.fileError = true;
             this.fileErrorMessage = 'Please upload a receipt before confirming discard.';
-            this.errorMessage = 'Receipt is required to confirm discard. Please upload a receipt file.';
-            this.showErrorCard = true;
-            setTimeout(() => {
-                this.showErrorCard = false;
-                this.cdr.markForCheck();
-            }, 4000);
+            this.toastService.error('Receipt is required to confirm discard. Please upload a receipt file.');
             this.cdr.markForCheck();
             return;
         }
@@ -184,23 +177,14 @@ export class AccOverviewComponent implements OnInit {
                                 this.updateCounts();
                                 this.filterByCategory(this.activeFilter);
                                 this.closeConfirmModal();
-                                this.showSuccessCard = true;
                                 this.isSaving = false;
-                                setTimeout(() => {
-                                    this.showSuccessCard = false;
-                                    this.cdr.markForCheck();
-                                }, 3000);
+                                this.toastService.success('Saved As Discarded');
                                 this.cdr.markForCheck();
                             },
                             error: (err) => {
                                 console.error('Failed to discard item:', err);
                                 this.isSaving = false;
-                                this.errorMessage = 'Failed to confirm discard. Please try again.';
-                                this.showErrorCard = true;
-                                setTimeout(() => {
-                                    this.showErrorCard = false;
-                                    this.cdr.markForCheck();
-                                }, 4000);
+                                this.toastService.error('Failed to confirm discard. Please try again.');
                                 this.cdr.markForCheck();
                             }
                         });
@@ -208,12 +192,7 @@ export class AccOverviewComponent implements OnInit {
                     error: (err) => {
                         console.error('Failed to upload receipt file:', err);
                         this.isSaving = false;
-                        this.errorMessage = 'Failed to upload receipt file. Please try again.';
-                        this.showErrorCard = true;
-                        setTimeout(() => {
-                            this.showErrorCard = false;
-                            this.cdr.markForCheck();
-                        }, 4000);
+                        this.toastService.error('Failed to upload receipt file. Please try again.');
                         this.cdr.markForCheck();
                     }
                 });
@@ -221,23 +200,24 @@ export class AccOverviewComponent implements OnInit {
             error: (err) => {
                 console.error('Failed to create receipt record:', err);
                 this.isSaving = false;
-                this.errorMessage = 'Failed to create receipt. Please try again.';
-                this.showErrorCard = true;
-                setTimeout(() => {
-                    this.showErrorCard = false;
-                    this.cdr.markForCheck();
-                }, 4000);
+                this.toastService.error('Failed to create receipt. Please try again.');
                 this.cdr.markForCheck();
             }
         });
     }
 
-    closeSuccess() {
-        this.showSuccessCard = false;
+    getPageNumbers(): number[] {
+        const pages: number[] = [];
+        for (let i = 1; i <= this.totalPages; i++) {
+            pages.push(i);
+        }
+        return pages;
     }
 
-    closeError() {
-        this.showErrorCard = false;
+    onPageChange(page: number) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+        }
     }
 
     goToPage(page: number) {

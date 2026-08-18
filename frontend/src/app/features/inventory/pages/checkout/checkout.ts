@@ -7,14 +7,13 @@ import { catchError, finalize, forkJoin, of, throwError, timeout } from 'rxjs';
 import { CheckoutService } from '../../services/checkout.service';
 import { CheckoutRecord, CheckoutFormData, CheckoutEmployee } from '../../models/checkout.model';
 import { ToastService } from '../../../../shared/services/toast.service';
-import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { ProcurementService } from '../../../procurement/services/procurement.service';
 
 @Component({
     selector: 'app-checkout',
     standalone: true,
-    imports: [CommonModule, FormsModule, MatIconModule, ResultOverlayComponent, PaginationComponent],
+    imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent],
     templateUrl: './checkout.html',
     styleUrls: ['./checkout.css'],
 })
@@ -40,8 +39,8 @@ export class CheckoutComponent implements OnInit {
     filterDueSoon = false;
 
     currentPage = 1;
-    pageSize = 10;
-    pageSizes = [5, 10, 25, 50];
+    pageSize = 20;
+    pageSizes = [5, 20, 25, 50];
 
     activeView: 'active' | 'history' = 'active';
 
@@ -65,12 +64,6 @@ export class CheckoutComponent implements OnInit {
     /* ── Detail drawer ── */
     showDetail = false;
     detailRecord: CheckoutRecord | null = null;
-
-    /* ── Result overlay ── */
-    showResult = false;
-    resultType: 'success' | 'error' = 'success';
-    resultTitle = '';
-    resultMessage = '';
 
     /* ── Stats ── */
     get totalCount(): number {
@@ -385,10 +378,7 @@ export class CheckoutComponent implements OnInit {
         ).subscribe({
             next: (record: CheckoutRecord) => {
                 this.showCheckoutModal = false;
-                this.resultType = 'success';
-                this.resultTitle = 'Checked Out!';
-                this.resultMessage = `"${record.assetName}" has been checked out to ${record.checkedOutTo}.`;
-                this.showResult = true;
+                this.toast.success(`"${record.assetName}" has been checked out to ${record.checkedOutTo}.`);
                 this.loadData();
                 if (this.informingId) {
                     this.procurementService.completeArrival(this.informingId, `Checked out to ${record.checkedOutTo}`).subscribe({
@@ -424,11 +414,6 @@ export class CheckoutComponent implements OnInit {
     closeDetail(): void {
         this.showDetail = false;
         this.detailRecord = null;
-    }
-
-    /* ── Result overlay ── */
-    onResultClosed(): void {
-        this.showResult = false;
     }
 
     /* ── Helpers ── */

@@ -48,7 +48,7 @@ export class AssetsComponent implements OnInit {
   search = '';
   filterStatus = '';
   filterCategory = '';
-  pageSize = 10;
+  pageSize = 20;
   currentPage = 1;
   totalPages = 1;
   allSelected = false;

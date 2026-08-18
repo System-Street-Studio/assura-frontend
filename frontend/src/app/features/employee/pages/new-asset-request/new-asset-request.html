@@ -163,13 +163,3 @@
     </form>
   </div>
 </div>
-
-<!-- Result Overlay -->
-@if (showResult()) {
-  <app-result-overlay
-    [type]="resultType()"
-    [title]="resultTitle()"
-    [message]="resultMessage()"
-    (closed)="onResultClosed()">
-  </app-result-overlay>
-}

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SystemAdminService, SystemAdminUser, SystemAdminAuditLog } from '../../services/system-admin.service';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { ConfirmationService } from '../../../../shared/services/confirmation.service';
 
 @Component({
   selector: 'app-maintenance',
@@ -14,6 +15,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
 export class MaintenanceComponent implements OnInit {
   private systemAdminService = inject(SystemAdminService);
   private toastService = inject(ToastService);
+  private confirmationService = inject(ConfirmationService);
 
   activeTab: 'backup' | 'logs' | 'support' = 'backup';
   
@@ -96,19 +98,21 @@ export class MaintenanceComponent implements OnInit {
   }
 
   resetPassword(user: SystemAdminUser) {
-    if (confirm(`Are you sure you want to reset the password for ${user.username}? A new random temporary password will be generated.`)) {
-      this.systemAdminService.resetUserPassword(user.id).subscribe({
-        next: (result) => {
-          this.toastService.show(
-            `Password reset for ${user.username}. Temporary password: ${result.temporaryPassword} — communicate this to the user directly, it will not be shown again.`,
-            'success'
-          );
-        },
-        error: (err) => {
-          console.error('Failed to reset password', err);
-          this.toastService.show(`Failed to reset password for ${user.username}`, 'error');
-        }
-      });
-    }
+    this.confirmationService.confirmPasswordReset(user.username).subscribe(confirmed => {
+      if (confirmed) {
+        this.systemAdminService.resetUserPassword(user.id).subscribe({
+          next: (result) => {
+            this.toastService.show(
+              `Password reset for ${user.username}. Temporary password: ${result.temporaryPassword} — communicate this to the user directly, it will not be shown again.`,
+              'success'
+            );
+          },
+          error: (err) => {
+            console.error('Failed to reset password', err);
+            this.toastService.show(`Failed to reset password for ${user.username}`, 'error');
+          }
+        });
+      }
+    });
   }
 }

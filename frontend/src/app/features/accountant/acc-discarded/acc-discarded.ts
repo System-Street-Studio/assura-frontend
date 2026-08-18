@@ -12,7 +12,6 @@ import { AccDiscardedItemsService, AccDiscardedItem } from '../../../services/ac
 export class AccDiscardedComponent implements OnInit {
     discardedItems: AccDiscardedItem[] = [];
     selectedItem: AccDiscardedItem | null = null;
-    showSuccessCard = false;
     isLoading = true;
 
     constructor(

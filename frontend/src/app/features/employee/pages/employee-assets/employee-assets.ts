@@ -69,7 +69,7 @@ export class EmployeeAssetsComponent implements OnInit {
   selectedCategory = signal('');
 
   // Pagination
-  pageSize = 6;
+  pageSize = 20;
   currentPage = signal(1);
 
   assets = signal<Asset[]>([]);

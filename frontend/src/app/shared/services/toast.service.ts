@@ -34,18 +34,18 @@ export class ToastService {
   }
 
   success(message: string): void {
-    this.show(message, 'success');
+    this.show(message, 'success', 4000);
   }
 
   error(message: string): void {
-    this.show(message, 'error');
+    this.show(message, 'error', 6000);
   }
 
   info(message: string): void {
-    this.show(message, 'info');
+    this.show(message, 'info', 4000);
   }
 
   warning(message: string): void {
-    this.show(message, 'warning');
+    this.show(message, 'warning', 5000);
   }
 }

@@ -7,13 +7,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CategoryService } from '../../../inventory/services/category.service';
 import { Category } from '../../../inventory/models/category.model';
-import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 
 @Component({
   selector: 'app-new-asset-request',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MatIconModule, ResultOverlayComponent],
+  imports: [CommonModule, FormsModule, RouterModule, MatIconModule],
   templateUrl: './new-asset-request.html',
   styleUrl: './new-asset-request.css',
 })
@@ -21,17 +21,12 @@ export class NewAssetRequestComponent implements OnInit {
   private authService = inject(AuthService);
   private categoryService = inject(CategoryService);
   private location = inject(Location);
+  private toastService = inject(ToastService);
 
   categories = signal<Category[]>([]);
   selectedFiles = signal<File[]>([]);
   isSubmitting = signal(false);
   fileInput: HTMLInputElement | null = null;
-
-  // Result overlay signals
-  showResult = signal(false);
-  resultType = signal<'success' | 'error'>('success');
-  resultTitle = signal('');
-  resultMessage = signal('');
 
   // Form data model
   requestData = {
@@ -59,14 +54,6 @@ export class NewAssetRequestComponent implements OnInit {
     });
   }
 
-  // Handle result overlay close
-  onResultClosed(): void {
-  this.showResult.set(false);
-
-  if (this.resultType() === 'success') {
-    this.location.back();
-  }
-}
 
   preventNegativeInput(event: KeyboardEvent) {
     if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
@@ -107,22 +94,15 @@ export class NewAssetRequestComponent implements OnInit {
     this.assetService.createRequest(requestPayload, this.selectedFiles()).subscribe({
       next: (res: any) => {
         this.isSubmitting.set(false);
-        this.resultType.set('success');
-        this.resultTitle.set('Request Submitted');
-        this.resultMessage.set(
-          res?.message || 'Asset request submitted successfully.'
-        );
-        this.showResult.set(true);
+        this.toastService.success(res?.message || 'Asset request submitted successfully');
+        setTimeout(() => {
+          this.location.back();
+        }, 1000);
       },
       error: (err: any) => {
         this.isSubmitting.set(false);
         console.error('Save failed', err);
-        this.resultType.set('error');
-        this.resultTitle.set('Submission Failed');
-        this.resultMessage.set(
-          err?.error?.message || 'Error submitting request. Please try again.'
-        );
-        this.showResult.set(true);
+        this.toastService.error(err?.error?.message || 'Error submitting request. Please try again.');
       }
     });
   }

@@ -36,8 +36,8 @@ export class MaintenanceComponent implements OnInit {
     filterStatus = '';
 
     currentPage = 1;
-    pageSize = 10;
-    pageSizes = [5, 10, 25, 50];
+    pageSize = 20;
+    pageSizes = [5, 20, 25, 50];
     pages: number[] = [1];
 
     /* ── Action modals ── */

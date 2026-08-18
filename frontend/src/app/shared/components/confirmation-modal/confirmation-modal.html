@@ -1,0 +1,18 @@
+<div class="confirmation-modal">
+  <div class="confirmation-header">
+    <h2 class="confirmation-title">{{ data.title }}</h2>
+  </div>
+
+  <div class="confirmation-content">
+    <p class="confirmation-message">{{ data.message }}</p>
+  </div>
+
+  <div class="confirmation-actions">
+    <button class="assura-btn assura-btn-secondary" mat-dialog-close type="button">
+      Cancel
+    </button>
+    <button class="assura-btn assura-btn-danger" [mat-dialog-close]="true" type="button">
+      Confirm
+    </button>
+  </div>
+</div>

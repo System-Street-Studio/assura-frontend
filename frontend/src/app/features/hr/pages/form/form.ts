@@ -2,6 +2,8 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HrAssignmentService, Division } from '../../services/hr-assignment.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { ConfirmationService } from '../../../../shared/services/confirmation.service';
 import { CommonModule } from '@angular/common';
 
 interface RoleAssignmentResponse {
@@ -29,6 +31,8 @@ export interface AssignRoleForm {
 export class HrAssignRoleFormComponent implements OnInit {
   private router = inject(Router);
   private hrAssignmentService = inject(HrAssignmentService);
+  private toastService = inject(ToastService);
+  private confirmationService = inject(ConfirmationService);
 
   divisions = signal<Division[]>([]);
   // Admin and SystemAdmin are deliberately excluded — HR may only assign operational
@@ -56,7 +60,6 @@ export class HrAssignRoleFormComponent implements OnInit {
   };
 
   isUpdate = false;
-  submitted = false;
   loadError = false;
 
   ngOnInit(): void {
@@ -120,7 +123,7 @@ export class HrAssignRoleFormComponent implements OnInit {
       .map(a => ({ divisionId: a.divisionId as number, role: a.role }));
 
     if (validAssignments.length === 0) {
-      alert('Please add at least one valid division and role assignment.');
+      this.toastService.error('Please add at least one valid division and role assignment.');
       return;
     }
 
@@ -136,16 +139,22 @@ export class HrAssignRoleFormComponent implements OnInit {
 
     request.subscribe({
       next: (response: RoleAssignmentResponse) => {
-        this.submitted = true;
+        const successMessage = `${this.form.employeeName || 'Selected employee'} has been successfully assigned to ${this.form.assignments.length} division(s) with their respective roles.`;
+        this.toastService.success(successMessage);
+
         const skipped = response?.skippedAssignments;
         if (skipped && skipped.length > 0) {
-          const details = skipped.map(a => `- Division ${a.divisionId}, Role "${a.role}"`).join('\n');
-          alert(`Some assignments were skipped because their role or division was invalid:\n${details}`);
+          const details = skipped.map(a => `Division ${a.divisionId}, Role "${a.role}"`).join(', ');
+          this.toastService.warning(`Some assignments were skipped: ${details}`);
         }
+
+        setTimeout(() => {
+          this.router.navigate(['/hr/assigned']);
+        }, 1000);
       },
       error: (err) => {
         console.error('Error processing role:', err);
-        alert('Failed to process request. Please try again.');
+        this.toastService.error('Failed to process request. Please try again.');
       }
     });
   }
@@ -154,32 +163,33 @@ export class HrAssignRoleFormComponent implements OnInit {
     if (this.form.dbId === 0) return;
 
     if (!this.form.note.trim()) {
-      alert('Please add a note explaining the reason for rejection.');
+      this.toastService.error('Please add a note explaining the reason for rejection.');
       return;
     }
 
-    if (!confirm('Are you sure you want to reject this role request?')) return;
-
-    this.hrAssignmentService.rejectUser(this.form.dbId, this.form.note).subscribe({
-      next: () => {
-        alert('User rejected successfully.');
-        this.router.navigate(['/hr/pending']);
-      },
-      error: (err) => {
-        console.error('Error rejecting user:', err);
-        alert('Failed to reject user.');
+    this.confirmationService.confirm(
+      'Reject Role Request',
+      'Are you sure you want to reject this role request?'
+    ).subscribe(confirmed => {
+      if (confirmed) {
+        this.hrAssignmentService.rejectUser(this.form.dbId, this.form.note).subscribe({
+          next: () => {
+            this.toastService.success('User rejected successfully.');
+            setTimeout(() => {
+              this.router.navigate(['/hr/pending']);
+            }, 1000);
+          },
+          error: (err) => {
+            console.error('Error rejecting user:', err);
+            this.toastService.error('Failed to reject user.');
+          }
+        });
       }
     });
   }
 
-  closePopup(): void {
-    this.submitted = false;
-    this.router.navigate(['/hr/assigned']);
-  }
-
   resetForm(): void {
     this.ngOnInit();
-    this.submitted = false;
   }
 
   private getTodayDate(): string {

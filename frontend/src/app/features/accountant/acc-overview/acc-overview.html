@@ -45,12 +45,12 @@
             </div>
 
             <!-- Pagination -->
-            <div class="pagination">
-                <span class="page-link" (click)="previousPage()">← Previous</span>
-                <span class="page-num" *ngFor="let p of [1, 2, 3]" [class.active]="currentPage === p"
-                    (click)="goToPage(p)">{{ p }}</span>
-                <span class="page-link" (click)="nextPage()">Next →</span>
-            </div>
+            <app-pagination
+                [currentPage]="currentPage"
+                [totalPages]="totalPages"
+                [pageNumbers]="getPageNumbers()"
+                (pageChange)="onPageChange($event)">
+            </app-pagination>
         </div>
 
         <!-- Right: Confirmation Request Detail -->
@@ -203,49 +203,5 @@
                 </span>
             </button>
         </div>
-    </div>
-</div>
-
-<!-- Success Toast -->
-<div class="global-toast-container" *ngIf="showSuccessCard">
-    <div class="global-toast-card toast-success">
-        <div class="global-toast-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </div>
-        <div class="global-toast-content">
-            <h4 class="global-toast-title">Success</h4>
-            <p class="global-toast-message">Saved As Discarded</p>
-        </div>
-        <button class="global-toast-close" (click)="closeSuccess()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
-    </div>
-</div>
-
-<!-- Error Toast -->
-<div class="global-toast-container" *ngIf="showErrorCard">
-    <div class="global-toast-card toast-error">
-        <div class="global-toast-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-        </div>
-        <div class="global-toast-content">
-            <h4 class="global-toast-title" style="color: #ef4444;">Error</h4>
-            <p class="global-toast-message">{{ errorMessage }}</p>
-        </div>
-        <button class="global-toast-close" (click)="closeError()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
     </div>
 </div>

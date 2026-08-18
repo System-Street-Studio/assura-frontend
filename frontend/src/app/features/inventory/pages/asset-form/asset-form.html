@@ -252,8 +252,3 @@
     </div>
   </form>
 </div>
-
-<!-- Result Overlay: covers the whole page after a save attempt.
-     Auto-closes after 2 seconds; (closed) fires onResultClosed() which then navigates away. -->
-<app-result-overlay *ngIf="showResult" [type]="resultType" [title]="resultTitle" [message]="resultMessage"
-  (closed)="onResultClosed()"></app-result-overlay>

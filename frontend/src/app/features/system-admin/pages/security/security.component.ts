@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SystemAdminService, SystemAdminUser, SystemAdminAuditLog } from '../../services/system-admin.service';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { ConfirmationService } from '../../../../shared/services/confirmation.service';
 
 @Component({
   selector: 'app-security',
@@ -14,6 +15,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
 export class SecurityComponent implements OnInit {
   private systemAdminService = inject(SystemAdminService);
   private toastService = inject(ToastService);
+  private confirmationService = inject(ConfirmationService);
 
   activeTab: 'users' | 'logs' = 'users';
   searchTerm = '';
@@ -87,18 +89,20 @@ export class SecurityComponent implements OnInit {
       return;
     }
 
-    const action = user.isLocked ? 'Unlock' : 'Lock';
-    if (confirm(`Are you sure you want to ${action} user ${user.username}?`)) {
-      this.systemAdminService.toggleUserLock(user.id).subscribe({
-        next: () => {
-          this.toastService.show(`User ${user.username} successfully ${action.toLowerCase()}ed.`, 'success');
-          this.loadData(); // Refresh list to get updated status
-        },
-        error: (err) => {
-          console.error(`Failed to ${action} user`, err);
-          this.toastService.show(`Failed to ${action.toLowerCase()} user ${user.username}.`, 'error');
-        }
-      });
-    }
+    this.confirmationService.confirmToggleLock(user.username, user.isLocked).subscribe(confirmed => {
+      if (confirmed) {
+        const action = user.isLocked ? 'Unlock' : 'Lock';
+        this.systemAdminService.toggleUserLock(user.id).subscribe({
+          next: () => {
+            this.toastService.show(`User ${user.username} successfully ${action.toLowerCase()}ed.`, 'success');
+            this.loadData(); // Refresh list to get updated status
+          },
+          error: (err) => {
+            console.error(`Failed to ${action} user`, err);
+            this.toastService.show(`Failed to ${action.toLowerCase()} user ${user.username}.`, 'error');
+          }
+        });
+      }
+    });
   }
 }
