@@ -175,7 +175,11 @@
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
-.status-badge.approved {
+.status-badge.approved,
+.status-badge.temporaryassigned,
+.status-badge.temporary_assigned,
+.status-badge.temporary-assigned,
+.status-badge.temporary.assigned {
   background: rgba(16, 185, 129, 0.15);
   color: #34d399;
   border: 1px solid rgba(16, 185, 129, 0.3);

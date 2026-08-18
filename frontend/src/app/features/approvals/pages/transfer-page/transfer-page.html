@@ -11,7 +11,7 @@
   </header>
 
   <!-- Navigation Tabs -->
-  <div class="transfer-tabs">
+  <div class="transfer-tabs" assura-grid assura-grid-cols-4>
     <button class="tab-btn" [class.active]="activeTab() === 'outgoing'" (click)="setTab('outgoing')">
       <mat-icon>outbox</mat-icon>
       <span>Outgoing Requests</span>
@@ -226,20 +226,33 @@
 
               <div class="card-actions-row">
                 @if (activeTab() === 'incoming') {
+                  @if (item.status === 'PendingOwnerDivisionHeadApproval') {
                   <button class="btn-approve-action" (click)="approveTransfer(item.id)">
                     <mat-icon>check_circle</mat-icon> Approve Transfer
                   </button>
                   <button class="btn-reject-action" (click)="rejectTransfer(item.id)">
                     <mat-icon>cancel</mat-icon> Reject
                   </button>
+                 }@else if (item.status === 'RejectedByDivisionHead') {
+                    <span class="status-badge-outline rejected"><span class="status-dot"></span>Rejected By DivisionHead</span>
+                  } @else if (item.status === 'WaitingForFinalConfirmation') {
+                    <span class="status-badge-outline waiting"><span class="status-dot"></span>Waiting Confirmation</span>
+                  }@else if (item.status === 'RejectedConfirmation') {
+                    <span class="status-badge-outline rejected"><span class="status-dot"></span>Rejected Confirmation</span>
+                  }
                 }
                 @if (activeTab() === 'pending') {
+                  @if (item.status === 'WaitingForFinalConfirmation') {
                   <button class="btn-confirm-action" (click)="confirmTransfer(item.id)">
                     <mat-icon>verified</mat-icon> Confirm Handover
                   </button>
                   <button class="btn-reject-action" (click)="rejectTransfer(item.id)">
                     <mat-icon>cancel</mat-icon> Reject
                   </button>
+                  }
+                  @if (item.status === 'RejectedConfirmation') {
+                    <span class="status-badge-outline rejected">Rejected Confirmation</span>
+                  }
                 }
               </div>
             </div>
@@ -374,6 +387,13 @@
               <div class="card-actions-row">
                 @if (item.status === 'Cancelled') {
                   <span class="status-badge-outline cancelled">Cancelled</span>
+                } @else if (item.status === 'RejectedByDivisionHead' || item.status === 'Rejected') {
+                  <span class="status-badge-outline rejected" >
+                    <span class="status-dot" ></span> {{item.status}}
+                  </span>
+                } @else if (item.status === 'PendingOwnerDivisionHeadApproval') {
+                    <span class="status-badge-outline pending"><span class="status-dot"></span>Pending Approval</span>
+                  
                 } @else {
                   <button class="btn-cancel-action" (click)="cancelTransfer(item.id)">
                     <mat-icon>close</mat-icon> Cancel Request
@@ -402,4 +422,19 @@
       </app-pagination>
     }
   </section>
+
+  @if (showPopup()) {
+    <div class="overlay" (click)="closePopup()">
+      <div class="glass-modal" [class.reject]="popupType() === 'reject'" (click)="$event.stopPropagation()">
+        <div class="modal-icon-badge">
+          <mat-icon>{{ popupType() === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+        </div>
+        <div class="modal-body-text">
+          <h3>{{ popupType() === 'success' ? 'Transfer Action Completed' : 'Transfer Action Failed' }}</h3>
+          <p>{{ popupMessage() }}</p>
+        </div>
+        <button class="modal-done-btn" (click)="closePopup()">Done</button>
+      </div>
+    </div>
+  }
 </div>

@@ -32,6 +32,10 @@ export class AllRequestsComponent implements OnInit {
   private authService = inject(AuthService);
   private assetService = inject(AssetService);
 
+  private sortByRequestOrderDesc(a: AssetRequest, b: AssetRequest): number {
+    return Number(b.id) - Number(a.id);
+  }
+
   onSearchChange(value: string) {
     this.searchQuery.set(value);
     this.currentPage.set(1);
@@ -55,7 +59,7 @@ export class AllRequestsComponent implements OnInit {
       
       this.assetService.getEmployeeRequests(userId).subscribe({
         next: (data: AssetRequest[]) => {
-          this.requests.set(data);
+          this.requests.set([...data].sort((a, b) => this.sortByRequestOrderDesc(a, b)));
           this.isLoading.set(false); 
         },
         error: (err) => {

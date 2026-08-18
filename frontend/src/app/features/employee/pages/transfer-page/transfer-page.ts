@@ -76,6 +76,9 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   
   isLoading = signal(false);
   errorMessage = signal('');
+  showPopup = signal(false);
+  popupMessage = signal('');
+  popupType = signal<'success' | 'reject'>('success');
   showMenu = signal(false); 
   filterType = signal<'all' | 'IncomingActive' | 'OutgoingActive'>('all');
   searchQuery = signal<string>('');
@@ -127,8 +130,12 @@ export class TransferPageComponent implements OnInit, OnDestroy {
           this.loadTransfers();
           this.loadAllCounts();
           this.expandedItemId.set(null);
+          this.showActionPopup('Asset returned successfully. Transfer has been completed.', 'success');
         },
-        error: (err) => console.error('Error returning asset:', err)
+        error: (err) => {
+          console.error('Error returning asset:', err);
+          this.showActionPopup('Failed to return asset. Please try again.', 'reject');
+        }
       });
     }
   }
@@ -277,8 +284,12 @@ export class TransferPageComponent implements OnInit, OnDestroy {
       next: () => {
         this.loadTransfers(); 
         this.loadAllCounts(); 
+        this.showActionPopup('Transfer accepted successfully.', 'success');
       },
-      error: (err) => console.error('Error updating status', err)
+      error: (err) => {
+        console.error('Error updating status', err);
+        this.showActionPopup('Failed to accept transfer. Please try again.', 'reject');
+      }
     });
   }
 
@@ -288,9 +299,23 @@ export class TransferPageComponent implements OnInit, OnDestroy {
       next: () => {
         this.loadTransfers();
         this.loadAllCounts(); 
+        this.showActionPopup('Transfer rejected successfully.', 'success');
       },
-      error: (err) => console.error('Error rejecting transfer', err)
+      error: (err) => {
+        console.error('Error rejecting transfer', err);
+        this.showActionPopup('Failed to reject transfer. Please try again.', 'reject');
+      }
     });
+  }
+
+  closePopup() {
+    this.showPopup.set(false);
+  }
+
+  private showActionPopup(message: string, type: 'success' | 'reject') {
+    this.popupMessage.set(message);
+    this.popupType.set(type);
+    this.showPopup.set(true);
   }
 
   // Additional methods for confirm, cancel, etc. can be implemented similarly

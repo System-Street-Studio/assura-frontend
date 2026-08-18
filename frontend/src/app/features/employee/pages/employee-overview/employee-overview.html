@@ -142,7 +142,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (arrival of filteredArrivedAssets(); track arrival.id) {
+                @for (arrival of paginatedArrivedAssets(); track arrival.id) {
                   <tr [class.highlight-row]="isAwaitingConfirmation(arrival.status)">
                     <td class="item-name-cell">
                       <div style="display: flex; align-items: center; gap: 8px;">
@@ -199,6 +199,17 @@
               </tbody>
             </table>
           </div>
+
+          @if (arrivedAssetsTotalPages() > 1) {
+            <div class="pagination-wrapper">
+              <app-pagination
+                [currentPage]="arrivedAssetsCurrentPage()"
+                [totalPages]="arrivedAssetsTotalPages()"
+                [pageNumbers]="arrivedAssetsPageNumbers()"
+                (pageChange)="onArrivedAssetsPageChange($event)">
+              </app-pagination>
+            </div>
+          }
         </div>
       </section>
     }
@@ -230,7 +241,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (req of pendingRequests(); track req.id) {
+                @for (req of paginatedPendingRequests(); track req.id) {
                   <tr>
                     <td><span class="id-tag">#{{ req.id }}</span></td>
                     <td class="date-cell">{{ req.requestDate | date: 'mediumDate' }}</td>
@@ -254,6 +265,17 @@
               </tbody>
             </table>
           </div>
+
+          @if (pendingRequestsTotalPages() > 1) {
+            <div class="pagination-wrapper">
+              <app-pagination
+                [currentPage]="pendingRequestsCurrentPage()"
+                [totalPages]="pendingRequestsTotalPages()"
+                [pageNumbers]="pendingRequestsPageNumbers()"
+                (pageChange)="onPendingRequestsPageChange($event)">
+              </app-pagination>
+            </div>
+          }
         } @else {
           <div class="empty-state-box">
             <mat-icon class="empty-icon">check_circle_outline</mat-icon>

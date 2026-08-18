@@ -16,10 +16,11 @@ describe('EmployeeOverviewComponent', () => {
   let mockNotifService: jasmine.SpyObj<NotificationService>;
 
   beforeEach(async () => {
-    mockAuthService = jasmine.createSpyObj('AuthService', ['getFirstName', 'getUserId', 'getDivisionId']);
+    mockAuthService = jasmine.createSpyObj('AuthService', ['getFirstName', 'getUserId', 'getDivisionId', 'getRoles']);
     mockAuthService.getFirstName.and.returnValue('John');
     mockAuthService.getUserId.and.returnValue('1');
     mockAuthService.getDivisionId.and.returnValue(1);
+    mockAuthService.getRoles.and.returnValue(['Employee']);
 
     mockEmpAssetService = jasmine.createSpyObj('EmpAssetService', ['getArrivedAssets', 'getEmployeeRequests', 'confirmArrival']);
     mockEmpAssetService.getArrivedAssets.and.returnValue(of([]));
