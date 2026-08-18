@@ -21,19 +21,48 @@
       <form class="assign-form" #assignForm="ngForm" (ngSubmit)="assignRole()">
         <label>
           <span>Employee ID</span>
-          <input type="text" name="employeeId" placeholder="E1223" required [(ngModel)]="form.employeeId" />
+          <input type="text" name="employeeId" placeholder="Type an existing employee ID" required
+            [readOnly]="!isDirectEntry" [attr.list]="isDirectEntry ? 'pending-employee-ids' : null"
+            [(ngModel)]="form.employeeId" (input)="isDirectEntry && selectEmployeeById()" />
+          @if (isDirectEntry) {
+          <datalist id="pending-employee-ids">
+            @for (user of selectableUsers(); track user.id) {
+            <option [value]="user.userId">{{ user.name }}</option>
+            }
+          </datalist>
+          <small class="employee-hint">Type or select an existing pending employee ID.</small>
+          }
         </label>
 
         <label>
           <span>Employee Name</span>
-          <input type="text" name="employeeName" placeholder="Enter employee name" required
-            [(ngModel)]="form.employeeName" />
+          <input type="text" name="employeeName" placeholder="Type an existing employee name" required
+            [readOnly]="!isDirectEntry" [attr.list]="isDirectEntry ? 'pending-employees' : null"
+            [(ngModel)]="form.employeeName" (input)="isDirectEntry && selectEmployeeByName()" />
+          @if (isDirectEntry) {
+          <datalist id="pending-employees">
+            @for (user of selectableUsers(); track user.id) {
+            <option [value]="user.name">{{ user.userId }}</option>
+            }
+          </datalist>
+          <small class="employee-hint">Type or select an existing pending employee name.</small>
+          }
         </label>
+
+        @if (isDirectEntry && employeeMatchAttempted) {
+        <div class="employee-match-status full-width" [class.matched]="form.dbId !== 0" role="status">
+          @if (form.dbId !== 0) {
+            Employee matched: {{ form.employeeName }} ({{ form.employeeId }})
+          } @else {
+            No pending employee matches that ID or name. Choose an autocomplete suggestion.
+          }
+        </div>
+        }
 
         <div class="assignments-section">
           <div class="section-header">
             <h3 style="color: #f8fafc;">Division & Role Assignments</h3>
-            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="addAssignment()">
+            <button type="button" class="assura-btn form-add-btn" (click)="addAssignment()">
               + Add Assignment
             </button>
           </div>
@@ -84,7 +113,7 @@
         </label>
 
         <div class="form-actions">
-          <button class="assura-btn assura-btn-secondary" type="button" (click)="resetForm()">Clear</button>
+          <button class="assura-btn form-clear-btn" type="button" (click)="resetForm()">Clear</button>
           @if (!isUpdate) {
           <button class="assura-btn assura-btn-danger" type="button" (click)="rejectRole()">Reject</button>
           }

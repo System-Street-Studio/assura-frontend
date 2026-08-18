@@ -55,6 +55,7 @@ export interface HrOverview {
 // Used for both flows the assign-role form serves: selecting a pending user to
 // assign for the first time, and selecting an already-assigned user to edit.
 const SELECTED_USER_ID_FOR_ASSIGNMENT_KEY = 'hrSelectedUserIdForAssignment';
+const RECENTLY_ASSIGNED_USER_ID_KEY = 'hrRecentlyAssignedUserId';
 
 export interface Division {
   id: number;
@@ -117,6 +118,15 @@ export class HrAssignmentService {
     return id ? parseInt(id, 10) : null;
   }
 
+  markRecentlyAssignedUser(id: number): void {
+    localStorage.setItem(RECENTLY_ASSIGNED_USER_ID_KEY, id.toString());
+  }
+
+  getRecentlyAssignedUserId(): number | null {
+    const id = localStorage.getItem(RECENTLY_ASSIGNED_USER_ID_KEY);
+    return id ? parseInt(id, 10) : null;
+  }
+
   assignRole(userId: number, payload: RoleAssignmentPayload): Observable<any> {
     return this.http.post(`${this.apiUrl}/users/${userId}/assign-role`, payload);
   }
@@ -135,4 +145,3 @@ export class HrAssignmentService {
     return this.http.get<any[]>(`${this.apiUrl}/activity-logs`, { params });
   }
 }
-
