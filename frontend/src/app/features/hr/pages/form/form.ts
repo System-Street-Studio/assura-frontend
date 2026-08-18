@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HrAssignmentService, Division } from '../../services/hr-assignment.service';
+import { HrAssignmentService, Division, PendingRoleUser } from '../../services/hr-assignment.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ConfirmationService } from '../../../../shared/services/confirmation.service';
 import { CommonModule } from '@angular/common';
@@ -35,6 +35,10 @@ export class HrAssignRoleFormComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
 
   divisions = signal<Division[]>([]);
+  selectableUsers = signal<PendingRoleUser[]>([]);
+  selectedEmployeeId: number | null = null;
+  isDirectEntry = false;
+  employeeMatchAttempted = false;
   // Admin and SystemAdmin are deliberately excluded — HR may only assign operational
   // roles, matching the backend allow-list in Assura.Domain.Constants.Roles.HrAssignableRoles.
   readonly roles = [
@@ -69,6 +73,20 @@ export class HrAssignRoleFormComponent implements OnInit {
       this.divisions.set(divisions);
     });
 
+    this.isDirectEntry = (this.router.url ?? '').split('?')[0] === '/hr/assign-form';
+
+    if (this.isDirectEntry) {
+      this.resetToBlankForm();
+      this.hrAssignmentService.getPendingUsers().subscribe({
+        next: users => this.selectableUsers.set(users),
+        error: err => {
+          console.error('Error loading pending employees:', err);
+          this.loadError = true;
+        }
+      });
+      return;
+    }
+
     const selectedUserId = this.hrAssignmentService.getSelectedUserIdForAssignment();
 
     if (!selectedUserId) {
@@ -76,8 +94,47 @@ export class HrAssignRoleFormComponent implements OnInit {
       return;
     }
 
+    this.loadUser(selectedUserId);
+  }
+
+  selectEmployeeByName(): void {
+    this.employeeMatchAttempted = this.form.employeeName.trim().length > 0;
+    const typedName = this.form.employeeName.trim().toLowerCase();
+    const employee = this.selectableUsers().find(
+      user => user.name.trim().toLowerCase() === typedName
+    );
+
+    if (!employee) {
+      this.selectedEmployeeId = null;
+      this.form.dbId = 0;
+      this.form.employeeId = '';
+      return;
+    }
+
+    this.selectedEmployeeId = employee.id;
+    this.loadUser(employee.id);
+  }
+
+  selectEmployeeById(): void {
+    this.employeeMatchAttempted = this.form.employeeId.trim().length > 0;
+    const typedId = this.form.employeeId.trim().toLowerCase();
+    const employee = this.selectableUsers().find(
+      user => user.userId.trim().toLowerCase() === typedId
+    );
+
+    if (!employee) {
+      this.selectedEmployeeId = null;
+      this.form.dbId = 0;
+      return;
+    }
+
+    this.selectedEmployeeId = employee.id;
+    this.loadUser(employee.id);
+  }
+
+  private loadUser(userId: number): void {
     this.loadError = false;
-    this.hrAssignmentService.getUserById(selectedUserId).subscribe({
+    this.hrAssignmentService.getUserById(userId).subscribe({
       next: (user) => {
         if (!user) {
           this.router.navigate(['/hr/pending']);
@@ -85,6 +142,7 @@ export class HrAssignRoleFormComponent implements OnInit {
         }
 
         this.isUpdate = !!(user.assignedRole || (user.assignments && user.assignments.length > 0));
+        this.employeeMatchAttempted = true;
 
         this.form = {
           dbId: user.id,
@@ -116,7 +174,10 @@ export class HrAssignRoleFormComponent implements OnInit {
   }
 
   assignRole(): void {
-    if (this.form.dbId === 0) return;
+    if (this.form.dbId === 0) {
+      this.toastService.error('Employee not found. Enter an exact pending employee ID or name from the suggestions.');
+      return;
+    }
 
     // Filter out incomplete assignments
     const validAssignments = this.form.assignments
@@ -141,6 +202,9 @@ export class HrAssignRoleFormComponent implements OnInit {
     request.subscribe({
       next: (response: RoleAssignmentResponse) => {
         this.submitted = true;
+        if (!this.isUpdate) {
+          this.hrAssignmentService.markRecentlyAssignedUser(this.form.dbId);
+        }
         const successMessage = `${this.form.employeeName || 'Selected employee'} has been successfully assigned to ${this.form.assignments.length} division(s) with their respective roles.`;
         this.toastService.success(successMessage);
 
@@ -191,11 +255,32 @@ export class HrAssignRoleFormComponent implements OnInit {
   }
 
   resetForm(): void {
+    if (this.isDirectEntry) {
+      this.selectedEmployeeId = null;
+      this.resetToBlankForm();
+      return;
+    }
+
     this.ngOnInit();
+  }
+
+  private resetToBlankForm(): void {
+    this.isUpdate = false;
+    this.loadError = false;
+    this.submitted = false;
+    this.employeeMatchAttempted = false;
+    this.form = {
+      dbId: 0,
+      employeeId: '',
+      employeeName: '',
+      assignments: [{ divisionId: null, role: '' }],
+      effectiveDate: this.getTodayDate(),
+      note: '',
+      jobTitle: ''
+    };
   }
 
   private getTodayDate(): string {
     return new Date().toISOString().slice(0, 10);
   }
 }
-

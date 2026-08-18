@@ -21,5 +21,9 @@ export const hrRoutes: Routes = [
         path: 'assign-role',
         loadComponent: () => import('./pages/form/form').then((m) => m.HrAssignRoleFormComponent),
     },
+    {
+        path: 'assign-form',
+        loadComponent: () => import('./pages/form/form').then((m) => m.HrAssignRoleFormComponent),
+    },
     { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];

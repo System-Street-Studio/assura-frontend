@@ -58,6 +58,7 @@ export class SharedSidebarComponent {
     { label: 'Overview', icon: 'home', link: '/hr/overview', roles: ['HR', 'Admin'] },
     { label: 'Activity Logs', icon: 'history', link: '/hr/activity-logs', roles: ['HR', 'Admin'] },
     { label: 'Pending', icon: 'pending_actions', link: '/hr/pending', roles: ['HR', 'Admin'] },
+    { label: 'Assign Form', icon: 'assignment_ind', link: '/hr/assign-form', roles: ['HR', 'Admin'] },
     { label: 'Assigned', icon: 'group', link: '/hr/assigned', roles: ['HR', 'Admin'] },
 
     // Accountant section
