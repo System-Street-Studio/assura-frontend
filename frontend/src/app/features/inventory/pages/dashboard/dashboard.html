@@ -1,298 +1,348 @@
 <!-- ═══════════════════════════════════════════════════════════════
-     Dashboard Page — Storekeeper home screen
-     Sections:
-       1. Loading Skeleton — shown while API data is in-flight
-       2. Welcome Banner  — greeting, quick stats, quick-action buttons
-       3. KPI Grid        — 7 key metric cards with progress bars
-       4. Two-Column Row  — Recent Activity feed | Warranty Expiry alerts
-       5. Charts Grid     — 4 Chart.js charts (doughnut, line, 2x bar)
-       6. Anomalies       — Ghost assets, missing assets, maintenance overdue
+     Inventory Dashboard — Storekeeper home screen
+       1. Header      — greeting, timestamp, refresh control
+       2. KPI Grid    — headline metrics, the first three with share meters
+       3. Activity    — recent activity feed | warranty expiry alerts
+       4. Charts      — category / trend / status / division
+       5. Anomalies   — ghost, missing, maintenance-overdue assets
      ═══════════════════════════════════════════════════════════════ -->
 <div class="page">
 
-  <!-- ── 1. Loading Skeleton ──────────────────────────────────────────────
-       Displayed while `loading` is true (during the API call).
-       Mimics the real page layout with animated shimmer placeholders so
-       the user understands content is loading, not that the page is broken. -->
-  <div class="skeleton-view" *ngIf="loading">
-    <div class="skeleton-banner"></div>
-    <!-- Render 6 skeleton KPI cards matching the real grid size -->
-    <div class="kpi-grid">
-      <div class="kpi-card skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
-        <div class="skeleton-line short"></div>
-        <div class="skeleton-line wide"></div>
-      </div>
-    </div>
-    <!-- Render 4 skeleton chart cards -->
-    <div class="charts-grid">
-      <div class="card skeleton-chart" *ngFor="let i of [1,2,3,4]">
-        <div class="skeleton-line short"></div>
-        <div class="skeleton-block"></div>
-      </div>
-    </div>
-  </div>
+  @if (loading()) {
+    <!-- Skeleton mirrors the real layout so nothing jumps when data lands. -->
+    <div class="skeleton-view" aria-busy="true" aria-live="polite">
+      <span class="visually-hidden">Loading dashboard…</span>
 
-  <!-- ── 2–6. Main Dashboard Content ─────────────────────────────────────
-       Only visible after data has loaded successfully. -->
-  <div class="dashboard-content" *ngIf="!loading">
+      <div class="skeleton-banner shimmer"></div>
 
-    <!-- ── 2. Welcome Banner ── -->
-    <div class="assura-greeting-banner">
-      <h2 class="assura-greeting-text">{{ greeting }}, {{ firstName }}</h2>
-      <p class="assura-greeting-date">{{ today | date:'EEEE, MMMM d, y — h:mm a' }}</p>
-    </div>
-
-    <!-- ── 3. KPI Cards Grid ── -->
-    <!-- 7 cards rendered in a 6-column responsive grid.
-         Cards with `routerLink` are clickable and navigate to a filtered assets view.
-         The `.kpi-bar-fill` width is bound to computed rate percentages via [style.width.%]. -->
-    <section class="assura-grid assura-grid-cols-4">
-
-      <!-- Total Assets -->
-      <div class="assura-card assura-accent-info clickable" routerLink="/inventory/assets">
-        <span class="assura-card-title">Total Assets</span>
-        <strong class="assura-card-value">{{ kpis.totalAssets | number }}</strong>
-      </div>
-
-      <!-- Checked Out -->
-      <div class="assura-card assura-accent-primary clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'checked_out' }">
-        <span class="assura-card-title">Checked Out</span>
-        <strong class="assura-card-value">{{ kpis.checkedOut | number }}</strong>
-      </div>
-
-      <!-- Available -->
-      <div class="assura-card assura-accent-success clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'available' }">
-        <span class="assura-card-title">Available</span>
-        <strong class="assura-card-value">{{ kpis.available | number }}</strong>
-      </div>
-
-      <!-- Total Value -->
-      <div class="assura-card assura-accent-warning">
-        <span class="assura-card-title">Total Value</span>
-        <strong class="assura-card-value">{{ kpis.totalAssetValue }}</strong>
-      </div>
-
-      <!-- Pending Requests -->
-      <div class="assura-card assura-accent-warning clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'pending' }">
-        <span class="assura-card-title">Pending Requests</span>
-        <strong class="assura-card-value">{{ kpis.pendingRequests }}</strong>
-      </div>
-
-      <!-- Maintenance Due -->
-      <div class="assura-card assura-accent-danger clickable" routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }">
-        <span class="assura-card-title">Maintenance Due</span>
-        <strong class="assura-card-value">{{ kpis.maintenanceDue }}</strong>
-      </div>
-
-      <!-- Temporary Assigned -->
-      <div class="assura-card assura-accent-info clickable" routerLink="/approvals/requests" [queryParams]="{ tab: 'new' }">
-        <span class="assura-card-title">Temporary Assigned</span>
-        <strong class="assura-card-value">{{ kpis.temporaryAssignedAssets }}</strong>
-        <div class="assura-card-subtitle" style="display: flex; flex-direction: column; gap: 4px; margin-top: 12px;">
-          <span>Awaiting pickup: {{ kpis.awaitingPickupConfirmations }}</span>
-          <span>Escalated: {{ kpis.procurementEscalations }}</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── 4. Two-Column Row: Recent Activity | Warranty Alerts ── -->
-    <section class="assura-grid assura-grid-cols-2" style="margin-bottom: 24px;">
-
-      <!-- Recent Activity Feed -->
-      <!-- `*ngIf="recentActivity.length; else emptyActivity"` conditionally shows the list
-           or falls back to a friendly empty state. -->
-      <div class="assura-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h2 class="assura-card-title" style="margin: 0; display: flex; align-items: center; gap: 8px;"><mat-icon style="color: var(--text-muted);">history</mat-icon> Recent Activity</h2>
-          <a routerLink="/inventory/assets" style="font-size: 13px; font-weight: 500; text-decoration: none; color: var(--primary); display: flex; align-items: center; gap: 4px;">View all <mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_forward</mat-icon></a>
-        </div>
-        <div class="activity-list" *ngIf="recentActivity.length; else emptyActivity">
-          <!-- `let last = last` gives the last-item flag so we can hide the connector line -->
-          <div class="activity-item" *ngFor="let item of recentActivity; let last = last">
-            <!-- Timeline column: coloured dot + vertical connector line (hidden on last item) -->
-            <div class="activity-timeline">
-              <div class="timeline-dot" [style.background]="item.color"></div>
-              <div class="timeline-line" *ngIf="!last"></div>
-            </div>
-            <!-- Action icon: background and foreground colour come from the activity item -->
-            <div class="activity-icon" [style.background]="item.color + '14'" [style.color]="item.color">
-              <mat-icon>{{ item.icon }}</mat-icon>
-            </div>
-            <div class="activity-body">
-              <div class="activity-main">
-                <strong>{{ item.assetName }}</strong>
-                <!-- `formatActionLabel()` maps raw action keys to readable strings -->
-                <span class="activity-badge" [style.background]="item.color + '14'" [style.color]="item.color">
-                  {{ formatActionLabel(item.action) }}
-                </span>
-              </div>
-              <!-- Meta row: asset code · user · relative timestamp -->
-              <div class="activity-meta">
-                <span class="activity-id">{{ item.assetCode }}</span>
-                <span class="activity-sep">·</span>
-                <span>{{ item.user }}</span>
-                <span class="activity-sep">·</span>
-                <!-- `formatTimeAgo()` converts the Date to a human-readable relative string -->
-                <span class="activity-time">{{ formatTimeAgo(item.timestamp) }}</span>
-              </div>
-            </div>
+      <div class="kpi-grid">
+        @for (i of skeletonKpis; track i) {
+          <div class="kpi-card skeleton-card">
+            <div class="skeleton-line short shimmer"></div>
+            <div class="skeleton-line wide shimmer"></div>
+            <div class="skeleton-line meter shimmer"></div>
           </div>
-        </div>
-        <!-- Empty state template reference -->
-        <ng-template #emptyActivity>
-          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 20px; color: var(--text-muted); gap: 8px;">
-            <mat-icon style="font-size: 32px; width: 32px; height: 32px; opacity: 0.5;">inbox</mat-icon>
-            <span class="assura-card-subtitle" style="font-size: 14px; margin: 0;">No recent activity</span>
-          </div>
-        </ng-template>
+        }
       </div>
 
-      <!-- Warranty Expiry Panel -->
-      <div class="assura-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h2 class="assura-card-title" style="margin: 0; display: flex; align-items: center; gap: 8px;"><mat-icon style="color: var(--text-muted);">shield</mat-icon> Warranty Expiring</h2>
-          <span style="font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: #fef3cd; color: #92640a;">{{ warrantyAlerts.length }} alerts</span>
+      <div class="panel-grid">
+        @for (i of [0, 1]; track i) {
+          <div class="panel skeleton-panel">
+            <div class="skeleton-line short shimmer"></div>
+            <div class="skeleton-block shimmer"></div>
+          </div>
+        }
+      </div>
+
+      <div class="charts-grid">
+        @for (i of skeletonCharts; track i) {
+          <div class="panel skeleton-panel">
+            <div class="skeleton-line short shimmer"></div>
+            <div class="skeleton-block shimmer"></div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="dashboard-content">
+
+      <!-- ── 1. Header ── -->
+      <header class="dash-header">
+        <div class="dash-header-text">
+          <h1 class="dash-greeting">{{ greeting() }}, {{ firstName() }}</h1>
+          <p class="dash-date">{{ today | date: 'EEEE, MMMM d, y' }}</p>
         </div>
-        <div class="warranty-list" *ngIf="warrantyAlerts.length; else emptyWarranty">
-          <!-- `[class]="'severity-' + alert.severity"` adds a coloured left border per severity -->
-          <div class="warranty-item" *ngFor="let alert of warrantyAlerts" [class]="'severity-' + alert.severity">
-            <!-- Severity icon: colour and icon driven by alert.severity value -->
-            <div class="warranty-severity-icon" [class]="alert.severity">
-              <mat-icon>{{ alert.severity === 'critical' ? 'error' : alert.severity === 'warning' ? 'warning' : 'info'
-                }}</mat-icon>
+
+        <div class="dash-header-actions">
+          @if (lastUpdated(); as updated) {
+            <span class="dash-updated" [class.is-refreshing]="refreshing()">
+              @if (refreshing()) {
+                <span class="dot-pulse" aria-hidden="true"></span> Refreshing…
+              } @else {
+                Updated {{ updated | date: 'h:mm a' }}
+              }
+            </span>
+          }
+          <button
+            type="button"
+            class="btn-refresh"
+            (click)="refresh()"
+            [disabled]="refreshing()"
+            aria-label="Refresh dashboard data"
+          >
+            <mat-icon class="icon-sm" [class.spinning]="refreshing()">refresh</mat-icon>
+            <span>Refresh</span>
+          </button>
+        </div>
+      </header>
+
+      @if (loadFailed()) {
+        <div class="alert-bar" role="alert">
+          <mat-icon class="icon-sm">cloud_off</mat-icon>
+          <span>Couldn't reach the server. Showing the last figures we have.</span>
+        </div>
+      }
+
+      <!-- ── 2. KPI Grid ── -->
+      <section class="kpi-grid" aria-label="Key metrics">
+
+        <a class="kpi-card accent-info" routerLink="/inventory/assets">
+          <span class="kpi-label">Total Assets</span>
+          <strong class="kpi-value">{{ kpis().totalAssets | number }}</strong>
+          <span class="kpi-foot">Across every division</span>
+        </a>
+
+        <a
+          class="kpi-card accent-primary"
+          routerLink="/inventory/assets"
+          [queryParams]="{ filter: 'checked_out' }"
+        >
+          <span class="kpi-label">Checked Out</span>
+          <strong class="kpi-value">{{ kpis().checkedOut | number }}</strong>
+          <div class="kpi-meter" role="img" [attr.aria-label]="utilizationRate() + '% of assets checked out'">
+            <span class="kpi-meter-fill fill-primary" [style.width.%]="utilizationRate()"></span>
+          </div>
+          <span class="kpi-foot">{{ utilizationRate() }}% utilisation</span>
+        </a>
+
+        <a
+          class="kpi-card accent-success"
+          routerLink="/inventory/assets"
+          [queryParams]="{ filter: 'available' }"
+        >
+          <span class="kpi-label">Available</span>
+          <strong class="kpi-value">{{ kpis().available | number }}</strong>
+          <div class="kpi-meter" role="img" [attr.aria-label]="availableRate() + '% of assets available'">
+            <span class="kpi-meter-fill fill-success" [style.width.%]="availableRate()"></span>
+          </div>
+          <span class="kpi-foot">{{ availableRate() }}% ready to issue</span>
+        </a>
+
+        <div class="kpi-card accent-warning">
+          <span class="kpi-label">Total Value</span>
+          <strong class="kpi-value kpi-value-sm">{{ kpis().totalAssetValue }}</strong>
+          <span class="kpi-foot">Combined purchase value</span>
+        </div>
+
+        <a
+          class="kpi-card accent-warning"
+          routerLink="/inventory/asset-requests"
+        >
+          <span class="kpi-label">Pending Requests</span>
+          <strong class="kpi-value">{{ kpis().pendingRequests | number }}</strong>
+          <span class="kpi-foot">Awaiting your action</span>
+        </a>
+
+        <a
+          class="kpi-card accent-danger"
+          routerLink="/inventory/maintenance"
+        >
+          <span class="kpi-label">Maintenance Due</span>
+          <strong class="kpi-value">{{ kpis().maintenanceDue | number }}</strong>
+          <div class="kpi-meter" role="img" [attr.aria-label]="maintenanceRate() + '% of assets in maintenance'">
+            <span class="kpi-meter-fill fill-danger" [style.width.%]="maintenanceRate()"></span>
+          </div>
+          <span class="kpi-foot">{{ maintenanceRate() }}% of the fleet</span>
+        </a>
+
+        <a class="kpi-card accent-info kpi-card-wide" routerLink="/approvals/requests" [queryParams]="{ tab: 'new' }">
+          <span class="kpi-label">Temporary Assigned</span>
+          <strong class="kpi-value">{{ kpis().temporaryAssignedAssets | number }}</strong>
+          <div class="kpi-split">
+            <span><em>{{ kpis().awaitingPickupConfirmations | number }}</em> awaiting pickup</span>
+            <span><em>{{ kpis().procurementEscalations | number }}</em> escalated</span>
+          </div>
+        </a>
+      </section>
+
+      <!-- ── 3. Recent Activity | Warranty Alerts ── -->
+      <section class="panel-grid" aria-label="Activity and warranties">
+
+        <article class="panel">
+          <header class="panel-head">
+            <h2 class="panel-title"><mat-icon class="icon-sm">history</mat-icon> Recent Activity</h2>
+            <a class="panel-link" routerLink="/inventory/assets">
+              View all <mat-icon class="icon-xs">arrow_forward</mat-icon>
+            </a>
+          </header>
+
+          @if (recentActivity().length) {
+            <ol class="activity-list">
+              @for (item of recentActivity(); track item.id; let last = $last) {
+                <li class="activity-item" [class.is-last]="last">
+                  <span class="activity-rail" aria-hidden="true">
+                    <span class="activity-dot" [style.background]="item.color"></span>
+                  </span>
+                  <span
+                    class="activity-icon"
+                    aria-hidden="true"
+                    [style.background]="tint(item.color)"
+                    [style.color]="item.color"
+                  >
+                    <mat-icon class="icon-sm">{{ item.icon }}</mat-icon>
+                  </span>
+                  <span class="activity-body">
+                    <span class="activity-main">
+                      <strong class="activity-name">{{ item.assetName }}</strong>
+                      <span class="activity-badge" [style.background]="tint(item.color)" [style.color]="item.color">
+                        {{ formatActionLabel(item.action) }}
+                      </span>
+                    </span>
+                    <span class="activity-meta">
+                      <span class="activity-code">{{ item.assetCode }}</span>
+                      <span class="sep" aria-hidden="true">·</span>
+                      <span>{{ item.user }}</span>
+                      <span class="sep" aria-hidden="true">·</span>
+                      <time [attr.datetime]="toIso(item.timestamp)">{{ formatTimeAgo(item.timestamp) }}</time>
+                    </span>
+                  </span>
+                </li>
+              }
+            </ol>
+          } @else {
+            <div class="empty-state">
+              <mat-icon>inbox</mat-icon>
+              <p>No recent activity</p>
             </div>
-            <div class="warranty-left">
-              <div class="warranty-name">{{ alert.assetName }}</div>
-              <div class="warranty-meta">{{ alert.assetId }} · {{ alert.category }}</div>
+          }
+        </article>
+
+        <article class="panel">
+          <header class="panel-head">
+            <h2 class="panel-title"><mat-icon class="icon-sm">shield</mat-icon> Warranty Expiring</h2>
+            <span class="pill pill-warning">{{ warrantyAlerts().length }} alerts</span>
+          </header>
+
+          @if (warrantyAlerts().length) {
+            <ul class="warranty-list">
+              @for (alert of warrantyAlerts(); track alert.assetCode) {
+                <li class="warranty-item" [class]="'severity-' + alert.severity">
+                  <span class="warranty-icon" aria-hidden="true">
+                    <mat-icon class="icon-sm">{{ getSeverityIcon(alert.severity) }}</mat-icon>
+                  </span>
+                  <span class="warranty-body">
+                    <span class="warranty-name">{{ alert.assetName }}</span>
+                    <span class="warranty-meta">{{ alert.assetCode }} · {{ alert.category }}</span>
+                  </span>
+                  <span class="warranty-right">
+                    <span class="pill pill-tone" [title]="getSeverityLabel(alert.severity)">
+                      {{ alert.daysRemaining }}d left
+                    </span>
+                    <span class="warranty-date">{{ alert.expiryDate | date: 'MMM d, y' }}</span>
+                  </span>
+                </li>
+              }
+            </ul>
+          } @else {
+            <div class="empty-state">
+              <mat-icon>verified</mat-icon>
+              <p>All warranties are up to date</p>
             </div>
-            <div class="warranty-right">
-              <!-- Badge: days remaining with colour matching severity -->
-              <span class="warranty-badge" [class]="alert.severity">
-                {{ alert.daysRemaining }}d left
+          }
+        </article>
+      </section>
+
+      <!-- ── 4. Charts ── -->
+      <section class="charts-grid" aria-label="Asset breakdowns">
+
+        <article class="panel">
+          <header class="panel-head">
+            <div>
+              <h2 class="panel-title">Assets by Category</h2>
+              <p class="panel-sub">Distribution across asset types</p>
+            </div>
+            <mat-icon class="panel-glyph glyph-primary">pie_chart</mat-icon>
+          </header>
+          <div class="chart-box">
+            <canvas baseChart [data]="doughnutData()" [options]="doughnutOptions" type="doughnut"></canvas>
+          </div>
+        </article>
+
+        <article class="panel">
+          <header class="panel-head">
+            <div>
+              <h2 class="panel-title">Checkout Trend</h2>
+              <p class="panel-sub">Monthly asset checkout volume</p>
+            </div>
+            <mat-icon class="panel-glyph glyph-accent">show_chart</mat-icon>
+          </header>
+          <div class="chart-box">
+            <canvas baseChart [data]="lineData()" [options]="lineOptions" type="line"></canvas>
+          </div>
+        </article>
+
+        <article class="panel">
+          <header class="panel-head">
+            <div>
+              <h2 class="panel-title">Assets by Status</h2>
+              <p class="panel-sub">Current lifecycle distribution</p>
+            </div>
+            <mat-icon class="panel-glyph glyph-success">bar_chart</mat-icon>
+          </header>
+          <div class="chart-box">
+            <canvas baseChart [data]="assetsByStatusData()" [options]="barOptions" type="bar"></canvas>
+          </div>
+        </article>
+
+        <article class="panel">
+          <header class="panel-head">
+            <div>
+              <h2 class="panel-title">Assets by Division</h2>
+              <p class="panel-sub">Allocation across divisions</p>
+            </div>
+            <mat-icon class="panel-glyph glyph-warning">groups</mat-icon>
+          </header>
+          <div class="chart-box">
+            <canvas baseChart [data]="assetsByDivisionData()" [options]="barOptions" type="bar"></canvas>
+          </div>
+        </article>
+      </section>
+
+      <!-- ── 5. Anomalies ── -->
+      <section class="anomaly-section" aria-label="Asset anomalies">
+        <h2 class="section-title"><mat-icon class="icon-sm">warning</mat-icon> Asset Anomalies</h2>
+
+        <div class="anomaly-grid">
+          <article class="anomaly-card tone-danger">
+            <header class="anomaly-head">
+              <span class="anomaly-icon" aria-hidden="true">
+                @if (anomalies().ghostAssets > 0) {
+                  <span class="anomaly-pulse"></span>
+                }
+                <mat-icon class="icon-sm">visibility_off</mat-icon>
               </span>
-              <div class="warranty-date">{{ alert.expiryDate }}</div>
-            </div>
-          </div>
-        </div>
-        <ng-template #emptyWarranty>
-          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 20px; color: var(--text-muted); gap: 8px;">
-            <mat-icon style="font-size: 32px; width: 32px; height: 32px; opacity: 0.5;">verified</mat-icon>
-            <span class="assura-card-subtitle" style="font-size: 14px; margin: 0;">All warranties are up to date</span>
-          </div>
-        </ng-template>
-      </div>
-    </section>
+              <span class="anomaly-value">{{ anomalies().ghostAssets | number }}</span>
+            </header>
+            <p class="anomaly-text">Ghost assets — present in records but not found physically</p>
+            <a class="anomaly-link" routerLink="/inventory/assets" [queryParams]="{ filter: 'ghost' }">
+              Investigate <mat-icon class="icon-xs">arrow_forward</mat-icon>
+            </a>
+          </article>
 
-    <!-- ── 5. Charts Grid ── -->
-    <section class="assura-grid assura-grid-cols-2" style="margin-bottom: 24px;">
+          <article class="anomaly-card tone-warning">
+            <header class="anomaly-head">
+              <span class="anomaly-icon" aria-hidden="true"><mat-icon class="icon-sm">search_off</mat-icon></span>
+              <span class="anomaly-value">{{ anomalies().missingAssets | number }}</span>
+            </header>
+            <p class="anomaly-text">Assets missing physical verification during audit</p>
+            <a class="anomaly-link" routerLink="/inventory/assets" [queryParams]="{ filter: 'missing' }">
+              Investigate <mat-icon class="icon-xs">arrow_forward</mat-icon>
+            </a>
+          </article>
 
-      <!-- Doughnut: Assets by Category -->
-      <div class="assura-card">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-          <div>
-            <div class="assura-card-title">Assets by Category</div>
-            <div class="assura-card-subtitle">Distribution across asset types</div>
-          </div>
-          <mat-icon style="color: var(--primary);">pie_chart</mat-icon>
+          <article class="anomaly-card tone-info">
+            <header class="anomaly-head">
+              <span class="anomaly-icon" aria-hidden="true"><mat-icon class="icon-sm">build_circle</mat-icon></span>
+              <span class="anomaly-value">{{ anomalies().maintenanceDue | number }}</span>
+            </header>
+            <p class="anomaly-text">Assets overdue for scheduled maintenance</p>
+            <a class="anomaly-link" routerLink="/inventory/maintenance">
+              View schedule <mat-icon class="icon-xs">arrow_forward</mat-icon>
+            </a>
+          </article>
         </div>
-        <div style="height: 210px;">
-          <canvas baseChart [data]="doughnutData" [options]="doughnutOptions" type="doughnut"></canvas>
-        </div>
-      </div>
+      </section>
 
-      <!-- Line: Checkout Trend -->
-      <div class="assura-card">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-          <div>
-            <div class="assura-card-title">Checkout Trend</div>
-            <div class="assura-card-subtitle">Monthly asset checkout volume</div>
-          </div>
-          <mat-icon style="color: var(--accent);">show_chart</mat-icon>
-        </div>
-        <div style="height: 210px;">
-          <canvas baseChart [data]="lineData" [options]="lineOptions" type="line"></canvas>
-        </div>
-      </div>
-
-      <!-- Bar: Assets by Status -->
-      <div class="assura-card">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-          <div>
-            <div class="assura-card-title">Assets by Status</div>
-            <div class="assura-card-subtitle">Current lifecycle distribution</div>
-          </div>
-          <mat-icon style="color: var(--success);">bar_chart</mat-icon>
-        </div>
-        <div style="height: 210px;">
-          <canvas baseChart [data]="assetsByStatusData" [options]="barOptions" type="bar"></canvas>
-        </div>
-      </div>
-
-      <!-- Bar: Assets by Division -->
-      <div class="assura-card">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-          <div>
-            <div class="assura-card-title">Assets by Division</div>
-            <div class="assura-card-subtitle">Allocation across divisions</div>
-          </div>
-          <mat-icon style="color: var(--warning);">groups</mat-icon>
-        </div>
-        <div style="height: 210px;">
-          <canvas baseChart [data]="assetsByDivisionData" [options]="barOptions" type="bar"></canvas>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── 6. Asset Anomalies ── -->
-    <section>
-      <h2 class="assura-page-title" style="display: flex; align-items: center; gap: 8px;"><mat-icon style="color: var(--danger);">warning</mat-icon> Asset Anomalies</h2>
-      <div class="assura-grid assura-grid-cols-3">
-
-        <!-- Ghost Assets -->
-        <div class="assura-card" style="border-left: 3px solid var(--danger);">
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <div style="width: 40px; height: 40px; border-radius: 50%; background: #fef2f2; color: var(--danger); display: flex; align-items: center; justify-content: center; position: relative;">
-              <span class="anomaly-pulse"></span>
-              <mat-icon>visibility_off</mat-icon>
-            </div>
-            <div>
-              <div style="font-size: 24px; font-weight: 700; color: var(--text-primary); line-height: 1;">{{ anomalies.ghostAssets }}</div>
-            </div>
-          </div>
-          <div class="assura-card-subtitle" style="margin-bottom: 16px;">Ghost assets detected — exist in records but not found physically</div>
-          <a routerLink="/inventory/assets" [queryParams]="{ filter: 'ghost' }" style="font-size: 13px; font-weight: 500; text-decoration: none; color: var(--danger); display: flex; align-items: center; gap: 4px;">Investigate <mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_forward</mat-icon></a>
-        </div>
-
-        <!-- Missing Assets -->
-        <div class="assura-card" style="border-left: 3px solid var(--warning);">
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <div style="width: 40px; height: 40px; border-radius: 50%; background: #fffbeb; color: var(--warning); display: flex; align-items: center; justify-content: center;">
-              <mat-icon>search_off</mat-icon>
-            </div>
-            <div>
-              <div style="font-size: 24px; font-weight: 700; color: var(--text-primary); line-height: 1;">{{ anomalies.missingAssets }}</div>
-            </div>
-          </div>
-          <div class="assura-card-subtitle" style="margin-bottom: 16px;">Assets missing physical verification during audit</div>
-          <a routerLink="/inventory/assets" [queryParams]="{ filter: 'missing' }" style="font-size: 13px; font-weight: 500; text-decoration: none; color: var(--warning); display: flex; align-items: center; gap: 4px;">Investigate <mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_forward</mat-icon></a>
-        </div>
-
-        <!-- Maintenance Overdue -->
-        <div class="assura-card" style="border-left: 3px solid var(--info);">
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <div style="width: 40px; height: 40px; border-radius: 50%; background: #eff6ff; color: var(--info); display: flex; align-items: center; justify-content: center;">
-              <mat-icon>build_circle</mat-icon>
-            </div>
-            <div>
-              <div style="font-size: 24px; font-weight: 700; color: var(--text-primary); line-height: 1;">{{ anomalies.maintenanceDue }}</div>
-            </div>
-          </div>
-          <div class="assura-card-subtitle" style="margin-bottom: 16px;">Assets overdue for scheduled maintenance</div>
-          <a routerLink="/inventory/assets" [queryParams]="{ filter: 'maintenance' }" style="font-size: 13px; font-weight: 500; text-decoration: none; color: var(--info); display: flex; align-items: center; gap: 4px;">View schedule <mat-icon style="font-size: 14px; width: 14px; height: 14px;">arrow_forward</mat-icon></a>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
+    </div>
+  }
 </div>

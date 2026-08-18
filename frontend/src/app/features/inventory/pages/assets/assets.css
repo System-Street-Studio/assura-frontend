@@ -1,3 +1,15 @@
+/* The status filter cards highlight the active filter with `border-color: var(--primary)`
+   and friends. Nothing in the codebase declares those custom properties, so the browser was
+   dropping the declaration and the selected filter looked identical to the unselected ones.
+   Declaring them on :host keeps the fix scoped to this page. */
+:host {
+  --primary: #6366f1;
+  --success: #10b981;
+  --info: #3b82f6;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
 /* Animation for loading spinner */
 @keyframes spin {
   from {

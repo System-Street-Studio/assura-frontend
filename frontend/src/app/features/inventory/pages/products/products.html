@@ -1,147 +1,293 @@
-<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
-    <!-- Header -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <div>
-            <h1 class="assura-page-title" style="margin-bottom: 4px;">Products</h1>
-            <span class="assura-card-subtitle" style="font-size: 14px;">{{ filteredProducts.length }} of {{ allProducts.length }} products</span>
-        </div>
-        <div style="display: flex; gap: 12px;">
-            <div class="export-wrapper">
-                <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleExportMenu()"
-                        [attr.aria-expanded]="showExportMenu" aria-haspopup="true"
-                        title="Export products as PDF, Excel or CSV">
-                    <i class="material-icons" style="font-size: 18px;">file_download</i>
-                    Export
-                    <i class="material-icons" style="font-size: 18px;">{{ showExportMenu ? 'arrow_drop_up' : 'arrow_drop_down' }}</i>
-                </button>
+<!-- ═══════════════════════════════════════════════════════════════
+     Products — catalog of product types assets are created from
+       1. Header   — title, count, export menu, new product
+       2. Stats    — catalog completeness at a glance
+       3. Toolbar  — search, bulk actions
+       4. Table    — skeleton while loading, then rows with image tiles
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page">
 
-                @if (showExportMenu) {
-                    <div class="export-menu" role="menu" aria-label="Export format">
-                        <div class="export-menu-scope">
-                            @if (selectedCount > 0) {
-                                Exporting {{ selectedCount }} selected product(s)
-                            } @else {
-                                Exporting {{ filteredProducts.length }} filtered product(s)
-                            }
-                        </div>
-
-                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportProducts('pdf')">
-                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #f87171;">picture_as_pdf</mat-icon>
-                            <span class="export-menu-text">
-                                <strong>PDF</strong>
-                                <small>Printable product catalog</small>
-                            </span>
-                        </button>
-
-                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportProducts('excel')">
-                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #34d399;">table_chart</mat-icon>
-                            <span class="export-menu-text">
-                                <strong>Excel</strong>
-                                <small>Formatted spreadsheet (.xls)</small>
-                            </span>
-                        </button>
-
-                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportProducts('csv')">
-                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #60a5fa;">description</mat-icon>
-                            <span class="export-menu-text">
-                                <strong>CSV</strong>
-                                <small>Plain data (.csv)</small>
-                            </span>
-                        </button>
-                    </div>
-                }
-            </div>
-            <button class="assura-btn assura-btn-primary" [routerLink]="['/inventory/products/new']" type="button">
-                <i class="material-icons" style="font-size: 18px;">add</i>
-                New Product
-            </button>
-        </div>
+  <!-- ── 1. Header ── -->
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Products</h1>
+      <p class="page-sub">
+        @if (loading) {
+          Loading catalog…
+        } @else {
+          {{ filteredProducts.length }} of {{ allProducts.length }} products
+        }
+      </p>
     </div>
 
-    <!-- Toolbar -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <div style="display: flex; gap: 16px; align-items: center;">
-            <div style="position: relative; width: 400px;">
-                <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 20px;">search</mat-icon>
-                <input type="text" class="assura-input" style="padding-left: 40px; padding-right: 40px;" placeholder="Search by name, ID, manufacturer, model..." [(ngModel)]="search" (input)="applyFilters()" />
-                <button *ngIf="search" (click)="search = ''; applyFilters()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; display: flex;">
-                    <mat-icon style="font-size: 18px;">close</mat-icon>
-                </button>
+    <div class="head-actions">
+      <div class="export-wrapper">
+        <button
+          class="btn btn-secondary"
+          type="button"
+          (click)="toggleExportMenu()"
+          [attr.aria-expanded]="showExportMenu"
+          aria-haspopup="true"
+          title="Export products as PDF, Excel or CSV"
+        >
+          <mat-icon class="icon-sm">file_download</mat-icon>
+          Export
+          <mat-icon class="icon-sm">{{ showExportMenu ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
+        </button>
+
+        @if (showExportMenu) {
+          <div class="export-menu" role="menu" aria-label="Export format">
+            <div class="export-menu-scope">
+              @if (selectedCount > 0) {
+                Exporting {{ selectedCount }} selected product(s)
+              } @else {
+                Exporting {{ filteredProducts.length }} filtered product(s)
+              }
             </div>
 
-            <button class="assura-btn assura-btn-secondary" style="border: none; background: transparent; box-shadow: none;" *ngIf="search" (click)="clearFilters()">
-                <i class="material-icons" style="font-size: 18px;">filter_list_off</i> Clear
+            <button class="export-menu-item" type="button" role="menuitem" (click)="exportProducts('pdf')">
+              <mat-icon class="icon-md tone-pdf">picture_as_pdf</mat-icon>
+              <span class="export-menu-text">
+                <strong>PDF</strong>
+                <small>Printable product catalog</small>
+              </span>
             </button>
-        </div>
 
-        <div>
-            <button class="assura-btn assura-btn-secondary" style="color: #ef4444; border-color: #fca5a5;" [disabled]="selectedCount === 0" title="Delete selected" (click)="onDeleteClick()">
-                <i class="material-icons" style="font-size: 18px;">delete_outline</i>
-                Delete{{ selectedCount > 0 ? ' (' + selectedCount + ')' : '' }}
+            <button class="export-menu-item" type="button" role="menuitem" (click)="exportProducts('excel')">
+              <mat-icon class="icon-md tone-excel">table_chart</mat-icon>
+              <span class="export-menu-text">
+                <strong>Excel</strong>
+                <small>Formatted spreadsheet (.xls)</small>
+              </span>
             </button>
-        </div>
+
+            <button class="export-menu-item" type="button" role="menuitem" (click)="exportProducts('csv')">
+              <mat-icon class="icon-md tone-csv">description</mat-icon>
+              <span class="export-menu-text">
+                <strong>CSV</strong>
+                <small>Plain data (.csv)</small>
+              </span>
+            </button>
+          </div>
+        }
+      </div>
+
+      <button class="btn btn-primary" [routerLink]="['/inventory/products/new']" type="button">
+        <mat-icon class="icon-sm">add</mat-icon>
+        New Product
+      </button>
+    </div>
+  </header>
+
+  <!-- ── 2. Stats ── -->
+  <section class="stat-grid" aria-label="Catalog summary">
+    <div class="stat-card tone-primary">
+      <span class="stat-label">Total Products</span>
+      @if (loading) {
+        <span class="stat-value skeleton-text shimmer"></span>
+      } @else {
+        <strong class="stat-value">{{ allProducts.length }}</strong>
+      }
     </div>
 
-    <!-- Table -->
-    <div class="assura-table-container">
-        <table class="assura-table">
-            <thead>
-                <tr>
-                    <th class="assura-th" style="width: 40px; text-align: center;">
-                        <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll($event)" />
-                    </th>
-                    <th class="assura-th">Product ID</th>
-                    <th class="assura-th">Name</th>
-                    <th class="assura-th">Manufacturer</th>
-                    <th class="assura-th">Model</th>
-                    <th class="assura-th">Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let product of viewProducts" class="assura-tr-hover" style="cursor: pointer;" [class.assura-row-selected]="product.selected" (click)="onRowClick(product)">
-                    <td class="assura-td" style="text-align: center;" (click)="$event.stopPropagation()">
-                        <input type="checkbox" [checked]="product.selected" (change)="onRowSelect(product, $event)" />
-                    </td>
-                    <td class="assura-td" style="font-weight: 600; color: #4f46e5;">{{ product.id }}</td>
-                    <td class="assura-td" style="font-weight: 500;">{{ product.name }}</td>
-                    <td class="assura-td"><span class="assura-card-subtitle" style="margin:0; font-size: 15px;">{{ product.manufacturer || '—' }}</span></td>
-                    <td class="assura-td"><span class="assura-card-subtitle" style="margin:0; font-size: 15px;">{{ product.modelNumber || '—' }}</span></td>
-                    <td class="assura-td"><span class="assura-card-subtitle" style="margin:0; font-size: 15px;">{{ product.description || '—' }}</span></td>
-                </tr>
-                <tr *ngIf="viewProducts.length === 0 && !loading">
-                    <td colspan="6" class="assura-td" style="text-align: center; padding: 48px;">
-                        <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;">inventory_2</mat-icon>
-                        <div class="assura-card-subtitle" style="font-size: 16px; font-weight: 500;">No products found</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Pagination -->
-        <div *ngIf="filteredProducts.length > 0" style="padding: 16px 24px; border-top: 1px solid #e2e8f0;">
-            <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pageNumbers" (pageChange)="setPage($event)">
-            </app-pagination>
-        </div>
+    <div class="stat-card tone-info">
+      <span class="stat-label">With Manufacturer</span>
+      @if (loading) {
+        <span class="stat-value skeleton-text shimmer"></span>
+      } @else {
+        <strong class="stat-value">{{ withManufacturer }}</strong>
+      }
     </div>
+
+    <div class="stat-card tone-success">
+      <span class="stat-label">With Image</span>
+      @if (loading) {
+        <span class="stat-value skeleton-text shimmer"></span>
+      } @else {
+        <strong class="stat-value">{{ withImage }}</strong>
+      }
+    </div>
+  </section>
+
+  <!-- ── 3. Toolbar ── -->
+  <div class="toolbar">
+    <div class="search-field">
+      <mat-icon class="search-icon icon-sm" aria-hidden="true">search</mat-icon>
+      <label class="visually-hidden" for="product-search">Search products</label>
+      <input
+        id="product-search"
+        type="text"
+        class="search-input"
+        placeholder="Search by name, ID, manufacturer, model…"
+        [(ngModel)]="search"
+        (input)="applyFilters()"
+      />
+      @if (hasSearch) {
+        <button class="search-clear" type="button" (click)="clearFilters()" aria-label="Clear search">
+          <mat-icon class="icon-sm">close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <button
+      class="btn btn-danger"
+      type="button"
+      [disabled]="selectedCount === 0"
+      title="Delete selected products"
+      (click)="onDeleteClick()"
+    >
+      <mat-icon class="icon-sm">delete_outline</mat-icon>
+      Delete{{ selectedCount > 0 ? ' (' + selectedCount + ')' : '' }}
+    </button>
+  </div>
+
+  @if (selectedCount > 0) {
+    <div class="selection-bar" role="status">
+      <mat-icon class="icon-sm">check_circle</mat-icon>
+      <span><strong>{{ selectedCount }}</strong> product(s) selected</span>
+    </div>
+  }
+
+  <!-- ── 4. Table ── -->
+  <div class="table-card">
+    <div class="table-scroll">
+      <table class="grid">
+        <thead>
+          <tr>
+            <th class="col-check">
+              <input
+                type="checkbox"
+                [checked]="allSelected"
+                (change)="toggleSelectAll($event)"
+                aria-label="Select all products on this page"
+              />
+            </th>
+            <th class="col-product">Product</th>
+            <th>Manufacturer</th>
+            <th>Model</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @if (loading) {
+            <!-- Skeleton rows: the table previously rendered completely empty while loading,
+                 which read as "no products" rather than "still fetching". -->
+            @for (row of skeletonRows; track row) {
+              <tr class="skeleton-row">
+                <td class="col-check"><span class="skeleton-box shimmer"></span></td>
+                <td>
+                  <span class="cell-product">
+                    <span class="thumb skeleton-thumb shimmer"></span>
+                    <span class="skeleton-text wide shimmer"></span>
+                  </span>
+                </td>
+                <td><span class="skeleton-text shimmer"></span></td>
+                <td><span class="skeleton-text shimmer"></span></td>
+                <td><span class="skeleton-text wide shimmer"></span></td>
+              </tr>
+            }
+          } @else {
+            @for (product of viewProducts; track product.id) {
+              <tr
+                class="grid-row"
+                [class.is-selected]="product.selected"
+                tabindex="0"
+                (click)="onRowClick(product)"
+                (keydown.enter)="onRowClick(product)"
+                (keydown.space)="onRowClick(product)"
+              >
+                <td class="col-check" (click)="$event.stopPropagation()">
+                  <input
+                    type="checkbox"
+                    [checked]="product.selected"
+                    (change)="onRowSelect(product, $event)"
+                    [attr.aria-label]="'Select ' + product.name"
+                  />
+                </td>
+
+                <td class="col-product">
+                  <span class="cell-product">
+                    <!-- imageUrl has always been on the model and resolved by the service, but
+                         no view ever displayed it. Initials show through if it fails to load. -->
+                    <span class="thumb" [attr.data-initials]="initials(product)">
+                      @if (product.imageUrl) {
+                        <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" (error)="onImageError($event)" />
+                      }
+                    </span>
+                    <span class="cell-product-text">
+                      <strong class="product-name">{{ product.name }}</strong>
+                      <span class="product-id">#{{ product.id }}</span>
+                    </span>
+                  </span>
+                </td>
+
+                <td class="muted">{{ product.manufacturer || '—' }}</td>
+                <td class="muted">{{ product.modelNumber || '—' }}</td>
+                <td class="muted col-desc" [title]="product.description || ''">{{ product.description || '—' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-cell">
+                  <div class="empty-state">
+                    <mat-icon>{{ hasSearch ? 'search_off' : 'inventory_2' }}</mat-icon>
+                    @if (hasSearch) {
+                      <p class="empty-title">No products match “{{ search }}”</p>
+                      <button class="btn btn-secondary" type="button" (click)="clearFilters()">Clear search</button>
+                    } @else {
+                      <p class="empty-title">No products yet</p>
+                      <p class="empty-sub">Products describe the items assets are created from.</p>
+                      <button class="btn btn-primary" type="button" [routerLink]="['/inventory/products/new']">
+                        <mat-icon class="icon-sm">add</mat-icon> Add the first product
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (!loading && filteredProducts.length > 0) {
+      <div class="table-foot">
+        <span class="showing">Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredProducts.length }}</span>
+        <app-pagination
+          [currentPage]="currentPage"
+          [totalPages]="totalPages"
+          [pageNumbers]="pageNumbers"
+          (pageChange)="setPage($event)"
+        />
+      </div>
+    }
+  </div>
 </div>
 
 <!-- Delete Confirmation -->
 @if (showDeleteConfirm) {
-    <div class="modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="cancelDelete()">
-        <div class="assura-card assura-accent-danger" style="width: 100%; max-width: 400px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
-            <div style="padding: 32px; text-align: center;">
-                <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(239, 68, 68, 0.12); color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                    <mat-icon style="font-size: 32px; width: 32px; height: 32px;">warning</mat-icon>
-                </div>
-                <h3 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700;">Delete Product{{ selectedCount > 1 ? 's' : '' }}?</h3>
-                <p style="margin: 0; font-size: 15px; line-height: 1.5;">Are you sure you want to remove <strong>{{ selectedCount }}</strong> selected product(s)? This cannot be undone.</p>
-            </div>
-            <div style="display: flex; border-top: 1px solid #e2e8f0;">
-                <button class="assura-btn" style="flex: 1; border-radius: 0; padding: 16px; background: transparent; border: none; border-right: 1px solid #e2e8f0;" (click)="cancelDelete()" [disabled]="deleting">Cancel</button>
-                <button class="assura-btn" style="flex: 1; border-radius: 0; padding: 16px; background: #ef4444; color: #ffffff; border: none;" (click)="confirmDelete()" [disabled]="deleting">
-                    {{ deleting ? 'Deleting...' : 'Delete' }}
-                </button>
-            </div>
+  <div
+    class="modal-overlay"
+    tabindex="-1"
+    (click)="onOverlayClick($event)"
+    (keydown.escape)="cancelDelete()"
+  >
+    <div class="modal-card" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
+      <div class="modal-body">
+        <div class="modal-icon" aria-hidden="true">
+          <mat-icon>warning</mat-icon>
         </div>
+        <h2 class="modal-title" id="delete-title">Delete Product{{ selectedCount > 1 ? 's' : '' }}?</h2>
+        <p class="modal-text">
+          Remove <strong>{{ selectedCount }}</strong> selected product(s)? This cannot be undone.
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn" type="button" (click)="cancelDelete()" [disabled]="deleting">Cancel</button>
+        <button class="modal-btn modal-btn-danger" type="button" (click)="confirmDelete()" [disabled]="deleting">
+          {{ deleting ? 'Deleting…' : 'Delete' }}
+        </button>
+      </div>
     </div>
+  </div>
 }

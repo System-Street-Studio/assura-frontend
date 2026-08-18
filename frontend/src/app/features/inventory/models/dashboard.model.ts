@@ -22,7 +22,7 @@ export interface RecentActivity {
 }
 
 export interface WarrantyAlert {
-  assetId: string;
+  assetCode: string;
   assetName: string;
   category: string;
   expiryDate: string;

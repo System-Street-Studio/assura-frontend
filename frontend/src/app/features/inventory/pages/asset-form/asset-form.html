@@ -194,7 +194,10 @@
              Cleared automatically in clone mode to avoid duplicate serials. -->
         <div style="margin-bottom: 20px;">
           <label class="assura-label" for="serialNumber">Serial Number</label>
-          <input id="serialNumber" type="text" class="assura-input" formControlName="serialNumber" placeholder="e.g. SN123456" />
+          <input id="serialNumber" type="text" class="assura-input" [class.field-invalid]="showError('serialNumber')" [class.field-shake]="shaking && showError('serialNumber')" formControlName="serialNumber" placeholder="e.g. SN123456" />
+          <div class="field-error-text" *ngIf="showError('serialNumber')">
+            <mat-icon>error_outline</mat-icon>{{ errorFor('serialNumber') }}
+          </div>
         </div>
       </div>
     </div>
@@ -208,7 +211,7 @@
         <!-- Asset Date: purchase/registration date; defaults to today via getTodayDateString() -->
         <div>
           <label class="assura-label" for="assetDate">Asset Date</label>
-          <input id="assetDate" type="date" class="assura-input" [class.field-invalid]="showError('assetDate')" [class.field-shake]="shaking && showError('assetDate')" formControlName="assetDate" />
+          <input id="assetDate" type="date" class="assura-input" [class.field-invalid]="showError('assetDate')" [class.field-shake]="shaking && showError('assetDate')" formControlName="assetDate" [attr.min]="restrictDateToToday ? todayDateString : null" [attr.max]="restrictDateToToday ? todayDateString : null" />
           <div class="field-error-text" *ngIf="showError('assetDate')">
             <mat-icon>error_outline</mat-icon>{{ errorFor('assetDate') }}
           </div>
@@ -220,7 +223,7 @@
           <label class="assura-label" for="purchaseValue">Purchase Value <span style="color: #ef4444;">*</span></label>
           <div style="display: flex; align-items: stretch;">
             <span style="  padding: 10px 16px; border: 1px solid #cbd5e1; border-right: none; border-radius: 8px 0 0 8px; font-weight: 500; font-size: 14px; display: flex; align-items: center;">LKR</span>
-            <input id="purchaseValue" type="number" class="assura-input" style="border-radius: 0 8px 8px 0; flex-grow: 1;" [class.field-invalid]="showError('purchaseValue')" [class.field-shake]="shaking && showError('purchaseValue')" formControlName="purchaseValue" placeholder="0" min="0" (keydown)="preventNegative($event)" step="1" />
+            <input id="purchaseValue" type="number" class="assura-input" style="border-radius: 0 8px 8px 0; flex-grow: 1;" [class.field-invalid]="showError('purchaseValue')" [class.field-shake]="shaking && showError('purchaseValue')" formControlName="purchaseValue" placeholder="0" min="0.01" (keydown)="preventNegative($event)" step="1" />
           </div>
           <div class="field-error-text" *ngIf="showError('purchaseValue')">
             <mat-icon>error_outline</mat-icon>{{ errorFor('purchaseValue') }}
