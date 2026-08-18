@@ -603,3 +603,7 @@
   width: 16px;
   height: 16px;
 }
+
+.pagination-wrapper {
+  margin-top: 8px;
+}

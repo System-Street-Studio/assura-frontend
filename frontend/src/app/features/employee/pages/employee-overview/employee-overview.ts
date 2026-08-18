@@ -7,6 +7,7 @@ import { AssetService as EmpAssetService, AssetRequest, EmployeeArrivedAsset } f
 import { AssetService as InvAssetService } from '../../../../features/inventory/services/asset.service';
 import { AssetDetail } from '../../../../features/inventory/models/asset.model';
 import { NotificationService } from '../../../../shared/services/notification.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 
 interface RequestItem {
   id: number;
@@ -21,7 +22,7 @@ interface RequestItem {
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatIcon],
+  imports: [CommonModule, RouterModule, MatIcon, PaginationComponent],
   templateUrl: './employee-overview.html',
   styleUrls: ['./employee-overview.css']
 })
@@ -40,12 +41,38 @@ export class EmployeeOverviewComponent implements OnInit {
   confirmingId = signal<number | null>(null);
   confirmSuccessMessage = signal<string | null>(null);
 
+  pendingRequestsCurrentPage = signal(1);
+  readonly pendingRequestsPageSize = 5;
+
+  arrivedAssetsCurrentPage = signal(1);
+  readonly arrivedAssetsPageSize = 5;
+
   greeting = '';
   firstName = '';
   today = new Date();
 
   private sortByRequestOrderDesc(a: AssetRequest, b: AssetRequest): number {
     return Number(b.id) - Number(a.id);
+  }
+
+  private sortByArrivalOrderDesc(a: EmployeeArrivedAsset, b: EmployeeArrivedAsset): number {
+    return Number(b.id) - Number(a.id);
+  }
+
+  private buildPageNumbers(total: number, current: number): number[] {
+    const pages: number[] = [];
+    let start = Math.max(1, current - 2);
+    let end = Math.min(total, start + 4);
+
+    if (end - start < 4) {
+      start = Math.max(1, end - 4);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 
   isAwaitingConfirmation(status?: string): boolean {
@@ -66,6 +93,34 @@ export class EmployeeOverviewComponent implements OnInit {
   maintenanceCount = computed(() => this.assignedAssets().filter(a => a.status === 'UnderMaintenance').length);
   transfersCount = computed(() => this.assignedAssets().filter(a => a.status === 'Transferred').length);
   pendingArrivalsCount = computed(() => this.arrivedAssets().filter(a => this.isAwaitingConfirmation(a.status)).length);
+
+  pendingRequestsTotalPages = computed(() =>
+    Math.max(1, Math.ceil(this.pendingRequests().length / this.pendingRequestsPageSize))
+  );
+
+  pendingRequestsPageNumbers = computed(() =>
+    this.buildPageNumbers(this.pendingRequestsTotalPages(), this.pendingRequestsCurrentPage())
+  );
+
+  paginatedPendingRequests = computed(() => {
+    const start = (this.pendingRequestsCurrentPage() - 1) * this.pendingRequestsPageSize;
+    const end = start + this.pendingRequestsPageSize;
+    return this.pendingRequests().slice(start, end);
+  });
+
+  arrivedAssetsTotalPages = computed(() =>
+    Math.max(1, Math.ceil(this.arrivedAssets().length / this.arrivedAssetsPageSize))
+  );
+
+  arrivedAssetsPageNumbers = computed(() =>
+    this.buildPageNumbers(this.arrivedAssetsTotalPages(), this.arrivedAssetsCurrentPage())
+  );
+
+  paginatedArrivedAssets = computed(() => {
+    const start = (this.arrivedAssetsCurrentPage() - 1) * this.arrivedAssetsPageSize;
+    const end = start + this.arrivedAssetsPageSize;
+    return this.arrivedAssets().slice(start, end);
+  });
 
   ngOnInit() {
     this.firstName = this.authService.getFirstName() ?? 'Employee';
@@ -97,7 +152,8 @@ export class EmployeeOverviewComponent implements OnInit {
     // 1. Fetch Arrived Assets / Arrivals pending confirmation
     this.empAssetService.getArrivedAssets(divisionId).subscribe({
       next: (arrivals: EmployeeArrivedAsset[]) => {
-        this.arrivedAssets.set(arrivals || []);
+        this.arrivedAssets.set([...(arrivals || [])].sort((a, b) => this.sortByArrivalOrderDesc(a, b)));
+        this.arrivedAssetsCurrentPage.set(1);
         this.checkLoadingComplete();
       },
       error: () => this.checkLoadingComplete()
@@ -109,7 +165,6 @@ export class EmployeeOverviewComponent implements OnInit {
         const pending = [...data]
           .sort((a, b) => this.sortByRequestOrderDesc(a, b))
           .filter(r => r.status === 'Pending' || r.status?.toLowerCase().includes('pending'))
-          .slice(0, 10)
           .map(r => ({
             id: r.id,
             item: r.assetName,
@@ -120,6 +175,7 @@ export class EmployeeOverviewComponent implements OnInit {
             priority: (r.priority as any) || 'Medium'
           }));
         this.pendingRequests.set(pending);
+        this.pendingRequestsCurrentPage.set(1);
         this.checkLoadingComplete();
       },
       error: () => this.checkLoadingComplete()
@@ -175,6 +231,14 @@ export class EmployeeOverviewComponent implements OnInit {
     if (hour < 12) return 'Good Morning';
     if (hour < 17) return 'Good Afternoon';
     return 'Good Evening';
+  }
+
+  onPendingRequestsPageChange(page: number): void {
+    this.pendingRequestsCurrentPage.set(page);
+  }
+
+  onArrivedAssetsPageChange(page: number): void {
+    this.arrivedAssetsCurrentPage.set(page);
   }
 
   getStatusClass(status: string): string {
