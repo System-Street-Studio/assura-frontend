@@ -40,8 +40,8 @@
   padding: 6px;
   border-radius: 14px;
   border: 1px solid rgba(148, 163, 184, 0.15);
-  width: fit-content;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .tab-pill-btn {
@@ -58,6 +58,8 @@
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: 260px;
+  
 }
 
 .tab-pill-btn mat-icon {

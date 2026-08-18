@@ -44,6 +44,10 @@ export class EmployeeOverviewComponent implements OnInit {
   firstName = '';
   today = new Date();
 
+  private sortByRequestOrderDesc(a: AssetRequest, b: AssetRequest): number {
+    return Number(b.id) - Number(a.id);
+  }
+
   isAwaitingConfirmation(status?: string): boolean {
     if (!status) return true;
     const s = status.trim().toLowerCase();
@@ -102,7 +106,8 @@ export class EmployeeOverviewComponent implements OnInit {
     // 2. Fetch Requests
     this.empAssetService.getEmployeeRequests(userId).subscribe({
       next: (data: AssetRequest[]) => {
-        const pending = data
+        const pending = [...data]
+          .sort((a, b) => this.sortByRequestOrderDesc(a, b))
           .filter(r => r.status === 'Pending' || r.status?.toLowerCase().includes('pending'))
           .slice(0, 10)
           .map(r => ({
