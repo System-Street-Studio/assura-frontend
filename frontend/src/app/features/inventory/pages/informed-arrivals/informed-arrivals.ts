@@ -103,16 +103,6 @@ export class InformedArrivalsComponent implements OnInit {
         return 'assura-badge-warning';
     }
 
-    registerArrival(item: AssetInformingDto): void {
-        this.router.navigate(['/inventory/grns'], {
-            queryParams: {
-                informingId: item.id,
-                po: item.itemName,
-                model: item.model || ''
-            }
-        });
-    }
-
     checkoutArrival(item: AssetInformingDto): void {
         this.router.navigate(['/inventory/check-out'], {
             queryParams: {

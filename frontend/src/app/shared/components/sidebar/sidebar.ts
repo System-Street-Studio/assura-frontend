@@ -47,8 +47,6 @@ export class SharedSidebarComponent {
     { label: 'Asset', icon: 'precision_manufacturing', link: '/inventory/assets', roles: ['Storekeeper', 'Admin'] },
     { label: 'Products', icon: 'category', link: '/inventory/products', roles: ['Storekeeper', 'Admin'] },
     { label: 'New Arrivals', icon: 'fiber_new', link: '/inventory/informed-arrivals', roles: ['Storekeeper', 'Admin'] },
-    { label: 'GRNs', icon: 'receipt_long', link: '/inventory/grns', roles: ['Storekeeper', 'Admin'] },
-    { label: 'GINs', icon: 'outbox', link: '/inventory/gins', roles: ['Storekeeper', 'Admin'] },
     { label: 'Request List', icon: 'swap_horiz', link: '/inventory/asset-requests', roles: ['Storekeeper', 'Admin'] },
     { label: 'Check Out', icon: 'exit_to_app', link: '/inventory/check-out', roles: ['Storekeeper', 'Admin'] },
     { label: 'Check In', icon: 'login', link: '/inventory/check-in', roles: ['Storekeeper', 'Admin'] },

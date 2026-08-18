@@ -61,16 +61,7 @@
                                 <span>Re-inform</span>
                             </button>
 
-                            <!-- State 3: Confirmed by Employee -> Register GRN & Checkout -->
-                            <button *ngIf="(item.status || '').toLowerCase() === 'confirmed'"
-                                class="assura-btn assura-btn-success"
-                                style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px; background: #059669; color: #fff;"
-                                (click)="registerArrival(item)"
-                                title="Record a GRN for this arrival">
-                                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">receipt_long</mat-icon>
-                                <span>Record GRN</span>
-                            </button>
-
+                            <!-- State 3: Confirmed by Employee -> Checkout -->
                             <button *ngIf="(item.status || '').toLowerCase() === 'confirmed'"
                                 class="assura-btn assura-btn-primary"
                                 style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px;"

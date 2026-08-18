@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AssetService } from '../../services/asset.service';
 import { CategoryService } from '../../services/category.service';
 import { AssetDetail } from '../../models/asset.model';
+import { Category } from '../../models/category.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { forkJoin, of } from 'rxjs';
@@ -48,6 +49,9 @@ export class AssetsComponent implements OnInit {
   search = '';
   filterStatus = '';
   filterCategory = '';
+  /** Defaults to newest-first: the id an asset was assigned on creation is the only reliable
+   *  record of creation order — AssetCode is often hand-typed or date-based, not sequential. */
+  sortOrder: 'newest' | 'oldest' = 'newest';
   pageSize = 10;
   currentPage = 1;
   totalPages = 1;
@@ -85,6 +89,15 @@ export class AssetsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Paint the list the service already holds, so coming back to this page is instant
+    // instead of staring at a spinner for another round-trip. The request below still runs,
+    // so what is on screen is never more than one refresh behind the server.
+    const cachedAssets = this.assetService.peekAll();
+    if (cachedAssets) {
+      this.applyData(cachedAssets, this.categoryService.peekAll() ?? []);
+      this.loading = false;
+    }
+
     forkJoin({
       assets: this.assetService.getAll(),
       // Loaded independently of the asset list so every category in the system shows up
@@ -93,30 +106,39 @@ export class AssetsComponent implements OnInit {
       categories: this.categoryService.getAll().pipe(catchError(() => of([]))),
     }).subscribe({
       next: ({ assets, categories }) => {
-        this.allAssets = assets || [];
-        // Precompute counts
-        const counts: Record<string, number> = { InUse: 0, InStore: 0, UnderMaintenance: 0, Discarded: 0, Transferred: 0, Lost: 0 };
-        this.allAssets.forEach(a => {
-          if (a.status) counts[a.status] = (counts[a.status] || 0) + 1;
-        });
-        this.statusCounts = counts;
-
-        // Union the full category master list with any names already on assets — a
-        // defensive fallback in case an asset references a category outside that list.
-        const assetCategoryNames = this.allAssets.map(a => a.categoryName).filter(Boolean) as string[];
-        const categoryNames = (categories || []).map(c => c.name).filter(Boolean);
-        this.categories = [...new Set([...categoryNames, ...assetCategoryNames])].sort((a, b) => a.localeCompare(b));
-
-        this.applyFilters();
+        this.applyData(assets || [], categories || []);
         this.loading = false;
         this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
-        this.toast.error('Failed to load assets');
+        // A cached list is still on screen, so only complain when there is nothing to show.
+        if (!this.allAssets.length) {
+          this.toast.error('Failed to load assets');
+        }
         this.cdr.detectChanges();
       },
     });
+  }
+
+  /** Applies a freshly loaded (or cached) payload to the view state. */
+  private applyData(assets: AssetDetail[], categories: Category[]): void {
+    this.allAssets = assets;
+
+    // Precompute counts
+    const counts: Record<string, number> = { InUse: 0, InStore: 0, UnderMaintenance: 0, Discarded: 0, Transferred: 0, Lost: 0 };
+    this.allAssets.forEach(a => {
+      if (a.status) counts[a.status] = (counts[a.status] || 0) + 1;
+    });
+    this.statusCounts = counts;
+
+    // Union the full category master list with any names already on assets — a
+    // defensive fallback in case an asset references a category outside that list.
+    const assetCategoryNames = this.allAssets.map(a => a.categoryName).filter(Boolean) as string[];
+    const categoryNames = categories.map(c => c.name).filter(Boolean);
+    this.categories = [...new Set([...categoryNames, ...assetCategoryNames])].sort((a, b) => a.localeCompare(b));
+
+    this.applyFilters();
   }
 
   applyFilters(): void {
@@ -159,6 +181,13 @@ export class AssetsComponent implements OnInit {
     if (this.filterCategory) {
       filtered = filtered.filter((a) => a.categoryName === this.filterCategory);
     }
+
+    // 4. Sort — by id, since it is assigned once at creation and never changes, unlike
+    // AssetCode which can be edited or hand-typed.
+    filtered.sort((a, b) => {
+      const diff = Number(a.id) - Number(b.id);
+      return this.sortOrder === 'newest' ? -diff : diff;
+    });
 
     this.filteredAssets = filtered;
     this.totalPages = Math.max(1, Math.ceil(filtered.length / this.pageSize));

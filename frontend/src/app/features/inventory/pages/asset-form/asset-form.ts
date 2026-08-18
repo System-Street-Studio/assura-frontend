@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Angular core & common imports
 // ─────────────────────────────────────────────────────────────────────────────
-import { Component, OnInit, inject, ElementRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, ElementRef } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { AbstractControl, FormBuilder, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -72,6 +72,7 @@ export class AssetFormComponent implements OnInit {
   private location = inject(Location);           // Enables browser-native "back" navigation
   private toast = inject(ToastService);          // Shows non-blocking notification toasts
   private hostRef = inject<ElementRef<HTMLElement>>(ElementRef); // Used to focus/scroll to the first invalid field
+  private cdr = inject(ChangeDetectorRef);
 
   // ── Component state ──
   /** Determines whether the form is in create, edit, or clone mode. Defaults to 'edit'. */
@@ -103,6 +104,15 @@ export class AssetFormComponent implements OnInit {
    * would collide with itself the moment the form is re-saved unchanged.
    */
   private originalAssetCode = '';
+
+  /**
+   * Serial numbers already taken, lowercased. Populated the same way as
+   * {@link existingAssetCodes} so a duplicate is caught before the API round-trip.
+   */
+  private existingSerialNumbers = new Set<string>();
+
+  /** The serial number this asset already had when editing. Always permitted, same reasoning as {@link originalAssetCode}. */
+  private originalSerialNumber = '';
 
   /** Human-readable field names, used for both inline errors and the summary toast. */
   private readonly fieldLabels: Record<string, string> = {
@@ -197,7 +207,7 @@ export class AssetFormComponent implements OnInit {
     divisionId:     [0, [Validators.min(1)]],
     serialNumber:   ['', [Validators.maxLength(100)]],
     assetDate:      [this.getTodayDateString(), [Validators.required]], // Defaults to today's date
-    purchaseValue:  [0, [Validators.required, Validators.min(0)]],
+    purchaseValue:  [0, [Validators.required, Validators.min(0.01)]], // An asset must be recorded with a real acquisition cost, not zero.
     warranty:       ['', [Validators.maxLength(200)]],
     notes:          ['', [Validators.maxLength(1000)]],
   });
@@ -216,6 +226,13 @@ export class AssetFormComponent implements OnInit {
     // Registered here rather than in the FormBuilder group so it can close over component
     // state (the loaded code list) that does not exist yet at field-initialisation time.
     this.assetForm.controls.assetCode.addValidators((c) => this.validateAssetCodeUnique(c));
+    this.assetForm.controls.serialNumber.addValidators((c) => this.validateSerialNumberUnique(c));
+
+    // Only new registrations are locked to today's date; an existing asset keeps whatever
+    // acquisition date it was originally recorded with when edited later.
+    if (this.mode === 'create' || this.mode === 'clone') {
+      this.assetForm.controls.assetDate.addValidators((c) => this.validateAssetDateIsToday(c));
+    }
 
     this.loadDropdownData();
 
@@ -238,6 +255,7 @@ export class AssetFormComponent implements OnInit {
 
           // Only edit mode keeps the original code; a clone must claim a brand-new one.
           this.originalAssetCode = this.mode === 'edit' ? a.assetCode || '' : '';
+          this.originalSerialNumber = this.mode === 'edit' ? a.serialNumber || '' : '';
 
           // Patch all form fields with values from the fetched asset
           this.assetForm.patchValue({
@@ -266,8 +284,9 @@ export class AssetFormComponent implements OnInit {
             });
           }
 
-          // Re-run the uniqueness rule now that the code (and the exempt original) are known.
+          // Re-run the uniqueness rules now that the code/serial (and their exempt originals) are known.
           this.assetForm.controls.assetCode.updateValueAndValidity({ emitEvent: false });
+          this.assetForm.controls.serialNumber.updateValueAndValidity({ emitEvent: false });
         },
         error: () => {
           this.toast.error('Failed to load asset');
@@ -324,6 +343,19 @@ export class AssetFormComponent implements OnInit {
   }
 
   /**
+   * Today's date as 'YYYY-MM-DD', bound to the Asset Date input's `min`/`max` attributes so its
+   * native picker only offers today. Only meaningful in create/clone mode — see {@link restrictDateToToday}.
+   */
+  get todayDateString(): string {
+    return this.getTodayDateString();
+  }
+
+  /** True when new-asset registration rules apply, locking the Asset Date field to today. */
+  get restrictDateToToday(): boolean {
+    return this.mode === 'create' || this.mode === 'clone';
+  }
+
+  /**
    * Determines whether to show a validation error for a specific form control.
    * An error is shown only after the user has interacted with the field OR clicked Submit.
    * @param controlName - Key of the form control to check.
@@ -348,6 +380,12 @@ export class AssetFormComponent implements OnInit {
     if (errors['codeTaken']) {
       return `Asset Code "${String(control.value ?? '').trim()}" already exists. Please use a different code.`;
     }
+    if (errors['serialTaken']) {
+      return `Serial Number "${String(control.value ?? '').trim()}" already exists. Please use a different serial number.`;
+    }
+    if (errors['notToday']) {
+      return 'Asset Date must be today. Past or future dates are not allowed.';
+    }
     if (errors['required']) {
       return `${label} is required.`;
     }
@@ -355,10 +393,10 @@ export class AssetFormComponent implements OnInit {
       return `${label} cannot be longer than ${errors['maxlength'].requiredLength} characters.`;
     }
     if (errors['min']) {
-      // purchaseValue uses min(0) to reject negatives; the FK dropdowns use min(1),
+      // purchaseValue uses min(0.01) to reject zero/negative values; the FK dropdowns use min(1),
       // where the failure really means "nothing was picked".
       return controlName === 'purchaseValue'
-        ? 'Purchase Value cannot be negative.'
+        ? 'Purchase Value must be greater than zero.'
         : `${label} is required.`;
     }
     return `${label} is not valid.`;
@@ -370,6 +408,28 @@ export class AssetFormComponent implements OnInit {
     if (!value) return null;
     if (value === this.originalAssetCode.trim().toLowerCase()) return null;
     return this.existingAssetCodes.has(value) ? { codeTaken: true } : null;
+  }
+
+  /**
+   * Rejects a serial number that another asset already uses. Serial number is optional, so an
+   * empty value always passes — only a non-blank duplicate is a problem.
+   */
+  private validateSerialNumberUnique(control: AbstractControl): ValidationErrors | null {
+    const value = String(control.value ?? '').trim().toLowerCase();
+    if (!value) return null;
+    if (value === this.originalSerialNumber.trim().toLowerCase()) return null;
+    return this.existingSerialNumbers.has(value) ? { serialTaken: true } : null;
+  }
+
+  /**
+   * New asset registrations must be dated today — not backdated, not postdated. Only wired up
+   * for create/clone mode; editing an existing asset must not be able to invalidate its
+   * original, already-past acquisition date.
+   */
+  private validateAssetDateIsToday(control: AbstractControl): ValidationErrors | null {
+    const value = String(control.value ?? '').trim();
+    if (!value) return null;
+    return value === this.getTodayDateString() ? null : { notToday: true };
   }
 
   /** Names of every currently invalid field, for the summary toast. */
@@ -417,23 +477,28 @@ export class AssetFormComponent implements OnInit {
   }
 
   /**
-   * Shows a failed save. When the backend reports a duplicate asset code, the error is
-   * pushed back onto the field so it turns red and shakes like a client-side failure.
+   * Shows a failed save. When the backend reports a duplicate asset code or serial number, the
+   * error is pushed back onto the offending field so it turns red and shakes like a client-side
+   * failure, rather than only appearing in the toast.
    */
   private handleSaveError(err: HttpErrorResponse, action: string): void {
     this.saving = false;
     const detail = this.extractApiError(err);
 
     if (/already exists/i.test(detail)) {
-      const codeControl = this.assetForm.controls.assetCode;
-      const code = String(codeControl.value ?? '').trim().toLowerCase();
-      if (code) this.existingAssetCodes.add(code);
-      codeControl.updateValueAndValidity({ emitEvent: false });
-      codeControl.markAsTouched();
+      const isSerialConflict = /serial number/i.test(detail);
+      const control = isSerialConflict ? this.assetForm.controls.serialNumber : this.assetForm.controls.assetCode;
+      const value = String(control.value ?? '').trim().toLowerCase();
+      if (value) {
+        (isSerialConflict ? this.existingSerialNumbers : this.existingAssetCodes).add(value);
+      }
+      control.updateValueAndValidity({ emitEvent: false });
+      control.markAsTouched();
       this.triggerInvalidFeedback();
     }
 
     this.toast.error(`${action}: ${detail}`);
+    this.cdr.detectChanges(); // See the comment in loadDropdownData().
   }
 
   // ── Stub methods for future image upload feature ──
@@ -458,17 +523,23 @@ export class AssetFormComponent implements OnInit {
       this.assetForm.markAllAsTouched(); // Force validation styling on all fields
       this.triggerInvalidFeedback();
 
-      // Surface the most specific problem first: a duplicate code needs a different message
-      // to a blank required field, and the old summary silently omitted Purchase Value.
+      // Surface the most specific problem first: a duplicate code/serial needs a different
+      // message to a blank required field, and the old summary silently omitted Purchase Value.
       const codeTaken = this.assetForm.controls.assetCode.hasError('codeTaken');
-      const negativeValue = this.assetForm.controls.purchaseValue.hasError('min');
+      const serialTaken = this.assetForm.controls.serialNumber.hasError('serialTaken');
+      const badValue = this.assetForm.controls.purchaseValue.hasError('min');
+      const badDate = this.assetForm.controls.assetDate.hasError('notToday');
       const invalid = this.invalidFieldLabels;
 
       let msg: string;
       if (codeTaken) {
         msg = this.errorFor('assetCode');
-      } else if (negativeValue) {
-        msg = 'Purchase Value cannot be negative.';
+      } else if (serialTaken) {
+        msg = this.errorFor('serialNumber');
+      } else if (badValue) {
+        msg = 'Purchase Value must be greater than zero.';
+      } else if (badDate) {
+        msg = 'Asset Date must be today. Past or future dates are not allowed.';
       } else if (invalid.length > 0) {
         msg = `Please check: ${invalid.join(', ')}`;
       } else {
@@ -535,14 +606,20 @@ export class AssetFormComponent implements OnInit {
       this.categories = categories;
       this.employees  = employees || [];
 
-      // Reuse the asset list for client-side asset-code uniqueness. The backend validates
-      // this authoritatively too; this only gives the user immediate feedback.
+      // Reuse the asset list for client-side asset-code/serial-number uniqueness. The backend
+      // validates both authoritatively too; this only gives the user immediate feedback.
       this.existingAssetCodes = new Set(
         (existingAssets || [])
           .map((a) => (a.assetCode || '').trim().toLowerCase())
           .filter(Boolean)
       );
+      this.existingSerialNumbers = new Set(
+        (existingAssets || [])
+          .map((a) => (a.serialNumber || '').trim().toLowerCase())
+          .filter(Boolean)
+      );
       this.assetForm.controls.assetCode.updateValueAndValidity({ emitEvent: false });
+      this.assetForm.controls.serialNumber.updateValueAndValidity({ emitEvent: false });
 
       // Extract existing asset notes to identify POs that have already been registered
       const existingNotes = (existingAssets || [])
@@ -576,6 +653,14 @@ export class AssetFormComponent implements OnInit {
       if (!suppliers.length)  this.toast.error('Failed to load suppliers');
       if (!divisions.length)  this.toast.error('Failed to load divisions');
       if (!categories.length) this.toast.error('Failed to load categories');
+
+      // Without this, the dropdowns above can be left permanently blank: this callback runs
+      // once all seven parallel requests have settled, and on this route that resolution
+      // sometimes lands in a change-detection pass this view's own tick doesn't pick up,
+      // leaving Product/Category/Supplier/Division stuck on their placeholder option even
+      // though the arrays above are already populated. Forcing a synchronous check here
+      // guarantees the view reflects the data that just arrived.
+      this.cdr.detectChanges();
     });
   }
 
@@ -651,10 +736,8 @@ export class AssetFormComponent implements OnInit {
           }
         }
 
-        // 3. Auto-match Date from PO Order Date
-        if (po.orderDate) {
-          patchData.assetDate = this.toDateInputValue(po.orderDate);
-        }
+        // Note: Asset Date is intentionally left untouched here — new registrations are
+        // locked to today's date, regardless of the PO's (typically earlier) order date.
 
         // 4. Auto-fill Item details
         if (this.poItems.length > 0) {
@@ -669,10 +752,12 @@ export class AssetFormComponent implements OnInit {
         }
 
         this.toast.success(`Auto-filled details from PO #${po.orderNumber}`);
+        this.cdr.detectChanges(); // See the comment in loadDropdownData().
       },
       error: () => {
         this.loadingPoDetails = false;
         this.toast.error('Failed to load details for selected PO');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -873,6 +958,10 @@ export class AssetFormComponent implements OnInit {
     this.resultMessage = message;
     this.navigateTarget = navigateTo;
     this.showResult    = true;
+    // See the comment in loadDropdownData(): state set from an HTTP subscribe callback on this
+    // route isn't reliably picked up by the next automatic change-detection tick, which without
+    // this left the overlay permanently invisible (asset was created, just no confirmation shown).
+    this.cdr.detectChanges();
     setTimeout(() => this.onResultClosed(), 3000); // Auto-close after 3 seconds
   }
 
@@ -913,11 +1002,26 @@ export class AssetFormComponent implements OnInit {
     if (!value) return this.getTodayDateString();
     const date = value instanceof Date ? value : new Date(value);
     if (Number.isNaN(date.getTime())) return this.getTodayDateString();
-    return date.toISOString().slice(0, 10);
+    return this.toLocalDateString(date);
   }
 
-  /** Returns today's date as a 'YYYY-MM-DD' string, used as the default for the asset date field. */
+  /**
+   * Returns today's date as a 'YYYY-MM-DD' string, used both as the default for the asset date
+   * field and to enforce the "must be today" rule on new registrations.
+   */
   private getTodayDateString(): string {
-    return new Date().toISOString().slice(0, 10);
+    return this.toLocalDateString(new Date());
+  }
+
+  /**
+   * Formats a Date using its local calendar day, not `toISOString()`'s UTC day — which would be
+   * off by one for part of the day in any timezone west of UTC, wrongly rejecting "today" as the
+   * asset date validator started strictly comparing against this exact string.
+   */
+  private toLocalDateString(date: Date): string {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
   }
 }

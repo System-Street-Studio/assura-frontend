@@ -108,4 +108,9 @@
       </div>
     </aside>
   </div>
+
+  @if (showResult) {
+    <app-result-overlay [type]="resultType" [title]="resultTitle" [message]="resultMessage"
+        (closed)="onResultClosed()"></app-result-overlay>
+  }
 </div>

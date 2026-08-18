@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ProductService } from '../../services/product.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ProductUpdateRequest } from '../../models/product.model';
+import { ResultOverlayComponent } from '../../../../shared/components/result-overlay/result-overlay';
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -14,11 +15,11 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, ResultOverlayComponent],
   templateUrl: './product-form.html',
   styleUrls: ['./product-form.css'],
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private productService = inject(ProductService);
   private route = inject(ActivatedRoute);
@@ -35,6 +36,15 @@ export class ProductFormComponent implements OnInit {
 
   imageFile: File | null = null;
   imagePreviewUrl: string | null = null;
+
+  /* Result overlay — shown for a freshly created product, matching the check-in flow's
+     success card. Edits keep the plain toast; only a brand-new record gets the celebratory
+     confirmation before returning to the list. */
+  showResult = false;
+  resultType: 'success' | 'error' = 'success';
+  resultTitle = '';
+  resultMessage = '';
+  private resultAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
 
   productForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -157,7 +167,7 @@ export class ProductFormComponent implements OnInit {
       };
 
       this.productService.update(updatePayload).subscribe({
-        next: () => this.finishSave(this.productId, 'Product updated successfully'),
+        next: () => this.finishSave(this.productId, raw.name.trim()),
         error: (err: HttpErrorResponse) => {
           this.submitting = false;
           const detail = err.error?.detail || err.error?.message || err.error?.title || 'Unknown error occurred';
@@ -168,7 +178,7 @@ export class ProductFormComponent implements OnInit {
     }
 
     this.productService.create(payload).subscribe({
-      next: (created) => this.finishSave(Number(created.id), 'Product created successfully'),
+      next: (created) => this.finishSave(Number(created.id), raw.name.trim()),
       error: (err: HttpErrorResponse) => {
         this.submitting = false;
         const detail = err.error?.detail || err.error?.message || err.error?.title || 'Unknown error occurred';
@@ -178,28 +188,66 @@ export class ProductFormComponent implements OnInit {
   }
 
   /**
-   * Uploads the staged image (if any) against the just-created/updated product, then navigates
-   * away. Deliberately leaves `submitting` at `true` on every path here — the component is about
-   * to be destroyed by the navigation regardless, and flipping it back to `false` immediately
-   * beforehand only races the submit button's [disabled] binding against Angular's dev-mode
-   * change-detection re-check (NG0100) for no visible benefit.
+   * Uploads the staged image (if any) against the just-created/updated product, then hands off
+   * to {@link onSaveComplete}. Deliberately leaves `submitting` at `true` on every path here —
+   * the form is either about to be replaced by the success overlay or navigated away from
+   * regardless, and flipping it back to `false` beforehand only races the submit button's
+   * [disabled] binding against Angular's dev-mode change-detection re-check (NG0100) for no
+   * visible benefit.
    */
-  private finishSave(id: number, successMessage: string): void {
+  private finishSave(id: number, name: string): void {
     if (!this.imageFile) {
-      this.toast.success(successMessage);
-      this.router.navigate(['/inventory/products']);
+      this.onSaveComplete(name);
       return;
     }
 
     this.productService.uploadImage(id, this.imageFile).subscribe({
-      next: () => {
-        this.toast.success(successMessage);
-        this.router.navigate(['/inventory/products']);
-      },
+      next: () => this.onSaveComplete(name),
       error: () => {
-        this.toast.warning(`${successMessage}, but the image failed to upload.`);
+        this.toast.warning('Product saved, but the image failed to upload.');
         this.router.navigate(['/inventory/products']);
       },
     });
+  }
+
+  /**
+   * A fresh product gets the same celebratory success card as check-in/check-out, auto-closing
+   * after 2 seconds before returning to the list. An edit keeps the plain toast — it isn't a new
+   * record worth a full-screen confirmation.
+   */
+  private onSaveComplete(name: string): void {
+    if (this.mode === 'edit') {
+      this.toast.success('Product updated successfully');
+      this.router.navigate(['/inventory/products']);
+      return;
+    }
+
+    this.resultType = 'success';
+    this.resultTitle = 'Product Created!';
+    this.resultMessage = `"${name}" has been added to the product catalog.`;
+    this.showResult = true;
+
+    if (this.resultAutoCloseTimer) {
+      clearTimeout(this.resultAutoCloseTimer);
+    }
+    this.resultAutoCloseTimer = setTimeout(() => this.onResultClosed(), 2000);
+    this.cdr.detectChanges();
+  }
+
+  /** Fired both by the overlay's own close button and by the 2-second auto-close timer. */
+  onResultClosed(): void {
+    if (this.resultAutoCloseTimer) {
+      clearTimeout(this.resultAutoCloseTimer);
+      this.resultAutoCloseTimer = null;
+    }
+    this.showResult = false;
+    this.router.navigate(['/inventory/products']);
+  }
+
+  ngOnDestroy(): void {
+    if (this.resultAutoCloseTimer) {
+      clearTimeout(this.resultAutoCloseTimer);
+      this.resultAutoCloseTimer = null;
+    }
   }
 }

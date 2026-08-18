@@ -25,7 +25,7 @@ interface ExportColumn {
   styleUrls: ['./products.css'],
   host: {
     '(document:click)': 'onDocumentClick($event)',
-    '(document:keydown.escape)': 'closeExportMenu()',
+    '(document:keydown.escape)': 'onEscape()',
   },
 })
 export class ProductsComponent implements OnInit {
@@ -52,6 +52,16 @@ export class ProductsComponent implements OnInit {
   deleting = false;
 
   ngOnInit(): void {
+    // Paint the list the service already holds, so returning to this page is instant instead
+    // of showing an empty table for another round-trip. The request below still runs, so what
+    // is on screen is never more than one refresh behind the server.
+    const cached = this.productService.peekAll();
+    if (cached) {
+      this.allProducts = cached;
+      this.applyFilters();
+      this.loading = false;
+    }
+
     this.productService.getAll().subscribe({
       next: (data: Product[]) => {
         this.allProducts = data || [];
@@ -61,10 +71,46 @@ export class ProductsComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
-        this.toast.error('Failed to load products');
+        // A cached list may already be on screen; only complain when there is nothing to show.
+        if (!this.allProducts.length) {
+          this.toast.error('Failed to load products');
+        }
         this.cdr.detectChanges();
       },
     });
+  }
+
+  // ── View helpers ──
+
+  /** Placeholder rows for the loading skeleton; the template needs a real collection to loop. */
+  readonly skeletonRows = [0, 1, 2, 3, 4, 5];
+
+  /** True when a search term is narrowing the list, used to pick the right empty state. */
+  get hasSearch(): boolean {
+    return this.search.trim().length > 0;
+  }
+
+  get withManufacturer(): number {
+    return this.allProducts.filter((p) => !!p.manufacturer).length;
+  }
+
+  get withImage(): number {
+    return this.allProducts.filter((p) => !!p.imageUrl).length;
+  }
+
+  /** Up to two initials, used for the fallback tile when a product has no image. */
+  initials(product: Product): string {
+    return (product.name || '?')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((word) => word[0]?.toUpperCase() ?? '')
+      .join('');
+  }
+
+  /** Hides a broken image so the initials tile underneath shows through instead. */
+  onImageError(ev: Event): void {
+    (ev.target as HTMLImageElement).style.display = 'none';
   }
 
   applyFilters(): void {
@@ -150,6 +196,28 @@ export class ProductsComponent implements OnInit {
 
   cancelDelete(): void {
     this.showDeleteConfirm = false;
+  }
+
+  /** Escape closes whichever layer is open, innermost first. */
+  onEscape(): void {
+    if (this.showDeleteConfirm) {
+      if (!this.deleting) {
+        this.cancelDelete();
+        this.cdr.detectChanges();
+      }
+      return;
+    }
+    this.closeExportMenu();
+  }
+
+  /**
+   * Dismisses the dialog only when the backdrop itself was clicked. Comparing target to
+   * currentTarget avoids needing a stopPropagation handler on the card inside it.
+   */
+  onOverlayClick(ev: MouseEvent): void {
+    if (ev.target === ev.currentTarget && !this.deleting) {
+      this.cancelDelete();
+    }
   }
 
   confirmDelete(): void {

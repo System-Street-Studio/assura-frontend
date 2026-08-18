@@ -88,14 +88,4 @@ export const inventoryRoutes: Routes = [
     loadComponent: () =>
       import('./pages/informed-arrivals/informed-arrivals').then((m) => m.InformedArrivalsComponent),
   },
-  {
-    path: 'grns',
-    loadComponent: () =>
-      import('./pages/grns/grns').then((m) => m.GrnsComponent),
-  },
-  {
-    path: 'gins',
-    loadComponent: () =>
-      import('./pages/gins/gins').then((m) => m.GinsComponent),
-  },
 ];
