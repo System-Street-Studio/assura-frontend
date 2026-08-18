@@ -340,7 +340,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   }
 
   //pagination activate
-      pageSize = 10;
+      pageSize = 20;
       currentPage = signal(1);
 
       totalPages = computed(() => Math.max(1, Math.ceil(this.filteredResults().length / this.pageSize)));

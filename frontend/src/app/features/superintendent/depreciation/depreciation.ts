@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination';
 import { DepreciationService } from '../../../core/services/depreciation.service';
 import {
   AssetDepreciation,
@@ -13,7 +14,7 @@ import {
 @Component({
   selector: 'app-depreciation',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, CurrencyPipe, DatePipe, DecimalPipe],
+  imports: [CommonModule, FormsModule, MatIconModule, PaginationComponent, CurrencyPipe, DatePipe, DecimalPipe],
   templateUrl: './depreciation.html',
   styleUrls: ['./depreciation.css']
 })
@@ -37,8 +38,8 @@ export class DepreciationComponent implements OnInit {
 
   // Pagination
   currentPage = 1;
-  pageSize = 10;
-  pageSizeOptions = [10, 20, 50, 100];
+  pageSize = 20;
+  pageSizeOptions = [20, 50, 100];
 
   // Schedule Modal State
   selectedSchedule: AssetDepreciationSchedule | null = null;
@@ -156,7 +157,28 @@ export class DepreciationComponent implements OnInit {
     return Math.min(this.currentPage * this.pageSize, this.filteredAssets.length);
   }
 
-  goToPage(page: number): void {
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisible = 5;
+
+    if (this.totalPages <= maxVisible) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (this.currentPage <= 3) {
+        pages.push(1, 2, 3, 4, this.totalPages);
+      } else if (this.currentPage >= this.totalPages - 2) {
+        pages.push(1, this.totalPages - 3, this.totalPages - 2, this.totalPages - 1, this.totalPages);
+      } else {
+        pages.push(1, this.currentPage - 1, this.currentPage, this.currentPage + 1, this.totalPages);
+      }
+    }
+
+    return pages;
+  }
+
+  onPageChange(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
     }

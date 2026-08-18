@@ -24,7 +24,7 @@ export class RepairingFirmsComponent implements OnInit {
 
     // Pagination
     currentPage = 1;
-    pageSize = 10;
+    pageSize = 20;
     totalPages = 1;
     pageNumbers: number[] = [];
     pagedFirms: RepairingFirmDto[] = [];

@@ -41,7 +41,7 @@ export class ProductsComponent implements OnInit {
   loading = true;
 
   search = '';
-  pageSize = 10;
+  pageSize = 20;
   currentPage = 1;
   totalPages = 1;
   allSelected = false;

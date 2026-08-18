@@ -42,7 +42,7 @@ export class TrackAssetsComponent implements OnInit {
     loading = true;
 
     currentPage = 1;
-    pageSize = 24;
+    pageSize = 20;
     showFilters = false;
 
     ngOnInit(): void {

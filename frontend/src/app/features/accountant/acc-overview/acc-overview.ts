@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination';
 import { AccPendingItemsService, AccPendingItem } from '../../../services/acc-pending-items.service';
 import { ReceiptsService } from '../../../services/receipts.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -26,7 +27,7 @@ interface PendingItem {
 @Component({
     selector: 'app-acc-overview',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, PaginationComponent],
     templateUrl: './acc-overview.html',
     styleUrls: ['./acc-overview.css']
 })
@@ -203,6 +204,20 @@ export class AccOverviewComponent implements OnInit {
                 this.cdr.markForCheck();
             }
         });
+    }
+
+    getPageNumbers(): number[] {
+        const pages: number[] = [];
+        for (let i = 1; i <= this.totalPages; i++) {
+            pages.push(i);
+        }
+        return pages;
+    }
+
+    onPageChange(page: number) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+        }
     }
 
     goToPage(page: number) {

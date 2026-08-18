@@ -96,28 +96,3 @@
     </div>
   </section>
 </div>
-
-@if (submitted) {
-<div class="global-toast-container">
-    <div class="global-toast-card toast-success">
-        <div class="global-toast-icon">
-            <svg viewBox="0 0 24 24">
-                <path d="M9.4 16.6 4.9 12.1l1.4-1.4 3.1 3.1 8.3-8.3 1.4 1.4-9.7 9.7Z" />
-            </svg>
-        </div>
-        <div class="global-toast-content">
-            <h4 class="global-toast-title" id="success-title">Assigned Successfully</h4>
-            <p class="global-toast-message">
-                {{ form.employeeName || 'Selected employee' }} has been successfully assigned to
-                {{ form.assignments.length }} division(s) with their respective roles.
-            </p>
-        </div>
-        <button class="global-toast-close" type="button" (click)="closePopup()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
-    </div>
-</div>
-}

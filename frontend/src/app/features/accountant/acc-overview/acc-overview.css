@@ -176,36 +176,6 @@
     border: 1px dashed rgba(148, 163, 184, 0.2);
 }
 
-/* ============ Pagination ============ */
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.page-link, .page-num {
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    color: #94a3b8;
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.page-link:hover, .page-num:hover {
-    background: rgba(30, 41, 59, 0.8);
-    color: #f8fafc;
-}
-
-.page-num.active {
-    background: #6366f1;
-    color: #ffffff;
-    border-color: #6366f1;
-}
-
 /* ============ Detail Section (Right) ============ */
 .detail-section {
     flex: 1;

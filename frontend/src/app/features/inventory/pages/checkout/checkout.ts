@@ -39,8 +39,8 @@ export class CheckoutComponent implements OnInit {
     filterDueSoon = false;
 
     currentPage = 1;
-    pageSize = 10;
-    pageSizes = [5, 10, 25, 50];
+    pageSize = 20;
+    pageSizes = [5, 20, 25, 50];
 
     activeView: 'active' | 'history' = 'active';
 

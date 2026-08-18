@@ -23,7 +23,7 @@ export class AllRequestsComponent implements OnInit {
   error = signal<string | null>(null);
 
   // Pagination
-  pageSize = 10;
+  pageSize = 20;
   currentPage = signal(1);
   
   filterStatus = signal<'All Types' | 'Pending' | 'Approved' | 'Rejected'>('All Types');
