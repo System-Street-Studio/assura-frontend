@@ -1,0 +1,276 @@
+<div class="request-details-page">
+  <!-- ── 1. Page Header ── -->
+  <div class="page-header">
+    <div class="back-nav">
+      <a routerLink="/employee/all-emp-requests" class="back-link-btn">
+        <mat-icon>arrow_back</mat-icon> Back to All Requests
+      </a>
+    </div>
+    <h1 class="assura-page-title">Request Details</h1>
+    <p class="page-subtitle">Review complete submission information, current status, and attached documents.</p>
+  </div>
+
+  @if (error()) {
+    <div class="error-glass-box">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <div class="error-text">
+        <h4>Unable to Load Request</h4>
+        <p>{{ error() }}</p>
+      </div>
+      <a routerLink="/employee/all-emp-requests" class="assura-btn-secondary">Go Back</a>
+    </div>
+  } @else if (request()) {
+    <div class="details-body">
+      
+      <!-- ── 2. Hero Status Banner ── -->
+      <div class="hero-status-card">
+        <div class="hero-left">
+          <div class="type-tag-row">
+            <span class="id-tag">#{{ request()!.id }}</span>
+            <span class="request-type-pill">{{ request()!.requestType }} Request</span>
+          </div>
+          <h2 class="hero-asset-name">{{ request()!.assetName }}</h2>
+          <span class="hero-timestamp">
+            <mat-icon>schedule</mat-icon> Submitted on {{ request()!.submittedDate | date:'medium' }}
+          </span>
+        </div>
+
+        <div class="hero-right">
+          <span class="status-badge large" [ngClass]="request()!.status ? request()!.status.toLowerCase() : 'pending'">
+            <span class="status-dot"></span> {{ request()!.status }}
+          </span>
+          @if ( request()!.priority) {
+            <span class="priority-badge large" [ngClass]="request()!.priority.toLowerCase()">
+              {{ request()!.priority }} Priority
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- ── 3. Overview Grid ── -->
+      <div class="details-grid-2">
+        <!-- Request Info Card -->
+        <div class="glass-card">
+          <div class="card-title-row">
+            <mat-icon class="section-icon">info</mat-icon>
+            <h3 class="card-section-title">Request Information</h3>
+          </div>
+          <div class="spec-rows-container">
+            <div class="spec-item">
+              <span class="spec-label">Request ID</span>
+              <span class="spec-value mono">#{{ request()!.id }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Submission Date</span>
+              <span class="spec-value">{{ request()!.submittedDate | date:'mediumDate' }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Request Type</span>
+              <span class="spec-value">{{ request()!.requestType }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Current Status</span>
+              <span class="status-badge" [ngClass]="request()!.status ? request()!.status.toLowerCase() : 'pending'">
+                <span class="status-dot"></span> {{ request()!.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Asset Info Card -->
+        <div class="glass-card">
+          <div class="card-title-row">
+            <mat-icon class="section-icon">inventory_2</mat-icon>
+            <h3 class="card-section-title">Asset Information</h3>
+          </div>
+          <div class="spec-rows-container">
+            <div class="spec-item">
+              <span class="spec-label">Asset / Item Name</span>
+              <span class="spec-value">
+                @if (request()!.requestType === 'Maintenance' || request()!.requestType === 'Discard') {
+                  {{ extractAssetName(request()!.assetName) }}
+                } @else {
+                  {{ request()!.assetName }}
+                }
+              </span>
+            </div>
+
+            @if (request()!.requestType === 'Maintenance' || request()!.requestType === 'Discard') {
+              <div class="spec-item">
+                <span class="spec-label">Asset Code / Tag</span>
+                <span class="spec-value mono">{{ extractAssetId(request()!.assetName) || 'N/A' }}</span>
+              </div>
+            }
+
+            @if (request()!.assetCategory && request()!.assetCategory !== 'N/A') {
+              <div class="spec-item">
+                <span class="spec-label">Asset Category</span>
+                <span class="spec-value">{{ request()!.assetCategory }}</span>
+              </div>
+            }
+
+            @if (request()!.requestType !== 'Maintenance' && request()!.requestType !== 'Discard') {
+              <div class="spec-item">
+                <span class="spec-label">Quantity</span>
+                <span class="spec-value">{{ request()!.quantity || 1 }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 3b. Storekeeper Processing Info ── -->
+      @if (request()!.processedByName) {
+        <div class="glass-card full-width">
+          <div class="card-title-row">
+            <mat-icon class="section-icon">assignment_ind</mat-icon>
+            <h3 class="card-section-title">Processed by Storekeeper</h3>
+          </div>
+          <div class="spec-rows-container">
+            <div class="spec-item">
+              <span class="spec-label">Handled By</span>
+              <span class="spec-value">{{ request()!.processedByName }}</span>
+            </div>
+            @if (request()!.processedAt) {
+              <div class="spec-item">
+                <span class="spec-label">Processed On</span>
+                <span class="spec-value">{{ request()!.processedAt | date:'medium' }}</span>
+              </div>
+            }
+          </div>
+          @if (request()!.processorRemarks) {
+            <div class="spec-text-block mt-16">
+              <span class="spec-label">Storekeeper Remarks</span>
+              <p class="text-content">{{ request()!.processorRemarks }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ── 4. Type-Specific Details ── -->
+      <ng-container [ngSwitch]="request()!.requestType">
+        <!-- New Asset -->
+        <div class="glass-card full-width" *ngSwitchCase="'New Asset'">
+          <div class="card-title-row">
+            <mat-icon class="section-icon">description</mat-icon>
+            <h3 class="card-section-title">Justification & Specifications</h3>
+          </div>
+          <div class="spec-text-block">
+            <span class="spec-label">Reason / Business Need</span>
+            <p class="text-content">{{ request()!.reason }}</p>
+          </div>
+          @if (request()!.description) {
+            <div class="spec-text-block mt-16">
+              <span class="spec-label">Technical Specifications</span>
+              <p class="text-content">{{ request()!.description }}</p>
+            </div>
+          }
+        </div>
+
+        <!-- Maintenance -->
+        <div class="glass-card full-width" *ngSwitchCase="'Maintenance'">
+          <div class="card-title-row">
+            <mat-icon class="section-icon">handyman</mat-icon>
+            <h3 class="card-section-title">Maintenance Diagnostics</h3>
+          </div>
+          <div class="spec-text-block">
+            <span class="spec-label">Reported Issue Type</span>
+            <p class="text-content highlight">{{ extractIssueType(request()!.reason) }}</p>
+          </div>
+          @if (request()!.description) {
+            <div class="spec-text-block mt-16">
+              <span class="spec-label">Detailed Symptoms & Description</span>
+              <p class="text-content">{{ request()!.description }}</p>
+            </div>
+          }
+        </div>
+
+        <!-- Discard -->
+        <div class="glass-card full-width" *ngSwitchCase="'Discard'">
+          <div class="card-title-row">
+            <mat-icon class="section-icon">delete_sweep</mat-icon>
+            <h3 class="card-section-title">Discard Justification</h3>
+          </div>
+          <div class="spec-text-block">
+            <span class="spec-label">Reason for Discard</span>
+            <p class="text-content">{{ request()!.reason }}</p>
+          </div>
+          @if (request()!.description) {
+            <div class="spec-text-block mt-16">
+              <span class="spec-label">Current Condition & Inspection Notes</span>
+              <p class="text-content">{{ request()!.description }}</p>
+            </div>
+          }
+        </div>
+
+        <!-- Transfer -->
+        <div class="glass-card full-width" *ngSwitchCase="'Transfer'">
+          <div class="card-title-row">
+            <mat-icon class="section-icon">move_up</mat-icon>
+            <h3 class="card-section-title">Transfer Allocation Details</h3>
+          </div>
+          <div class="spec-rows-container">
+            <div class="spec-item">
+              <span class="spec-label">Reason for Transfer</span>
+              <span class="spec-value">{{ extractTransferReason(request()!.reason) }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Transfer Period</span>
+              <span class="spec-value">{{ extractTransferPeriod(request()!.reason) }}</span>
+            </div>
+          </div>
+          @if (request()!.description) {
+            <div class="spec-text-block mt-16">
+              <span class="spec-label">Required Specifications</span>
+              <p class="text-content">{{ request()!.description }}</p>
+            </div>
+          }
+        </div>
+      </ng-container>
+
+      <!-- ── 5. Attachments ── -->
+      @if (request()!.attachments && (request()!.attachments?.length ?? 0) > 0) {
+        <div class="glass-card full-width">
+          <div class="card-title-row">
+            <mat-icon class="section-icon">attach_file</mat-icon>
+            <h3 class="card-section-title">Attached Documents ({{ request()!.attachments?.length ?? 0 }})</h3>
+          </div>
+          <div class="attachments-grid">
+            @for (att of request()!.attachments; track att.id) {
+              <div class="attachment-item-card">
+                <div class="att-left">
+                  <div class="att-icon-box">
+                    <mat-icon>{{ getFileIcon(att.fileName) }}</mat-icon>
+                  </div>
+                  <div class="att-meta">
+                    <span class="att-filename" [title]="att.fileName">{{ att.fileName }}</span>
+                    <span class="att-size">{{ formatFileSize(att.fileSize) }}</span>
+                  </div>
+                </div>
+                <button class="assura-btn-secondary att-download-btn" (click)="downloadFile(att)" title="Download Attachment">
+                  <mat-icon>download</mat-icon> Download
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ── 6. Page Action Buttons ── -->
+      <div class="footer-actions-row">
+        <button class="assura-btn-secondary" routerLink="/employee/all-emp-requests">
+          Back to List
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="empty-state-box">
+      <mat-icon class="empty-icon">inbox</mat-icon>
+      <h4>No Request Found</h4>
+      <p>No request record was selected or data is unavailable.</p>
+      <a routerLink="/employee/all-emp-requests" class="assura-btn-primary mt-16">
+        View All Requests
+      </a>
+    </div>
+  }
+</div>

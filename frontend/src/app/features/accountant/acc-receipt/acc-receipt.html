@@ -1,0 +1,145 @@
+<div class="acc-receipt-container">
+    <div class="page-header">
+        <h1 class="assura-page-title">Receipt</h1>
+        <button class="assura-btn assura-btn-primary btn-add-receipt" (click)="openAddReceipt()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>Add Receipt</span>
+        </button>
+    </div>
+
+    <!-- List Action Error -->
+    <div class="list-action-error" *ngIf="listActionError">
+        <span>{{ listActionError }}</span>
+        <button class="btn-close" (click)="dismissListActionError()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" placeholder="Search receipts..." [(ngModel)]="searchTerm" (input)="filterReceipts()" />
+    </div>
+
+    <div class="glass-panel assura-table-container table-wrapper">
+        <table class="assura-table receipt-table">
+            <thead>
+                <tr>
+                    <th>Asset Name</th>
+                    <th>Division</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of filteredReceipts">
+                    <td>{{ item.assetName }}</td>
+                    <td>{{ item.division }}</td>
+                    <td>{{ item.date }}</td>
+                    <td>Rs. {{ item.amount | number:'1.2-2' }}</td>
+                    <td>
+                        <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{ item.status }}</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-view" (click)="viewReceipt(item)" title="View">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+                            <button class="btn-download" (click)="downloadReceipt(item)" title="Download">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr *ngIf="filteredReceipts.length === 0">
+                    <td colspan="6" class="empty-row">No receipts found.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Receipt Modal -->
+    <div class="modal-overlay" *ngIf="showAddModal" (click)="closeAddReceipt()">
+        <div class="glass-panel modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Add Receipt</h2>
+                <button class="btn-close" (click)="closeAddReceipt()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <form class="modal-body" [formGroup]="receiptForm" (ngSubmit)="submitReceipt()">
+                <div class="form-group">
+                    <label for="receipt-asset-name">Asset Name</label>
+                    <input id="receipt-asset-name" type="text" placeholder="Enter asset name" formControlName="assetName" />
+                    <p class="field-error" *ngIf="isInvalid('assetName')">Asset name is required.</p>
+                </div>
+                <div class="form-group">
+                    <label for="receipt-division">Division</label>
+                    <input id="receipt-division" type="text" placeholder="Enter division" formControlName="division" />
+                    <p class="field-error" *ngIf="isInvalid('division')">Division is required.</p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="receipt-date">Date</label>
+                        <input id="receipt-date" type="date" formControlName="date" />
+                        <p class="field-error" *ngIf="isInvalid('date')">A valid date is required.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="receipt-amount">Amount</label>
+                        <input id="receipt-amount" type="number" min="0.01" step="0.01" (keydown)="preventNegative($event)" placeholder="0.00" formControlName="amount" />
+                        <p class="field-error" *ngIf="isInvalid('amount')">Enter an amount greater than 0.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Upload Receipt</label>
+                    <div class="upload-area" (click)="fileInput.click()" style="cursor:pointer;">
+                        <input #fileInput type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" (change)="onFileSelected($event)" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        <span *ngIf="!selectedFileName">Click to upload or drag and drop</span>
+                        <span *ngIf="selectedFileName" style="color:#0078d4;font-weight:500;">📎 {{ selectedFileName }}</span>
+                    </div>
+                    <p class="field-error" *ngIf="fileError">{{ fileError }}</p>
+                    <p class="field-error" *ngIf="uploadError">{{ uploadError }}</p>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button class="assura-btn assura-btn-secondary" (click)="closeAddReceipt()">Cancel</button>
+                <button class="assura-btn assura-btn-primary" (click)="submitReceipt()">Submit Receipt</button>
+            </div>
+        </div>
+    </div>
+</div>

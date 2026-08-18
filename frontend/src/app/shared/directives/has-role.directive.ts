@@ -1,4 +1,4 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, OnInit } from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, OnInit, inject } from '@angular/core';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Directive({
@@ -7,12 +7,9 @@ import { AuthService } from '../../core/auth/auth.service';
 })
 export class HasRoleDirective implements OnInit {
     private currentRole: string | string[] = [];
-
-    constructor(
-        private templateRef: TemplateRef<any>,
-        private viewContainer: ViewContainerRef,
-        private authService: AuthService
-    ) { }
+    private templateRef = inject(TemplateRef<unknown>);
+    private viewContainer = inject(ViewContainerRef);
+    private authService = inject(AuthService);
 
     @Input()
     set appHasRole(role: string | string[]) {

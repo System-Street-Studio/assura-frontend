@@ -1,0 +1,113 @@
+<div class="asset-details-container">
+    <h1 class="page-title">Asset Details</h1>
+
+    <div class="details-card">
+        <div class="card-header">
+            <h2>{{ asset.name }}</h2>
+        </div>
+
+        <div class="card-body">
+            <div class="info-grid">
+                <!-- Left Column -->
+                <div class="info-column">
+                    <div class="detail-item">
+                        <label>Purchased date</label>
+                        <span>{{ asset.purchasedDate }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Purchased Price (LKR)</label>
+                        <span>{{ asset.purchasedPrice }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Supplier</label>
+                        <span>{{ asset.supplier }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Category</label>
+                        <span>{{ asset.category }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Serial Number</label>
+                        <span>{{ asset.serialNumber }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Is Assigned</label>
+                        <span>{{ asset.isAssigned }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Purchasing Order</label>
+                        <span>{{ asset.orderId }}</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Warranty</label>
+                        <span>{{ asset.warranty }}</span>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="visual-column">
+                    <div class="qr-section">
+                        <label>QR Code</label>
+                        <div class="qr-placeholder">
+                            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" class="qr-image" />
+                            <mat-icon *ngIf="!qrDataUrl" class="qr-icon">qr_code_2</mat-icon>
+                        </div>
+                    </div>
+
+                    <div class="status-indicator">
+                        <label>Is Assigned</label>
+                        <app-status-badge [status]="asset.status"></app-status-badge>
+                    </div>
+
+                    <div class="status-updater">
+                        <label>Update status</label>
+                        <div class="status-options">
+                            <label class="radio-label">
+                                <input type="radio" name="status" [(ngModel)]="asset.status"
+                                    (ngModelChange)="onStatusChange($event)" value="In Use">
+                                <span class="radio-custom"></span> In Use
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="status" [(ngModel)]="asset.status"
+                                    (ngModelChange)="onStatusChange($event)" value="In Store">
+                                <span class="radio-custom"></span> In Store
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="status" [(ngModel)]="asset.status"
+                                    (ngModelChange)="onStatusChange($event)" value="Repairing">
+                                <span class="radio-custom"></span> Under Repair
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="status" [(ngModel)]="asset.status"
+                                    (ngModelChange)="onStatusChange($event)" value="Discarded">
+                                <span class="radio-custom"></span> Discarded
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specifications Section -->
+            <div class="specifications-section">
+                <h3 class="section-title">Specifications</h3>
+                <div class="specs-box">
+                    <div class="spec-item" *ngFor="let spec of asset.specifications">
+                        <label>{{ spec.label }}</label>
+                        <span>{{ spec.value }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="btn-close" (click)='onClose()'>Close</button>
+        </div>
+    </div>
+</div>

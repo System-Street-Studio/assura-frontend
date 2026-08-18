@@ -1,0 +1,125 @@
+<div class="approval-detail-page">
+  <div class="header-section">
+    <button class="back-link-btn" (click)="close()">
+      <mat-icon>arrow_back</mat-icon> Back to Requests
+    </button>
+    <div class="page-title-row">
+      <h1 class="assura-page-title">Maintenance Request Details</h1>
+      <span class="request-id-pill">ID: #{{ request().id }}</span>
+    </div>
+  </div>
+
+  <div class="detail-container">
+    <!-- Hero Banner -->
+    <div class="glass-card hero-banner">
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="asset-category-tag">{{ request().category || 'Hardware' }}</div>
+          <h2 class="hero-asset-name">{{ request().assetName }}</h2>
+          <div class="requester-line">
+            <mat-icon>person</mat-icon>
+            <span><strong>{{ request().name }}</strong> (ID: {{ request().requesterId || request().employeeId || request().employee || 'N/A' }})</span>
+            <span class="divider">·</span>
+            <mat-icon>domain</mat-icon>
+            <span>{{ request().division || 'General Division' }}</span>
+          </div>
+        </div>
+        <div class="hero-right">
+          <span class="status-badge large" [ngClass]="(request().status || 'pending').toLowerCase()">
+            <span class="status-dot"></span> {{ request().status || 'Pending' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Card -->
+    <div class="glass-card info-card">
+      <div class="card-section-header">
+        <mat-icon>build</mat-icon>
+        <h3>Fault Diagnostics & Submission Details</h3>
+      </div>
+
+      <div class="info-grid-2">
+        <div class="info-item">
+          <span class="info-label">Issue Classification</span>
+          <span class="issue-badge">{{ extractIssueType(request().justification || request().reason || '') }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Submission Date</span>
+          <span class="info-value">{{ request().date | date:'medium' }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Urgency / Priority</span>
+          <span class="priority-pill" [ngClass]="(request().priority || 'normal').toLowerCase()">
+            {{ request().priority || 'Normal' }}
+          </span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Asset Category</span>
+          <span class="info-value">{{ request().category || 'General' }}</span>
+        </div>
+
+        <div class="info-item full-width">
+          <span class="info-label">Detailed Fault Description & Symptoms</span>
+          <p class="info-text-block highlight">{{ request().specs || 'No specific fault diagnostics provided.' }}</p>
+        </div>
+      </div>
+
+      <!-- Attachments Section -->
+      @if (request()!.attachments && (request()!.attachments?.length ?? 0) > 0) {
+        <div class="attachments-block">
+          <span class="info-label">Diagnostic Attachments & Photos ({{ request()!.attachments?.length ?? 0 }})</span>
+          <div class="attachments-list">
+            @for (attachment of request()!.attachments; track attachment.id) {
+              <div class="attachment-item-card">
+                <div class="attachment-info">
+                  <mat-icon class="file-type-icon">{{ getFileIcon(attachment.fileName) }}</mat-icon>
+                  <div class="file-details">
+                    <span class="file-name">{{ attachment.fileName }}</span>
+                    <span class="file-meta">{{ formatFileSize(attachment.fileSize) }}</span>
+                  </div>
+                </div>
+                <button class="download-icon-btn" (click)="downloadFile(attachment)" title="Download attachment">
+                  <mat-icon>download</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Actions Panel -->
+    @if (!isReadOnly() && canDivisionHeadAct()) {
+      <div class="glass-card actions-panel">
+        <div class="action-buttons-row">
+          <button class="btn-approve" (click)="approveRequest()" [disabled]="processing()">
+            <mat-icon>check_circle</mat-icon> Approve Maintenance
+          </button>
+          <button class="btn-reject" (click)="rejectRequest()" [disabled]="processing()">
+            <mat-icon>cancel</mat-icon> Reject Request
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Confirmation / Success Modal -->
+  @if (showPopup()) {
+    <div class="overlay" (click)="closePopup()">
+      <div class="glass-modal" [class.reject]="popupType() === 'reject'" (click)="$event.stopPropagation()">
+        <div class="modal-icon-badge">
+          <mat-icon>{{ popupType() === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+        </div>
+        <div class="modal-body-text">
+          <h3>{{ popupType() === 'success' ? 'Maintenance Approved' : 'Request Processed' }}</h3>
+          <p>{{ popupMessage() }}</p>
+        </div>
+        <button class="modal-done-btn" (click)="closePopup()">Done</button>
+      </div>
+    </div>
+  }
+</div>

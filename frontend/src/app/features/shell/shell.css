@@ -8,17 +8,21 @@
     height: 100vh;
     width: 100%;
     overflow: hidden;
+    background-color: #0f172a;
 }
 
 .main-area {
     flex: 1;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+    overflow: hidden;
     min-width: 0;
 }
 
 .content {
-    flex: 1;
-    padding: 16px;
     overflow-y: auto;
+    width: 100%;
+    padding: 24px;
+    background-color: #020617;
 }

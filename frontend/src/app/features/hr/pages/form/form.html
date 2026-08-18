@@ -1,0 +1,98 @@
+<div class="hr-shell">
+  <section class="form-page" aria-labelledby="assign-title">
+    <div class="glass-panel">
+      <div class="form-header">
+        <h1 id="assign-title" style="color: #f8fafc;">Assign/Update Role and Division</h1>
+        <p style="color: #94a3b8;">Set the division and role for the employee to complete assignment.</p>
+      </div>
+
+      @if (loadError) {
+      <div class="global-toast-card toast-error" role="alert" style="margin-bottom: 1rem;">
+        <div class="global-toast-content">
+          <h4 class="global-toast-title">Unable to load user</h4>
+          <p class="global-toast-message">
+            Something went wrong while loading this employee's details. Please try again.
+          </p>
+        </div>
+        <button class="assura-btn assura-btn-secondary" type="button" (click)="resetForm()">Retry</button>
+      </div>
+      }
+
+      <form class="assign-form" #assignForm="ngForm" (ngSubmit)="assignRole()">
+        <label>
+          <span>Employee ID</span>
+          <input type="text" name="employeeId" placeholder="E1223" required [(ngModel)]="form.employeeId" />
+        </label>
+
+        <label>
+          <span>Employee Name</span>
+          <input type="text" name="employeeName" placeholder="Enter employee name" required
+            [(ngModel)]="form.employeeName" />
+        </label>
+
+        <div class="assignments-section">
+          <div class="section-header">
+            <h3 style="color: #f8fafc;">Division & Role Assignments</h3>
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="addAssignment()">
+              + Add Assignment
+            </button>
+          </div>
+
+          @for (assignment of form.assignments; track $index) {
+          <div class="assignment-row">
+            <label>
+              <span>Division</span>
+              <select [name]="'divisionId_' + $index" required [(ngModel)]="assignment.divisionId">
+                <option [ngValue]="null" disabled>Select division</option>
+                @for (division of divisions(); track division.id) {
+                <option [value]="division.id">{{ division.name }}</option>
+                }
+              </select>
+            </label>
+
+            <label>
+              <span>Role</span>
+              <select [name]="'role_' + $index" required [(ngModel)]="assignment.role">
+                <option value="" disabled>Select role</option>
+                @for (role of roles; track role) {
+                <option [value]="role">{{ role }}</option>
+                }
+              </select>
+            </label>
+
+            <button type="button" class="assura-btn assura-btn-danger" style="padding: 8px 12px; height: auto;" (click)="removeAssignment($index)" [disabled]="form.assignments.length === 1">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          }
+        </div>
+
+        <label class="full-width">
+          <span>Job Title</span>
+          <input type="text" name="jobTitle" placeholder="Enter job title" required
+            [(ngModel)]="form.jobTitle" />
+        </label>
+
+        <label>
+          <span>Effective Date</span>
+          <input type="date" name="effectiveDate" required [(ngModel)]="form.effectiveDate" />
+        </label>
+
+        <label class="full-width">
+          <span>Notes</span>
+          <textarea name="note" rows="4" placeholder="Add assignment note" [(ngModel)]="form.note"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button class="assura-btn assura-btn-secondary" type="button" (click)="resetForm()">Clear</button>
+          @if (!isUpdate) {
+          <button class="assura-btn assura-btn-danger" type="button" (click)="rejectRole()">Reject</button>
+          }
+          <button class="assura-btn assura-btn-primary" type="submit" [disabled]="assignForm.invalid">
+            {{ isUpdate ? 'Update Assignment' : 'Assign Role' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>

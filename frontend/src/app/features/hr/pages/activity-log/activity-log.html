@@ -1,0 +1,59 @@
+<div class="hr-shell">
+  <section class="audit-page" aria-labelledby="audit-title">
+    <div class="audit-shell">
+      <h1 id="audit-title" class="page-title">HR Activity Logs</h1>
+
+      <label class="search-field" aria-label="Search audit logs">
+        <input type="search" class="assura-input" placeholder="Search by HR Officer, Employee, or Status" [value]="searchTerm()"
+          (input)="updateSearch($event)" />
+      </label>
+
+      <div class="glass-panel assura-table-container">
+        <table class="assura-table">
+          <thead>
+            <tr>
+              <th class="assura-th">Date &amp; Time</th>
+              <th class="assura-th">HR Officer</th>
+              <th class="assura-th">Action</th>
+              <th class="assura-th">Employee</th>
+              <th class="assura-th">Department</th>
+              <th class="assura-th">Role</th>
+              <th class="assura-th">IP / Device</th>
+              <th class="assura-th">Notes</th>
+              <th class="assura-th">Result</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (entry of filteredAuditLogs(); track $index) {
+            <tr class="assura-tr-hover">
+              <td class="assura-td">
+                <span style="display: block;">{{ entry.date }}</span>
+                <span style="color: #94a3b8; font-size: 12px;">{{ entry.time }}</span>
+              </td>
+              <td class="assura-td">{{ entry.officer }}</td>
+              <td class="assura-td">{{ entry.action }}</td>
+              <td class="assura-td">{{ entry.employee }}</td>
+              <td class="assura-td">{{ entry.department }}</td>
+              <td class="assura-td">{{ entry.role }}</td>
+              <td class="assura-td">{{ entry.device }}</td>
+              <td class="assura-td">{{ entry.notes }}</td>
+              <td class="assura-td">
+                <span class="assura-badge"
+                      [class.assura-badge-success]="entry.result.toLowerCase() === 'success'"
+                      [class.assura-badge-danger]="entry.result.toLowerCase() !== 'success'">
+                  {{ entry.result }}
+                </span>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td class="assura-td empty-state" colspan="9" style="text-align: center; padding: 2rem; color: #94a3b8;">No audit records found</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

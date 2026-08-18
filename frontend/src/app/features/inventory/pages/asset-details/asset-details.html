@@ -1,0 +1,245 @@
+<div *ngIf="loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;  padding: 48px;">
+  <mat-icon style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 16px; animation: spin 1s linear infinite;">autorenew</mat-icon>
+  <p style="margin: 0; font-weight: 500;">Loading Asset Details...</p>
+</div>
+
+<div class="no-print" style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;" *ngIf="!loading && asset">
+  <!-- Navigation link to return to the main inventory table -->
+  <button class="assura-btn assura-btn-secondary" style="border: none; background: transparent; box-shadow: none; padding: 0;  margin-bottom: 24px;" (click)="goBack()">
+    <mat-icon style="font-size: 18px; margin-right: 4px;">arrow_back</mat-icon>
+    Back to Assets
+  </button>
+
+    <!-- Header row -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <div style="width: 64px; height: 64px; border-radius: 12px; background: rgba(79, 70, 229, 0.15); color: #818cf8; display: flex; align-items: center; justify-content: center;">
+          <mat-icon style="font-size: 32px; width: 32px; height: 32px;">devices</mat-icon>
+        </div>
+        <div>
+          <h2 style="margin: 0 0 8px 0; font-family: 'Jost'; font-size: 24px; font-weight: 700;">{{ asset.productName }}</h2>
+          <div style="font-size: 14px; display: flex; align-items: center; gap: 8px; opacity: 0.85;">
+            <span style="font-weight: 600;">Code:</span> {{ asset.assetCode }} <span style="opacity: 0.4;">&bull;</span> <span style="font-weight: 600;">Tag:</span> {{ asset.assetTag || '—' }}
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 4px;">
+        <button *ngFor="let t of tabs" style="padding: 8px 16px; border: none; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; border-radius: 6px;" [ngStyle]="{'color': activeTab === t.id ? '#818cf8' : '', 'background': activeTab === t.id ? 'rgba(79, 70, 229, 0.15)' : 'transparent'}" (click)="setTab(t.id)">
+          {{ t.label }}
+        </button>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px;">
+      <button class="assura-btn assura-btn-secondary" (click)="onClone()">
+        <mat-icon style="font-size: 18px;">content_copy</mat-icon>
+        Clone
+      </button>
+      <button class="assura-btn assura-btn-primary" style="background: #f59e0b; border-color: #f59e0b; color: white;" (click)="onEdit()">
+        <mat-icon style="font-size: 18px;">edit</mat-icon>
+        Edit
+      </button>
+      <button class="assura-btn assura-btn-primary" style="background: #ef4444; border-color: #ef4444; color: white;" (click)="onDelete()">
+        <mat-icon style="font-size: 18px;">delete</mat-icon>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Content grid: Splits the page into a main details section (left) and a status sidebar (right) -->
+  <div class="assura-grid" style="grid-template-columns: 2fr 1fr; gap: 32px;">
+    <div>
+      <!-- About / QR section -->
+      <section *ngIf="activeTab === 'about'">
+        <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 24px;">
+          <div class="assura-card assura-accent-primary" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; text-align: center;">
+            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" style="width: 150px; height: 150px; margin-bottom: 16px;" (error)="onQrImageError()" />
+            <div *ngIf="!qrDataUrl" style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; border-radius: 8px;">
+              <mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #64748b;">qr_code_2</mat-icon>
+            </div>
+            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; opacity: 0.7;">{{ asset.serialNumber || '—' }}</div>
+            <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">{{ asset.assetCode }}</div>
+            <div style="font-size: 11px; opacity: 0.7; margin-bottom: 24px;">Property of Assura Inventory</div>
+            <button class="assura-btn assura-btn-secondary" style="width: 100%; justify-content: center;" (click)="onPrint()">
+              <mat-icon style="font-size: 18px;">print</mat-icon>
+              Print Label
+            </button>
+          </div>
+
+          <div style="display: flex; flex-direction: column; justify-content: center;">
+            <p style="margin: 0 0 16px 0; font-size: 15px; line-height: 1.6;">Asset QR reflects the unique identifier for tracking.</p>
+            <div style="background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 14px; display: flex; gap: 8px;">
+              <mat-icon style="font-size: 18px; width: 18px; height: 18px; margin-top: 2px;">lightbulb</mat-icon>
+              <div>Tip: Labels can be printed in bulk from the main Assets table.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin: 32px 0; border-top: 1px solid rgba(148, 163, 184, 0.2);"></div>
+
+        <!-- Details -->
+        <h3 style="margin: 0 0 24px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; text-transform: uppercase;">Asset Information</h3>
+
+        <div class="assura-grid assura-grid-cols-3" style="margin-top: 0; gap: 24px;">
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">Asset Code</div>
+              <div style="font-size: 15px; font-weight: 500;">{{ asset.assetCode }}</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">Asset Tag</div>
+              <div style="font-size: 15px; font-weight: 500;">{{ asset.assetTag || '—' }}</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">Serial Number</div>
+              <div style="font-size: 15px; font-weight: 500;">{{ asset.serialNumber || '—' }}</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">Product</div>
+              <div style="font-size: 15px; font-weight: 500;">{{ asset.productName }}</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">Category</div>
+              <div style="font-size: 15px; font-weight: 500;">{{ asset.categoryName }}</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">Division</div>
+              <div style="font-size: 15px; font-weight: 500;">{{ asset.divisionName }}</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">Supplier</div>
+              <div style="font-size: 15px; font-weight: 500;">{{ asset.supplierName }}</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">Purchase Value</div>
+              <div style="font-size: 15px; font-weight: 500;">{{ asset.purchaseValue | currency:'LKR' }}</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">Asset Date</div>
+              <div style="font-size: 15px; font-weight: 500;">{{ asset.assetDate || '—' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 32px; padding: 16px; border-radius: 8px; border: 1px solid rgba(148, 163, 184, 0.2);" *ngIf="asset.notes">
+          <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;">Notes</div>
+          <div style="font-size: 14px; line-height: 1.6;">{{ asset.notes }}</div>
+        </div>
+      </section>
+
+      <!-- Placeholder for other tabs -->
+      <section style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 0;" *ngIf="activeTab !== 'about'">
+        <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #64748b;">history</mat-icon>
+        <p style="margin: 0; font-size: 16px; font-weight: 500;">
+          {{ activeTab === 'checkout-log' ? 'Maintenance and assignment history coming soon.' : 'Additional details.' }}
+        </p>
+      </section>
+    </div>
+
+    <!-- Right sidebar -->
+    <aside>
+      <div class="assura-card" style="padding: 24px;">
+        <h4 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600; text-transform: uppercase;">Current Status</h4>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 15px; font-weight: 500;">
+          <span style="width: 12px; height: 12px; border-radius: 50%; display: inline-block;" [ngClass]="getStatusClass()"></span>
+          <span>{{ getStatusLabel(asset.status) }}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; font-size: 14px; padding: 12px; border-radius: 6px; background: rgba(148, 163, 184, 0.1);" *ngIf="asset.assignedUserName">
+          <mat-icon style="font-size: 18px; width: 18px; height: 18px;">person</mat-icon>
+          <span>Assigned to: <strong>{{ asset.assignedUserName }}</strong></span>
+        </div>
+        <button class="assura-btn assura-btn-primary" style="width: 100%; justify-content: center; background: #10b981; border-color: #10b981;" (click)="onCheckin()"
+          *ngIf="asset.assignedUserName || asset.status === 'Deployed' || asset.status === 'InUse'">
+          <mat-icon style="font-size: 18px;">login</mat-icon>
+          Check-In
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ═══ CHECK-IN MODAL ═══ -->
+  <!-- Opens as an overlay allowing users to return a deployed asset and log its condition -->
+  <div class="modal-overlay" *ngIf="showCheckinModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="cancelCheckin()">
+    <div class="assura-card assura-accent-success" style="width: 100%; max-width: 450px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
+      <div style="padding: 32px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); color: #34d399; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+          <mat-icon style="font-size: 32px; width: 32px; height: 32px;">assignment_return</mat-icon>
+        </div>
+        <h3 style="margin: 0 0 8px 0; font-family: 'Jost'; font-size: 20px; font-weight: 700;">Quick Check-In</h3>
+        <p style="margin: 0 0 24px 0; font-size: 15px;">
+          Returning <strong>{{ asset.assetCode }}</strong>
+        </p>
+
+        <div style="width: 100%; text-align: left; margin-bottom: 32px;">
+          <label class="assura-label">Return Condition</label>
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px 16px; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 8px; transition: all 0.2s;" [ngStyle]="{'background': checkinCondition === 'Good' ? 'rgba(59, 130, 246, 0.15)' : 'transparent', 'border-color': checkinCondition === 'Good' ? '#3b82f6' : 'rgba(148, 163, 184, 0.2)'}">
+              <input type="radio" name="condition" value="Good" [(ngModel)]="checkinCondition" style="width: 18px; height: 18px; accent-color: #3b82f6;" />
+              <span style="font-weight: 500;">Good</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px 16px; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 8px; transition: all 0.2s;" [ngStyle]="{'background': checkinCondition === 'Fair' ? 'rgba(245, 158, 11, 0.15)' : 'transparent', 'border-color': checkinCondition === 'Fair' ? '#f59e0b' : 'rgba(148, 163, 184, 0.2)'}">
+              <input type="radio" name="condition" value="Fair" [(ngModel)]="checkinCondition" style="width: 18px; height: 18px; accent-color: #f59e0b;" />
+              <span style="font-weight: 500;">Fair</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px 16px; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 8px; transition: all 0.2s;" [ngStyle]="{'background': checkinCondition === 'Damaged' ? 'rgba(239, 68, 68, 0.15)' : 'transparent', 'border-color': checkinCondition === 'Damaged' ? '#ef4444' : 'rgba(148, 163, 184, 0.2)'}">
+              <input type="radio" name="condition" value="Damaged" [(ngModel)]="checkinCondition" style="width: 18px; height: 18px; accent-color: #ef4444;" />
+              <span style="font-weight: 500;">Damaged</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; padding: 20px 24px; border-top: 1px solid rgba(148, 163, 184, 0.2);">
+        <button class="assura-btn assura-btn-secondary" style="flex: 1; justify-content: center;" (click)="cancelCheckin()" [disabled]="checkinProcessing">Cancel</button>
+        <button class="assura-btn assura-btn-primary" style="flex: 1; justify-content: center; background: #10b981; border-color: #10b981;" (click)="confirmCheckin()" [disabled]="checkinProcessing">
+          Confirm Check-In
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation -->
+  <!-- Prompt to prevent accidental permanent deletion of an asset -->
+  <div class="modal-overlay" *ngIf="showDeleteConfirm" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;" (click)="cancelDelete()">
+    <div class="assura-card assura-accent-danger" style="width: 100%; max-width: 400px; padding: 0; overflow: hidden;" (click)="$event.stopPropagation()">
+      <div style="padding: 32px; text-align: center;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+          <mat-icon style="font-size: 32px; width: 32px; height: 32px;">warning</mat-icon>
+        </div>
+        <h3 style="margin: 0 0 12px 0; font-family: 'Jost'; font-size: 20px; font-weight: 700;">Delete Asset?</h3>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5;">Are you sure you want to remove <strong>{{ asset.assetCode }}</strong>?</p>
+      </div>
+      <div style="display: flex; gap: 12px; padding: 20px 24px; border-top: 1px solid rgba(148, 163, 184, 0.2);">
+        <button class="assura-btn assura-btn-secondary" style="flex: 1; justify-content: center;" (click)="cancelDelete()">Cancel</button>
+        <button class="assura-btn assura-btn-primary" style="flex: 1; justify-content: center; background: #ef4444; border-color: #ef4444;" (click)="confirmDelete()" [disabled]="deleting">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= DEDICATED PRINT CONTAINER (VISIBLE ONLY DURING WINDOW.PRINT) ================= -->
+<div id="printable-single-qr-sheet" class="print-only-container" *ngIf="asset">
+  <div class="qr-print-card">
+    <div class="qr-print-img-box">
+      <img *ngIf="qrDataUrl" [src]="qrDataUrl" [alt]="asset.assetCode" class="qr-print-img" />
+    </div>
+    <div class="qr-print-details">
+      <div class="qr-print-header">ASSURA ASSET TAG</div>
+      <div class="qr-print-code">{{ asset.assetCode }}</div>
+      <div class="qr-print-product" *ngIf="asset.productName">{{ asset.productName }}</div>
+      <div class="qr-print-meta">
+        <span *ngIf="asset.categoryName">{{ asset.categoryName }}</span>
+        <span *ngIf="asset.divisionName"> | {{ asset.divisionName }}</span>
+      </div>
+      <div class="qr-print-serial" *ngIf="asset.serialNumber">SN: {{ asset.serialNumber }}</div>
+    </div>
+  </div>
+</div>

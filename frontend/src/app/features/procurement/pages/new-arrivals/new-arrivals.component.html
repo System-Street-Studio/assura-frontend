@@ -1,0 +1,132 @@
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <h1 class="assura-page-title" style="margin-bottom: 24px;">Inform New Arrivals</h1>
+
+    <div class="assura-card" style="border-top: 4px solid #4f46e5; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
+        <h2 style="margin: 0 0 24px 0; font-family: 'Jost'; font-size: 20px; font-weight: 600; color: #0f172a;">Inform New Assets has arrived</h2>
+
+        <form [formGroup]="arrivalForm" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; gap: 24px;">
+            <!-- Purchasing Order -->
+            <div>
+                <label class="assura-label" for="purchasingOrderId">Purchasing Order (Item Name) <span style="color: #ef4444;">*</span></label>
+                <select id="purchasingOrderId" formControlName="purchasingOrderId" class="assura-input custom-select">
+                    <option [ngValue]="null">Select Purchasing Order</option>
+                    <option *ngFor="let po of purchasingOrders" [ngValue]="po.id">{{ po.orderNumber }} - {{ po.supplierName }}</option>
+                </select>
+                <div *ngIf="f['purchasingOrderId'].invalid && f['purchasingOrderId'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                    Purchasing Order is required
+                </div>
+            </div>
+
+            <!-- Model -->
+            <div>
+                <label class="assura-label" for="model">Model</label>
+                <input type="text" id="model" formControlName="model" class="assura-input">
+            </div>
+
+            <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 24px;">
+                <!-- Warranty -->
+                <div>
+                    <label class="assura-label" for="warranty">Warranty</label>
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <input type="number" id="warranty" formControlName="warranty" min="0" (keydown)="preventNegative($event)" class="assura-input" style="width: 100px;">
+                        <div style="display: flex; gap: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #475569;">
+                                <input type="checkbox" formControlName="isYears" style="width: 16px; height: 16px;">
+                                Years
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #475569;">
+                                <input type="checkbox" formControlName="isMonths" style="width: 16px; height: 16px;">
+                                Months
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                    <label class="assura-label" for="quantity">Quantity <span style="color: #ef4444;">*</span></label>
+                    <input type="number" id="quantity" formControlName="quantity" min="1" step="1" (keydown)="preventNegative($event)" class="assura-input">
+                    <div *ngIf="f['quantity'].invalid && f['quantity'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Quantity must be at least 1
+                    </div>
+                </div>
+            </div>
+
+            <!-- Purchased Date & Division -->
+            <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 24px;">
+                <div>
+                    <label class="assura-label" for="purchasedDate">Purchased Date <span style="color: #ef4444;">*</span></label>
+                    <input type="date" id="purchasedDate" formControlName="purchasedDate" class="assura-input">
+                    <div *ngIf="f['purchasedDate'].invalid && f['purchasedDate'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Purchased Date is required
+                    </div>
+                </div>
+                <div>
+                    <label class="assura-label" for="divisionId">Division <span style="color: #ef4444;">*</span></label>
+                    <select id="divisionId" formControlName="divisionId" class="assura-input custom-select">
+                        <option [ngValue]="null">Select Division</option>
+                        <option *ngFor="let division of divisions" [ngValue]="division.id">{{ division.name }}</option>
+                    </select>
+                    <div *ngIf="f['divisionId'].invalid && f['divisionId'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Please select a division
+                    </div>
+                </div>
+            </div>
+
+            <!-- Purchased Price -->
+            <div style="max-width: 50%;">
+                <label class="assura-label" for="purchasedPrice">Purchased Price (LKR) <span style="color: #ef4444;">*</span></label>
+                <input type="number" id="purchasedPrice" formControlName="purchasedPrice" min="0" (keydown)="preventNegative($event)" class="assura-input">
+                <div *ngIf="f['purchasedPrice'].invalid && f['purchasedPrice'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                    Valid purchased price is required
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                <button type="button" class="assura-btn assura-btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">Cancel</button>
+                <button type="submit" class="assura-btn assura-btn-primary" [disabled]="!arrivalForm.valid || isSubmitting">
+                    <i class="material-icons" style="font-size: 18px;" *ngIf="!isSubmitting">add_box</i>
+                    {{ isSubmitting ? 'Informing...' : 'Inform' }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- History Section -->
+    <section>
+        <h2 class="assura-page-title" style="margin-bottom: 24px; font-size: 22px;">Recent New Arrivals</h2>
+
+        <div class="assura-table-container">
+            <table class="assura-table">
+                <thead>
+                    <tr>
+                        <th class="assura-th">Date</th>
+                        <th class="assura-th">Item Name</th>
+                        <th class="assura-th">Model</th>
+                        <th class="assura-th">Qty</th>
+                        <th class="assura-th">Division</th>
+                        <th class="assura-th" style="text-align: right;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="assura-tr-hover" *ngFor="let item of history">
+                        <td class="assura-td" style="color: #64748b;">{{ item.purchasedDate | date:'mediumDate' }}</td>
+                        <td class="assura-td" style="font-weight: 600; color: #0f172a;">{{ item.itemName }}</td>
+                        <td class="assura-td" style="color: #475569;">{{ item.model || '-' }}</td>
+                        <td class="assura-td">{{ item.quantity }}</td>
+                        <td class="assura-td" style="color: #475569;">{{ item.divisionName }}</td>
+                        <td class="assura-td" style="text-align: right;">
+                            <span class="assura-badge" [ngClass]="item.status === 'Pending' ? 'assura-badge-warning' : 'assura-badge-success'">
+                                {{ item.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="history.length === 0">
+                        <td colspan="6" class="assura-td" style="text-align: center; color: #94a3b8; padding: 32px;">No data available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>

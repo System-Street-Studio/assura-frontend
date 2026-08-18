@@ -1,0 +1,254 @@
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+  <!-- Top bar: back button + breadcrumb. onCancel() uses Location.back() (no save) -->
+  <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+    <button class="assura-btn assura-btn-secondary" style="padding: 8px;" (click)="onCancel()">
+      <mat-icon style="font-size: 20px;">arrow_back</mat-icon>
+    </button>
+    <!-- pageTitle is a computed getter: 'New Asset' | 'Edit Asset' | 'Clone Asset' -->
+    <div>
+      <span style="font-size: 13px;  font-weight: 500; text-transform: uppercase;">Assets / {{ pageTitle }}</span>
+      <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px;">
+        <h1 class="assura-page-title" style="margin-bottom: 0;">{{ pageTitle }}</h1>
+        <!-- Badge only appears once the user has typed an asset code -->
+        <span class="assura-badge assura-badge-info" style="display: inline-flex; align-items: center; gap: 4px;" *ngIf="assetCodeValue">
+          <mat-icon style="font-size: 14px; width: 14px; height: 14px;">tag</mat-icon>
+          {{ assetCodeValue }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main reactive form.
+       [formGroup] binds to the `assetForm` FormGroup defined in the component.
+       (ngSubmit) triggers onSave() which validates then calls the appropriate API. -->
+  <form class="assura-card assura-accent-primary" style="padding: 24px;" [formGroup]="assetForm" (ngSubmit)="onSave()">
+
+    <!-- ── PURCHASE ORDER (PO) AUTO-FILL SELECTOR ── -->
+    <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px; padding: 18px 22px; margin-bottom: 28px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99, 102, 241, 0.2); color: #818cf8; display: flex; align-items: center; justify-content: center;">
+            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">receipt_long</mat-icon>
+          </div>
+          <div>
+            <div style="font-family: 'Jost'; font-weight: 700; font-size: 15px; letter-spacing: 0.5px;">Purchase Order (Auto-Fill)</div>
+            <div style="font-size: 12px; opacity: 0.75;">Select a PO to automatically populate Supplier, Division, Product, Value & Warranty</div>
+          </div>
+        </div>
+        <span class="assura-badge assura-badge-info" style="font-size: 12px;" *ngIf="purchasingOrders.length > 0">
+          {{ purchasingOrders.length }} POs available &bull; Latest first
+        </span>
+      </div>
+
+      <div class="assura-grid" [ngStyle]="{'grid-template-columns': poItems.length > 1 ? '1fr 1fr' : '1fr', 'gap': '16px', 'margin-top': '0'}">
+        <!-- PO Selection Dropdown -->
+        <div>
+          <label class="assura-label" for="poSelect" style="font-size: 12px; margin-bottom: 6px; font-weight: 600;">
+            Select Purchase Order (PO)
+          </label>
+          <div style="position: relative;">
+            <select id="poSelect" class="assura-input custom-select" [ngModel]="selectedPoId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onPoChange($event)" style="font-weight: 500;">
+              <option [ngValue]="0">-- Select PO from Dropdown (Latest First) --</option>
+              <option *ngFor="let po of purchasingOrders" [ngValue]="po.id">
+                #{{ po.orderNumber }} - {{ po.supplierName || 'Vendor' }} ({{ po.issuedDate | date:'yyyy-MM-dd' }}) {{ po.divisionName ? '• ' + po.divisionName : '' }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PO Item Dropdown (shown when the PO contains multiple items) -->
+        <div *ngIf="poItems.length > 1">
+          <label class="assura-label" for="poItemSelect" style="font-size: 12px; margin-bottom: 6px; font-weight: 600;">
+            Select PO Item
+          </label>
+          <select id="poItemSelect" class="assura-input custom-select" [ngModel]="selectedPoItemId" [ngModelOptions]="{standalone: true}" (ngModelChange)="onPoItemChange($event)" style="font-weight: 500;">
+            <option *ngFor="let item of poItems" [ngValue]="item.id">
+              {{ item.itemName }} {{ item.model ? '(' + item.model + ')' : '' }} - {{ (item.discountedPrice || item.unitPrice) | currency:'LKR':'symbol':'1.0-0' }} (Qty: {{ item.quantity }})
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Info Bar when PO is selected -->
+      <div *ngIf="currentPo" style="margin-top: 12px; padding: 10px 14px; background: rgba(99, 102, 241, 0.12); border-radius: 8px; font-size: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; color: #c7d2fe;">
+        <span><strong style="color: #ffffff;">Order:</strong> #{{ currentPo.orderNumber }}</span>
+        <span>&bull;</span>
+        <span><strong style="color: #ffffff;">Supplier:</strong> {{ currentPo.supplierName }}</span>
+        <span *ngIf="currentPo.divisionName">&bull;</span>
+        <span *ngIf="currentPo.divisionName"><strong style="color: #ffffff;">Division:</strong> {{ currentPo.divisionName }}</span>
+        <span>&bull;</span>
+        <span><strong style="color: #ffffff;">Total PO Value:</strong> {{ currentPo.totalAmount | currency:'LKR' }}</span>
+        <span *ngIf="loadingPoDetails" style="margin-left: auto; display: inline-flex; align-items: center; gap: 4px; color: #818cf8;">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px; animation: spin 1s linear infinite;">autorenew</mat-icon>
+          Loading PO...
+        </span>
+      </div>
+    </div>
+
+    <!-- Two-column grid: left = Basic Info, right = Details -->
+    <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 32px;">
+
+      <!-- ── LEFT COLUMN: Basic Information ── -->
+      <div>
+        <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600;  text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Basic Information</h3>
+
+        <!-- Asset Code: required unique identifier (e.g. ASSET-001).
+             [class.has-error] adds a red border when showError() returns true. -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="assetCode">Asset Code <span style="color: #ef4444;">*</span></label>
+          <div style="display: flex; gap: 8px;">
+            <input id="assetCode" type="text" class="assura-input" [class.field-invalid]="showError('assetCode')" [class.field-shake]="shaking && showError('assetCode')" formControlName="assetCode" placeholder="e.g. AST-20260815-1234" required />
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 0 14px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; font-size: 13px;" (click)="regenerateCode()" title="Generate new unique code">
+              <mat-icon style="font-size: 18px; width: 18px; height: 18px;">autorenew</mat-icon>
+              <span>Auto</span>
+            </button>
+          </div>
+          <div class="field-error-text" *ngIf="showError('assetCode')">
+            <mat-icon>error_outline</mat-icon>{{ errorFor('assetCode') }}
+          </div>
+        </div>
+
+        <!-- Asset Tag: optional secondary label (e.g. a physical barcode sticker reference) -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="assetTag">Asset Tag</label>
+          <input id="assetTag" type="text" class="assura-input" formControlName="assetTag" placeholder="e.g. TAG-123" />
+        </div>
+
+        <!-- Product dropdown: populated from the `products` array loaded via ProductService.
+             [ngValue]="0" is the placeholder; Validators.min(1) makes 0 an invalid selection. -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="productId">Product <span style="color: #ef4444;">*</span></label>
+          <select id="productId" class="assura-input custom-select" [class.field-invalid]="showError('productId')" [class.field-shake]="shaking && showError('productId')" formControlName="productId" (change)="onProductChange($event)" required>
+            <option [ngValue]="0">Select Product</option>
+            <option *ngFor="let p of products" [ngValue]="p.id">{{ p.name }}</option>
+          </select>
+          <div class="field-error-text" *ngIf="showError('productId')">
+            <mat-icon>error_outline</mat-icon>{{ errorFor('productId') }}
+          </div>
+        </div>
+
+        <!-- Status dropdown: driven by the `statuses` string-array in the component
+             (InUse, InStore, UnderMaintenance, Discarded, Transferred, Lost) -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="status">Status <span style="color: #ef4444;">*</span></label>
+          <select id="status" class="assura-input custom-select" [class.field-invalid]="showError('status')" [class.field-shake]="shaking && showError('status')" formControlName="status" required>
+            <option value="">Select Status</option>
+            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+          </select>
+          <div class="field-error-text" *ngIf="showError('status')">
+            <mat-icon>error_outline</mat-icon>{{ errorFor('status') }}
+          </div>
+        </div>
+
+        <!-- Assigned Employee: allows optional direct assignment to employee on registration -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="assignedUserId">Assigned Employee <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">(Optional - leave empty for Store Inventory)</span></label>
+          <select id="assignedUserId" class="assura-input custom-select" formControlName="assignedUserId" (change)="onEmployeeChange($event)">
+            <option [ngValue]="0">-- In Store Inventory (Unassigned) --</option>
+            <option *ngFor="let emp of employees" [ngValue]="+emp.id">{{ emp.name }} ({{ emp.division || 'No Division' }})</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ── RIGHT COLUMN: Details ── -->
+      <div>
+        <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600;  text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Details</h3>
+
+        <!-- Category: groups assets into logical types (e.g. Electronics, Furniture) -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="categoryId">Category <span style="color: #ef4444;">*</span></label>
+          <select id="categoryId" class="assura-input custom-select" [class.field-invalid]="showError('categoryId')" [class.field-shake]="shaking && showError('categoryId')" formControlName="categoryId" required>
+            <option [ngValue]="0">Select Category</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+          <div class="field-error-text" *ngIf="showError('categoryId')">
+            <mat-icon>error_outline</mat-icon>{{ errorFor('categoryId') }}
+          </div>
+        </div>
+
+        <!-- Supplier: the vendor from whom the asset was purchased -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="supplierId">Supplier <span style="color: #ef4444;">*</span></label>
+          <select id="supplierId" class="assura-input custom-select" [class.field-invalid]="showError('supplierId')" [class.field-shake]="shaking && showError('supplierId')" formControlName="supplierId" required>
+            <option [ngValue]="0">Select Supplier</option>
+            <option *ngFor="let s of suppliers" [ngValue]="s.id">{{ s.name }}</option>
+          </select>
+          <div class="field-error-text" *ngIf="showError('supplierId')">
+            <mat-icon>error_outline</mat-icon>{{ errorFor('supplierId') }}
+          </div>
+        </div>
+
+        <!-- Division: the department or business unit responsible for this asset -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="divisionId">Division <span style="color: #ef4444;">*</span></label>
+          <select id="divisionId" class="assura-input custom-select" [class.field-invalid]="showError('divisionId')" [class.field-shake]="shaking && showError('divisionId')" formControlName="divisionId" required>
+            <option [ngValue]="0">Select Division</option>
+            <option *ngFor="let d of divisions" [ngValue]="d.id">{{ d.name }}</option>
+          </select>
+          <div class="field-error-text" *ngIf="showError('divisionId')">
+            <mat-icon>error_outline</mat-icon>{{ errorFor('divisionId') }}
+          </div>
+        </div>
+
+        <!-- Serial Number: manufacturer serial for exact unit identification.
+             Cleared automatically in clone mode to avoid duplicate serials. -->
+        <div style="margin-bottom: 20px;">
+          <label class="assura-label" for="serialNumber">Serial Number</label>
+          <input id="serialNumber" type="text" class="assura-input" formControlName="serialNumber" placeholder="e.g. SN123456" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Full-width Additional section (outside the two-column grid) ── -->
+    <div style="margin-top: 12px; margin-bottom: 32px;">
+      <h3 style="margin: 0 0 20px 0; font-family: 'Jost'; font-size: 16px; font-weight: 600;  text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Additional</h3>
+
+      <!-- Side-by-side pair: Asset Date and Purchase Value -->
+      <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 24px; margin-bottom: 20px;">
+        <!-- Asset Date: purchase/registration date; defaults to today via getTodayDateString() -->
+        <div>
+          <label class="assura-label" for="assetDate">Asset Date</label>
+          <input id="assetDate" type="date" class="assura-input" [class.field-invalid]="showError('assetDate')" [class.field-shake]="shaking && showError('assetDate')" formControlName="assetDate" />
+          <div class="field-error-text" *ngIf="showError('assetDate')">
+            <mat-icon>error_outline</mat-icon>{{ errorFor('assetDate') }}
+          </div>
+        </div>
+
+        <!-- Purchase Value: monetary amount in LKR.
+             .money-row makes the currency badge and input appear as one fused control. -->
+        <div>
+          <label class="assura-label" for="purchaseValue">Purchase Value <span style="color: #ef4444;">*</span></label>
+          <div style="display: flex; align-items: stretch;">
+            <span style="  padding: 10px 16px; border: 1px solid #cbd5e1; border-right: none; border-radius: 8px 0 0 8px; font-weight: 500; font-size: 14px; display: flex; align-items: center;">LKR</span>
+            <input id="purchaseValue" type="number" class="assura-input" style="border-radius: 0 8px 8px 0; flex-grow: 1;" [class.field-invalid]="showError('purchaseValue')" [class.field-shake]="shaking && showError('purchaseValue')" formControlName="purchaseValue" placeholder="0" min="0" (keydown)="preventNegative($event)" step="1" />
+          </div>
+          <div class="field-error-text" *ngIf="showError('purchaseValue')">
+            <mat-icon>error_outline</mat-icon>{{ errorFor('purchaseValue') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes: free-text remarks about the asset (max 1000 chars enforced in the FormGroup) -->
+      <div>
+        <label class="assura-label" for="notes">Notes</label>
+        <textarea id="notes" class="assura-input" formControlName="notes" rows="3"
+          placeholder="Additional notes about this asset..."></textarea>
+      </div>
+    </div>
+
+    <!-- ── Action Buttons ── -->
+    <div style="display: flex; justify-content: flex-end; gap: 12px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+      <!-- Cancel: navigates back without saving -->
+      <button type="button" class="assura-btn assura-btn-secondary" (click)="onCancel()">Cancel</button>
+
+      <!-- Submit: disabled while saving.
+           Icon swaps to a spinning 'sync' during the in-flight API call.
+           Label changes contextually by mode. -->
+      <button type="submit" class="assura-btn assura-btn-primary" [disabled]="saving">
+        <mat-icon style="font-size: 18px;" *ngIf="!saving">save</mat-icon>
+        <mat-icon style="font-size: 18px; animation: spin 1s linear infinite;" *ngIf="saving">sync</mat-icon>
+        {{ saving ? 'Saving...' : (mode === 'create' ? 'Create Asset' : mode === 'clone' ? 'Create Clone' : 'Save Changes') }}
+      </button>
+    </div>
+  </form>
+</div>

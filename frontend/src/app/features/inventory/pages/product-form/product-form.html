@@ -1,0 +1,111 @@
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+  <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+    <button class="assura-btn assura-btn-secondary" style="padding: 8px;" type="button" (click)="onCancel()">
+      <mat-icon style="font-size: 20px;">arrow_back</mat-icon>
+    </button>
+    <div>
+      <span class="assura-card-subtitle" style="font-size: 13px; font-weight: 500; text-transform: uppercase;">Inventory / Products / {{ pageTitle }}</span>
+      <h1 class="assura-page-title" style="margin-bottom: 4px; margin-top: 4px;">{{ pageTitle }}</h1>
+      <p class="assura-card-subtitle" style="margin: 0; font-size: 15px;">{{ mode === 'edit' ? 'Update product metadata used by assets and requests.' : 'Create a product record that can be reused across asset registrations.' }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="assura-card" style="padding: 48px; text-align: center; border-radius: 12px; margin-bottom: 24px;">
+    <mat-icon style="animation: spin 1s linear infinite; margin-bottom: 12px;">sync</mat-icon>
+    <div>Loading product details...</div>
+  </div>
+
+  <div class="assura-grid" style="grid-template-columns: 2fr 1fr; gap: 32px; margin-top: 0;" *ngIf="!loading">
+    <form class="assura-card" style="border-top: 4px solid #4f46e5;" [formGroup]="productForm" (ngSubmit)="onSave()">
+      <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 24px;">
+        <div style="grid-column: 1 / -1;">
+          <label class="assura-label" for="name">Product Name <span style="color: #ef4444;">*</span></label>
+          <input id="name" type="text" class="assura-input" formControlName="name" placeholder="e.g. Lenovo ThinkPad T14" />
+          <div *ngIf="showError('name')" style="color: #ef4444; font-size: 13px; margin-top: 4px;">Product name is required</div>
+        </div>
+
+        <div>
+          <label class="assura-label" for="manufacturer">Manufacturer <span style="color: #ef4444;">*</span></label>
+          <input id="manufacturer" type="text" class="assura-input" formControlName="manufacturer" placeholder="e.g. Lenovo" />
+          @if (showError('manufacturer')) {
+            <div style="color: #ef4444; font-size: 13px; margin-top: 4px;">Manufacturer is required</div>
+          }
+        </div>
+
+        <div>
+          <label class="assura-label" for="modelNumber">Model Number</label>
+          <input id="modelNumber" type="text" class="assura-input" formControlName="modelNumber" placeholder="e.g. T14 Gen 4" />
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+          <label class="assura-label" for="description">Description</label>
+          <textarea id="description" class="assura-input" rows="4" formControlName="description" placeholder="Optional notes about the product..."></textarea>
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+          <label class="assura-label" for="productImage">Product Image</label>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 88px; height: 88px; border-radius: 8px; border: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8fafc; flex-shrink: 0;">
+              @if (imagePreviewUrl) {
+                <img [src]="imagePreviewUrl" alt="Product preview" style="width: 100%; height: 100%; object-fit: cover;" />
+              } @else {
+                <mat-icon style="color: #94a3b8;">image</mat-icon>
+              }
+            </div>
+            <div>
+              <input #imageInput id="productImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="display: none;" (change)="onImageSelected($event)" />
+              <button type="button" class="assura-btn assura-btn-secondary" (click)="imageInput.click()">
+                <mat-icon style="font-size: 18px;">upload</mat-icon>
+                {{ imagePreviewUrl ? 'Change Image' : 'Upload Image' }}
+              </button>
+              @if (imagePreviewUrl) {
+                <button type="button" class="assura-btn assura-btn-secondary" style="margin-left: 8px; color: #ef4444; border-color: #fca5a5;" (click)="removeImage()">
+                  Remove
+                </button>
+              }
+              <div class="assura-card-subtitle" style="font-size: 12px; margin-top: 6px;">JPG, PNG, WEBP or GIF. Max 5MB.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+        <button type="button" class="assura-btn assura-btn-secondary" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="assura-btn assura-btn-primary" [disabled]="submitting || isInvalid">
+          <mat-icon *ngIf="!submitting" style="font-size: 18px;">save</mat-icon>
+          <mat-icon *ngIf="submitting" style="font-size: 18px; animation: spin 1s linear infinite;">sync</mat-icon>
+          {{ submitLabel }}
+        </button>
+      </div>
+    </form>
+
+    <aside class="assura-card" style="height: fit-content;">
+      <h3 class="assura-card-title" style="margin: 0 0 20px 0; font-size: 18px; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">Preview</h3>
+      
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+        @if (imagePreviewUrl) {
+          <div style="width: 100%; height: 140px; border-radius: 8px; overflow: hidden; background: #f8fafc; border: 1px solid #e2e8f0;">
+            <img [src]="imagePreviewUrl" alt="Product preview" style="width: 100%; height: 100%; object-fit: cover;" />
+          </div>
+        }
+        <div>
+          <span class="assura-card-subtitle" style="display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Name</span>
+          <span class="assura-card-title" style="display: block; font-size: 15px; font-weight: 600;">{{ productForm.controls.name.value || 'Unnamed product' }}</span>
+        </div>
+        <div>
+          <span class="assura-card-subtitle" style="display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Manufacturer</span>
+          <span class="assura-card-title" style="display: block; font-size: 15px; font-weight: 500;">{{ productForm.controls.manufacturer.value || '—' }}</span>
+        </div>
+        <div>
+          <span class="assura-card-subtitle" style="display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Model</span>
+          <span class="assura-card-title" style="display: block; font-size: 15px; font-weight: 500;">{{ productForm.controls.modelNumber.value || '—' }}</span>
+        </div>
+      </div>
+      
+      <div style="background: #e0e7ff; color: #4338ca; padding: 12px; border-radius: 6px; font-size: 13px; line-height: 1.5; display: flex; gap: 8px;">
+        <mat-icon style="font-size: 16px; width: 16px; height: 16px; margin-top: 2px;">info</mat-icon>
+        <div>Products are validated before submission to avoid empty catalog rows and broken asset references.</div>
+      </div>
+    </aside>
+  </div>
+</div>

@@ -1,0 +1,86 @@
+.my-assets-container {
+    padding: 32px 40px;
+    background-color: transparent;
+    min-height: calc(100vh - 48px);
+    font-family: 'Jost', sans-serif;
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header-section {
+    margin-bottom: 32px;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 24px;
+}
+
+.table-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Overriding shared table styles locally if needed to match design specificity */
+:host ::ng-deep .data-table-container {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+:host ::ng-deep .data-table {
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+:host ::ng-deep .data-table thead tr {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15) !important;
+}
+
+:host ::ng-deep th {
+    background: transparent !important;
+    color: #94a3b8 !important;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 12px 16px;
+    text-align: center;
+}
+
+:host ::ng-deep td {
+    padding: 24px 16px;
+    color: #e2e8f0 !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1) !important;
+}
+
+:host ::ng-deep .data-row {
+    background-color: transparent !important;
+}
+
+:host ::ng-deep .data-row:hover {
+    background-color: rgba(51, 65, 85, 0.4) !important;
+}
+
+:host ::ng-deep .clickable-link {
+    color: #818cf8 !important;
+}
+
+:host ::ng-deep tr:hover td {
+    background: rgba(51, 65, 85, 0.4);
+}

@@ -1,0 +1,103 @@
+/* Hidden by default on screen */
+.print-only-container {
+  display: none;
+}
+
+/* =========================================================
+   PRINT STYLESHEET (Activated when window.print() is called)
+   ========================================================= */
+@media print {
+  /* Container setup for single sticker printing */
+  #printable-single-qr-sheet {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    padding: 8mm !important;
+    margin: 0 !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-sizing: border-box !important;
+    visibility: visible !important;
+  }
+
+  /* Individual Asset Sticker Card */
+  .qr-print-card {
+    border: 1.5px dashed #475569 !important;
+    border-radius: 6px !important;
+    padding: 8px 14px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 14px !important;
+    min-height: 38mm !important;
+    max-height: 48mm !important;
+    width: 90mm !important;
+    box-sizing: border-box !important;
+  }
+
+  .qr-print-img-box {
+    width: 32mm !important;
+    height: 32mm !important;
+    min-width: 32mm !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #ffffff !important;
+  }
+
+  .qr-print-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  .qr-print-details {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    overflow: hidden !important;
+    line-height: 1.2 !important;
+  }
+
+  .qr-print-header {
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+  }
+
+  .qr-print-code {
+    font-size: 13pt !important;
+    font-weight: 800 !important;
+    font-family: monospace, monospace !important;
+    color: #000000 !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  .qr-print-product {
+    font-size: 9.5pt !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .qr-print-meta {
+    font-size: 8pt !important;
+    color: #334155 !important;
+  }
+
+  .qr-print-serial {
+    font-size: 7.5pt !important;
+    font-family: monospace, monospace !important;
+    color: #64748b !important;
+    margin-top: 2px !important;
+  }
+}

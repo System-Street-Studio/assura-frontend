@@ -1,0 +1,326 @@
+<div class="transfers-page">
+  <!-- ── 1. Page Header ── -->
+  <div class="page-header">
+    <h1 class="assura-page-title">Transfer Management</h1>
+    <p class="page-subtitle">Track, approve, and manage temporary equipment movements and custody transfers.</p>
+  </div>
+
+  <!-- ── 2. Navigation Tabs ── -->
+  <div class="transfer-tabs-bar">
+    <button class="tab-pill-btn" [class.active]="activeTab() === 'incoming'" (click)="setTab('incoming')">
+      <mat-icon>inbox</mat-icon>
+      <span>Incoming Requests</span>
+      @if (incomingCount() > 0) {
+        <span class="tab-count-badge">{{ incomingCount() }}</span>
+      }
+    </button>
+    <button class="tab-pill-btn" [class.active]="activeTab() === 'pending'" (click)="setTab('pending')">
+      <mat-icon>hourglass_top</mat-icon>
+      <span>Pending Approval</span>
+      @if (pendingCount() > 0) {
+        <span class="tab-count-badge">{{ pendingCount() }}</span>
+      }
+    </button>
+    <button class="tab-pill-btn" [class.active]="activeTab() === 'active'" (click)="setTab('active')">
+      <mat-icon>sync_alt</mat-icon>
+      <span>Active Transfers</span>
+      @if (activeCount() > 0) {
+        <span class="tab-count-badge">{{ activeCount() }}</span>
+      }
+    </button>
+    <button class="tab-pill-btn" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">
+      <mat-icon>check_circle</mat-icon>
+      <span>Completed</span>
+      @if (completedCount() > 0) {
+        <span class="tab-count-badge">{{ completedCount() }}</span>
+      }
+    </button>
+  </div>
+
+  <!-- ── 3. KPI Stats Grid ── -->
+  <div class="assura-grid assura-grid-cols-4">
+    <div class="assura-card assura-accent-info" [class.active-card]="activeTab() === 'incoming'" (click)="setTab('incoming')">
+      <span class="assura-card-title">Incoming Requests</span>
+      <strong class="assura-card-value">{{ incomingCount() }}</strong>
+      <span class="assura-card-subtitle">Requiring your action</span>
+    </div>
+
+    <div class="assura-card assura-accent-warning" [class.active-card]="activeTab() === 'pending'" (click)="setTab('pending')">
+      <span class="assura-card-title">Pending Approval</span>
+      <strong class="assura-card-value">{{ pendingCount() }}</strong>
+      <span class="assura-card-subtitle">Awaiting holder approval</span>
+    </div>
+
+    <div class="assura-card assura-accent-primary" [class.active-card]="activeTab() === 'active'" (click)="setTab('active')">
+      <span class="assura-card-title">Active Transfers</span>
+      <strong class="assura-card-value">{{ activeCount() }}</strong>
+      <span class="assura-card-subtitle">Currently on loan</span>
+    </div>
+
+    <div class="assura-card assura-accent-success" [class.active-card]="activeTab() === 'completed'" (click)="setTab('completed')">
+      <span class="assura-card-title">Completed Transfers</span>
+      <strong class="assura-card-value">{{ completedCount() }}</strong>
+      <span class="assura-card-subtitle">Successfully returned</span>
+    </div>
+  </div>
+
+  <!-- ── 4. Main Content Panel ── -->
+  <div class="glass-panel">
+    <div class="panel-header-row">
+      <h3 class="panel-title">
+        {{ activeTab() | titlecase }} {{ activeTab() === 'active' || activeTab() === 'completed' ? 'Transfers' : 'Requests' }}
+      </h3>
+
+      <!-- Search & Filter Controls -->
+      @if (activeTab() === 'active' || activeTab() === 'completed') {
+        <div class="controls-group">
+          <div class="search-box">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input
+              type="text"
+              placeholder="Search by asset, user, or code..."
+              class="assura-search-input"
+              [value]="searchQuery()"
+              (input)="onSearchChange($event)">
+          </div>
+
+          <div class="filter-dropdown" (click)="$event.stopPropagation()">
+            <button class="assura-filter-btn" (click)="$event.stopPropagation(); showMenu.set(!showMenu())">
+              <div class="filter-btn-inner">
+                <mat-icon>tune</mat-icon>
+                <span>{{ filterType() === 'all' ? 'All Transfers' : (filterType() === 'IncomingActive' ? 'Incoming' : 'Outgoing') }}</span>
+              </div>
+              <mat-icon class="arrow-icon">expand_more</mat-icon>
+            </button>
+
+            @if (showMenu()) {
+              <div class="filter-dropdown-menu" (click)="$event.stopPropagation()">
+                <div class="filter-menu-item" (click)="setFilterType('all')" [class.active]="filterType() === 'all'">
+                  All Transfers
+                </div>
+                <div class="filter-menu-item" (click)="setFilterType('IncomingActive')" [class.active]="filterType() === 'IncomingActive'">
+                  Incoming Transfers
+                </div>
+                <div class="filter-menu-item" (click)="setFilterType('OutgoingActive')" [class.active]="filterType() === 'OutgoingActive'">
+                  Outgoing Transfers
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Transfer Cards List -->
+    <div class="transfers-list-container">
+      @if (isLoading()) {
+        <div class="loading-state">
+          <mat-icon class="spin-animation">sync</mat-icon>
+          <p>Loading transfer records... Please wait.</p>
+        </div>
+      } @else {
+        @for (item of paginatedRequests(); track item.id) {
+          
+          <!-- Incoming & Pending Cards -->
+          @if (activeTab() === 'incoming' || activeTab() === 'pending') {
+            <div class="transfer-card">
+              <div class="card-top-row">
+                <div class="item-title-group">
+                  <span class="id-tag">#{{ item.id }}</span>
+                  <h4 class="transfer-item-title">{{ item.productName || 'Asset Transfer' }}</h4>
+                  <span class="code-pill">{{ item.assetCode || 'N/A' }}</span>
+                </div>
+                <span class="timestamp-tag">
+                  <mat-icon>schedule</mat-icon> {{ item.timeAgo }}
+                </span>
+              </div>
+
+              <div class="transfer-meta-grid">
+                <div class="meta-item">
+                  <span class="meta-label">Division:</span>
+                  <span class="meta-val">{{ item.toDivisionName }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Transfer Period:</span>
+                  <span class="meta-val">{{ item.transferPeriod }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Requested By:</span>
+                  <span class="meta-val">{{ item.transferByName }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Target Custodian:</span>
+                  <span class="meta-val">{{ item.targetUserName }}</span>
+                </div>
+                <div class="meta-item full-width">
+                  <span class="meta-label">Reason:</span>
+                  <span class="meta-val ">{{ item.reason || 'No description provided.' }}</span>
+                </div>
+              </div>
+
+              <div class="card-footer-row">
+                @if (activeTab() === 'incoming') {
+                  <div class="action-buttons-group">
+                    <button class="assura-btn-danger" (click)="rejectTransfer(+item.id)">
+                      <mat-icon>close</mat-icon> Reject
+                    </button>
+                    <button class="assura-btn-success" (click)="acceptTransfer(+item.id)">
+                      <mat-icon>check</mat-icon> Accept Transfer
+                    </button>
+                  </div>
+                } @else {
+                  <span class="status-badge pending">
+                    <span class="status-dot"></span> Pending Approval
+                  </span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Active & Completed Cards -->
+          @if (activeTab() === 'active' || activeTab() === 'completed') {
+            <div class="transfer-card" [class.card-expanded]="expandedItemId() === item.id">
+              <div class="card-top-row">
+                <div class="item-title-group">
+                  <span class="id-tag">#{{ item.id }}</span>
+                  <h4 class="transfer-item-title">{{ item.productName || 'Asset Transfer' }}</h4>
+                  <span class="code-pill">{{ item.assetCode }}</span>
+                  <span class="direction-badge" [ngClass]="item.type === 'IncomingActive' ? 'incoming' : 'outgoing'">
+                    {{ item.type === 'IncomingActive' ? 'Incoming' : 'Outgoing' }}
+                  </span>
+                  @if (activeTab() === 'completed') {
+                    <span class="status-badge approved">
+                      <span class="status-dot"></span> Completed
+                    </span>
+                  }
+                </div>
+
+                <div class="card-top-right">
+                  @if (activeTab() === 'active') {
+                    <div class="countdown-badge">
+                      <mat-icon>hourglass_empty</mat-icon>
+                      <span>{{ item.daysLeft || 'N/A' }}</span>
+                    </div>
+                  }
+                  <span class="timestamp-tag">
+                    <mat-icon>schedule</mat-icon> {{ item.timeAgo }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="transfer-meta-grid">
+                @if (item.type === 'OutgoingActive') {
+                  <div class="meta-item">
+                    <span class="meta-label">Transfer To Division:</span>
+                    <span class="meta-val">{{ item.toDivisionName }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Recipient User:</span>
+                    <span class="meta-val">{{ item.targetUserName }}</span>
+                  </div>
+                } @else {
+                  <div class="meta-item">
+                    <span class="meta-label">Transfer From Division:</span>
+                    <span class="meta-val">{{ item.fromDivisionName }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Origin Custodian:</span>
+                    <span class="meta-val">{{ item.currentHolderName }}</span>
+                  </div>
+                }
+                <div class="meta-item full-width">
+                  <span class="meta-label">Transfer Period:</span>
+                  <span class="meta-val">{{ item.transferPeriod }}</span>
+                </div>
+              </div>
+
+              <div class="card-footer-row">
+                <button class="assura-btn-secondary" (click)="$event.stopPropagation(); toggleDetails(item.id)">
+                  <mat-icon>{{ expandedItemId() === item.id ? 'expand_less' : 'visibility' }}</mat-icon>
+                  {{ expandedItemId() === item.id ? 'Hide Details' : 'View Details' }}
+                </button>
+              </div>
+
+              <!-- Expanded Details Sub-Panel -->
+              @if (expandedItemId() === item.id) {
+                <div class="expanded-details-box">
+                  <h5 class="expanded-title">
+                    <mat-icon>info</mat-icon> Full Transfer Specification
+                  </h5>
+                  <div class="details-spec-grid">
+                    <div class="spec-cell">
+                      <span class="spec-label">Transfer ID</span>
+                      <span class="spec-val mono">#{{ item.id }}</span>
+                    </div>
+                    <div class="spec-cell">
+                      <span class="spec-label">Asset Tag</span>
+                      <span class="spec-val mono">{{ item.assetTag }}</span>
+                    </div>
+                    <div class="spec-cell">
+                      <span class="spec-label">Current Status</span>
+                      <span class="status-badge" [ngClass]="item.status ? item.status.toLowerCase() : 'transferred'">
+                        <span class="status-dot"></span> {{ item.status }}
+                      </span>
+                    </div>
+                    <div class="spec-cell">
+                      <span class="spec-label">Authorized By</span>
+                      <span class="spec-val">{{ item.transferByName || 'N/A' }}</span>
+                    </div>
+                    <div class="spec-cell">
+                      <span class="spec-label">Transfer Date</span>
+                      <span class="spec-val">{{ item.transferDate | date: 'mediumDate' }}</span>
+                    </div>
+                    @if (activeTab() === 'completed') {
+                      <div class="spec-cell">
+                        <span class="spec-label">Return Date</span>
+                        <span class="spec-val">{{ (item.returnDate | date: 'mediumDate') ?? 'N/A' }}</span>
+                      </div>
+                    }
+                    <div class="spec-cell full-width">
+                      <span class="spec-label">Reason / Justification</span>
+                      <span class="spec-val">{{ item.reason || 'No specific reason provided.' }}</span>
+                    </div>
+                  </div>
+
+                  @if (activeTab() === 'active' && item.type === 'IncomingActive') {
+                    <div class="return-action-banner">
+                      <div class="banner-text">
+                        <mat-icon class="banner-icon">assignment_return</mat-icon>
+                        <div>
+                          <strong>Return Asset to Owner</strong>
+                          <p>Once your project or usage duration is completed, initiate return to mark the transfer finished.</p>
+                        </div>
+                      </div>
+                      <button class="assura-btn-primary" (click)="returnAsset(item.id)">
+                        <mat-icon>keyboard_return</mat-icon> Return Asset
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+
+        } @empty {
+          <div class="empty-state-box">
+            <mat-icon class="empty-icon">layers_clear</mat-icon>
+            <h4>No Records Found</h4>
+            <p>There are no transfer records under this category at the moment.</p>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if (filteredResults().length > 0 && totalPages() > 1) {
+      <div class="pagination-wrapper">
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          [pageNumbers]="pageNumbers()"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    }
+  </div>
+</div>

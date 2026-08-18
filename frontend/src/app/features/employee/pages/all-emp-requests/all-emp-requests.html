@@ -1,0 +1,138 @@
+<div class="all-requests-page">
+  <!-- ── 1. Page Header ── -->
+  <div class="page-header-row">
+    <div class="header-titles">
+      <div class="back-nav">
+        <a routerLink="/employee/requests-main" class="back-link">
+          <mat-icon>arrow_back</mat-icon> Requests Hub
+        </a>
+      </div>
+      <h1 class="assura-page-title">My All Requests</h1>
+      <p class="page-subtitle">Track, filter, and review the full history of your submitted requests.</p>
+    </div>
+    <button class="assura-btn-primary" routerLink="/employee/new-asset-request">
+      <mat-icon>add</mat-icon> New Request
+    </button>
+  </div>
+
+  <!-- ── 2. Controls & Filter Bar ── -->
+  <div class="controls-bar">
+    <div class="search-box">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search requests..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchChange($event)"
+        class="assura-search-input">
+    </div>
+
+    <!-- Status Filter Dropdown -->
+    <div class="filter-dropdown-container" data-filter="status-filter" (click)="$event.stopPropagation()">
+      <button class="assura-filter-btn" (click)="$event.stopPropagation(); toggleMenu()">
+        <div class="filter-btn-inner">
+          <mat-icon>tune</mat-icon>
+          <span>{{ filterStatus() }}</span>
+        </div>
+        <mat-icon class="arrow-icon">expand_more</mat-icon>
+      </button>
+
+      @if (isMenuOpen()) {
+        <div class="filter-dropdown-menu" (click)="$event.stopPropagation()">
+          <div class="filter-menu-item" (click)="setStatus('All Types')" [class.active]="filterStatus() === 'All Types'">
+            All Types
+          </div>
+          <div class="filter-menu-item" (click)="setStatus('Pending')" [class.active]="filterStatus() === 'Pending'">
+            Pending
+          </div>
+          <div class="filter-menu-item" (click)="setStatus('Approved')" [class.active]="filterStatus() === 'Approved'">
+            Approved
+          </div>
+          <div class="filter-menu-item" (click)="setStatus('Rejected')" [class.active]="filterStatus() === 'Rejected'">
+            Rejected
+          </div>
+          <div class="filter-menu-item" (click)="setStatus('PendingProcurement')" [class.active]="filterStatus() === 'PendingProcurement'">
+            PendingProcurement
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ── 3. Requests Table Panel ── -->
+  <div class="glass-panel">
+    @if (isLoading()) {
+      <div class="loading-state">
+        <mat-icon class="spin-animation">sync</mat-icon>
+        <p>Loading your requests... Please wait.</p>
+      </div>
+    } @else {
+      @if (paginatedRequests().length > 0) {
+        <div class="table-responsive">
+          <table class="assura-modern-table">
+            <thead>
+              <tr>
+                <th>Request ID</th>
+                <th>Type</th>
+                <th>Submitted Date</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (req of paginatedRequests(); track req.id) {
+                <tr>
+                  <td><span class="id-tag">#{{ req.id }}</span></td>
+                  <td><span class="type-pill">{{ req.requestType }}</span></td>
+                  <td class="date-cell">{{ req.submittedDate | date: 'mediumDate' }}</td>
+                  <td>
+                    <span class="priority-badge" [ngClass]="req.priority ? req.priority.toLowerCase() : 'normal'">
+                      {{ req.priority || 'Normal' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="status-badge" [ngClass]="req.status.toLowerCase()">
+                      <span class="status-dot"></span>
+                      {{ req.status }}
+                    </span>
+                  </td>
+                  <td class="text-right">
+                    <div class="row-actions">
+                      <button class="assura-btn-secondary" [routerLink]="['/employee/request-details', req.id]" [state]="{ request: req }">
+                        <mat-icon>visibility</mat-icon> View
+                      </button>
+                      @if (req.status === 'Pending') {
+                        <button class="assura-btn-danger-outline" (click)="cancelRequest(req.id)">
+                          <mat-icon>close</mat-icon> Cancel
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="pagination-wrapper">
+            <app-pagination
+              [currentPage]="currentPage()"
+              [totalPages]="totalPages()"
+              [pageNumbers]="pageNumbers()"
+              (pageChange)="onPageChange($event)">
+            </app-pagination>
+          </div>
+        }
+      } @else {
+        <div class="empty-state-box">
+          <mat-icon class="empty-icon">layers_clear</mat-icon>
+          <h4>No Requests Found</h4>
+          <p>No request records matching your search or filter criteria were found.</p>
+        </div>
+      }
+    }
+  </div>
+</div>

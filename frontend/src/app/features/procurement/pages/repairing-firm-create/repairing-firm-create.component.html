@@ -1,0 +1,56 @@
+<div class="modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;">
+    <div class="assura-card" style="width: 100%; max-width: 600px; padding: 0; overflow: hidden; border-top: 4px solid #4f46e5;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+            <h1 style="margin: 0; font-family: 'Jost'; font-size: 20px; font-weight: 600; color: #0f172a;">{{ isEdit ? 'Edit Repairing Firm' : 'Add New Repairing Firm' }}</h1>
+            <button style="background: none; border: none; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="close()">
+                <i class="material-icons">close</i>
+            </button>
+        </div>
+
+        <form [formGroup]="firmForm" (ngSubmit)="save()" style="padding: 24px;">
+            <div class="assura-grid assura-grid-cols-2" style="margin-top: 0; gap: 24px;">
+                <div style="grid-column: 1 / -1;">
+                    <label class="assura-label" for="name">Firm Name <span style="color: #ef4444;">*</span></label>
+                    <input type="text" class="assura-input" id="name" formControlName="name" placeholder="Enter firm name">
+                    <div *ngIf="f['name'].invalid && f['name'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Firm Name is required
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="assura-label" for="contactPerson">Contact Person</label>
+                    <input type="text" class="assura-input" id="contactPerson" formControlName="contactPerson" placeholder="Enter contact name">
+                </div>
+                
+                <div>
+                    <label class="assura-label" for="phone">Phone Number</label>
+                    <input type="text" class="assura-input" id="phone" formControlName="phone" (keydown)="preventNonNumeric($event)" placeholder="Enter phone number">
+                    <div *ngIf="f['phone'].invalid && f['phone'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Valid 10-digit phone number is required
+                    </div>
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label class="assura-label" for="email">Email Address</label>
+                    <input type="email" class="assura-input" id="email" formControlName="email" placeholder="Enter email address">
+                    <div *ngIf="f['email'].invalid && f['email'].touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Valid email address is required
+                    </div>
+                </div>
+                
+                <div style="grid-column: 1 / -1;">
+                    <label class="assura-label" for="address">Address</label>
+                    <textarea class="assura-input" id="address" formControlName="address" placeholder="Enter firm address" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                <button type="button" class="assura-btn assura-btn-secondary" (click)="close()">Cancel</button>
+                <button type="submit" class="assura-btn assura-btn-primary" [disabled]="firmForm.invalid || isSaving">
+                    <i class="material-icons" style="font-size: 18px;" *ngIf="!isSaving">save</i>
+                    {{ isSaving ? 'Saving...' : 'Save Firm' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

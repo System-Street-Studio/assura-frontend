@@ -1,0 +1,150 @@
+:host {
+  display: block;
+  width: 100%;
+  font-family: 'Jost', sans-serif;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+.audit-page {
+  padding: 0;
+  max-width: 100%;
+  margin: 0 auto;
+  animation: fadeUp 0.4s ease-out;
+  box-sizing: border-box;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.audit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.audit-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.audit-header p {
+  margin: 4px 0 0;
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-field span {
+  position: absolute;
+  left: 12px;
+  font-size: 18px;
+  color: #94a3b8;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+.dropdown-right {
+  left: auto;
+  right: 0;
+}
+
+.dropdown-menu button {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-menu button:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-title h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.table-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.help-button {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+  cursor: pointer;
+}

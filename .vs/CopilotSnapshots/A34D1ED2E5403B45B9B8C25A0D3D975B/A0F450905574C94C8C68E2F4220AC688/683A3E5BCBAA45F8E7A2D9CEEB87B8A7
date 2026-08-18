@@ -1,0 +1,174 @@
+﻿<div class="page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">All Assets</h1>
+      <span class="asset-count">{{ filteredAssets.length }} items</span>
+    </div>
+    <button class="btn primary">
+      <mat-icon class="btn-icon">add</mat-icon>
+      New Asset
+    </button>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          class="search-input"
+          placeholder="Search by name, ID, serial..."
+          [(ngModel)]="search"
+          (input)="applyFilters()"
+        />
+        <button class="search-clear" *ngIf="search" (click)="search = ''; applyFilters()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <select class="filter-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
+        <option value="">All Status</option>
+        <option value="Deployed">Deployed</option>
+        <option value="In Repair">In Repair</option>
+        <option value="Available">Available</option>
+        <option value="Retired">Retired</option>
+      </select>
+    </div>
+
+    <div class="toolbar-right">
+      <button class="btn outline" [disabled]="selectedCount === 0">
+        <mat-icon class="btn-icon">login</mat-icon>
+        Check in
+      </button>
+      <button class="btn outline" [disabled]="selectedCount === 0">
+        <mat-icon class="btn-icon">exit_to_app</mat-icon>
+        Check out
+      </button>
+      <button class="btn outline" [disabled]="selectedCount === 0">
+        <mat-icon class="btn-icon">edit</mat-icon>
+        Bulk Edit
+      </button>
+      <button class="btn outline">
+        <mat-icon class="btn-icon">file_download</mat-icon>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Selected count banner -->
+  <div class="selection-banner" *ngIf="selectedCount > 0">
+    <mat-icon class="banner-icon">check_circle</mat-icon>
+    {{ selectedCount }} asset(s) selected
+    <button class="banner-clear" (click)="clearFilters()">Clear selection</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table class="assets-table">
+      <thead>
+        <tr>
+          <th class="col-check">
+            <input
+              type="checkbox"
+              [checked]="allSelected"
+              (change)="toggleSelectAll($event)"
+            />
+          </th>
+          <th class="col-image">Image</th>
+          <th>ID</th>
+          <th>Product</th>
+          <th>Status</th>
+          <th>Checked Out To</th>
+          <th>Album</th>
+          <th>Serial</th>
+          <th>Warranty</th>
+          <th>End of Life</th>
+          <th>Order #</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let asset of viewAssets"
+          [class.row-selected]="asset.selected"
+        >
+          <td class="col-check">
+            <input
+              type="checkbox"
+              [checked]="asset.selected"
+              (change)="onRowSelect(asset, $event)"
+            />
+          </td>
+          <td class="col-image">
+            <div [class]="getThumbClass(asset.product)">
+              <mat-icon class="thumb-icon">{{ getThumbIcon(asset.product) }}</mat-icon>
+            </div>
+          </td>
+          <td class="cell-id">{{ asset.id }}</td>
+          <td class="cell-product">{{ asset.product }}</td>
+          <td>
+            <span
+              class="status-badge"
+              [ngClass]="asset.status.toLowerCase().replace(' ', '-')"
+            >
+              {{ asset.status }}
+            </span>
+          </td>
+          <td>
+            <div class="checkout-info" *ngIf="asset.checkedOutTo">
+              <span class="checkout-name">{{ asset.checkedOutTo }}</span>
+              <span class="checkout-ago">{{ asset.checkedOutAgo }}</span>
+            </div>
+            <span class="text-muted" *ngIf="!asset.checkedOutTo">—</span>
+          </td>
+          <td>{{ asset.album }}</td>
+          <td class="cell-serial">{{ asset.serial }}</td>
+          <td class="cell-warranty">{{ asset.warranty }}</td>
+          <td>{{ asset.endOfLife }}</td>
+          <td class="cell-serial">{{ asset.orderNumber }}</td>
+        </tr>
+
+        <tr *ngIf="viewAssets.length === 0">
+          <td colspan="11" class="empty-state">
+            <mat-icon class="empty-icon">inventory_2</mat-icon>
+            <div class="empty-text">No assets found</div>
+            <button class="btn outline" *ngIf="search || filterStatus" (click)="clearFilters()">
+              Clear filters
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="filteredAssets.length > 0">
+    <div class="page-info">
+      Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredAssets.length }}
+    </div>
+    <div class="page-controls">
+      <button
+        class="page-btn"
+        (click)="setPage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button
+        class="page-btn"
+        *ngFor="let p of pageNumbers"
+        [class.active]="currentPage === p"
+        (click)="setPage(p)"
+      >
+        {{ p }}
+      </button>
+      <button
+        class="page-btn"
+        (click)="setPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

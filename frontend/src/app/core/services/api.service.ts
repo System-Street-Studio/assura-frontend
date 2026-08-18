@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 // TODO: Implement API service methods
@@ -11,22 +11,41 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private baseUrl = environment.apiUrl;
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
 
   get<T>(endpoint: string): Observable<T> {
-    return this.http.get<T>(`${this.baseUrl}/${endpoint}`);
+    const url = `${this.baseUrl}/${endpoint}`;
+    console.log(`[DEBUG] ApiService: GET ${url}`);
+    return this.http.get<T>(url).pipe(
+      tap({
+        next: (data: any) => console.log(`[DEBUG] ApiService: GET ${url} success`, data),
+        error: (err: any) => console.error(`[DEBUG] ApiService: GET ${url} error`, err)
+      })
+    );
   }
 
   post<T>(endpoint: string, body: unknown): Observable<T> {
-    return this.http.post<T>(`${this.baseUrl}/${endpoint}`, body);
+    const url = `${this.baseUrl}/${endpoint}`;
+    console.log(`[DEBUG] ApiService: POST ${url}`, body);
+    return this.http.post<T>(url, body);
   }
 
   put<T>(endpoint: string, body: unknown): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}/${endpoint}`, body);
+    const url = `${this.baseUrl}/${endpoint}`;
+    console.log(`[DEBUG] ApiService: PUT ${url}`, body);
+    return this.http.put<T>(url, body);
   }
 
   delete<T>(endpoint: string): Observable<T> {
-    return this.http.delete<T>(`${this.baseUrl}/${endpoint}`);
+    const url = `${this.baseUrl}/${endpoint}`;
+    console.log(`[DEBUG] ApiService: DELETE ${url}`);
+    return this.http.delete<T>(url);
+  }
+
+  patch<T>(endpoint: string, body: unknown): Observable<T> {
+    const url = `${this.baseUrl}/${endpoint}`;
+    console.log(`[DEBUG] ApiService: PATCH ${url}`, body);
+    return this.http.patch<T>(url, body);
   }
 }

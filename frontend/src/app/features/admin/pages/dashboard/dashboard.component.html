@@ -1,0 +1,50 @@
+<div class="dashboard-container">
+    <h1 class="statics-title">Statics</h1>
+
+    <div *ngIf="errorMessage" class="error-alert"
+        style="color: red; padding: 10px; border: 1px solid red; margin-bottom: 20px;">
+        {{ errorMessage }}
+    </div>
+
+    <div class="summary-cards-row">
+        <div *ngFor="let stat of summaryStats" class="summary-card" [class.highlighted]="stat.highlighted">
+            <span class="card-label">{{ stat.label }}</span>
+            <span class="card-value">{{ stat.value }}</span>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <!-- Assets by Status -->
+        <div class="stats-card">
+            <h3 class="stats-card-title">Assets by Status</h3>
+            <div class="stats-list">
+                <div *ngFor="let item of assetsByStatus" class="stats-item">
+                    <span class="item-label">{{ item.label }}</span>
+                    <span class="item-value">{{ item.value }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assets by Division -->
+        <div class="stats-card division-card">
+            <h3 class="stats-card-title">Assets by Division</h3>
+            <div class="stats-list">
+                <div *ngFor="let item of assetsByDivision" class="stats-item">
+                    <span class="item-label">{{ item.label }}</span>
+                    <span class="item-value">{{ item.value }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assets by Category -->
+        <div class="stats-card category-card">
+            <h3 class="stats-card-title">Assets by Category</h3>
+            <div class="stats-list">
+                <div *ngFor="let item of assetsByCategory" class="stats-item">
+                    <span class="item-label">{{ item.label }}</span>
+                    <span class="item-value">{{ item.value }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

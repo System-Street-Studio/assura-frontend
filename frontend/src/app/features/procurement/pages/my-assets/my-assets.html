@@ -1,0 +1,10 @@
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h1 class="assura-page-title" style="margin-bottom: 0;">My Assets</h1>
+    </div>
+
+    <div class="assura-table-container">
+        <app-data-table [columns]="columns" [data]="assets" (rowClick)="onAssetClick($event)">
+        </app-data-table>
+    </div>
+</div>

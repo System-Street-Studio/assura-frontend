@@ -1,0 +1,65 @@
+/* =========================================================
+   FORM VALIDATION FEEDBACK
+   Applied by [class.field-invalid] / [class.field-shake] in the template.
+   ========================================================= */
+
+/* Red outline on a field that failed validation. */
+.field-invalid {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16) !important;
+}
+
+.field-invalid:focus {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.28) !important;
+  outline: none;
+}
+
+/* Short horizontal shake played once when a submit is rejected. */
+.field-shake {
+  animation: field-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes field-shake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-7px);
+  }
+  40%,
+  60% {
+    transform: translateX(7px);
+  }
+}
+
+/* Respect users who have asked the OS to reduce motion: keep the red, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .field-shake {
+    animation: none;
+  }
+}
+
+/* Inline error text shown beneath an invalid field. */
+.field-error-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.field-error-text mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}

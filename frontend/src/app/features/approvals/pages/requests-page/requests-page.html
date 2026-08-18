@@ -1,0 +1,218 @@
+<div class="requests-hub-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="assura-page-title">Requests Review Hub</h1>
+      <p class="page-subtitle">Evaluate, verify, and approve incoming asset allocations, transfers, maintenance, and discard requests.</p>
+    </div>
+  </div>
+
+  <!-- Segmented Request Tabs -->
+  <div class="request-tabs-bar">
+    <button class="tab-btn" [class.active]="activeTab() === 'new'" (click)="setTab('new')">
+      <mat-icon>add_box</mat-icon>
+      <span>New Asset Requests</span>
+      <span class="tab-badge">{{ newAssetCount() }}</span>
+    </button>
+
+    <button class="tab-btn" [class.active]="activeTab() === 'transfer'" (click)="setTab('transfer')">
+      <mat-icon>swap_horiz</mat-icon>
+      <span>Transfer Requests</span>
+      <span class="tab-badge">{{ transferCount() }}</span>
+    </button>
+
+    <button class="tab-btn" [class.active]="activeTab() === 'maintenance'" (click)="setTab('maintenance')">
+      <mat-icon>build</mat-icon>
+      <span>Maintenance</span>
+      <span class="tab-badge">{{ maintenanceCount() }}</span>
+    </button>
+
+    <button class="tab-btn" [class.active]="activeTab() === 'discard'" (click)="setTab('discard')">
+      <mat-icon>delete_outline</mat-icon>
+      <span>Discard Requests</span>
+      <span class="tab-badge">{{ discardCount() }}</span>
+    </button>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="assura-card stat-card border-blue" [class.highlight]="activeTab() === 'new'" (click)="setTab('new')">
+      <div class="stat-header">
+        <span class="stat-label">New Asset</span>
+        <div class="icon-box blue-icon"><mat-icon>add_shopping_cart</mat-icon></div>
+      </div>
+      <div class="stat-value">{{ newAssetCount() }}</div>
+      <div class="stat-desc">New acquisition requests</div>
+    </div>
+
+    <div class="assura-card stat-card border-green" [class.highlight]="activeTab() === 'transfer'" (click)="setTab('transfer')">
+      <div class="stat-header">
+        <span class="stat-label">Transfers</span>
+        <div class="icon-box green-icon"><mat-icon>swap_horiz</mat-icon></div>
+      </div>
+      <div class="stat-value">{{ transferCount() }}</div>
+      <div class="stat-desc">Inter-division movements</div>
+    </div>
+
+    <div class="assura-card stat-card border-amber" [class.highlight]="activeTab() === 'maintenance'" (click)="setTab('maintenance')">
+      <div class="stat-header">
+        <span class="stat-label">Maintenance</span>
+        <div class="icon-box amber-icon"><mat-icon>build</mat-icon></div>
+      </div>
+      <div class="stat-value">{{ maintenanceCount() }}</div>
+      <div class="stat-desc">Repairs & service issues</div>
+    </div>
+
+    <div class="assura-card stat-card border-red" [class.highlight]="activeTab() === 'discard'" (click)="setTab('discard')">
+      <div class="stat-header">
+        <span class="stat-label">Discards</span>
+        <div class="icon-box red-icon"><mat-icon>delete_forever</mat-icon></div>
+      </div>
+      <div class="stat-value">{{ discardCount() }}</div>
+      <div class="stat-desc">Decommission requests</div>
+    </div>
+  </div>
+
+  <!-- Requests Table Card -->
+  <section class="glass-panel table-panel">
+    <div class="table-header-controls">
+      <div class="table-title-group">
+        <h3 class="panel-title">
+          {{ activeTab() | titlecase }} Requests
+        </h3>
+        <span class="count-pill">{{ filteredResults().length }} items</span>
+      </div>
+
+      <div class="table-actions">
+        <!-- Search Input -->
+        <div class="search-input-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input 
+            type="text" 
+            [ngModel]="searchQuery()" 
+            (ngModelChange)="searchQuery.set($event)"
+            placeholder="Search by Employee / Asset..." 
+            class="assura-search-input"
+          />
+        </div>
+
+        <!-- Filter Dropdown Trigger -->
+        <button class="filter-btn" [matMenuTriggerFor]="filterMenu">
+          <mat-icon>tune</mat-icon>
+          <span>Filter</span>
+          <span class="filter-badge" *ngIf="filterCount() > 0">{{ filterCount() }}</span>
+          <mat-icon class="arrow">expand_more</mat-icon>
+        </button>
+
+        <mat-menu #filterMenu="matMenu" class="assura-dropdown-menu">
+          <div class="filter-menu-panel" (click)="$event.stopPropagation()">
+            <div class="filter-menu-header">
+              <h4>Filter Requests</h4>
+              <button (click)="resetFilters()" class="clear-all-btn">Reset</button>
+            </div>
+            <div class="filter-menu-body">
+              <div *ngFor="let group of filterConfig" class="filter-group-block">
+                <span class="group-title">{{ group.label }}</span>
+                <div class="chips-container">
+                  <div 
+                    *ngFor="let opt of group.options" 
+                    class="filter-chip"
+                    [class.active]="selectedFilters()[group.key].includes(opt)" 
+                    (click)="toggleFilter(group.key, opt)">
+                    <mat-icon *ngIf="selectedFilters()[group.key].includes(opt)">check</mat-icon>
+                    {{ opt }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-menu>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">
+        <mat-icon class="spin-animation">sync</mat-icon>
+        <p>Loading requests data...</p>
+      </div>
+    } @else if (paginatedRequests().length > 0) {
+      <div class="table-responsive">
+        <table class="assura-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Submit Date</th>
+              <th>Asset / Category</th>
+              <th>Requester</th>
+              <th>Division</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th class="actions-th">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of paginatedRequests(); track item.id) {
+              <tr class="table-row">
+                <td class="id-cell">
+                  <span class="id-tag">#{{ item.id }}</span>
+                </td>
+                <td class="date-cell">{{ item.date | date:'mediumDate' }}</td>
+                <td class="asset-cell">
+                  <div class="asset-details">
+                    <span class="asset-name-text">{{ item.assetName }}</span>
+                    @if (item.category) {
+                      <span class="asset-cat-text">{{ item.category }}</span>
+                    }
+                  </div>
+                </td>
+                <td class="emp-cell">
+                  <div class="requester-info">
+                    <mat-icon>badge</mat-icon>
+                    <span>{{ item.name || item.requesterId || item.employeeId || 'N/A' }}</span>
+                  </div>
+                </td>
+                <td>{{ item.division || 'N/A' }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="(item.status || 'pending').toLowerCase()">
+                    <span class="status-dot"></span> {{ item.status }}
+                  </span>
+                </td>
+                <td>
+                  <span class="priority-pill" [ngClass]="(item.priority || 'normal').toLowerCase()">
+                    {{ item.priority || 'Normal' }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  @if (item.status === 'Pending') {
+                    <button class="assura-btn-primary action-btn" (click)="viewDetails(item)">
+                      <mat-icon>rate_review</mat-icon> Review
+                    </button>
+                  } @else {
+                    <button class="assura-btn-secondary action-btn" (click)="checkDetails(item)">
+                      <mat-icon>visibility</mat-icon> Check
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-wrapper">
+        <app-pagination 
+          [currentPage]="currentPage()" 
+          [totalPages]="totalPages()" 
+          [pageNumbers]="pageNumbers()"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    } @else {
+      <div class="empty-state-box">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h4>No {{ activeTab() | titlecase }} Requests</h4>
+        <p>There are currently no requests matching this filter in your queue.</p>
+      </div>
+    }
+  </section>
+</div>

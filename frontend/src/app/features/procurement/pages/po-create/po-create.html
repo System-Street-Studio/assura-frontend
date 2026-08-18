@@ -1,0 +1,169 @@
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <h1 class="assura-page-title" style="margin-bottom: 24px;">Add New Purchasing Order</h1>
+
+    <form [formGroup]="poForm" (ngSubmit)="onSubmitOrder()">
+        <div class="assura-card" style="border-top: 4px solid #4f46e5; margin-bottom: 24px;">
+            <!-- Header: Supplier Info -->
+            <div style="margin-bottom: 24px;">
+                <h3 class="assura-card-title" style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600;">Order Information</h3>
+                <div>
+                    <label class="assura-label">Supplier Name <span style="color: #ef4444;">*</span></label>
+                    <select class="assura-input custom-select" formControlName="supplierName">
+                        <option value="" disabled selected>Select supplier</option>
+                        <option *ngFor="let s of suppliers" [value]="s.name">{{ s.name }}</option>
+                    </select>
+                    <div *ngIf="poForm.get('supplierName')?.invalid && poForm.get('supplierName')?.touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Supplier Name is required
+                    </div>
+                </div>
+            </div>
+
+            <div style="height: 1px; background: #e2e8f0; margin: 32px 0;"></div>
+
+            <h3 class="assura-card-title" style="margin: 0 0 24px 0; font-size: 18px; font-weight: 600;">Add Item</h3>
+
+            <div class="assura-grid assura-grid-cols-2" [formGroup]="itemForm" style="margin-top: 0; gap: 24px;">
+                <!-- Row 1 -->
+                <div style="grid-column: 1 / -1;">
+                    <label class="assura-label">Item Name <span style="color: #ef4444;">*</span></label>
+                    <input type="text" class="assura-input" formControlName="itemName" placeholder="Enter item name">
+                    <div *ngIf="itemForm.get('itemName')?.invalid && itemForm.get('itemName')?.touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Item name is required
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div style="grid-column: 1 / -1;">
+                    <label class="assura-label">Model</label>
+                    <input type="text" class="assura-input" formControlName="model" placeholder="Enter model">
+                </div>
+
+                <!-- Row 3: Warranty -->
+                <div style="grid-column: 1 / -1;">
+                    <label class="assura-label">Warranty</label>
+                    <div style="display: flex; gap: 12px; max-width: 300px;">
+                        <input type="number" min="0" (keydown)="preventNegative($event)" class="assura-input" formControlName="warrantyDuration" placeholder="Duration">
+                        <select class="assura-input custom-select" formControlName="warrantyUnit">
+                            <option value="Years">Years</option>
+                            <option value="Months">Months</option>
+                        </select>
+                    </div>
+                    <div *ngIf="itemForm.get('warrantyDuration')?.invalid && itemForm.get('warrantyDuration')?.touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Warranty cannot be negative
+                    </div>
+                </div>
+
+                <!-- Row 4 -->
+                <div>
+                    <label class="assura-label">Quantity <span style="color: #ef4444;">*</span></label>
+                    <input type="number" min="1" (keydown)="preventNegative($event)" class="assura-input" formControlName="quantity">
+                    <div *ngIf="itemForm.get('quantity')?.invalid && itemForm.get('quantity')?.touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Min quantity is 1
+                    </div>
+                </div>
+                <div></div>
+ 
+                <!-- Row 5 -->
+                <div>
+                    <label class="assura-label">Unit Price (LKR) <span style="color: #ef4444;">*</span></label>
+                    <input type="number" min="0" (keydown)="preventNegative($event)" class="assura-input" formControlName="unitPrice" placeholder="0.00">
+                    <div *ngIf="itemForm.get('unitPrice')?.invalid && itemForm.get('unitPrice')?.touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Invalid price
+                    </div>
+                </div>
+                <div></div>
+
+                <!-- Row 6 -->
+                <div>
+                    <label class="assura-label">Amount (LKR)</label>
+                    <input type="text" class="assura-input" style="font-weight: 600;" readonly [value]="amount | number:'1.2-2'">
+                </div>
+                <div></div>
+
+                <!-- Row 7 -->
+                <div>
+                    <label class="assura-label">Discount (%)</label>
+                    <input type="number" min="0" max="100" (keydown)="preventNegative($event)" class="assura-input" formControlName="discount">
+                    <div *ngIf="itemForm.get('discount')?.invalid && itemForm.get('discount')?.touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Must be 0-100
+                    </div>
+                </div>
+                <div>
+                    <label class="assura-label">Discounted Price (LKR)</label>
+                    <input type="text" class="assura-input" style="font-weight: 600;" readonly [value]="discountedPrice | number:'1.2-2'">
+                </div>
+ 
+                <!-- Row 8 -->
+                <div>
+                    <label class="assura-label">VAT (%)</label>
+                    <input type="number" min="0" max="100" (keydown)="preventNegative($event)" class="assura-input" formControlName="vat">
+                    <div *ngIf="itemForm.get('vat')?.invalid && itemForm.get('vat')?.touched" style="color: #ef4444; font-size: 13px; margin-top: 4px;">
+                        Must be 0-100
+                    </div>
+                </div>
+                <div>
+                    <label class="assura-label">VAT Amount (LKR)</label>
+                    <input type="text" class="assura-input" style="font-weight: 600;" readonly [value]="vatAmount | number:'1.2-2'">
+                </div>
+
+                <!-- Total Price -->
+                <div style="grid-column: 1 / -1;">
+                    <label class="assura-label">Total Price (LKR)</label>
+                    <input type="text" class="assura-input assura-accent-primary" style="font-weight: 700; font-size: 18px; color: #4f46e5; border: 1px solid #4f46e5;" readonly [value]="totalPrice | number:'1.2-2'">
+                </div>
+
+                <!-- Special Note -->
+                <div style="grid-column: 1 / -1;">
+                    <label class="assura-label">Special Note</label>
+                    <textarea class="assura-input" formControlName="specialNote" placeholder="Additional details..." rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                <button type="button" class="assura-btn assura-btn-secondary" (click)="exit()">Cancel</button>
+                <button type="button" class="assura-btn assura-btn-primary" (click)="onSaveAndNext()">
+                    <i class="material-icons" style="font-size: 18px;">add_shopping_cart</i>
+                    Add Item to Order
+                </button>
+            </div>
+        </div>
+
+        <!-- Added Items List -->
+        <div class="assura-card" *ngIf="addedItems.length > 0" style="border-top: 4px solid #10b981;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 class="assura-card-title" style="margin: 0; font-size: 18px; font-weight: 600;">Items in this Order ({{ addedItems.length }})</h3>
+            </div>
+
+            <div class="assura-table-container" style="margin-bottom: 24px;">
+                <table class="assura-table">
+                    <thead>
+                        <tr>
+                            <th class="assura-th">Item</th>
+                            <th class="assura-th">Model</th>
+                            <th class="assura-th">Qty</th>
+                            <th class="assura-th">Price</th>
+                            <th class="assura-th">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="assura-tr-hover" *ngFor="let item of addedItems">
+                            <td class="assura-td" style="font-weight: 600;">{{ item.itemName }}</td>
+                            <td class="assura-td">{{ item.model }}</td>
+                            <td class="assura-td">{{ item.quantity }}</td>
+                            <td class="assura-td">{{ item.unitPrice | number:'1.2-2' }}</td>
+                            <td class="assura-td" style="font-weight: 600;">{{ (item.quantity * item.unitPrice) | number:'1.2-2' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                <button type="submit" class="assura-btn assura-btn-primary" style="background: #10b981; border-color: #10b981;" [disabled]="isSubmitting || poForm.invalid">
+                    <i class="material-icons" style="font-size: 18px;" *ngIf="!isSubmitting">check_circle</i>
+                    {{ isSubmitting ? 'Submitting...' : 'Submit Complete Order' }}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,183 @@
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { SearchBarComponent } from '../../../../shared/components/search-bar/search-bar';
+import { DataTableComponent, ColumnDef } from '../../../../shared/components/data-table/data-table';
+import { ActionButtonComponent } from '../../../../shared/components/action-button/action-button';
+import { FilterDropdownComponent, FilterGroup } from '../../../../shared/components/filter-dropdown/filter-dropdown';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
+import { AssetService } from '../../../../core/services/asset.service';
+import { Asset } from '../../../../shared/models/asset.model';
+import { CategoryService } from '../../../inventory/services/category.service';
+
+@Component({
+    selector: 'app-track-assets',
+    standalone: true,
+    imports: [
+        CommonModule,
+        SearchBarComponent,
+        DataTableComponent,
+        ActionButtonComponent,
+        FilterDropdownComponent,
+        PaginationComponent
+    ],
+    templateUrl: './track-assets.html',
+    styleUrls: ['./track-assets.css']
+})
+export class TrackAssetsComponent implements OnInit {
+    private router = inject(Router);
+    private assetService = inject(AssetService);
+    private cdr = inject(ChangeDetectorRef);
+    private categoryService = inject(CategoryService);
+
+    columns: ColumnDef[] = [
+        { key: 'id', label: 'ID', type: 'link' },
+        { key: 'name', label: 'Name', type: 'text' },
+        { key: 'category', label: 'Category', type: 'text' },
+        { key: 'status', label: 'Status', type: 'status' }
+    ];
+
+    assets: any[] = [];
+    filteredAssets: any[] = [];
+    loading = true;
+
+    currentPage = 1;
+    pageSize = 20;
+    showFilters = false;
+
+    ngOnInit(): void {
+        this.fetchAssets();
+        this.loadCategories();
+    }
+
+    private loadCategories(): void {
+        this.categoryService.getAll().subscribe({
+            next: (categories) => {
+                const categoryGroup = this.filterGroups.find(g => g.title === 'Category');
+                if (categoryGroup) {
+                    categoryGroup.options = categories.map(c => ({
+                        label: c.name,
+                        value: c.name,
+                        checked: false,
+                    }));
+                }
+            },
+        });
+    }
+
+    private fetchAssets(): void {
+        this.loading = true;
+        this.assetService.getAssets().subscribe({
+            next: (data: Asset[]) => {
+                this.assets = data.map(asset => ({
+                    id: asset.assetCode,
+                    realId: asset.id,
+                    name: asset.productName,
+                    category: asset.categoryName,
+                    status: this.formatStatus(asset.status)
+                }));
+                this.filteredAssets = [...this.assets];
+                this.loading = false;
+                this.cdr.detectChanges(); // Fix for NG0100 ExpressionChangedAfterItHasBeenCheckedError
+            },
+            error: (err) => {
+                console.error('Error fetching assets:', err);
+                this.loading = false;
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    private formatStatus(status: string): string {
+        switch (status) {
+            case 'InUse': return 'In Use';
+            case 'InStore': return 'In Store';
+            case 'UnderMaintenance': return 'Repairing';
+            case 'Discarded': return 'Discarded';
+            case 'Transferred': return 'Transferred';
+            case 'Lost': return 'Lost';
+            default: return status;
+        }
+    }
+
+    get paginatedAssets() {
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        return this.filteredAssets.slice(startIndex, startIndex + this.pageSize);
+    }
+
+    get totalPages() {
+        return Math.ceil(this.filteredAssets.length / this.pageSize);
+    }
+
+    get pageNumbers() {
+        return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    }
+
+    filterGroups: FilterGroup[] = [
+        {
+            title: 'Category',
+            options: [] // Populated dynamically from CategoryService
+        },
+        {
+            title: 'Status',
+            options: [
+                { label: 'In Use', value: 'In Use', checked: false },
+                { label: 'Repairing', value: 'Repairing', checked: false },
+                { label: 'Discarded', value: 'Discarded', checked: false },
+                { label: 'In Store', value: 'In Store', checked: false }
+            ]
+        }
+    ];
+
+    onSearch(query: string): void {
+        const term = query.toLowerCase().trim();
+        this.currentPage = 1;
+        if (!term) {
+            this.filteredAssets = [...this.assets];
+            return;
+        }
+        this.filteredAssets = this.assets.filter(asset =>
+            asset.name.toLowerCase().includes(term) ||
+            asset.id.toLowerCase().includes(term)
+        );
+    }
+
+    onPageChange(page: number): void {
+        this.currentPage = page;
+    }
+
+    onAssetClick(asset: any): void {
+        this.router.navigate(['/admin/track-assets', asset.realId || asset.id]);
+    }
+
+    toggleFilters(): void {
+        this.showFilters = !this.showFilters;
+    }
+
+    onFilterClosed(groups: FilterGroup[]): void {
+        this.filterGroups = groups;
+        this.showFilters = false;
+        this.applyFilters();
+    }
+
+    applyFilters(): void {
+        const activeCategories = this.filterGroups[0].options.filter(o => o.checked).map(o => o.label);
+        const activeStatuses = this.filterGroups[1].options.filter(o => o.checked).map(o => o.label);
+
+        console.log('[DEBUG] Applying filters', { activeCategories, activeStatuses });
+
+        this.currentPage = 1;
+        this.filteredAssets = this.assets.filter(asset => {
+            const matchCat = activeCategories.length === 0 || activeCategories.includes(asset.category);
+            const matchStatus = activeStatuses.length === 0 || activeStatuses.includes(asset.status);
+            return matchCat && matchStatus;
+        });
+
+        console.log('[DEBUG] Filtered items:', this.filteredAssets.length);
+        this.cdr.detectChanges();
+    }
+
+    onUpdateAsset(): void {
+        console.log('Update Asset clicked');
+    }
+}

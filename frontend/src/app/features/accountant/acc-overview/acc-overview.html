@@ -1,0 +1,207 @@
+<div class="acc-overview-container">
+    <h1 class="assura-page-title">Overview</h1>
+
+    <!-- Counter Cards -->
+    <div class="counter-row">
+        <div class="glass-card counter-card approved" [class.active-card]="activeFilter === 'approved'"
+            (click)="filterByCategory('approved')">
+            <span class="counter-label">Approved</span>
+            <span class="counter-number">{{ approvedCount }}</span>
+        </div>
+        <div class="glass-card counter-card pending" [class.active-card]="activeFilter === 'pending'"
+            (click)="filterByCategory('pending')">
+            <span class="counter-label">Pending</span>
+            <span class="counter-number">{{ pendingCount }}</span>
+        </div>
+    </div>
+
+    <!-- Active Filter Label -->
+    <div class="glass-panel filter-bar" *ngIf="activeFilter !== 'all'">
+        <span class="filter-label">Showing: <strong>{{ activeFilter | titlecase }}</strong></span>
+        <button class="assura-btn assura-btn-secondary" (click)="filterByCategory('all')">Show All</button>
+    </div>
+
+    <!-- Main Two-Column Layout -->
+    <div class="main-layout">
+        <!-- Left: Discarding Confirmation Queue -->
+        <div class="glass-panel queue-section">
+            <h2 class="section-title">Discarding Confirmation Queue</h2>
+
+            <div class="queue-list">
+                <div class="queue-card" *ngFor="let item of filteredItems" [class.highlighted]="item.isHighlighted"
+                    [class.selected]="selectedItem?.id === item.id" (click)="selectItem(item)">
+                    <div class="queue-card-info">
+                        <span class="queue-name" [class.bold]="item.isHighlighted">{{ item.name }}</span>
+                        <span class="queue-division" [class.bold]="item.isHighlighted">{{ item.division }}</span>
+                    </div>
+                    <div class="queue-card-meta">
+                        <span class="queue-date" [class.bold]="item.isHighlighted">{{ item.date }}</span>
+                        <span class="queue-status-dot" [ngClass]="item.category"></span>
+                    </div>
+                </div>
+                <div class="empty-queue" *ngIf="filteredItems.length === 0">
+                    No items found for this filter.
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <app-pagination
+                [currentPage]="currentPage"
+                [totalPages]="totalPages"
+                [pageNumbers]="getPageNumbers()"
+                (pageChange)="onPageChange($event)">
+            </app-pagination>
+        </div>
+
+        <!-- Right: Confirmation Request Detail -->
+        <div class="detail-section" *ngIf="selectedItem">
+            <div class="glass-panel detail-card">
+                <div class="detail-header">
+                    <h3 class="detail-name">{{ selectedItem.name }}</h3>
+                    <span class="detail-status-badge" [ngClass]="selectedItem.category">{{ selectedItem.status }}</span>
+                </div>
+                <hr class="detail-divider" />
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Division</label>
+                        <span>{{ selectedItem.division }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Date</label>
+                        <span>{{ selectedItem.date }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Status</label>
+                        <span>{{ selectedItem.status }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Time</label>
+                        <span>{{ selectedItem.time }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Asset Type</label>
+                        <span>{{ selectedItem.assetType }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Requested By</label>
+                        <span>{{ selectedItem.requestedByName || 'Unknown' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Assigned To</label>
+                        <span>{{ selectedItem.assigneeName || 'Unassigned' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Current User</label>
+                        <span>{{ selectedItem.currentUser }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Value at Purchasing</label>
+                        <span>{{ selectedItem.valueAtPurchasing }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Current Value</label>
+                        <span>{{ selectedItem.currentValue }}</span>
+                    </div>
+                </div>
+
+                <div class="note-section">
+                    <label class="note-label">Special Note</label>
+                    <div class="note-box">{{ selectedItem.specialNote || 'No special note' }}</div>
+                </div>
+
+                <div class="detail-actions">
+                    <button class="assura-btn assura-btn-primary btn-confirm" (click)="confirmDiscarding()">Confirm Discarding</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Selection State -->
+        <div class="detail-section empty-detail" *ngIf="!selectedItem">
+            <div class="glass-panel detail-card empty-state">
+                <p>Select an item from the queue to view details.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Discarding Modal -->
+<div class="confirm-modal-overlay" *ngIf="showConfirmModal && selectedItem" (click)="closeConfirmModal()">
+    <div class="glass-panel confirm-modal-card" (click)="$event.stopPropagation()">
+        <h3 class="confirm-modal-name">{{ selectedItem.name }}</h3>
+
+        <div class="confirm-info-grid">
+            <div class="confirm-info-item">
+                <label>Division</label>
+                <span>{{ selectedItem.division }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Date</label>
+                <span>{{ selectedItem.date }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Status</label>
+                <span>{{ selectedItem.status }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Time</label>
+                <span>{{ selectedItem.time }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Asset Type</label>
+                <span>{{ selectedItem.assetType }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Requested By</label>
+                <span>{{ selectedItem.requestedByName || 'Unknown' }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Assigned To</label>
+                <span>{{ selectedItem.assigneeName || 'Unassigned' }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Current User</label>
+                <span>{{ selectedItem.currentUser }}</span>
+            </div>
+        </div>
+
+        <div class="confirm-note-section">
+            <label class="confirm-note-label">Special Note</label>
+            <div class="confirm-note-box">{{ selectedItem.specialNote || 'No special note' }}</div>
+        </div>
+
+        <div class="confirm-upload-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label class="confirm-upload-label" style="margin-bottom: 0;">Add the receipt <span style="color: #ef4444; font-weight: bold;">*</span></label>
+                <span class="required-badge" style="font-size: 11px; padding: 2px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #f87171; font-weight: 600;">Required</span>
+            </div>
+            <div class="confirm-upload-area" [class.has-error]="fileError" (click)="fileInput.click()" style="cursor: pointer;">
+                <input #fileInput type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" (change)="onFileSelected($event)" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+                    [attr.stroke]="fileError ? '#ef4444' : '#999'" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                <span *ngIf="!selectedFileName" [style.color]="fileError ? '#ef4444' : '#94a3b8'">Upload the Receipt (Required)</span>
+                <span *ngIf="selectedFileName" style="color:#6366f1;font-weight:600;">📎 {{ selectedFileName }}</span>
+            </div>
+            <div class="confirm-upload-error-text" *ngIf="fileError">
+                <span style="display: inline-flex; align-items: center; gap: 4px;">
+                    ⚠️ {{ fileErrorMessage }}
+                </span>
+            </div>
+        </div>
+
+        <div class="confirm-modal-actions">
+            <button class="assura-btn assura-btn-secondary" [disabled]="isSaving" (click)="closeConfirmModal()">Cancel</button>
+            <button class="assura-btn assura-btn-danger" [disabled]="isSaving" (click)="saveAsDiscarded()">
+                <span *ngIf="!isSaving">Save as Discarded</span>
+                <span *ngIf="isSaving" style="display: inline-flex; align-items: center; gap: 6px;">
+                    <span class="spinner" style="width: 14px; height: 14px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; display: inline-block; animation: spin 1s linear infinite;"></span>
+                    Processing...
+                </span>
+            </button>
+        </div>
+    </div>
+</div>

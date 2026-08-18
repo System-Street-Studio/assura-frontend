@@ -1,0 +1,80 @@
+<div class="hr-shell">
+  <section class="pending-page" aria-labelledby="pending-title">
+    <div class="content-shell">
+      <h1 id="pending-title" class="page-title">Pending to Assign Roles</h1>
+
+      <div class="glass-panel assura-table-container">
+        <table class="assura-table">
+          <thead>
+            <tr>
+              <th class="assura-th">User ID</th>
+              <th class="assura-th">Name</th>
+              <th class="assura-th">Joined Date</th>
+              <th class="assura-th" style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (user of pendingUsers(); track user.id) {
+            <tr class="assura-tr-hover" tabindex="0" [class.show-details]="activeUserIdNum === user.id"
+              (mouseenter)="showDetails(user.id)" (mouseleave)="hideDetails()"
+              (focusin)="showDetails(user.id)" (focusout)="hideDetails()">
+              <td class="assura-td">{{ user.userId }}</td>
+              <td class="assura-td">
+                <div class="name-popover">
+                  <span class="name-trigger" (click)="openAssignForm(user.id)">{{ user.name }}</span>
+
+                  <div class="detail-card" role="tooltip">
+                    <div class="detail-header">
+                      <span class="detail-avatar">{{ user.name.charAt(0) }}</span>
+                      <div>
+                        <strong>{{ user.name }}</strong>
+                        <small>{{ user.userId }}</small>
+                      </div>
+                    </div>
+
+                    <div class="detail-grid">
+                      <div>
+                        <b>Email</b>
+                        <span>{{ user.email || '—' }}</span>
+                      </div>
+                      <div>
+                        <b>Division</b>
+                        <span>{{ user.department || 'Not Assigned' }}</span>
+                      </div>
+                      <div>
+                        <b>Requested Role</b>
+                        <span>{{ user.requestedRole || 'Not Specified' }}</span>
+                      </div>
+                      <div>
+                        <b>Phone</b>
+                        <span>{{ user.phone || '—' }}</span>
+                      </div>
+                      <div>
+                        <b>Status</b>
+                        <span class="status-pill">{{ user.status || 'Pending' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="assura-td">{{ user.joinedDate }}</td>
+              <td class="assura-td" style="text-align: right;">
+                <button class="assura-btn assura-btn-primary" style="padding: 6px 14px; font-size: 13px;" (click)="openAssignForm(user.id)">
+                  Assign Role
+                </button>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td class="assura-td empty-state" colspan="4" style="text-align: center; padding: 2rem; color: #94a3b8;">
+                No pending users found
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

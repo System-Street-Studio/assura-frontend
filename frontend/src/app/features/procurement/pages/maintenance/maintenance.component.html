@@ -1,0 +1,149 @@
+<div class="maintenance-page">
+
+    <!-- Section 1: History of Maintenance -->
+    <section class="page-section">
+        <div class="section-header">
+            <div>
+                <h2 class="assura-page-title">History of Maintenance</h2>
+                <span class="assura-page-subtitle">Manage maintenance requests and history</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="search-bar-wrapper">
+                    <app-search-bar (queryChange)="onSearch($event)" placeholder="Search History..."></app-search-bar>
+                </div>
+                <button class="assura-btn-secondary" (click)="navigateToFirms()">
+                    <mat-icon style="font-size: 18px; height: 18px; width: 18px;">business</mat-icon> Repairing Firms
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-panel table-panel">
+            @if (isLoading) {
+                <div class="empty-state">
+                    <mat-icon class="spin-animation">sync</mat-icon>
+                    <p>Loading history...</p>
+                </div>
+            } @else {
+                @if (pagedHistory.length > 0) {
+                    <table class="assura-table">
+                        <thead>
+                            <tr>
+                                <th>Maintenance No</th>
+                                <th>Asset</th>
+                                <th>Requested By</th>
+                                <th>Division</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (record of pagedHistory; track record.id) {
+                                <tr class="clickable-row">
+                                    <td class="primary-col" (click)="navigateToNote(record.id)">{{ record.maintenanceNumber }}</td>
+                                    <td>{{ record.assetName }}</td>
+                                    <td>{{ record.requestedByName || 'N/A' }}</td>
+                                    <td>{{ record.requesterDivision || 'N/A' }}</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <div class="pagination-footer">
+                        <app-pagination [currentPage]="historyCurrentPage" [totalPages]="historyTotalPages" [pageNumbers]="historyPageNumbers" (pageChange)="goToHistoryPage($event)"></app-pagination>
+                    </div>
+                } @else {
+                    <div class="empty-state">
+                        <mat-icon class="empty-icon">history</mat-icon>
+                        <p>No history records found.</p>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+
+    <!-- Section 2: Maintenance Requests -->
+    <section class="page-section">
+        <h2 class="assura-page-title">Maintenance Requests</h2>
+
+        <div class="requests-layout">
+            <!-- Left: Request List -->
+            <div class="requests-list">
+                <div class="queue-cards-wrapper">
+                    @for (request of pagedRequests; track request.id) {
+                        <div class="glass-card queue-card" [class.active]="selectedRequest === request" (click)="selectRequest(request)">
+                            <div class="queue-card-top">
+                                <div>
+                                    <h4 class="req-employee">{{ request.assetName }}</h4>
+                                    <span class="req-division">{{ request.division }}</span>
+                                </div>
+                                <span class="date-chip">{{ request.timestamp }}</span>
+                            </div>
+                        </div>
+                    } @empty {
+                        <div class="glass-card empty-state">
+                            <p>No active requests.</p>
+                        </div>
+                    }
+                </div>
+
+                @if (filteredRequests.length > 0) {
+                    <div class="pagination-wrapper">
+                        <app-pagination [currentPage]="requestsCurrentPage" [totalPages]="requestsTotalPages"
+                            [pageNumbers]="requestsPageNumbers" (pageChange)="goToRequestsPage($event)">
+                        </app-pagination>
+                    </div>
+                }
+            </div>
+
+            <!-- Right: Request Details -->
+            <div class="request-details">
+                @if (selectedRequest) {
+                    <div class="glass-panel detail-panel sticky-top">
+                        <div class="detail-header">
+                            <span class="pre-title">Maintenance Request</span>
+                            <h3>{{ selectedRequest.assetName }}</h3>
+                        </div>
+
+                        <div class="detail-info-grid">
+                            <div class="info-group">
+                                <label>Division</label>
+                                <span>{{ selectedRequest.divisionName }}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Date</label>
+                                <span class="mono">{{ selectedRequest.timestamp }}</span>
+                            </div>
+                        </div>
+
+                        <div class="desc-group mt-24">
+                            <label>Specifications</label>
+                            <div class="glass-box text-box">
+                                @for (spec of selectedRequest.specificationsArray; track spec) {
+                                    <div>• {{ spec }}</div>
+                                }
+                                @if (!selectedRequest.specificationsArray.length) {
+                                    <span style="font-style: italic; color: #94a3b8;">No specifications provided</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="desc-group mt-16">
+                            <label>Special Note</label>
+                            <div class="glass-box note-box">
+                                {{ selectedRequest.specialNote || 'No special note provided.' }}
+                            </div>
+                        </div>
+
+                        <div class="detail-actions">
+                            <button class="assura-btn-primary" (click)="navigateToCreate()">
+                                <mat-icon style="font-size: 18px; height: 18px; width: 18px;">note_add</mat-icon> Create Maintenance Note
+                            </button>
+                        </div>
+                    </div>
+                } @else {
+                    <div class="glass-panel detail-panel empty-state" [class.hidden]="filteredRequests.length === 0">
+                        <p>Select a request from the list to view details</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>

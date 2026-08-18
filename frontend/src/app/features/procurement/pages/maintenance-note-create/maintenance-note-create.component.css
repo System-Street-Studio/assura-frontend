@@ -1,0 +1,157 @@
+.note-page-container {
+    padding: 40px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    font-family: 'Jost', sans-serif;
+}
+
+.page-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 40px;
+}
+
+.note-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 60px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.note-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 80px;
+    margin-bottom: 60px;
+}
+
+.note-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.note-item.full-width {
+    grid-column: span 2;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.note-item label {
+    font-weight: 700;
+    font-size: 18px;
+    color: #000;
+    min-width: 120px;
+}
+
+.note-item input,
+.note-item textarea {
+    width: 100%;
+    border: 1px solid #AAAAAA;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-family: 'Jost', sans-serif;
+    outline: none;
+}
+
+.note-item textarea {
+    border-radius: 8px;
+    padding: 30px 40px;
+    min-height: 150px;
+}
+
+.action-row {
+    display: flex;
+    justify-content: center;
+    gap: 250px;
+}
+
+.action-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 12px 60px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-width: 200px;
+    color: #ffffff;
+    background-color: #a30000;
+}
+
+.action-btn:hover {
+    background-color: #800000;
+}
+
+.action-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Popup Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Asset Details Container */
+.asset-details-container {
+    background-color: #f1f8f9;
+    border-radius: 12px;
+    padding: 24px;
+    border-left: 5px solid #00AFB5;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+.details-header {
+    font-size: 18px;
+    font-weight: 700;
+    color: #00AFB5;
+    margin-bottom: 15px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.detail-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.detail-value {
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+
+
+.error-message {
+    color: #e11d48;
+    font-size: 14px;
+    margin-top: 6px;
+    font-weight: 500;
+}

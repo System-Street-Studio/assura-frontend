@@ -1,0 +1,56 @@
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h1 class="assura-page-title" style="margin-bottom: 0;">Suppliers</h1>
+        <div style="display: flex; gap: 16px; align-items: center;">
+            <div style="position: relative; width: 300px;">
+                <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 20px;">search</mat-icon>
+                <input type="text" placeholder="Search Suppliers..." class="assura-input" style="padding-left: 40px;" [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" />
+            </div>
+            <button class="assura-btn assura-btn-primary" (click)="onAddNew()">
+                <i class="material-icons" style="font-size: 18px;">add</i>
+                Add New
+            </button>
+        </div>
+    </div>
+
+    <div class="assura-table-container">
+        <table class="assura-table">
+            <thead>
+                <tr>
+                    <th class="assura-th">Supplier ID</th>
+                    <th class="assura-th">Name</th>
+                    <th class="assura-th">Email</th>
+                    <th class="assura-th">Contact No</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let supplier of pagedSuppliers" class="assura-tr-hover">
+                    <td class="assura-td" (click)="navigateToDetails(supplier.id)" style="color: #4f46e5; font-weight: 600; cursor: pointer;">{{ supplier.id }}</td>
+                    <td class="assura-td" style="font-weight: 600;">{{ supplier.name }}</td>
+                    <td class="assura-td">
+                        <span class="assura-card-subtitle" style="margin: 0; font-size: 15px;">{{ supplier.email }}</span>
+                    </td>
+                    <td class="assura-td">
+                        <span class="assura-card-subtitle" style="margin: 0; font-size: 15px;">{{ supplier.phone || supplier.contactNumber }}</span>
+                    </td>
+                </tr>
+                <tr *ngIf="!isLoading && pagedSuppliers.length === 0">
+                    <td colspan="4" class="assura-td" style="text-align: center; padding: 32px;">
+                        <span class="assura-card-subtitle">No suppliers found.</span>
+                    </td>
+                </tr>
+                <tr *ngIf="isLoading">
+                    <td colspan="4" class="assura-td" style="text-align: center; padding: 32px;">
+                        <span class="assura-card-subtitle">Loading suppliers...</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0;">
+            <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pageNumbers"
+                (pageChange)="goToPage($event)">
+            </app-pagination>
+        </div>
+    </div>
+</div>

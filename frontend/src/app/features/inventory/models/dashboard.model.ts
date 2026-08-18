@@ -1,0 +1,46 @@
+export interface Kpi {
+  totalAssets: number;
+  checkedOut: number;
+  available: number;
+  totalAssetValue: string;
+  pendingRequests: number;
+  maintenanceDue: number;
+  temporaryAssignedAssets: number;
+  awaitingPickupConfirmations: number;
+  procurementEscalations: number;
+}
+
+export interface RecentActivity {
+  id: string;
+  action: 'checked_out' | 'checked_in' | 'registered' | 'maintenance' | 'disposed' | 'transferred';
+  assetName: string;
+  assetCode: string;
+  user: string;
+  timestamp: Date;
+  icon: string;
+  color: string;
+}
+
+export interface WarrantyAlert {
+  assetId: string;
+  assetName: string;
+  category: string;
+  expiryDate: string;
+  daysRemaining: number;
+  severity: 'critical' | 'warning' | 'info';
+}
+
+export interface ChartDatasets {
+  assetsByCategory: { labels: string[]; data: number[]; colors: string[] };
+  assetsByStatus: { labels: string[]; data: number[]; colors: string[] };
+  assetsByDivision: { labels: string[]; data: number[]; colors: string[] };
+  checkoutTrend: { labels: string[]; data: number[] };
+  anomalies: { ghostAssets: number; missingAssets: number; maintenanceDue: number };
+}
+
+export interface DashboardData {
+  kpis: Kpi;
+  charts: ChartDatasets;
+  recentActivity: RecentActivity[];
+  warrantyAlerts: WarrantyAlert[];
+}

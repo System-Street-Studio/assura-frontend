@@ -1,0 +1,130 @@
+:host {
+  display: block;
+  width: 100%;
+  font-family: 'Jost', sans-serif;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+.asset-page {
+  padding: 0;
+  max-width: 100%;
+  margin: 0 auto;
+  animation: fadeUp 0.4s ease-out;
+  box-sizing: border-box;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.asset-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.asset-toolbar h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box span {
+  position: absolute;
+  left: 12px;
+  font-size: 18px;
+  color: #94a3b8;
+}
+
+.select-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.select-label input {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.asset-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #334155;
+}
+
+.person-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.person-cell small {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.person-cell .muted {
+  color: #64748b;
+  font-style: italic;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding: 16px 24px;
+  background: rgba(30, 41, 59, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 12px;
+}
+
+.page-info {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.page-info strong {
+  color: #f8fafc;
+  font-weight: 600;
+}

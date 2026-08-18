@@ -1,0 +1,342 @@
+<div class="no-print" style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h1 class="assura-page-title" style="margin-bottom: 4px;">Assets</h1>
+            <span style="font-size: 14px; color: #94a3b8;">{{ filteredAssets.length }} of {{ allAssets.length }} items</span>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <div class="export-wrapper">
+                <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleExportMenu()"
+                        [attr.aria-expanded]="showExportMenu" aria-haspopup="true"
+                        title="Export asset details as PDF, Excel or CSV">
+                    <mat-icon style="font-size: 18px; width: 18px; height: 18px;">file_download</mat-icon>
+                    Export
+                    <mat-icon style="font-size: 18px; width: 18px; height: 18px;">{{ showExportMenu ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
+                </button>
+
+                @if (showExportMenu) {
+                    <div class="export-menu" role="menu" aria-label="Export format">
+                        <div class="export-menu-scope">
+                            @if (selectedCount > 0) {
+                                Exporting {{ selectedCount }} selected asset(s)
+                            } @else {
+                                Exporting {{ filteredAssets.length }} filtered asset(s)
+                            }
+                        </div>
+
+                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportAssets('pdf')">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #f87171;">picture_as_pdf</mat-icon>
+                            <span class="export-menu-text">
+                                <strong>PDF</strong>
+                                <small>Printable asset register</small>
+                            </span>
+                        </button>
+
+                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportAssets('excel')">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #34d399;">table_chart</mat-icon>
+                            <span class="export-menu-text">
+                                <strong>Excel</strong>
+                                <small>Formatted spreadsheet (.xls)</small>
+                            </span>
+                        </button>
+
+                        <button class="export-menu-item" type="button" role="menuitem" (click)="exportAssets('csv')">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #60a5fa;">description</mat-icon>
+                            <span class="export-menu-text">
+                                <strong>CSV</strong>
+                                <small>Plain data (.csv)</small>
+                            </span>
+                        </button>
+                    </div>
+                }
+            </div>
+            <button class="assura-btn assura-btn-secondary" style="border-color: #6366f1; color: #818cf8;" (click)="openBulkQrModal()" [disabled]="selectedCount === 0" title="Print QR Code labels for selected assets">
+                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">qr_code_2</mat-icon>
+                Print QR Labels @if (selectedCount > 0) { ({{ selectedCount }}) }
+            </button>
+            <button class="assura-btn assura-btn-primary" (click)="onNewAsset()">
+                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">add</mat-icon>
+                New Asset
+            </button>
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="assura-grid assura-grid-cols-6" style="margin-bottom: 24px;">
+        <div class="assura-card assura-accent-primary" style="cursor: pointer;" [style.border-color]="!filterStatus ? 'var(--primary)' : ''" (click)="filterStatus = ''; applyFilters();">
+            <span class="assura-card-title">All Assets</span>
+            <strong class="assura-card-value">{{ allAssets.length }}</strong>
+        </div>
+        
+        <div class="assura-card assura-accent-success" style="cursor: pointer;" [style.border-color]="filterStatus === 'InUse' ? 'var(--success)' : ''" (click)="onStatusCardClick('InUse')">
+            <span class="assura-card-title">In Use</span>
+            <strong class="assura-card-value">{{ statusCounts['InUse'] }}</strong>
+        </div>
+        
+        <div class="assura-card assura-accent-info" style="cursor: pointer;" [style.border-color]="filterStatus === 'InStore' ? 'var(--info)' : ''" (click)="onStatusCardClick('InStore')">
+            <span class="assura-card-title">In Store</span>
+            <strong class="assura-card-value">{{ statusCounts['InStore'] }}</strong>
+        </div>
+        
+        <div class="assura-card assura-accent-warning" style="cursor: pointer;" [style.border-color]="filterStatus === 'UnderMaintenance' ? 'var(--warning)' : ''" (click)="onStatusCardClick('UnderMaintenance')">
+            <span class="assura-card-title">Maintenance</span>
+            <strong class="assura-card-value">{{ statusCounts['UnderMaintenance'] }}</strong>
+        </div>
+        
+        <div class="assura-card assura-accent-danger" style="cursor: pointer;" [style.border-color]="filterStatus === 'Discarded' ? 'var(--danger)' : ''" (click)="onStatusCardClick('Discarded')">
+            <span class="assura-card-title">Discarded</span>
+            <strong class="assura-card-value">{{ statusCounts['Discarded'] }}</strong>
+        </div>
+        
+        <div class="assura-card assura-accent-primary" title="{{ formatCurrency(totalValue) }}">
+            <span class="assura-card-title">Total Value (LKR)</span>
+            <strong class="assura-card-value" style="font-size: 22px;">{{ formatNumber(totalValue) }}</strong>
+        </div>
+    </div>
+
+    <!-- Bulk Selection Bar (Shows when items are checked) -->
+    @if (selectedCount > 0) {
+        <div class="bulk-selection-bar" style="margin-bottom: 20px; padding: 12px 20px; background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(8px); border: 1px solid #4f46e5; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.25);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="assura-badge assura-badge-info" style="font-size: 13px; padding: 4px 10px; font-weight: 600;">
+                    {{ selectedCount }} selected
+                </span>
+                <span style="font-size: 13.5px; color: #cbd5e1;">You have selected assets ready for bulk actions.</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 12.5px;" (click)="selectAllFiltered()">
+                    Select All Filtered ({{ filteredAssets.length }})
+                </button>
+                <button class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 12.5px;" (click)="clearSelection()">
+                    Clear Selection
+                </button>
+                <button class="assura-btn assura-btn-primary" style="padding: 6px 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;" (click)="openBulkQrModal()">
+                    <mat-icon style="font-size: 18px; width: 18px; height: 18px;">print</mat-icon>
+                    Print QR Labels
+                </button>
+            </div>
+        </div>
+    }
+
+    <!-- Toolbar -->
+    <div style="display: flex; gap: 16px; margin-bottom: 24px; align-items: center;">
+        <div style="position: relative; width: 350px;">
+            <mat-icon style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 20px; color: #94a3b8;">search</mat-icon>
+            <input type="text" class="assura-input" style="padding-left: 40px; padding-right: 40px;" placeholder="Search by name, code, serial, category..." [(ngModel)]="search" (input)="applyFilters()" />
+            <button *ngIf="search" (click)="search = ''; applyFilters()" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; color: #94a3b8;">
+                <mat-icon style="font-size: 18px;">close</mat-icon>
+            </button>
+        </div>
+
+        <select class="assura-input custom-select" style="width: 200px;" [(ngModel)]="filterStatus" (change)="applyFilters()">
+            <option value="">All Status</option>
+            <option value="InUse">In Use</option>
+            <option value="InStore">In Store</option>
+            <option value="UnderMaintenance">Under Maintenance</option>
+            <option value="Discarded">Discarded</option>
+            <option value="Transferred">Transferred</option>
+            <option value="Lost">Lost</option>
+        </select>
+
+        <select class="assura-input custom-select" style="width: 200px;" [(ngModel)]="filterCategory" (change)="applyFilters()">
+            <option value="">All Categories</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+
+        <button class="assura-btn assura-btn-secondary" style="border: none; background: transparent; box-shadow: none;" *ngIf="search || filterStatus || filterCategory" (click)="clearFilters()">
+            <i class="material-icons" style="font-size: 18px;">filter_list_off</i> Clear
+        </button>
+    </div>
+
+    <!-- Table -->
+    <div class="assura-table-container">
+        <table class="assura-table">
+            <thead>
+                <tr>
+                    <th class="assura-th" style="width: 44px; text-align: center;">
+                        <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll($event)" title="Select all current page items" />
+                    </th>
+                    <th class="assura-th">Asset Code</th>
+                    <th class="assura-th">Product</th>
+                    <th class="assura-th">Category</th>
+                    <th class="assura-th">Status</th>
+                    <th class="assura-th">Assigned To</th>
+                    <th class="assura-th">Division</th>
+                    <th class="assura-th">Serial</th>
+                    <th class="assura-th" style="text-align: right;">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let asset of viewAssets" class="assura-tr-hover" style="cursor: pointer;" [style.background]="asset.selected ? 'rgba(79, 70, 229, 0.12)' : ''" (click)="onRowClick(asset)">
+                    <td class="assura-td" style="text-align: center;" (click)="$event.stopPropagation()">
+                        <input type="checkbox" [checked]="asset.selected" (change)="onRowSelect(asset, $event)" />
+                    </td>
+                    <td class="assura-td" style="font-weight: 600; color: #818cf8;">{{ asset.assetCode }}</td>
+                    <td class="assura-td" style="font-weight: 500;">{{ asset.productName }}</td>
+                    <td class="assura-td">{{ asset.categoryName }}</td>
+                    <td class="assura-td">
+                        <span class="assura-badge" [ngClass]="{
+                            'assura-badge-success': asset.status === 'InUse',
+                            'assura-badge-info': asset.status === 'InStore',
+                            'assura-badge-warning': asset.status === 'UnderMaintenance',
+                            'assura-badge-danger': asset.status === 'Discarded' || asset.status === 'Lost'
+                        }">
+                            {{ getStatusLabel(asset.status) }}
+                        </span>
+                    </td>
+                    <td class="assura-td">{{ asset.assignedUserName || '—' }}</td>
+                    <td class="assura-td">{{ asset.divisionName }}</td>
+                    <td class="assura-td" style="font-family: monospace; font-size: 13px;">{{ asset.serialNumber || '—' }}</td>
+                    <td class="assura-td" style="text-align: right; font-weight: 500;">{{ formatCurrency(asset.purchaseValue) }}</td>
+                </tr>
+                <tr *ngIf="viewAssets.length === 0 && !loading">
+                    <td colspan="9" class="assura-td" style="text-align: center; padding: 48px;">
+                        <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #64748b;">inventory_2</mat-icon>
+                        <div style="font-size: 16px; font-weight: 500;">No assets match your filters</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- Pagination -->
+        <div *ngIf="filteredAssets.length > 0" style="padding: 16px 24px; border-top: 1px solid #1e293b;">
+            <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [pageNumbers]="pageNumbers" (pageChange)="setPage($event)">
+            </app-pagination>
+        </div>
+    </div>
+</div>
+
+<!-- ================= BULK QR CODE PRINT MODAL ================= -->
+@if (showBulkQrModal) {
+    <div class="modal-overlay no-print" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;">
+        <div class="assura-card" style="width: 100%; max-width: 860px; max-height: 90vh; padding: 0; overflow: hidden; background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+            
+            <!-- Modal Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #1e293b; background: rgba(30, 41, 59, 0.3);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(99, 102, 241, 0.15); display: flex; align-items: center; justify-content: center; color: #818cf8;">
+                        <mat-icon style="font-size: 22px; width: 22px; height: 22px;">qr_code_scanner</mat-icon>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #f8fafc;">Bulk QR Labels Print Preview</h2>
+                        <span style="font-size: 12.5px; color: #94a3b8;">{{ bulkQrItems.length }} Asset QR Code(s) generated ready to print</span>
+                    </div>
+                </div>
+                <button style="background: none; border: none; cursor: pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center;" (click)="closeBulkQrModal()" aria-label="Close">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <!-- Customization Bar -->
+            <div style="padding: 12px 24px; background: rgba(30, 41, 59, 0.2); border-bottom: 1px solid #1e293b; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;">
+                <div style="display: flex; gap: 16px; align-items: center; font-size: 13px; color: #cbd5e1;">
+                    <span style="font-weight: 600; color: #94a3b8;">Include:</span>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" [(ngModel)]="printOptions.showProduct" /> Product
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" [(ngModel)]="printOptions.showCategory" /> Category
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" [(ngModel)]="printOptions.showDivision" /> Division
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" [(ngModel)]="printOptions.showSerial" /> Serial No
+                    </label>
+                </div>
+                <div style="font-size: 12.5px; color: #818cf8; display: flex; align-items: center; gap: 4px;">
+                    <mat-icon style="font-size: 16px; width: 16px; height: 16px;">info</mat-icon>
+                    Standard A4 / Sticker Sheet Format
+                </div>
+            </div>
+
+            <!-- Modal Content / Live Preview Grid -->
+            <div style="padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 16px; background: #020617;">
+                @if (qrLoading) {
+                    <div style="text-align: center; padding: 48px; color: #94a3b8;">
+                        <mat-icon style="font-size: 36px; width: 36px; height: 36px; animation: spin 1s linear infinite; margin-bottom: 12px;">sync</mat-icon>
+                        <div>Generating QR codes for selected assets...</div>
+                    </div>
+                } @else {
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px;">
+                        @for (item of bulkQrItems; track item.asset.id) {
+                            <div class="qr-preview-card" style="display: flex; align-items: center; gap: 16px; padding: 14px 16px; background: #0f172a; border: 1.5px dashed #334155; border-radius: 12px;">
+                                <div style="width: 100px; height: 100px; min-width: 100px; background: #ffffff; border-radius: 8px; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                    @if (item.qrUrl) {
+                                        <img [src]="item.qrUrl" [alt]="item.asset.assetCode" style="width: 100%; height: 100%; object-fit: contain;" />
+                                    } @else {
+                                        <mat-icon style="color: #64748b;">qr_code</mat-icon>
+                                    }
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 4px; overflow: hidden;">
+                                    <div style="font-size: 10px; font-weight: 700; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px;">ASSURA ASSET TAG</div>
+                                    <div style="font-size: 16px; font-weight: 700; color: #f8fafc; font-family: monospace;">{{ item.asset.assetCode }}</div>
+                                    @if (printOptions.showProduct && item.asset.productName) {
+                                        <div style="font-size: 13.5px; font-weight: 600; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.asset.productName }}</div>
+                                    }
+                                    <div style="font-size: 12px; color: #94a3b8; display: flex; flex-wrap: wrap; gap: 6px;">
+                                        @if (printOptions.showCategory && item.asset.categoryName) {
+                                            <span>{{ item.asset.categoryName }}</span>
+                                        }
+                                        @if (printOptions.showDivision && item.asset.divisionName) {
+                                            <span>• {{ item.asset.divisionName }}</span>
+                                        }
+                                    </div>
+                                    @if (printOptions.showSerial && item.asset.serialNumber) {
+                                        <div style="font-size: 11px; color: #64748b; font-family: monospace;">SN: {{ item.asset.serialNumber }}</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Modal Footer -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-top: 1px solid #1e293b; background: rgba(30, 41, 59, 0.3);">
+                <div style="font-size: 13px; color: #94a3b8;">
+                    Labels will be optimized for printing when you click <strong>Print Now</strong>.
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="assura-btn assura-btn-secondary" (click)="closeBulkQrModal()">Cancel</button>
+                    <button class="assura-btn assura-btn-primary" (click)="printBulkQr()" [disabled]="qrLoading || bulkQrItems.length === 0" style="display: inline-flex; align-items: center; gap: 6px;">
+                        <mat-icon style="font-size: 18px; width: 18px; height: 18px;">print</mat-icon>
+                        Print Now ({{ bulkQrItems.length }})
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- ================= DEDICATED PRINT CONTAINER (VISIBLE ONLY DURING WINDOW.PRINT) ================= -->
+<div id="printable-qr-sheet" class="print-only-container">
+    @for (item of bulkQrItems; track item.asset.id) {
+        <div class="qr-print-card">
+            <div class="qr-print-img-box">
+                @if (item.qrUrl) {
+                    <img [src]="item.qrUrl" [alt]="item.asset.assetCode" class="qr-print-img" />
+                }
+            </div>
+            <div class="qr-print-details">
+                <div class="qr-print-header">ASSURA ASSET TAG</div>
+                <div class="qr-print-code">{{ item.asset.assetCode }}</div>
+                @if (printOptions.showProduct && item.asset.productName) {
+                    <div class="qr-print-product">{{ item.asset.productName }}</div>
+                }
+                <div class="qr-print-meta">
+                    @if (printOptions.showCategory && item.asset.categoryName) {
+                        <span>{{ item.asset.categoryName }}</span>
+                    }
+                    @if (printOptions.showDivision && item.asset.divisionName) {
+                        <span> | {{ item.asset.divisionName }}</span>
+                    }
+                </div>
+                @if (printOptions.showSerial && item.asset.serialNumber) {
+                    <div class="qr-print-serial">SN: {{ item.asset.serialNumber }}</div>
+                }
+            </div>
+        </div>
+    }
+</div>

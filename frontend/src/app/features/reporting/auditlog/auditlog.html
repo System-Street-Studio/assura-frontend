@@ -1,0 +1,146 @@
+<section class="audit-page">
+  <header class="audit-header">
+    <div>
+      <h1>Audit Log</h1>
+      <p>Track reporting, asset, export, and verification activity.</p>
+    </div>
+
+    <div class="header-actions">
+      <label class="search-field">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" class="assura-input" style="padding-left: 36px;" placeholder="Search audit log..." [(ngModel)]="searchTerm" />
+      </label>
+
+      <!-- Date Range Filter Dropdown -->
+      <div class="dropdown-container">
+        <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleDateRangeDropdown()">
+          📅 Date: {{ selectedDateRange() }}
+        </button>
+        @if (showDateRangeDropdown()) {
+          <div class="dropdown-menu">
+            <button type="button" (click)="selectDateRange('All')">All Time</button>
+            <button type="button" (click)="selectDateRange('Today')">Today</button>
+            <button type="button" (click)="selectDateRange('Last 7 Days')">Last 7 Days</button>
+            <button type="button" (click)="selectDateRange('Last 30 Days')">Last 30 Days</button>
+          </div>
+        }
+      </div>
+
+      <!-- Module Filter Dropdown -->
+      <div class="dropdown-container">
+        <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleModuleDropdown()">
+          📦 Module: {{ selectedModule() }}
+        </button>
+        @if (showModuleDropdown()) {
+          <div class="dropdown-menu">
+            @for (mod of availableModules(); track mod) {
+              <button type="button" (click)="selectModule(mod)">{{ mod }}</button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Export Log Dropdown -->
+      <div class="dropdown-container">
+        <button class="assura-btn assura-btn-primary" type="button" (click)="toggleExportDropdown()">
+          📤 Export Log
+        </button>
+        @if (showExportDropdown()) {
+          <div class="dropdown-menu dropdown-right">
+            <button type="button" (click)="exportToCsv()">📄 Export as CSV</button>
+            <button type="button" (click)="triggerPrint()">🖨️ Print / Save as PDF</button>
+          </div>
+        }
+      </div>
+    </div>
+  </header>
+
+  <div class="summary-grid">
+    @for (stat of stats(); track stat.label) {
+      <article class="glass-card" [class]="stat.tone">
+        <span class="assura-card-title">{{ stat.label }}</span>
+        <strong class="assura-card-value">{{ stat.value }}</strong>
+      </article>
+    }
+  </div>
+
+  <section class="glass-panel" style="padding: 24px;">
+      <div class="section-title">
+        <h2 style="color: #f8fafc; font-size: 1.25rem;">Audit Trail</h2>
+        <div class="table-actions">
+          <div class="dropdown-container">
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="toggleStatusDropdown()">
+              Status: {{ selectedStatus() }}
+            </button>
+            @if (showStatusDropdown()) {
+              <div class="dropdown-menu">
+                @for (status of availableStatuses(); track status) {
+                  <button type="button" (click)="selectStatus(status)">{{ status }}</button>
+                }
+              </div>
+            }
+          </div>
+          <div class="dropdown-container">
+            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="toggleActorDropdown()">
+              Actor: {{ selectedActor() }}
+            </button>
+            @if (showActorDropdown()) {
+              <div class="dropdown-menu">
+                @for (actor of availableActors(); track actor) {
+                  <button type="button" (click)="selectActor(actor)">{{ actor }}</button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="assura-table-container">
+        <table class="assura-table">
+          <thead>
+            <tr>
+              <th class="assura-th">Time</th>
+              <th class="assura-th">Actor</th>
+              <th class="assura-th">Action</th>
+              <th class="assura-th">Reference</th>
+              <th class="assura-th">Module</th>
+              <th class="assura-th">IP Address</th>
+              <th class="assura-th">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of filteredLogs(); track $index) {
+              <tr class="assura-tr-hover">
+                <td class="assura-td">
+                  <div>
+                    <strong style="color: #f8fafc; display: block;">{{ log.time }}</strong>
+                    <small style="color: #94a3b8; font-size: 12px;">{{ log.date }}</small>
+                  </div>
+                </td>
+                <td class="assura-td">
+                  <div>
+                    <strong style="color: #f8fafc; display: block;">{{ log.actor }}</strong>
+                    <small style="color: #94a3b8; font-size: 12px;">{{ log.role }}</small>
+                  </div>
+                </td>
+                <td class="assura-td">{{ log.action }}</td>
+                <td class="assura-td">{{ log.asset }}</td>
+                <td class="assura-td">{{ log.module }}</td>
+                <td class="assura-td">{{ log.ip }}</td>
+                <td class="assura-td">
+                  <span class="assura-badge" [class.assura-badge-success]="log.status === 'Success'" [class.assura-badge-danger]="log.status === 'Failure'">{{ log.status }}</span>
+                </td>
+              </tr>
+            }
+            @if (filteredLogs().length === 0) {
+              <tr>
+                <td colspan="7" class="assura-td" style="text-align: center; padding: 32px; color: #94a3b8; font-style: italic;">
+                  No audit logs found matching filters.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+</section>

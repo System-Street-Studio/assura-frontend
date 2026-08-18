@@ -1,0 +1,149 @@
+<div class="approval-detail-page">
+  <div class="header-section">
+    <button class="back-link-btn" (click)="close()">
+      <mat-icon>arrow_back</mat-icon> Back to Requests
+    </button>
+    <div class="page-title-row">
+      <h1 class="assura-page-title">Temporary Transfer Request Details</h1>
+      <span class="request-id-pill">ID: #{{ request().id }}</span>
+    </div>
+  </div>
+
+  <div class="detail-container">
+    <!-- Hero Banner -->
+    <div class="glass-card hero-banner">
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="asset-category-tag">{{ request().category || 'Equipment Transfer' }}</div>
+          <h2 class="hero-asset-name">{{ request().assetName }}</h2>
+          <div class="requester-line">
+            <mat-icon>person</mat-icon>
+            <span><strong>{{ request().name }}</strong> (ID: {{ request().requesterId || request().employeeId || request().employee || 'N/A' }})</span>
+            <span class="divider">·</span>
+            <mat-icon>domain</mat-icon>
+            <span>{{ request().division || 'General Division' }}</span>
+          </div>
+        </div>
+        <div class="hero-right">
+          <span class="status-badge large" [ngClass]="getStatusClass(requestStatus)">
+            <span class="status-dot"></span> {{ request().status || 'Pending' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Card -->
+    <div class="glass-card info-card">
+      <div class="card-section-header">
+        <mat-icon>swap_horiz</mat-icon>
+        <h3>Transfer Period & Allocation Parameters</h3>
+      </div>
+
+      <div class="info-grid-2">
+        <div class="info-item">
+          <span class="info-label">Submission Date</span>
+          <span class="info-value">{{ request().date | date:'medium' }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Priority Level</span>
+          <span class="priority-pill" [ngClass]="(request().priority || 'normal').toLowerCase()">
+            {{ request().priority || 'Normal' }}
+          </span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Transfer Start Date</span>
+          <span class="info-value mono">{{ getTransferDates().from || (request().date | date:'yyyy-MM-dd') }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Transfer Return Date</span>
+          <span class="info-value mono">{{ getTransferDates().to || 'Open-ended' }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Requested Quantity</span>
+          <span class="info-value">{{ request().quantity || 1 }} Units</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Asset Category</span>
+          <span class="info-value">{{ request().category || 'General' }}</span>
+        </div>
+
+        <div class="info-item full-width">
+          <span class="info-label">Transfer Purpose & Justification</span>
+          <p class="info-text-block highlight">{{ getCleanReason() || 'No specific purpose stated.' }}</p>
+        </div>
+
+        <div class="info-item full-width">
+          <span class="info-label">Technical Notes & Specification</span>
+          <p class="info-text-block">{{ request().specs || request().description || 'No additional notes provided.' }}</p>
+        </div>
+      </div>
+
+      <!-- Attachments Section -->
+      @if (request()!.attachments && (request()!.attachments?.length ?? 0) > 0) {
+        <div class="attachments-block">
+          <span class="info-label">Supporting Documents ({{ request()!.attachments?.length ?? 0 }})</span>
+          <div class="attachments-list">
+            @for (attachment of request()!.attachments; track attachment.id) {
+              <div class="attachment-item-card">
+                <div class="attachment-info">
+                  <mat-icon class="file-type-icon">{{ getFileIcon(attachment.fileName) }}</mat-icon>
+                  <div class="file-details">
+                    <span class="file-name">{{ attachment.fileName }}</span>
+                    <span class="file-meta">{{ formatFileSize(attachment.fileSize) }}</span>
+                  </div>
+                </div>
+                <button class="download-icon-btn" (click)="downloadFile(attachment)" title="Download attachment">
+                  <mat-icon>download</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Division Head Actions -->
+    @if (!isReadOnly() && canDivisionHeadAct()) {
+      <div class="glass-card actions-panel">
+        <div class="action-buttons-row">
+          <button class="btn-approve" (click)="approveRequest()" [disabled]="processing()">
+            <mat-icon>check_circle</mat-icon> Approve Request
+          </button>
+          <button class="btn-reject" (click)="rejectRequest()" [disabled]="processing()">
+            <mat-icon>cancel</mat-icon> Reject with Reason
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Read-only View in Pool -->
+    @if (isReadOnly()) {
+      <div class="glass-card actions-panel">
+        <button class="btn-secondary-action full-width" (click)="viewInPool()">
+          <mat-icon>search</mat-icon> View in Centralized Pool
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Confirmation / Success Modal -->
+  @if (showPopup()) {
+    <div class="overlay" (click)="closePopup()">
+      <div class="glass-modal" [class.reject]="popupType() === 'reject'" (click)="$event.stopPropagation()">
+        <div class="modal-icon-badge">
+          <mat-icon>{{ popupType() === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+        </div>
+        <div class="modal-body-text">
+          <h3>{{ popupType() === 'success' ? 'Transfer Processed' : 'Request Processed' }}</h3>
+          <p>{{ popupMessage() }}</p>
+        </div>
+        <button class="modal-done-btn" (click)="closePopup()">Done</button>
+      </div>
+    </div>
+  }
+</div>

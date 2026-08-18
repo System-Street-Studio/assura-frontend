@@ -1,0 +1,233 @@
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { AssetService as AssetRequestService } from '../../services/asset-request.service';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { CategoryService } from '../../../inventory/services/category.service';
+import { Category } from '../../../inventory/models/category.model';
+import { ToastService } from '../../../../shared/services/toast.service';
+
+@Component({
+  selector: 'app-transfer-form',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule
+  ],
+  templateUrl: './transfer-form.html',
+  styleUrl: './transfer-form.css',
+})
+export class TransferFormComponent implements OnInit {
+    // Signals
+    categories = signal<Category[]>([]);
+    assetName = signal('');
+    category = signal('');
+    description = signal('');
+    quantity = signal(1);
+    priority = signal('Normal');
+    reason = signal('');
+    fromDate = signal<Date | null>(null);
+    toDate = signal<Date | null>(null);
+    selectedFiles = signal<File[]>([]);
+    isSubmitting = signal(false);
+    resultVisible = signal(false);
+    result = signal<'success' | 'error' | null>(null);
+
+    showResult(): boolean {
+      return this.resultVisible();
+    }
+
+    resultType(): 'success' | 'error' | null {
+      return this.result();
+    }
+
+    onResultClosed(): void {
+      this.resultVisible.set(false);
+      this.location.back();
+    }
+
+    // Services
+  private location = inject(Location);
+  private assetRequestService = inject(AssetRequestService);
+  private categoryService = inject(CategoryService);
+  private authService = inject(AuthService);
+  private toastService = inject(ToastService);
+
+    ngOnInit(): void {
+      this.categoryService.getAll().subscribe({
+        next: (cats) => this.categories.set(cats),
+        error: (err) => console.error('Failed to load categories', err)
+      });
+    }
+
+  // Minimum date allowed for From Date (today)
+  minDate: Date = (() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  })();
+
+  get minToDate(): Date {
+    return this.fromDate() || this.minDate;
+  }
+
+  dateError = signal('');
+
+  preventNegativeInput(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e' || event.key === 'E' || event.key === '+') {
+      event.preventDefault();
+    }
+  }
+
+  onQuantityChange(value: any) {
+    const num = Number(value);
+    if (isNaN(num) || num < 1) {
+      this.quantity.set(1);
+    } else {
+      this.quantity.set(Math.floor(num));
+    }
+  }
+
+  onFromDateChange(date: Date | null) {
+    if (date) {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      if (d < this.minDate) {
+        this.dateError.set('From Date cannot be in the past.');
+        this.fromDate.set(this.minDate);
+      } else {
+        this.dateError.set('');
+        this.fromDate.set(d);
+      }
+    } else {
+      this.fromDate.set(null);
+    }
+
+    if (this.fromDate() && this.toDate()) {
+      if (this.toDate()! < this.fromDate()!) {
+        this.toDate.set(this.fromDate());
+      }
+    }
+  }
+
+  onToDateChange(date: Date | null) {
+    if (date) {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      const minAllowed = this.fromDate() || this.minDate;
+      if (d < minAllowed) {
+        this.dateError.set('To Date cannot be earlier than From Date.');
+        this.toDate.set(minAllowed);
+      } else {
+        this.dateError.set('');
+        this.toDate.set(d);
+      }
+    } else {
+      this.toDate.set(null);
+    }
+  }
+
+  // Methods
+  onSubmit() {
+    if (!this.assetName() || !this.category() || !this.reason()) {
+      alert('Failed to create transfer request. Please fill all required fields.');
+      return;
+    }
+    if (!this.quantity() || this.quantity() < 1) {
+      alert('Quantity must be at least 1.');
+      return;
+    }
+    if (this.fromDate()) {
+      const f = new Date(this.fromDate()!);
+      f.setHours(0, 0, 0, 0);
+      if (f < this.minDate) {
+        alert('From Date cannot be in the past.');
+        return;
+      }
+    }
+    if (this.fromDate() && this.toDate()) {
+      const f = new Date(this.fromDate()!);
+      f.setHours(0, 0, 0, 0);
+      const t = new Date(this.toDate()!);
+      t.setHours(0, 0, 0, 0);
+      if (t < f) {
+        alert('To Date cannot be earlier than From Date.');
+        return;
+      }
+    }
+    this.isSubmitting.set(true);
+    const requestPayload = {
+      employeeId: this.authService.getUserId() || '',
+      submittedBy: this.authService.getUserName() || 'Employee',
+      assetCategory: this.category(),
+      assetName: this.assetName(),
+      description: this.description(),
+      reason: `${this.reason()} (Transfer periods: ${this.fromDate()?.toLocaleDateString()} to ${this.toDate()?.toLocaleDateString()})`,
+      quantity: this.quantity(),
+      priority: this.priority(),
+      requestType: 'Transfer',
+      submittedDate: new Date().toISOString()
+    };
+
+    // Call the service to create the transfer request
+    this.assetRequestService.createRequest(requestPayload, this.selectedFiles()).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.resultVisible.set(true);
+        this.result.set('success');
+        this.toastService.success('Transfer request submitted successfully');
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        this.resultVisible.set(true);
+        this.result.set('error');
+        console.error('Submission failed', err);
+        this.toastService.error('Failed to submit request. Please try again.');
+      }
+    });
+  }
+
+  // Cancel button logic
+  onCancel() {
+    this.location.back();
+  }
+
+  // File attachment methods
+  onFileSelected(event: any): void {
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files) as File[];
+      this.selectedFiles.update(prev => [...prev, ...newFiles]);
+    }
+  }
+
+  // Remove selected file
+  removeFile(index: number): void {
+    this.selectedFiles.update(files => {
+      const updated = [...files];
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
+
+  // Open file browser
+  browseFiles(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.addEventListener('change', (e) => this.onFileSelected(e));
+    input.click();
+  }
+}

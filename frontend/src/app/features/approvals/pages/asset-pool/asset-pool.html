@@ -1,0 +1,323 @@
+<div class="pool-container">
+  <!-- Page Header -->
+  <div class="header-section">
+    <div class="page-title-row">
+      <div class="title-with-badge">
+        <h1 class="assura-page-title">Centralized Asset Pool</h1>
+        <span class="header-badge">Cross-Division Inventory</span>
+      </div>
+    </div>
+    <p class="assura-page-subtitle">Search, filter, and allocate assets assigned to employees across all company divisions.</p>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="glass-card loading-container">
+      <div class="spinner"></div>
+      <p>Loading enterprise asset catalog...</p>
+    </div>
+  } @else {
+    <!-- Error Handling Banner -->
+    @if (errorMessage()) {
+      <div class="error-banner">
+        <mat-icon>error</mat-icon>
+        <p>{{ errorMessage() }}</p>
+      </div>
+    }
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-input-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" 
+               class="search-bar"
+               placeholder="Search by product name, asset tag, serial number, division, or employee..." 
+               [ngModel]="searchQuery()" 
+               (ngModelChange)="onSearchChange($event)">
+      </div>
+    </div>
+
+    <!-- Transfer Request Selection Panel -->
+    <div class="glass-card transfer-request-section">
+      <div class="transfer-request-dropdown">
+        <label for="transferRequest">
+          <mat-icon>assignment_turned_in</mat-icon> Select Approved Transfer Request
+        </label>
+        <select id="transferRequest" 
+                class="glass-select"
+                [ngModel]="selectedTransferRequest()?.id || ''" 
+                (ngModelChange)="onDropdownChange($event)">
+          <option value="">Choose an approved transfer request to assign assets against...</option>
+          @for (request of approvedTransferRequests(); track request.id) {
+            <option [value]="request.id">
+              Request #{{ request.id }} — {{ request.requesterName || 'Unknown' }} (Requester ID: {{ request.requesterId || 'N/A' }}) - {{ request.assetName || 'Equipment' }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <!-- No approved requests info -->
+      @if (approvedTransferRequests().length === 0) {
+        <div class="info-alert-chip">
+          <mat-icon>info</mat-icon>
+          <span>No approved transfer requests pending asset allocation.</span>
+        </div>
+      }
+
+      <!-- Detailed View of Selected Transfer Request -->
+      @if (selectedTransferRequest()) {
+        <div class="selected-request-info">
+          <div class="req-info-grid">
+            <div class="req-cell"><span class="label">Request ID:</span> <strong class="mono">#{{ selectedTransferRequest().id }}</strong></div>
+            <div class="req-cell"><span class="label">Requester:</span> <strong>{{ selectedTransferRequest().requesterName || 'Unknown' }}</strong> (ID: {{ selectedTransferRequest().requesterId || 'N/A' }})</div>
+            <div class="req-cell"><span class="label">Target Asset:</span> <strong class="highlight">{{ selectedTransferRequest().assetName || 'Not specified' }}</strong></div>
+            <div class="req-cell"><span class="label">Status:</span> <span class="status-badge approved">{{ selectedTransferRequest().status }}</span></div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Filter Section Grid -->
+    <div class="glass-card filter-section">
+      <div class="filter-group">
+        <label for="category">Category</label>
+        <select id="category" 
+                class="glass-select"
+                [ngModel]="selectedCategory()" 
+                (ngModelChange)="onCategoryChange($event); currentPage.set(1)">
+          <option value="">All Categories</option>
+          @for (cat of categories(); track cat.id) { 
+            <option [value]="cat.name">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Specification Filter -->
+      @if (selectedCategory()) {
+        <div class="filter-group">
+          <label for="specification">Specification</label>
+          <select id="specification" 
+                  class="glass-select"
+                  [ngModel]="selectedSpecification()" 
+                  (ngModelChange)="onSpecificationChange($event); currentPage.set(1)">
+            <option value="">All Specifications</option>
+            @for (spec of availableSpecifications(); track spec) {
+              <option [value]="spec">{{ spec }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <!-- Specification Value Search -->
+      @if (selectedSpecification()) {
+        <div class="filter-group">
+          <label for="specValue">Specification Value</label>
+          <input type="text" 
+                 id="specValue"
+                 class="glass-input"
+                 placeholder="e.g. 16GB, Intel i7, etc."
+                 [ngModel]="specificationValue()" 
+                 (ngModelChange)="onSpecValueChange($event); currentPage.set(1)">
+        </div>
+      }
+
+      <!-- Division Filter -->
+      <div class="filter-group">
+        <label for="division">Division</label>
+        <select id="division" 
+                class="glass-select"
+                [ngModel]="selectedDivision()" 
+                (ngModelChange)="onDivisionChange($event); currentPage.set(1)">
+          <option value="">All Divisions</option>
+          @for (division of divisions(); track division.id) {
+            <option [value]="division.name">{{ division.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- User/Employee Filter -->
+      <div class="filter-group">
+        <label for="employee">Assigned User</label>
+        <select id="employee" 
+                class="glass-select"
+                [ngModel]="selectedEmployee()" 
+                (ngModelChange)="onEmployeeChange($event); currentPage.set(1)">
+          <option value="">All Users</option>
+          @for (emp of employeesList(); track emp.id) {
+            <option [value]="emp.id">{{ emp.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    
+    <!-- Instruction Banner -->
+    @if (paginatedAssets().length > 0 && !selectedTransferRequest()) {
+      <div class="alert-info-banner">
+        <mat-icon>info</mat-icon>
+        <span>To initiate a transfer for any asset below, first choose an <strong>Approved Transfer Request</strong> from the dropdown above.</span>
+      </div>
+    }
+
+    <!-- Results Section -->
+    @if (searchQuery().trim() || selectedCategory() || selectedDivision() || selectedEmployee() || allAssets().length > 0) {
+      <div class="glass-panel results-container">
+        <div class="results-header">
+          <h3 class="results-title">Inventory Match ({{ totalItems() }} assets)</h3>
+          @if (paginatedAssets().length > 0) {
+            <div class="pagination-info">
+              <span>Page {{ currentPage() }} of {{ totalPages() }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="table-container">
+          @if (paginatedAssets().length === 0) {
+            <div class="no-results">
+              <mat-icon>search_off</mat-icon>
+              <h3>No assets match your search</h3>
+              <p>Try adjusting your keywords or clearing category/division filters.</p>
+            </div>
+          } @else {
+            <table class="assura-table">
+              <thead>
+                <tr>
+                  <th>Asset Item</th>
+                  <th>Category</th>
+                  <th>Assigned To</th>
+                  <th>Division</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (asset of paginatedAssets(); track asset.id) {
+                  <tr>
+                    <td>
+                      <div class="asset-info">
+                        <span class="asset-name">{{ asset.productName || asset.assetCode || 'N/A' }}</span>
+                        <span class="asset-code mono">#{{ asset.assetCode }}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="category-badge">{{ asset.categoryName || 'General' }}</span>
+                    </td>
+                    <td>
+                      <div class="assignee-info">
+                        <span class="name">{{ asset.assignedUserName || 'Unassigned' }}</span>
+                        @if (asset.assignedUserId) {
+                          <span class="id mono">(ID: {{ asset.assignedUserId }})</span>
+                        }
+                      </div>
+                    </td>
+                    <td>{{ asset.divisionName || 'N/A' }}</td>
+                    <td>
+                      <span class="status-badge" [ngClass]="'status-' + (asset.status || 'unknown')">
+                        <span class="status-dot"></span> {{ asset.status || 'Unknown' }}
+                      </span>
+                    </td>
+                    <td>
+                      @if (asset.assignedUserId) {
+                        <button class="btn-transfer" (click)="selectForTransfer(asset)">
+                          <mat-icon>swap_horiz</mat-icon> Select for Transfer
+                        </button>
+                      } @else {
+                        <span class="text-muted">Not Assigned</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+            
+            <!-- Pagination Controls -->
+            @if (totalPages() > 1) {
+              <div class="pagination-controls">
+                <button class="btn-pagination" 
+                        (click)="onPreviousPage()" 
+                        [disabled]="currentPage() === 1">
+                  <mat-icon>chevron_left</mat-icon> Previous
+                </button>
+                
+                <div class="page-numbers">
+                  @for (pageNum of getPageNumbers(); track pageNum) {
+                    <button class="btn-page" 
+                            [class.active]="pageNum === currentPage()"
+                            (click)="onPageChange(pageNum)">
+                      {{ pageNum }}
+                    </button>
+                  }
+                </div>
+                
+                <button class="btn-pagination" 
+                        (click)="onNextPage()" 
+                        [disabled]="currentPage() === totalPages()">
+                  Next <mat-icon>chevron_right</mat-icon>
+                </button>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- Initial Landing State -->
+      <div class="glass-card search-prompt">
+        <mat-icon class="prompt-icon">travel_explore</mat-icon>
+        <h3>Search Enterprise Assigned Assets</h3>
+        <p>Enter search keywords or select filter criteria to explore assets currently assigned to employees across all company divisions.</p>
+        <div class="search-hints">
+          <div class="hint-item"><mat-icon>check_circle</mat-icon> <span>Filter by category, brand, and hardware specifications</span></div>
+          <div class="hint-item"><mat-icon>check_circle</mat-icon> <span>Locate assets by division or individual employee name</span></div>
+          <div class="hint-item"><mat-icon>check_circle</mat-icon> <span>Allocate matching assets to approved transfer requests</span></div>
+        </div>
+      </div>
+    }
+  }
+
+ <!-- Glass Modal Popup -->
+@if (showPopup()) {
+  <div class="overlay" (click)="closePopup()">
+    <div class="glass-modal" [class.reject]="popupType() === 'reject'" [class.confirm]="popupType() === 'confirm'" (click)="$event.stopPropagation()">
+      <div class="modal-icon-badge">
+        <mat-icon>
+          @if (popupType() === 'success') {
+            check_circle
+          } @else if (popupType() === 'reject') {
+            error
+          } @else {
+            help_outline
+          }
+        </mat-icon>
+      </div>
+      <div class="modal-body-text">
+        <h3>
+          @if (popupType() === 'success') {
+            Success
+          } @else if (popupType() === 'reject') {
+            Attention / Error
+          } @else {
+            Are you sure?
+          }
+        </h3>
+        <p>{{ popupMessage() }}</p>
+      </div>
+
+      <!-- Actions with [disabled] binding -->
+      <div class="modal-actions" style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 15px;">
+        @if (popupType() === 'confirm') {
+          <button class="modal-done-btn" style="background-color: #334155;" [disabled]="isProcessing()" (click)="closePopup()">No</button>
+          <button class="modal-done-btn" [disabled]="isProcessing()" (click)="onPopupAction()">
+            @if (isProcessing()) {
+              Processing...
+            } @else {
+              Yes
+            }
+          </button>
+        } @else {
+          <button class="modal-done-btn" (click)="closePopup()">Done</button>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+</div>

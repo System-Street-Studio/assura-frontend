@@ -1,8 +1,9 @@
-<div class="status-card">
-  <div class="status-icon-area" [style.background-color]="color">
-    <mat-icon class="status-icon">{{ icon }}</mat-icon>
+<div class="global-toast-card">
+  <div class="global-toast-icon" [style.background-color]="color || '#10b981'">
+    <mat-icon>{{ icon }}</mat-icon>
   </div>
-  <div class="status-label-area">
-    <span class="status-label">{{ label }}</span>
+  <div class="global-toast-content">
+    <h4 class="global-toast-title">Notification</h4>
+    <p class="global-toast-message">{{ label }}</p>
   </div>
 </div>

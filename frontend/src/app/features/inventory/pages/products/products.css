@@ -1,0 +1,70 @@
+/* =========================================================
+   EXPORT FORMAT DROPDOWN (PDF / Excel / CSV)
+   ========================================================= */
+.export-wrapper {
+  position: relative;
+}
+
+.export-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: 260px;
+  padding: 6px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.55);
+}
+
+.export-menu-scope {
+  padding: 8px 10px 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #1e293b;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.export-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #e2e8f0;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease-in-out;
+}
+
+.export-menu-item:hover,
+.export-menu-item:focus-visible {
+  background: rgba(99, 102, 241, 0.15);
+  outline: none;
+}
+
+.export-menu-item:focus-visible {
+  box-shadow: inset 0 0 0 2px #818cf8;
+}
+
+.export-menu-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.export-menu-text strong {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.export-menu-text small {
+  font-size: 11.5px;
+  color: #94a3b8;
+}

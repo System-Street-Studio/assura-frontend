@@ -1,0 +1,112 @@
+<div style="padding: 32px; max-width: 1200px; margin: 0 auto; height: 100%; overflow-y: auto;">
+    <h1 class="assura-page-title" style="margin-bottom: 24px;">Security & Data Management</h1>
+
+    <!-- Tabs -->
+    <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+        <button class="assura-btn" [ngClass]="activeTab === 'users' ? 'assura-btn-primary' : 'assura-btn-secondary'" (click)="setTab('users')">
+            User Access Control
+        </button>
+        <button class="assura-btn" [ngClass]="activeTab === 'logs' ? 'assura-btn-primary' : 'assura-btn-secondary'" (click)="setTab('logs')">
+            Security Logs
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" style="text-align: center; padding: 40px; color: #64748b; font-family: 'Jost'; font-weight: 500;">
+        <p>Loading data...</p>
+    </div>
+
+    <!-- Users Tab -->
+    <div *ngIf="activeTab === 'users' && !loading">
+        <div class="glass-panel assura-table-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
+                <div>
+                    <h3 style="margin: 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #f8fafc;">User Access Control</h3>
+                    <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 14px;">Manage system access and lock/unlock user accounts.</p>
+                </div>
+                <div style="width: 300px;">
+                    <input type="text" [(ngModel)]="searchTerm" placeholder="Search users..." class="assura-input">
+                </div>
+            </div>
+            <table class="assura-table">
+                <thead>
+                    <tr>
+                        <th class="assura-th">ID</th>
+                        <th class="assura-th">Username</th>
+                        <th class="assura-th">Email</th>
+                        <th class="assura-th">Role</th>
+                        <th class="assura-th">Status</th>
+                        <th class="assura-th" style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="assura-tr-hover" *ngFor="let user of filteredUsers">
+                        <td class="assura-td">{{ user.id }}</td>
+                        <td class="assura-td" style="font-weight: 600;">{{ user.username }}</td>
+                        <td class="assura-td" style="color: #94a3b8;">{{ user.email }}</td>
+                        <td class="assura-td"><span class="assura-badge assura-badge-info">{{ user.role || 'None' }}</span></td>
+                        <td class="assura-td">
+                            <span class="assura-badge" [ngClass]="user.isLocked ? 'assura-badge-danger' : 'assura-badge-success'">
+                                {{ user.isLocked ? 'Locked' : 'Active' }}
+                            </span>
+                        </td>
+                        <td class="assura-td" style="text-align: right;">
+                            <button class="assura-btn" 
+                                    [ngClass]="user.isLocked ? 'assura-btn-secondary' : 'assura-btn-danger'" 
+                                    style="padding: 6px 16px; font-size: 13px;"
+                                    (click)="toggleLock(user)"
+                                    [disabled]="user.username === 'sysadmin'">
+                                {{ user.isLocked ? 'Unlock' : 'Lock' }}
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredUsers.length === 0">
+                        <td colspan="6" class="assura-td" style="text-align: center; color: #94a3b8; padding: 32px;">No users match your search.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Logs Tab -->
+    <div *ngIf="activeTab === 'logs' && !loading">
+        <div class="glass-panel assura-table-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
+                <div>
+                    <h3 style="margin: 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #f8fafc;">Security Audit Trail</h3>
+                    <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 14px;">Review all security-related events and access logs.</p>
+                </div>
+                <div style="width: 300px;">
+                    <input type="text" [(ngModel)]="searchTerm" placeholder="Search logs..." class="assura-input">
+                </div>
+            </div>
+            <table class="assura-table">
+                <thead>
+                    <tr>
+                        <th class="assura-th">Date & Time</th>
+                        <th class="assura-th">Entity</th>
+                        <th class="assura-th">Action</th>
+                        <th class="assura-th">IP Address</th>
+                        <th class="assura-th">User ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="assura-tr-hover" *ngFor="let log of filteredLogs">
+                        <td class="assura-td" style="font-weight: 500; color: #94a3b8;">{{ log.createdAt | date:'medium' }}</td>
+                        <td class="assura-td" style="font-weight: 600;">{{ log.entityName }}</td>
+                        <td class="assura-td">
+                            <span class="assura-badge" [ngClass]="log.action === 'CREATE' ? 'assura-badge-success' : log.action === 'UPDATE' ? 'assura-badge-warning' : log.action === 'DELETE' ? 'assura-badge-danger' : 'assura-badge-info'">
+                                {{ log.action }}
+                            </span>
+                        </td>
+                        <td class="assura-td" style="color: #94a3b8;">{{ log.ipAddress || 'N/A' }}</td>
+                        <td class="assura-td" style="color: #94a3b8;">{{ log.createdBy || 'System' }}</td>
+                    </tr>
+                    <tr *ngIf="filteredLogs.length === 0">
+                        <td colspan="5" class="assura-td" style="text-align: center; color: #94a3b8; padding: 32px;">No security logs match your search.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
