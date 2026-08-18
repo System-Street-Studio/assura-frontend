@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Asset } from '../features/my-assets/models/asset.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AssetsService {
-  private apiUrl = '/api/Assets';
+  private apiUrl = `${environment.apiUrl}/Assets`;
 
   constructor(private http: HttpClient) {}
 
