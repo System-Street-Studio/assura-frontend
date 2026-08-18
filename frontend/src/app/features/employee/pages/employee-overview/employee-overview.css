@@ -603,3 +603,29 @@
   width: 16px;
   height: 16px;
 }
+
+/* ── Filter Pills ── */
+.assura-filter-pill {
+  padding: 6px 14px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 20px;
+  color: #94a3b8;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.assura-filter-pill:hover {
+  background: rgba(30, 41, 59, 0.9);
+  color: #f8fafc;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.assura-filter-pill.active {
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+}

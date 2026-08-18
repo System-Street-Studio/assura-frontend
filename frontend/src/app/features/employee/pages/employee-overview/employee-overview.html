@@ -104,17 +104,27 @@
     @if (arrivedAssets().length > 0) {
       <section class="section-block">
         <div class="glass-panel arrived-panel" [class.has-pending-arrivals]="pendingArrivalsCount() > 0">
-          <div class="panel-header">
+          <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div class="panel-header-left">
               <mat-icon class="panel-header-icon pulse-icon">notifications_active</mat-icon>
               <div>
-                <h3 class="panel-title">New Asset Arrivals — Confirmation Required</h3>
+                <h3 class="panel-title">New Asset Arrivals</h3>
                 <span class="panel-subtitle">Items informed by storekeeper for your collection and receipt verification</span>
               </div>
             </div>
-            @if (pendingArrivalsCount() > 0) {
-              <span class="badge-pill-alert">{{ pendingArrivalsCount() }} Action Required</span>
-            }
+
+            <!-- Filter Controls & Badges -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button type="button" class="assura-filter-pill" [class.active]="activeArrivalFilter() === 'all'" (click)="setArrivalFilter('all')">
+                All ({{ arrivedAssets().length }})
+              </button>
+              <button type="button" class="assura-filter-pill" [class.active]="activeArrivalFilter() === 'pending'" (click)="setArrivalFilter('pending')">
+                Action Required ({{ pendingArrivalsCount() }})
+              </button>
+              <button type="button" class="assura-filter-pill" [class.active]="activeArrivalFilter() === 'confirmed'" (click)="setArrivalFilter('confirmed')">
+                Verified ({{ confirmedArrivalsCount() }})
+              </button>
+            </div>
           </div>
 
           <div class="table-responsive">
@@ -132,7 +142,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (arrival of arrivedAssets(); track arrival.id) {
+                @for (arrival of filteredArrivedAssets(); track arrival.id) {
                   <tr [class.highlight-row]="isAwaitingConfirmation(arrival.status)">
                     <td class="item-name-cell">
                       <div style="display: flex; align-items: center; gap: 8px;">
@@ -176,6 +186,13 @@
                           <mat-icon>done_all</mat-icon> Verified
                         </span>
                       }
+                    </td>
+                  </tr>
+                }
+                @if (filteredArrivedAssets().length === 0) {
+                  <tr>
+                    <td colspan="8" style="text-align: center; padding: 32px; color: #94a3b8;">
+                      No items found matching the selected filter.
                     </td>
                   </tr>
                 }
