@@ -47,7 +47,7 @@ export class EmployeeOverviewComponent implements OnInit {
   isAwaitingConfirmation(status?: string): boolean {
     if (!status) return true;
     const s = status.trim().toLowerCase();
-    return s === 'informed' || s === 'pending';
+    return s === 'informed' || s === 'pending' || s === 'grn recorded' || s === 'grnrecorded' || s === 'received';
   }
 
   isConfirmedOrCompleted(status?: string): boolean {
@@ -76,19 +76,18 @@ export class EmployeeOverviewComponent implements OnInit {
       return;
     }
 
-    if (!divisionId) {
+    const roles = this.authService.getRoles();
+    if (roles.includes('Pending') && roles.length === 1) {
       this.isPendingUser = true;
       this.isLoading.set(false);
       return;
     }
 
-    this.loadData(userId, Number(divisionId));
+    this.loadData(userId, divisionId ? Number(divisionId) : undefined);
   }
 
   loadData(userId: string, divisionId?: number) {
     this.loadedCount = 0;
-
-    
 
     // 1. Fetch Arrived Assets / Arrivals pending confirmation
     this.empAssetService.getArrivedAssets(divisionId).subscribe({
@@ -96,7 +95,10 @@ export class EmployeeOverviewComponent implements OnInit {
         this.arrivedAssets.set(arrivals || []);
         this.checkLoadingComplete();
       },
-      error: () => this.checkLoadingComplete()
+      error: (err) => {
+        console.error('Error loading employee arrivals:', err);
+        this.checkLoadingComplete();
+      }
     });
 
     // 2. Fetch Requests
