@@ -13,7 +13,7 @@
 
       <!-- Date Range Filter Dropdown -->
       <div class="dropdown-container">
-        <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleDateRangeDropdown()">
+        <button class="assura-btn audit-filter-btn" type="button" (click)="toggleDateRangeDropdown()">
           📅 Date: {{ selectedDateRange() }}
         </button>
         @if (showDateRangeDropdown()) {
@@ -28,7 +28,7 @@
 
       <!-- Module Filter Dropdown -->
       <div class="dropdown-container">
-        <button class="assura-btn assura-btn-secondary" type="button" (click)="toggleModuleDropdown()">
+        <button class="assura-btn audit-filter-btn" type="button" (click)="toggleModuleDropdown()">
           📦 Module: {{ selectedModule() }}
         </button>
         @if (showModuleDropdown()) {
@@ -69,7 +69,7 @@
         <h2 style="color: #f8fafc; font-size: 1.25rem;">Audit Trail</h2>
         <div class="table-actions">
           <div class="dropdown-container">
-            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="toggleStatusDropdown()">
+            <button type="button" class="assura-btn audit-filter-btn audit-filter-btn-compact" (click)="toggleStatusDropdown()">
               Status: {{ selectedStatus() }}
             </button>
             @if (showStatusDropdown()) {
@@ -81,7 +81,7 @@
             }
           </div>
           <div class="dropdown-container">
-            <button type="button" class="assura-btn assura-btn-secondary" style="padding: 6px 12px; font-size: 13px;" (click)="toggleActorDropdown()">
+            <button type="button" class="assura-btn audit-filter-btn audit-filter-btn-compact" (click)="toggleActorDropdown()">
               Actor: {{ selectedActor() }}
             </button>
             @if (showActorDropdown()) {
