@@ -3,15 +3,15 @@
 
     <!-- Counter Cards -->
     <div class="counter-row">
-        <div class="glass-card counter-card approved" [class.active-card]="activeFilter === 'approved'"
-            (click)="filterByCategory('approved')">
-            <span class="counter-label">Approved</span>
-            <span class="counter-number">{{ approvedCount }}</span>
-        </div>
         <div class="glass-card counter-card pending" [class.active-card]="activeFilter === 'pending'"
             (click)="filterByCategory('pending')">
             <span class="counter-label">Pending</span>
             <span class="counter-number">{{ pendingCount }}</span>
+        </div>
+        <div class="glass-card counter-card approved" [class.active-card]="activeFilter === 'approved'"
+            (click)="filterByCategory('approved')">
+            <span class="counter-label">Approved</span>
+            <span class="counter-number">{{ approvedCount }}</span>
         </div>
     </div>
 
