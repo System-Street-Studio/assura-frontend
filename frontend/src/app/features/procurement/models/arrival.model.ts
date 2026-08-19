@@ -13,6 +13,8 @@ export interface AssetInformingDto {
     targetEmployeeName?: string;
     remarks?: string;
     createdAt: string;
+    assetId?: number;
+    assetCode?: string;
 }
 
 export interface InformStoresRequest {

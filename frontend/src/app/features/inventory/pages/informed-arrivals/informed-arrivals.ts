@@ -119,7 +119,8 @@ export class InformedArrivalsComponent implements OnInit {
             queryParams: {
                 informingId: item.id,
                 employeeId: item.targetEmployeeId ? String(item.targetEmployeeId) : undefined,
-                item: itemName
+                item: itemName,
+                assetId: item.assetId ? String(item.assetId) : undefined
             }
         });
     }

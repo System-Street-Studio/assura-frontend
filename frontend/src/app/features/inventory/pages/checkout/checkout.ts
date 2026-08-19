@@ -130,9 +130,10 @@ export class CheckoutComponent implements OnInit {
                     if (params['informingId']) {
                         this.informingId = Number(params['informingId']);
                     }
-                    if (params['informingId'] || params['employeeId'] || params['item']) {
+                    if (params['informingId'] || params['employeeId'] || params['item'] || params['assetId']) {
                         let empId = params['employeeId'];
                         let itemName = params['item'];
+                        const directAssetId = params['assetId'];
 
                         if (!empId && this.informingId && arrivals && arrivals.length > 0) {
                             const arrival = arrivals.find(a => a.id === this.informingId);
@@ -155,7 +156,7 @@ export class CheckoutComponent implements OnInit {
                             }
                         }
 
-                        this.openCheckoutModal(empId, itemName);
+                        this.openCheckoutModal(empId, itemName, directAssetId);
                     }
                 });
                 this.cdr.detectChanges();
@@ -289,7 +290,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     /* ── New Checkout ── */
-    openCheckoutModal(preselectEmpId?: string, preselectItem?: string): void {
+    openCheckoutModal(preselectEmpId?: string, preselectItem?: string, directAssetId?: string): void {
         this.submitted = false;
         this.checkoutProcessing = false;
 
@@ -297,7 +298,17 @@ export class CheckoutComponent implements OnInit {
         defaultDueDate.setFullYear(defaultDueDate.getFullYear() + 1);
 
         let preselectedAssetId = '';
-        if (preselectItem && this.availableAssets.length > 0) {
+
+        // 1. Prefer direct assetId match (most reliable — from GRN-linked asset)
+        if (directAssetId && this.availableAssets.length > 0) {
+            const directMatch = this.availableAssets.find(a => String(a.id) === String(directAssetId));
+            if (directMatch) {
+                preselectedAssetId = directMatch.id;
+            }
+        }
+
+        // 2. Fall back to fuzzy name match
+        if (!preselectedAssetId && preselectItem && this.availableAssets.length > 0) {
             const cleanItem = preselectItem.trim().toLowerCase();
             const match = this.availableAssets.find(a =>
                 a.name.toLowerCase().includes(cleanItem) ||
@@ -308,6 +319,8 @@ export class CheckoutComponent implements OnInit {
                 preselectedAssetId = match.id;
             }
         }
+
+        // 3. Last resort: pick the first available asset
         if (!preselectedAssetId && this.availableAssets && this.availableAssets.length > 0) {
             preselectedAssetId = this.availableAssets[0].id;
         }
