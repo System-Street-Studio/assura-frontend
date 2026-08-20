@@ -23,6 +23,7 @@ import { DivisionService } from '../../services/division.service';
 import { CategoryService } from '../../services/category.service';
 import { ProcurementService } from '../../../procurement/services/procurement.service';
 import { CheckoutService } from '../../services/checkout.service';
+import { GrnService } from '../../services/grn.service';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Domain models
@@ -66,6 +67,7 @@ export class AssetFormComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private procurementService = inject(ProcurementService);
   private checkoutService = inject(CheckoutService);
+  private grnService = inject(GrnService);
   private route = inject(ActivatedRoute);         // Reads route params (e.g., :id) and data (e.g., mode)
   private router = inject(Router);               // Navigates programmatically after save/cancel
   private location = inject(Location);           // Enables browser-native "back" navigation
@@ -156,6 +158,16 @@ export class AssetFormComponent implements OnInit {
   categories: Category[] = [];
   employees: CheckoutEmployee[] = [];
 
+  /** Full asset list kept in memory so supplier inference can scan purchase history. */
+  private existingAssets: AssetDetail[] = [];
+
+  /**
+   * PO ID that should be auto-selected once all dropdowns have loaded.
+   * Set from query params or by fetching the linked informing record.
+   * Consumed at the end of loadDropdownData's subscribe so the dropdowns are ready.
+   */
+  private pendingPoId = 0;
+
   // ── Purchase Order Auto-Fill State ──
   /** List of all purchasing orders loaded from backend, sorted with latest at top. */
   purchasingOrders: PurchasingOrderSummaryDto[] = [];
@@ -175,6 +187,17 @@ export class AssetFormComponent implements OnInit {
   /** Loading indicator while fetching PO details. */
   loadingPoDetails = false;
 
+  // ── "New Arrival" registration state (Informed Arrivals -> Register) ──
+  /** Set when this form was opened to register a Procurement-informed arrival. */
+  private informingId: number | null = null;
+  /** Product name suggested by the arrival, applied once the product list has loaded. */
+  private pendingProductName = '';
+
+  // ── Quick-add Product (so a genuinely new item doesn't block registration) ──
+  showAddProduct = false;
+  newProductName = '';
+  addingProduct = false;
+
   // ── Reactive Form Definition ──
   /**
    * The main form group built using Angular's FormBuilder.
@@ -187,19 +210,19 @@ export class AssetFormComponent implements OnInit {
    *  - `Validators.min(0)`       : For monetary values — prevents negative numbers.
    */
   assetForm = this.fb.nonNullable.group({
-    assetCode:      ['', [Validators.required, Validators.maxLength(50)]],
-    assetTag:       ['', [Validators.maxLength(50)]],
-    productId:      [0, [Validators.min(1)]],    // 0 = "Select Product" placeholder; min(1) enforces a real selection
-    status:         ['InStore' as AssetStatus, [Validators.required]],
+    assetCode: ['', [Validators.required, Validators.maxLength(50)]],
+    assetTag: ['', [Validators.maxLength(50)]],
+    productId: [0, [Validators.min(1)]],    // 0 = "Select Product" placeholder; min(1) enforces a real selection
+    status: ['InStore' as AssetStatus, [Validators.required]],
     assignedUserId: [0],                        // 0 = Not Assigned (Store Inventory)
-    categoryId:     [0, [Validators.min(1)]],
-    supplierId:     [0, [Validators.min(1)]],
-    divisionId:     [0, [Validators.min(1)]],
-    serialNumber:   ['', [Validators.maxLength(100)]],
-    assetDate:      [this.getTodayDateString(), [Validators.required]], // Defaults to today's date
-    purchaseValue:  [0, [Validators.required, Validators.min(0.01)]], // An asset must be recorded with a real acquisition cost, not zero.
-    warranty:       ['', [Validators.maxLength(200)]],
-    notes:          ['', [Validators.maxLength(1000)]],
+    categoryId: [0, [Validators.min(1)]],
+    supplierId: [0, [Validators.min(1)]],
+    divisionId: [0, [Validators.min(1)]],
+    serialNumber: ['', [Validators.maxLength(100)]],
+    assetDate: [this.getTodayDateString(), [Validators.required]], // Defaults to today's date
+    purchaseValue: [0, [Validators.required, Validators.min(0.01)]], // An asset must be recorded with a real acquisition cost, not zero.
+    warranty: ['', [Validators.maxLength(200)]],
+    notes: ['', [Validators.maxLength(1000)]],
   });
 
   /**
@@ -212,6 +235,9 @@ export class AssetFormComponent implements OnInit {
     // 'mode' is injected via the route's `data` property in the routing module
     this.mode = this.route.snapshot.data['mode'] || 'edit';
     this.assetId = this.route.snapshot.paramMap.get('id') || '';
+
+    console.log('[AssetForm ngOnInit] Mode:', this.mode);
+    console.log('[AssetForm ngOnInit] Query Params:', JSON.stringify(this.route.snapshot.queryParams));
 
     // Registered here rather than in the FormBuilder group so it can close over component
     // state (the loaded code list) that does not exist yet at field-initialisation time.
@@ -229,13 +255,41 @@ export class AssetFormComponent implements OnInit {
     if (this.mode === 'create') {
       this.route.queryParams.subscribe((params) => {
         const initialCode = params['code'] || this.generateAssetCode();
+        this.informingId = params['informingId'] ? Number(params['informingId']) : null;
+        this.pendingProductName = params['productName'] || '';
+
         this.assetForm.patchValue({
           assetCode: initialCode,
           warranty: params['warranty'] || '',
-          purchaseValue: params['price'] ? Number(params['price']) : 0,
+          // params['price'] is a string — use != null so "0" is not treated as falsy.
+          purchaseValue: params['price'] != null ? Number(params['price']) : 0,
           divisionId: params['divisionId'] ? Number(params['divisionId']) : 0,
           assignedUserId: params['assignedUserId'] ? Number(params['assignedUserId']) : 0,
         });
+
+        // If the PO id was passed directly (e.g. from GRN page), loadDropdownData handles
+        // it via the pendingPoId flag consumed at the end of its subscribe callback.
+        // When navigating from New Arrivals without a poId (older informing records), fetch
+        // the informing to see if it has a linked PO and store it in the same flag.
+        const queryPoId = params['poId'] ? Number(params['poId']) : 0;
+        if (queryPoId > 0) {
+          this.pendingPoId = queryPoId;
+        } else if (this.informingId) {
+          this.procurementService.getInformingById(this.informingId).subscribe({
+            next: (informing) => {
+              if (informing?.purchasingOrderId) {
+                // If loadDropdownData already finished, trigger immediately;
+                // otherwise store it so loadDropdownData picks it up.
+                if (this.suppliers.length > 0) {
+                  this.onPoChange(informing.purchasingOrderId!);
+                } else {
+                  this.pendingPoId = informing.purchasingOrderId!;
+                }
+              }
+            },
+            error: () => { /* non-critical */ }
+          });
+        }
       });
     } else if (this.assetId) {
       this.assetService.getAssetById(this.assetId).subscribe({
@@ -249,27 +303,27 @@ export class AssetFormComponent implements OnInit {
 
           // Patch all form fields with values from the fetched asset
           this.assetForm.patchValue({
-            assetCode:      a.assetCode || '',
-            assetTag:       a.assetTag || '',
-            productId:      a.productId || 0,
-            status:         a.status || 'InStore',
+            assetCode: a.assetCode || '',
+            assetTag: a.assetTag || '',
+            productId: a.productId || 0,
+            status: a.status || 'InStore',
             assignedUserId: a.assignedUserId || 0,
-            categoryId:     a.categoryId || 0,
-            supplierId:     a.supplierId || 0,
-            divisionId:     a.divisionId || 0,
-            serialNumber:   a.serialNumber || '',
-            assetDate:      this.toDateInputValue(a.assetDate),  // Normalise to 'YYYY-MM-DD' for <input type="date">
-            purchaseValue:  Number(a.purchaseValue) || 0,
-            warranty:       a.warranty || '',
-            notes:          a.notes || '',
+            categoryId: a.categoryId || 0,
+            supplierId: a.supplierId || 0,
+            divisionId: a.divisionId || 0,
+            serialNumber: a.serialNumber || '',
+            assetDate: this.toDateInputValue(a.assetDate),  // Normalise to 'YYYY-MM-DD' for <input type="date">
+            purchaseValue: Number(a.purchaseValue) || 0,
+            warranty: a.warranty || '',
+            notes: a.notes || '',
           });
 
           // For clone mode: reset the ID so a new record is created, and modify the code to signal it's a copy
           if (this.mode === 'clone') {
             this.editingAssetNumericId = 0;
             this.assetForm.patchValue({
-              assetCode:      `${a.assetCode}-COPY`,
-              serialNumber:   '',  // Serial number must be unique; clear it to prevent duplicates
+              assetCode: `${a.assetCode}-COPY`,
+              serialNumber: '',  // Serial number must be unique; clear it to prevent duplicates
               assignedUserId: 0,
             });
           }
@@ -322,7 +376,7 @@ export class AssetFormComponent implements OnInit {
 
   /** Returns a human-readable page title based on the current mode. */
   get pageTitle(): string {
-    if (this.mode === 'clone')  return 'Clone Asset';
+    if (this.mode === 'clone') return 'Clone Asset';
     if (this.mode === 'create') return 'New Asset';
     return 'Edit Asset';
   }
@@ -460,8 +514,8 @@ export class AssetFormComponent implements OnInit {
     const body = err.error ?? {};
     return (
       body.Message || body.message ||
-      body.Detail  || body.detail  ||
-      body.Title   || body.title   ||
+      body.Detail || body.detail ||
+      body.Title || body.title ||
       'Unknown error occurred'
     );
   }
@@ -546,13 +600,31 @@ export class AssetFormComponent implements OnInit {
     if (this.mode === 'clone' || this.mode === 'create') {
       // POST — create a new asset record
       this.assetService.createAsset(payload).subscribe({
-        next: () => {
-          // If this asset was created from a selected PO, mark the PO as completed/registered
-          if (this.selectedPoId && this.selectedPoId > 0) {
-            this.procurementService.completeOrder(this.selectedPoId).subscribe({
-              next: () => console.log(`[PO] Order #${this.selectedPoId} marked as registered.`),
-              error: (err) => console.warn('[PO] Could not update PO status:', err)
+        next: (created) => {
+          // If this asset was created from a selected PO, record the formal Goods Received
+          // Note against it (assetId already set, so the backend attaches rather than
+          // auto-creating a second asset) and mark the PO completed/registered. This also
+          // flips the originating "informed arrival" to fulfilled, if there is one, so it
+          // stops showing as outstanding on the Informed Arrivals page.
+          if ((this.selectedPoId && this.selectedPoId > 0) || this.informingId) {
+            this.grnService.create({
+              purchasingOrderId: this.selectedPoId || 0,
+              assetId: Number(created.id),
+              receivedDate: this.getTodayDateString(),
+              receivedBy: '',
+              notes: `Registered via asset form${this.informingId ? ' from informed arrival' : ''}.`,
+              informingId: this.informingId ?? undefined,
+            }).subscribe({
+              next: () => console.log('[GRN] Recorded successfully for asset', created.id),
+              error: (err) => console.warn('[GRN] Could not record GRN for this asset:', err),
             });
+
+            if (this.selectedPoId && this.selectedPoId > 0) {
+              this.procurementService.completeOrder(this.selectedPoId).subscribe({
+                next: () => console.log(`[PO] Order #${this.selectedPoId} marked as registered.`),
+                error: (err) => console.warn('[PO] Could not update PO status:', err)
+              });
+            }
           }
 
           this.saving = false;
@@ -588,19 +660,20 @@ export class AssetFormComponent implements OnInit {
    */
   private loadDropdownData(): void {
     forkJoin({
-      products:         this.productService.getAll().pipe(catchError(() => of([] as Product[]))),
-      suppliers:        this.supplierService.getAll().pipe(catchError(() => of([] as Supplier[]))),
-      divisions:        this.divisionService.getAll().pipe(catchError(() => of([] as Division[]))),
-      categories:       this.categoryService.getAll().pipe(catchError(() => of([] as Category[]))),
+      products: this.productService.getAll().pipe(catchError(() => of([] as Product[]))),
+      suppliers: this.supplierService.getAll().pipe(catchError(() => of([] as Supplier[]))),
+      divisions: this.divisionService.getAll().pipe(catchError(() => of([] as Division[]))),
+      categories: this.categoryService.getAll().pipe(catchError(() => of([] as Category[]))),
       purchasingOrders: this.procurementService.getOrders(true).pipe(catchError(() => of([] as PurchasingOrderSummaryDto[]))),
-      existingAssets:   this.assetService.getAll().pipe(catchError(() => of([] as AssetDetail[]))),
-      employees:        this.checkoutService.getEmployees().pipe(catchError(() => of([] as CheckoutEmployee[]))),
+      existingAssets: this.assetService.getAll().pipe(catchError(() => of([] as AssetDetail[]))),
+      employees: this.checkoutService.getEmployees().pipe(catchError(() => of([] as CheckoutEmployee[]))),
     }).subscribe(({ products, suppliers, divisions, categories, purchasingOrders, existingAssets, employees }) => {
-      this.products   = products;
-      this.suppliers  = suppliers;
-      this.divisions  = divisions;
+      this.products = products;
+      this.suppliers = suppliers;
+      this.divisions = divisions;
       this.categories = categories;
-      this.employees  = employees || [];
+      this.employees = employees || [];
+      this.existingAssets = existingAssets || [];
 
       // Reuse the asset list for client-side asset-code/serial-number uniqueness. The backend
       // validates both authoritatively too; this only gives the user immediate feedback.
@@ -636,299 +709,580 @@ export class AssetFormComponent implements OnInit {
           return (b.id || 0) - (a.id || 0);
         });
 
-      // If in create mode and queryParams had poId, auto select
-      if (this.mode === 'create') {
+      // If queryParams had poId and pendingPoId wasn't queued yet, queue it now
+      if (this.mode === 'create' && !this.pendingPoId) {
         const queryPoId = Number(this.route.snapshot.queryParams['poId']);
-        if (queryPoId && this.purchasingOrders.some(p => p.id === queryPoId)) {
-          this.onPoChange(queryPoId);
+        if (queryPoId > 0) {
+          this.pendingPoId = queryPoId;
+        }
+      }
+
+      // Registering a Procurement-informed arrival: try to match its item name against an
+      // existing product; if none exists, open the quick-add box pre-filled with that name
+      // instead of leaving the storekeeper stuck with no way to register a genuinely new item.
+      if (this.pendingProductName && !this.assetForm.value.productId) {
+        // Strip embedded asset-code suffixes like "(AST-0050)" that procurement sometimes
+        // appends to the item name, so they don't prevent a product match.
+        const cleanName = this.pendingProductName
+          .replace(/\s*\(AST-[A-Z0-9-]+\)\s*/gi, '')
+          .trim();
+        const target = cleanName.toLowerCase();
+
+        // Try exact match first, then partial containment in either direction.
+        const match = this.products.find((p) => {
+          const pn = p.name.trim().toLowerCase();
+          return pn === target || pn.includes(target) || target.includes(pn);
+        });
+
+        if (match) {
+          this.assetForm.patchValue({ productId: Number(match.id) });
+          this.onProductChange(Number(match.id));  // also auto-fills category
+
+          // Infer supplier from purchase history for this product (only if not already set).
+          if (!this.assetForm.value.supplierId) {
+            const inferredSupplierId = this.inferSupplierFromHistory(Number(match.id), 0);
+            if (inferredSupplierId > 0) this.assetForm.patchValue({ supplierId: inferredSupplierId });
+          }
+
+          // Infer price from purchase history for this product (if price is 0 or empty).
+          const currentPrice = Number(this.assetForm.value.purchaseValue || 0);
+          if (currentPrice <= 0) {
+            const inferredPrice = this.inferPriceFromHistory(Number(match.id), 0);
+            if (inferredPrice > 0) this.assetForm.patchValue({ purchaseValue: inferredPrice });
+          }
+        } else {
+          // No matching product — do not automatically open quick-add box.
+          // Pre-fill newProductName if storekeeper manually chooses to click + Add Product.
+          this.newProductName = cleanName;
+          this.showAddProduct = false;
+
+          // Even without a matched product, auto-detect category from the item name.
+          const detectedCatId = this.detectCategoryId(cleanName);
+          if (detectedCatId > 0 && !this.assetForm.value.categoryId) {
+            this.assetForm.patchValue({ categoryId: detectedCatId });
+
+            // Also infer supplier from the detected category's purchase history.
+            if (!this.assetForm.value.supplierId) {
+              const inferredSupplierId = this.inferSupplierFromHistory(0, detectedCatId);
+              if (inferredSupplierId > 0) this.assetForm.patchValue({ supplierId: inferredSupplierId });
+            }
+
+            // Also infer price from the detected category's purchase history.
+            const currentPrice = Number(this.assetForm.value.purchaseValue || 0);
+            if (currentPrice <= 0) {
+              const inferredPrice = this.inferPriceFromHistory(0, detectedCatId);
+              if (inferredPrice > 0) this.assetForm.patchValue({ purchaseValue: inferredPrice });
+            }
+          }
         }
       }
 
       // Warn the user if any reference list came back empty
-      if (!products.length)   this.toast.error('Failed to load products');
-      if (!suppliers.length)  this.toast.error('Failed to load suppliers');
-      if (!divisions.length)  this.toast.error('Failed to load divisions');
-      if (!categories.length) this.toast.error('Failed to load categories');
+      if (!products.length) this.toast.error('Failed to load products');
+    if (!suppliers.length) this.toast.error('Failed to load suppliers');
+    if (!divisions.length) this.toast.error('Failed to load divisions');
+    if (!categories.length) this.toast.error('Failed to load categories');
 
-      // Without this, the dropdowns above can be left permanently blank: this callback runs
-      // once all seven parallel requests have settled, and on this route that resolution
-      // sometimes lands in a change-detection pass this view's own tick doesn't pick up,
-      // leaving Product/Category/Supplier/Division stuck on their placeholder option even
-      // though the arrays above are already populated. Forcing a synchronous check here
-      // guarantees the view reflects the data that just arrived.
-      this.cdr.detectChanges();
-    });
-  }
-
-  /**
-   * Called when a storekeeper selects an Employee from the optional Assigned Employee dropdown.
-   * If an employee is selected, automatically sets status to 'InUse' and populates division.
-   */
-  onEmployeeChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const empId = Number(select.value);
-    if (empId > 0) {
-      this.assetForm.patchValue({ status: 'InUse' });
-      const emp = this.employees.find(e => Number(e.id) === empId);
-      if (emp && emp.divisionId && !this.assetForm.value.divisionId) {
-        this.assetForm.patchValue({ divisionId: emp.divisionId });
-      }
-    } else {
-      if (this.assetForm.value.status === 'InUse') {
-        this.assetForm.patchValue({ status: 'InStore' });
-      }
-    }
-  }
-
-  /**
-   * Called when a storekeeper selects a Purchase Order from the dropdown.
-   * Fetches the complete PO details and auto-fills supplier, division, date, product, warranty, and price.
-   */
-  onPoChange(poId: number | string): void {
-    const numericId = Number(poId);
-    this.selectedPoId = numericId;
-    this.poItems = [];
-    this.selectedPoItemId = 0;
-    this.currentPo = null;
-
-    if (!numericId || numericId <= 0) {
-      return;
-    }
-
-    this.loadingPoDetails = true;
-    this.procurementService.getOrderById(numericId).subscribe({
-      next: (po) => {
-        this.loadingPoDetails = false;
-        this.currentPo = po;
-        this.poItems = po.items || [];
-
-        const patchData: any = {};
-
-        // 1. Auto-match Supplier
-        if (po.supplierName && this.suppliers.length > 0) {
-          const sName = po.supplierName.trim().toLowerCase();
-          const supMatch = this.suppliers.find(
-            (s) => s.name.trim().toLowerCase() === sName ||
-                   sName.includes(s.name.trim().toLowerCase()) ||
-                   s.name.trim().toLowerCase().includes(sName)
-          );
-          if (supMatch) {
-            patchData.supplierId = Number(supMatch.id);
-          }
-        }
-
-        // 2. Auto-match Division
-        if (po.divisionId && this.divisions.some(d => Number(d.id) === Number(po.divisionId))) {
-          patchData.divisionId = Number(po.divisionId);
-        } else if (po.divisionName && this.divisions.length > 0) {
-          const dName = po.divisionName.trim().toLowerCase();
-          const divMatch = this.divisions.find(
-            (d) => d.name.trim().toLowerCase() === dName ||
-                   dName.includes(d.name.trim().toLowerCase()) ||
-                   d.name.trim().toLowerCase().includes(dName)
-          );
-          if (divMatch) {
-            patchData.divisionId = Number(divMatch.id);
-          }
-        }
-
-        // Note: Asset Date is intentionally left untouched here — new registrations are
-        // locked to today's date, regardless of the PO's (typically earlier) order date.
-
-        // 4. Auto-fill Item details
-        if (this.poItems.length > 0) {
-          this.selectedPoItemId = this.poItems[0].id;
-          this.applyPoItemData(this.poItems[0], po, patchData);
-        } else {
-          if (po.totalAmount && po.totalAmount > 0) {
-            patchData.purchaseValue = Number(po.totalAmount);
-          }
-          patchData.notes = `PO: #${po.orderNumber}${po.supplierName ? ' - ' + po.supplierName : ''}`;
-          this.assetForm.patchValue(patchData);
-        }
-
-        this.toast.success(`Auto-filled details from PO #${po.orderNumber}`);
-        this.cdr.detectChanges(); // See the comment in loadDropdownData().
-      },
-      error: () => {
-        this.loadingPoDetails = false;
-        this.toast.error('Failed to load details for selected PO');
-        this.cdr.detectChanges();
-      },
-    });
-  }
-
-  /**
-   * Helper to detect category ID based on product/item name, model, and keywords.
-   */
-  detectCategoryId(itemName: string, modelName: string = ''): number {
-    if (!this.categories || this.categories.length === 0) return 0;
-
-    const text = `${itemName || ''} ${modelName || ''}`.toLowerCase();
-
-    // 1. Direct name match
-    for (const cat of this.categories) {
-      const catNameLower = cat.name.toLowerCase();
-      if (text.includes(catNameLower) || catNameLower.includes(text)) {
-        return Number(cat.id);
-      }
-    }
-
-    // 2. Domain keyword matching
-    const keywordMap: { match: string; keywords: string[] }[] = [
-      {
-        match: 'computer',
-        keywords: [
-          'headphone', 'headset', 'earphone', 'speaker', 'audio', 'sound', 'mic', 'microphone',
-          'laptop', 'desktop', 'computer', 'pc', 'monitor', 'screen', 'display', 'keyboard', 'mouse',
-          'dell', 'hp', 'lenovo', 'sony', 'asus', 'acer', 'apple', 'macbook', 'samsung',
-          'cable', 'adapter', 'charger', 'usb', 'hdmi', 'hard drive', 'ssd', 'hdd', 'ram',
-          'server', 'switch', 'router', 'modem', 'v720h', 'wh-', 'mdr'
-        ]
-      },
-      {
-        match: 'office',
-        keywords: [
-          'printer', 'scanner', 'photocopier', 'copier', 'projector', 'fax', 'telephone',
-          'phone', 'shredder', 'laminator', 'calculator', 'whiteboard'
-        ]
-      },
-      {
-        match: 'furniture',
-        keywords: [
-          'chair', 'table', 'desk', 'cupboard', 'cabinet', 'shelf', 'shelving', 'rack',
-          'stool', 'sofa', 'drawer', 'bench', 'podium', 'curtain', 'blind', 'furniture'
-        ]
-      },
-      {
-        match: 'vehicle',
-        keywords: [
-          'car', 'van', 'truck', 'lorry', 'bike', 'motorcycle', 'vehicle', 'jeep', 'bus', 'scooter'
-        ]
-      },
-      {
-        match: 'antenna',
-        keywords: [
-          'satellite', 'antenna', 'dish', 'receiver', 'transmitter', 'radio', 'transceiver'
-        ]
-      },
-      {
-        match: 'lab',
-        keywords: [
-          'lab', 'microscope', 'oscilloscope', 'spectrometer', 'multimeter', 'sensor',
-          'laser', 'pipette', 'centrifuge', 'tester', 'meter'
-        ]
-      },
-      {
-        match: 'book',
-        keywords: [
-          'book', 'journal', 'periodical', 'magazine', 'dictionary', 'handbook'
-        ]
-      }
-    ];
-
-    for (const entry of keywordMap) {
-      const targetCat = this.categories.find(c => c.name.toLowerCase().includes(entry.match));
-      if (targetCat && entry.keywords.some(kw => text.includes(kw))) {
-        return Number(targetCat.id);
-      }
-    }
-
-    return 0;
-  }
-
-  /**
-   * Called when the Product selection is changed.
-   * Auto-selects category if not already set.
-   */
-  onProductChange(event: any): void {
-    const selectedId = Number(event?.target?.value !== undefined ? event.target.value : event);
-    if (!selectedId || selectedId <= 0) return;
-
-    const prod = this.products.find(p => Number(p.id) === selectedId);
-    if (prod) {
-      const currentCat = Number(this.assetForm.get('categoryId')?.value || 0);
-      if (currentCat <= 0) {
-        const detectedCatId = this.detectCategoryId(prod.name, prod.modelNumber || '');
-        if (detectedCatId > 0) {
-          this.assetForm.patchValue({ categoryId: detectedCatId });
-        }
-      }
-    }
-  }
-
-  /**
-   * Applies the details of a specific PO item to the form (Product, Category, Price, Warranty, Notes).
-   */
-  applyPoItemData(item: PurchasingOrderItemDto, po: PurchasingOrderDto, existingPatch: any = {}): void {
-    const patchData = { ...existingPatch };
-
-    // 1. Match Product
-    if (item.itemName && this.products.length > 0) {
-      const iName = item.itemName.trim().toLowerCase();
-      const mName = (item.model || '').trim().toLowerCase();
-      const prodMatch = this.products.find((p) => {
-        const pName = p.name.trim().toLowerCase();
-        return (
-          pName === iName ||
-          (mName && pName.includes(mName)) ||
-          pName.includes(iName) ||
-          iName.includes(pName)
-        );
+    // If no PO was queued directly, try matching an available PO by item/product name or division
+    if (this.mode === 'create' && !this.pendingPoId && !this.selectedPoId && this.purchasingOrders.length > 0) {
+      const cleanTarget = (this.pendingProductName || '').replace(/\s*\(AST-[A-Z0-9-]+\)\s*/gi, '').trim().toLowerCase();
+      const matchedPo = this.purchasingOrders.find(po => {
+        const orderNum = (po.orderNumber || '').toLowerCase();
+        if (cleanTarget && orderNum && cleanTarget.includes(orderNum)) return true;
+        if (po.supplierName && cleanTarget && cleanTarget.includes(po.supplierName.toLowerCase())) return true;
+        return false;
       });
-      if (prodMatch) {
-        patchData.productId = Number(prodMatch.id);
+
+      if (matchedPo) {
+        this.pendingPoId = matchedPo.id;
+      } else if (this.informingId && this.purchasingOrders.length === 1) {
+        // If registering an arrival and exactly 1 PO is available, pre-select it
+        this.pendingPoId = this.purchasingOrders[0].id;
       }
     }
 
-    // 2. Auto-detect Category
-    const detectedCatId = this.detectCategoryId(item.itemName, item.model || '');
-    if (detectedCatId > 0) {
-      patchData.categoryId = detectedCatId;
+    // If a PO was queued for auto-select (from query param, informing, or auto-matching),
+    // trigger it NOW — all dropdowns are populated so supplier/product matching will work.
+    if (this.pendingPoId > 0) {
+      const poId = this.pendingPoId;
+      this.pendingPoId = 0; // clear so it doesn't fire again
+      this.loadAndSelectPoFromGrn(poId);
     }
 
-    // 3. Purchase Value (discounted price or unit price or total price)
-    const price = item.discountedPrice || item.unitPrice || item.totalPrice || 0;
-    if (price > 0) {
-      patchData.purchaseValue = Number(price);
-    } else if (po.totalAmount && po.totalAmount > 0) {
-      patchData.purchaseValue = Number(po.totalAmount);
-    }
-
-    // 4. Warranty
-    if (item.warranty) {
-      patchData.warranty = item.warranty;
-    }
-
-    // 5. Notes
-    const noteParts = [
-      `PO: #${po.orderNumber}`,
-      item.itemName ? `Item: ${item.itemName}` : '',
-      item.model ? `Model: ${item.model}` : '',
-      item.specialNote ? `Note: ${item.specialNote}` : '',
-    ].filter(Boolean);
-    patchData.notes = noteParts.join(' | ');
-
-    this.assetForm.patchValue(patchData);
-  }
+    this.cdr.detectChanges();
+  });
+}
 
   /**
-   * Triggered when storekeeper chooses a different item in multi-item PO.
+   * Loads a PO directly from the API when it's passed via query params from GRN,
+   * even if it's not in the filtered list (e.g., already marked as Registered).
+   * This ensures the user's selection from the GRN page is honored.
    */
-  onPoItemChange(itemId: number | string): void {
-    const numericId = Number(itemId);
-    this.selectedPoItemId = numericId;
-    const item = this.poItems.find((i) => i.id === numericId);
-    if (item && this.currentPo) {
-      this.applyPoItemData(item, this.currentPo);
-      this.toast.info(`Updated form with item: ${item.itemName}`);
+  private loadAndSelectPoFromGrn(poId: number): void {
+  this.loadingPoDetails = true;
+  this.procurementService.getOrderById(poId).subscribe({
+    next: (po) => {
+      this.loadingPoDetails = false;
+      // Add the PO to the list so it appears in the dropdown
+      const summary: PurchasingOrderSummaryDto = {
+        id: po.id,
+        orderNumber: po.orderNumber,
+        supplierName: po.supplierName || 'Vendor',
+        issuedDate: po.orderDate || new Date().toISOString(),
+        divisionName: po.divisionName,
+        totalAmount: po.totalAmount,
+        status: po.status,
+      };
+      if (!this.purchasingOrders.some(p => p.id === po.id)) {
+        this.purchasingOrders = [summary, ...this.purchasingOrders];
+      }
+      this.selectedPoId = poId;
+      this.currentPo = po;
+      this.poItems = po.items || [];
+
+      // Auto-fill form fields from the PO
+      const patchData: any = {};
+
+      // 1. Auto-match Supplier
+      if (po.supplierName && this.suppliers.length > 0) {
+        const sName = po.supplierName.trim().toLowerCase();
+        const supMatch = this.suppliers.find(
+          (s) => s.name.trim().toLowerCase() === sName ||
+            sName.includes(s.name.trim().toLowerCase()) ||
+            s.name.trim().toLowerCase().includes(sName)
+        );
+        if (supMatch) {
+          patchData.supplierId = Number(supMatch.id);
+        }
+      }
+
+      // 2. Auto-match Division
+      if (po.divisionId && this.divisions.some(d => Number(d.id) === Number(po.divisionId))) {
+        patchData.divisionId = Number(po.divisionId);
+      } else if (po.divisionName && this.divisions.length > 0) {
+        const dName = po.divisionName.trim().toLowerCase();
+        const divMatch = this.divisions.find(
+          (d) => d.name.trim().toLowerCase() === dName ||
+            dName.includes(d.name.trim().toLowerCase()) ||
+            d.name.trim().toLowerCase().includes(dName)
+        );
+        if (divMatch) {
+          patchData.divisionId = Number(divMatch.id);
+        }
+      }
+
+      // 3. Auto-fill Item details
+      if (this.poItems.length > 0) {
+        this.selectedPoItemId = this.poItems[0].id;
+        this.applyPoItemData(this.poItems[0], po, patchData);
+      } else {
+        if (po.totalAmount && po.totalAmount > 0) {
+          patchData.purchaseValue = Number(po.totalAmount);
+        }
+        patchData.notes = `PO: #${po.orderNumber}${po.supplierName ? ' - ' + po.supplierName : ''}`;
+        this.assetForm.patchValue(patchData);
+      }
+
+      this.toast.success(`Auto-filled details from PO #${po.orderNumber}`);
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      this.loadingPoDetails = false;
+      console.warn('[PO Auto-Select] Failed to load PO details:', err);
+      this.toast.warning(`Could not auto-load PO #${poId}, but you can still select it manually.`);
+      this.cdr.detectChanges();
+    }
+  });
+}
+
+/**
+ * Infers the most likely supplier for a new asset by scanning purchase history
+ * (the already-loaded existingAssets list). Falls back from product-level match to
+ * category-level match so even a genuinely new product can get a sensible suggestion.
+ *
+ * @param productId  Match assets with this product ID first (pass 0 to skip).
+ * @param categoryId Broader fallback: match assets with this category ID (pass 0 to skip).
+ * @returns The most-used supplier's ID, or 0 if nothing useful found.
+ */
+private inferSupplierFromHistory(productId: number, categoryId: number): number {
+  if (!this.existingAssets.length || !this.suppliers.length) return 0;
+
+  // Count supplier occurrences — product-level hits are weighted 3× over category-level.
+  const tally = new Map<number, number>();
+
+  for (const asset of this.existingAssets) {
+    const sid = Number(asset.supplierId);
+    if (!sid || sid <= 0) continue;
+    if (!this.suppliers.some(s => Number(s.id) === sid)) continue; // must exist in dropdown
+
+    if (productId > 0 && Number(asset.productId) === productId) {
+      tally.set(sid, (tally.get(sid) ?? 0) + 3);
+    } else if (categoryId > 0 && Number(asset.categoryId) === categoryId) {
+      tally.set(sid, (tally.get(sid) ?? 0) + 1);
     }
   }
 
-  /** Navigates back to the previous page without saving. */
-  onCancel(): void {
-    this.location.back();
+  if (!tally.size) return 0;
+
+  // Return the supplier with the highest cumulative score.
+  return [...tally.entries()].sort((a, b) => b[1] - a[1])[0][0];
+}
+
+/**
+ * Infers the typical purchase value for a product or category by scanning
+ * past asset purchase history (existingAssets).
+ *
+ * @param productId  Match assets with this product ID first (pass 0 to skip).
+ * @param categoryId Fallback: match assets with this category ID (pass 0 to skip).
+ * @returns Historical purchase cost/value, or 0 if none found.
+ */
+private inferPriceFromHistory(productId: number, categoryId: number): number {
+  if (!this.existingAssets.length) return 0;
+
+  // 1. Try exact product match
+  if (productId > 0) {
+    const productAsset = this.existingAssets.find(
+      (a) => Number(a.productId) === productId && Number(a.purchaseValue || a.purchaseCost || 0) > 0
+    );
+    if (productAsset) {
+      return Number(productAsset.purchaseValue || productAsset.purchaseCost || 0);
+    }
   }
+
+  // 2. Fall back to category match
+  if (categoryId > 0) {
+    const categoryAsset = this.existingAssets.find(
+      (a) => Number(a.categoryId) === categoryId && Number(a.purchaseValue || a.purchaseCost || 0) > 0
+    );
+    if (categoryAsset) {
+      return Number(categoryAsset.purchaseValue || categoryAsset.purchaseCost || 0);
+    }
+  }
+
+  return 0;
+}
+
+/**
+ * Called when a storekeeper selects an Employee from the optional Assigned Employee dropdown.
+ * If an employee is selected, automatically sets status to 'InUse' and populates division.
+ */
+onEmployeeChange(event: Event): void {
+  const select = event.target as HTMLSelectElement;
+  const empId = Number(select.value);
+  if(empId > 0) {
+  this.assetForm.patchValue({ status: 'InUse' });
+  const emp = this.employees.find(e => Number(e.id) === empId);
+  if (emp && emp.divisionId && !this.assetForm.value.divisionId) {
+    this.assetForm.patchValue({ divisionId: emp.divisionId });
+  }
+} else {
+  if (this.assetForm.value.status === 'InUse') {
+    this.assetForm.patchValue({ status: 'InStore' });
+  }
+}
+  }
+
+/**
+ * Called when a storekeeper selects a Purchase Order from the dropdown.
+ * Fetches the complete PO details and auto-fills supplier, division, date, product, warranty, and price.
+ */
+onPoChange(poId: number | string): void {
+  const numericId = Number(poId);
+  console.log('[onPoChange] Called with poId:', numericId);
+  this.selectedPoId = numericId;
+  this.poItems = [];
+  this.selectedPoItemId = 0;
+  this.currentPo = null;
+
+  if(!numericId || numericId <= 0) {
+  // Trigger change detection to reflect cleared state in the template
+  this.cdr.detectChanges();
+  return;
+}
+
+this.loadingPoDetails = true;
+this.cdr.detectChanges(); // Ensure loading state is visible immediately
+
+console.log('[onPoChange] Fetching PO details for ID:', numericId);
+this.procurementService.getOrderById(numericId).subscribe({
+  next: (po) => {
+    console.log('[onPoChange] PO loaded successfully:', po.orderNumber);
+    this.loadingPoDetails = false;
+    this.currentPo = po;
+    this.poItems = po.items || [];
+
+    const patchData: any = {};
+
+    // 1. Auto-match Supplier
+    if (po.supplierName && this.suppliers.length > 0) {
+      const sName = po.supplierName.trim().toLowerCase();
+      const supMatch = this.suppliers.find(
+        (s) => s.name.trim().toLowerCase() === sName ||
+          sName.includes(s.name.trim().toLowerCase()) ||
+          s.name.trim().toLowerCase().includes(sName)
+      );
+      if (supMatch) {
+        patchData.supplierId = Number(supMatch.id);
+        console.log('[onPoChange] Matched supplier:', supMatch.name);
+      }
+    }
+
+    // 2. Auto-match Division
+    if (po.divisionId && this.divisions.some(d => Number(d.id) === Number(po.divisionId))) {
+      patchData.divisionId = Number(po.divisionId);
+      console.log('[onPoChange] Matched division by ID:', po.divisionId);
+    } else if (po.divisionName && this.divisions.length > 0) {
+      const dName = po.divisionName.trim().toLowerCase();
+      const divMatch = this.divisions.find(
+        (d) => d.name.trim().toLowerCase() === dName ||
+          dName.includes(d.name.trim().toLowerCase()) ||
+          d.name.trim().toLowerCase().includes(dName)
+      );
+      if (divMatch) {
+        patchData.divisionId = Number(divMatch.id);
+        console.log('[onPoChange] Matched division by name:', divMatch.name);
+      }
+    }
+
+    // Note: Asset Date is intentionally left untouched here — new registrations are
+    // locked to today's date, regardless of the PO's (typically earlier) order date.
+
+    // 4. Auto-fill Item details
+    if (this.poItems.length > 0) {
+      this.selectedPoItemId = this.poItems[0].id;
+      this.applyPoItemData(this.poItems[0], po, patchData);
+    } else {
+      if (po.totalAmount && po.totalAmount > 0) {
+        patchData.purchaseValue = Number(po.totalAmount);
+      }
+      patchData.notes = `PO: #${po.orderNumber}${po.supplierName ? ' - ' + po.supplierName : ''}`;
+      this.assetForm.patchValue(patchData);
+    }
+
+    console.log('[onPoChange] Form patched with:', patchData);
+    this.toast.success(`Auto-filled details from PO #${po.orderNumber}`);
+    this.cdr.detectChanges(); // Ensure dropdown value and all auto-filled fields are visible
+  },
+  error: (err) => {
+    console.error('[onPoChange] Error loading PO:', err);
+    this.loadingPoDetails = false;
+    this.toast.error('Failed to load details for selected PO');
+    this.cdr.detectChanges();
+  },
+});
+}
+
+/**
+ * Helper to detect category ID based on product/item name, model, and keywords.
+ */
+detectCategoryId(itemName: string, modelName: string = ''): number {
+  if (!this.categories || this.categories.length === 0) return 0;
+
+  const text = `${itemName || ''} ${modelName || ''}`.toLowerCase();
+
+  // 1. Direct name match
+  for (const cat of this.categories) {
+    const catNameLower = cat.name.toLowerCase();
+    if (text.includes(catNameLower) || catNameLower.includes(text)) {
+      return Number(cat.id);
+    }
+  }
+
+  // 2. Domain keyword matching
+  const keywordMap: { match: string; keywords: string[] }[] = [
+    {
+      match: 'computer',
+      keywords: [
+        'headphone', 'headset', 'earphone', 'speaker', 'audio', 'sound', 'mic', 'microphone',
+        'laptop', 'desktop', 'computer', 'pc', 'monitor', 'screen', 'display', 'keyboard', 'mouse',
+        'dell', 'hp', 'lenovo', 'sony', 'asus', 'acer', 'apple', 'macbook', 'samsung',
+        'cable', 'adapter', 'charger', 'usb', 'hdmi', 'hard drive', 'ssd', 'hdd', 'ram',
+        'server', 'switch', 'router', 'modem', 'v720h', 'wh-', 'mdr'
+      ]
+    },
+    {
+      match: 'office',
+      keywords: [
+        'printer', 'scanner', 'photocopier', 'copier', 'projector', 'fax', 'telephone',
+        'phone', 'shredder', 'laminator', 'calculator', 'whiteboard'
+      ]
+    },
+    {
+      match: 'furniture',
+      keywords: [
+        'chair', 'table', 'desk', 'cupboard', 'cabinet', 'shelf', 'shelving', 'rack',
+        'stool', 'sofa', 'drawer', 'bench', 'podium', 'curtain', 'blind', 'furniture'
+      ]
+    },
+    {
+      match: 'vehicle',
+      keywords: [
+        'car', 'van', 'truck', 'lorry', 'bike', 'motorcycle', 'vehicle', 'jeep', 'bus', 'scooter'
+      ]
+    },
+    {
+      match: 'antenna',
+      keywords: [
+        'satellite', 'antenna', 'dish', 'receiver', 'transmitter', 'radio', 'transceiver'
+      ]
+    },
+    {
+      match: 'lab',
+      keywords: [
+        'lab', 'microscope', 'oscilloscope', 'spectrometer', 'multimeter', 'sensor',
+        'laser', 'pipette', 'centrifuge', 'tester', 'meter'
+      ]
+    },
+    {
+      match: 'book',
+      keywords: [
+        'book', 'journal', 'periodical', 'magazine', 'dictionary', 'handbook'
+      ]
+    }
+  ];
+
+  for (const entry of keywordMap) {
+    const targetCat = this.categories.find(c => c.name.toLowerCase().includes(entry.match));
+    if (targetCat && entry.keywords.some(kw => text.includes(kw))) {
+      return Number(targetCat.id);
+    }
+  }
+
+  return 0;
+}
+
+/**
+ * Registers a brand-new Product on the fly (name only — the rest can be filled in later from
+ * the Products page) and selects it, so a genuinely new arrival never blocks asset
+ * registration just because nobody has created its Product entry yet.
+ */
+quickAddProduct(): void {
+  const name = this.newProductName.trim();
+  if(!name || this.addingProduct) return;
+
+this.addingProduct = true;
+this.productService.create({ name }).subscribe({
+  next: (product) => {
+    this.addingProduct = false;
+    this.products = [...this.products, product];
+    this.assetForm.patchValue({ productId: Number(product.id) });
+    this.onProductChange(Number(product.id));
+    this.showAddProduct = false;
+    this.newProductName = '';
+    this.toast.success(`Product "${product.name}" added.`);
+    this.cdr.detectChanges();
+  },
+  error: (err: HttpErrorResponse) => {
+    this.addingProduct = false;
+    this.toast.error(this.extractApiError(err) || 'Failed to add product.');
+    this.cdr.detectChanges();
+  },
+});
+  }
+
+/**
+ * Called when the Product selection is changed.
+ * Auto-selects category if not already set.
+ */
+onProductChange(event: any): void {
+  const selectedId = Number((event.target as HTMLSelectElement)?.value || event);
+  if(!selectedId || selectedId <= 0) return;
+
+const prod = this.products.find(p => Number(p.id) === selectedId);
+if (prod) {
+  const currentCat = Number(this.assetForm.get('categoryId')?.value || 0);
+  if (currentCat <= 0) {
+    const detectedCatId = this.detectCategoryId(prod.name, prod.modelNumber || '');
+    if (detectedCatId > 0) {
+      this.assetForm.patchValue({ categoryId: detectedCatId });
+    }
+  }
+
+  if (!this.assetForm.value.supplierId) {
+    const inferredSupplierId = this.inferSupplierFromHistory(selectedId, 0);
+    if (inferredSupplierId > 0) this.assetForm.patchValue({ supplierId: inferredSupplierId });
+  }
+
+  const currentPrice = Number(this.assetForm.value.purchaseValue || 0);
+  if (currentPrice <= 0) {
+    const inferredPrice = this.inferPriceFromHistory(selectedId, 0);
+    if (inferredPrice > 0) this.assetForm.patchValue({ purchaseValue: inferredPrice });
+  }
+}
+}
+
+/**
+ * Applies the details of a specific PO item to the form (Product, Category, Price, Warranty, Notes).
+ */
+applyPoItemData(item: PurchasingOrderItemDto, po: PurchasingOrderDto, existingPatch: any = {}): void {
+  const patchData = { ...existingPatch };
+
+  // 1. Match Product
+  if(item.itemName && this.products.length > 0) {
+  const iName = item.itemName.trim().toLowerCase();
+  const mName = (item.model || '').trim().toLowerCase();
+  const prodMatch = this.products.find((p) => {
+    const pName = p.name.trim().toLowerCase();
+    return (
+      pName === iName ||
+      (mName && pName.includes(mName)) ||
+      pName.includes(iName) ||
+      iName.includes(pName)
+    );
+  });
+  if (prodMatch) {
+    patchData.productId = Number(prodMatch.id);
+  }
+}
+
+// 2. Auto-detect Category
+const detectedCatId = this.detectCategoryId(item.itemName, item.model || '');
+if (detectedCatId > 0) {
+  patchData.categoryId = detectedCatId;
+}
+
+// 3. Purchase Value (discounted price or unit price or total price)
+const price = item.discountedPrice || item.unitPrice || item.totalPrice || 0;
+if (price > 0) {
+  patchData.purchaseValue = Number(price);
+} else if (po.totalAmount && po.totalAmount > 0) {
+  patchData.purchaseValue = Number(po.totalAmount);
+}
+
+// 4. Warranty
+if (item.warranty) {
+  patchData.warranty = item.warranty;
+}
+
+// 5. Notes
+const noteParts = [
+  `PO: #${po.orderNumber}`,
+  item.itemName ? `Item: ${item.itemName}` : '',
+  item.model ? `Model: ${item.model}` : '',
+  item.specialNote ? `Note: ${item.specialNote}` : '',
+].filter(Boolean);
+patchData.notes = noteParts.join(' | ');
+
+this.assetForm.patchValue(patchData);
+}
+
+/**
+ * Triggered when storekeeper chooses a different item in multi-item PO.
+ */
+onPoItemChange(itemId: number | string): void {
+  const numericId = Number(itemId);
+  this.selectedPoItemId = numericId;
+  const item = this.poItems.find((i) => i.id === numericId);
+  if(item && this.currentPo) {
+  this.applyPoItemData(item, this.currentPo);
+  this.toast.info(`Updated form with item: ${item.itemName}`);
+}
+}
+
+/** Navigates back to the previous page without saving. */
+onCancel(): void {
+  this.location.back();
+}
 
   /**
    * Constructs the `Asset` object to be sent to the API from the current form values.
@@ -936,27 +1290,29 @@ export class AssetFormComponent implements OnInit {
    * - For 'create' / 'clone', `id` is set to 0, signalling the backend to insert a new row.
    */
   private buildAssetPayload(): Asset {
-    const raw = this.assetForm.getRawValue();
-    const id  = this.mode === 'edit' ? this.editingAssetNumericId : 0;
-    const assignedUserId = Number(raw.assignedUserId) > 0 ? Number(raw.assignedUserId) : undefined;
+  const raw = this.assetForm.getRawValue();
+  const id = this.mode === 'edit' ? this.editingAssetNumericId : 0;
+  const assignedUserId = Number(raw.assignedUserId) > 0 ? Number(raw.assignedUserId) : undefined;
 
-    return {
-      id,
-      assetCode:      raw.assetCode.trim(),
-      assetTag:       raw.assetTag.trim(),
-      assetDate:      raw.assetDate,
-      status:         raw.status,
-      serialNumber:   raw.serialNumber.trim(),
-      purchaseValue:  Number(raw.purchaseValue) || 0,
-      warranty:       raw.warranty.trim(),
-      notes:          raw.notes.trim(),
-      categoryId:     Number(raw.categoryId),
-      divisionId:     Number(raw.divisionId),
-      productId:      Number(raw.productId),
-      supplierId:     Number(raw.supplierId),
-      assignedUserId: assignedUserId,
-    };
-  }
+  return {
+    id,
+    assetCode: raw.assetCode.trim(),
+    assetTag: raw.assetTag.trim(),
+    assetDate: raw.assetDate,
+    status: raw.status,
+    serialNumber: raw.serialNumber.trim(),
+    purchaseValue: Number(raw.purchaseValue) || 0,
+    warranty: raw.warranty.trim(),
+    notes: raw.notes.trim(),
+    categoryId: Number(raw.categoryId),
+    divisionId: Number(raw.divisionId),
+    productId: Number(raw.productId),
+    supplierId: Number(raw.supplierId),
+    assignedUserId: assignedUserId,
+    purchasingOrderId: this.selectedPoId > 0 ? this.selectedPoId : undefined,
+    informingId: this.informingId ?? undefined,
+  };
+}
 
   /**
    * Converts an asset date (string ISO or Date object) to the 'YYYY-MM-DD' format
@@ -964,19 +1320,19 @@ export class AssetFormComponent implements OnInit {
    * missing or unparseable.
    */
   private toDateInputValue(value: string | Date | undefined): string {
-    if (!value) return this.getTodayDateString();
-    const date = value instanceof Date ? value : new Date(value);
-    if (Number.isNaN(date.getTime())) return this.getTodayDateString();
-    return this.toLocalDateString(date);
-  }
+  if (!value) return this.getTodayDateString();
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return this.getTodayDateString();
+  return this.toLocalDateString(date);
+}
 
   /**
    * Returns today's date as a 'YYYY-MM-DD' string, used both as the default for the asset date
    * field and to enforce the "must be today" rule on new registrations.
    */
   private getTodayDateString(): string {
-    return this.toLocalDateString(new Date());
-  }
+  return this.toLocalDateString(new Date());
+}
 
   /**
    * Formats a Date using its local calendar day, not `toISOString()`'s UTC day — which would be
@@ -984,9 +1340,9 @@ export class AssetFormComponent implements OnInit {
    * asset date validator started strictly comparing against this exact string.
    */
   private toLocalDateString(date: Date): string {
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
-  }
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
 }

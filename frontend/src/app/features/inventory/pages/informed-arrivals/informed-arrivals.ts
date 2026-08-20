@@ -103,24 +103,39 @@ export class InformedArrivalsComponent implements OnInit {
         return 'assura-badge-warning';
     }
 
+    // Takes the storekeeper straight to full asset registration (serial number, product,
+    // category, etc.) instead of the old GRN-only modal, which had no serial number field and
+    // no way to add a product that doesn't already exist. `informingId` lets the asset form
+    // record the formal GRN and mark this arrival fulfilled once the asset is saved.
     registerArrival(item: AssetInformingDto): void {
-        this.router.navigate(['/inventory/grns'], {
+        const rawName = item.model && item.itemName.startsWith('PO-') ? item.model : item.itemName;
+        // Strip embedded asset-code suffixes like "(AST-0050)" that sometimes get appended
+        // by the procurement flow, so the asset form can match the product name cleanly.
+        const productName = (rawName || '').replace(/\s*\(AST-[A-Z0-9-]+\)\s*/gi, '').trim();
+        this.router.navigate(['/inventory/assets/new'], {
             queryParams: {
                 informingId: item.id,
-                po: item.itemName,
-                model: item.model || ''
+                productName: productName || '',
+                warranty: item.warranty || '',
+                // Always send the price — even 0 — so the form shows the value from the
+                // informing record rather than silently defaulting to 0 with no context.
+                price: Number(item.purchasedPrice) || 0,
+                divisionId: item.divisionId || undefined,
+                poId: item.purchasingOrderId || undefined,
             }
         });
     }
 
     checkoutArrival(item: AssetInformingDto): void {
-        const itemName = item.model && item.itemName.startsWith('PO-') ? item.model : item.itemName;
+        const rawName = item.model && item.itemName.startsWith('PO-') ? item.model : item.itemName;
+        const itemName = (rawName || '').replace(/\s*\(AST-[A-Z0-9-]+\)\s*/gi, '').trim();
         this.router.navigate(['/inventory/check-out'], {
             queryParams: {
                 informingId: item.id,
                 employeeId: item.targetEmployeeId ? String(item.targetEmployeeId) : undefined,
-                item: itemName,
-                assetId: item.assetId ? String(item.assetId) : undefined
+                item: itemName || item.itemName,
+                assetId: item.assetId ? String(item.assetId) : undefined,
+                poId: item.purchasingOrderId ? String(item.purchasingOrderId) : undefined,
             }
         });
     }

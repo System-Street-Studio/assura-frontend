@@ -238,6 +238,15 @@
       <div style="padding: 24px; overflow-y: auto;">
         <p style="margin: 0 0 24px 0; font-size: 14px; color: #94a3b8;">Assign an available asset to an employee.</p>
         <div style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- Unmatched item warning -->
+          <div *ngIf="unmatchedItemName && !checkoutForm.assetId" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #fbbf24; display: flex; align-items: flex-start; gap: 10px;">
+            <mat-icon style="font-size: 20px; width: 20px; height: 20px; color: #f59e0b; flex-shrink: 0; margin-top: 1px;">warning</mat-icon>
+            <div>
+              <strong style="color: #f59e0b; display: block; margin-bottom: 2px;">No exact asset match found in store for "{{ unmatchedItemName }}"</strong>
+              This item may not be registered in the Asset Inventory yet, or is currently checked out. Please select an available asset or register it under Asset Inventory first.
+            </div>
+          </div>
+
           <div>
             <label class="assura-label">Asset <span style="color: #ef4444;">*</span></label>
             <select class="assura-input custom-select" [(ngModel)]="checkoutForm.assetId" [ngStyle]="{'border-color': (submitted && !checkoutForm.assetId) ? '#ef4444' : ''}">

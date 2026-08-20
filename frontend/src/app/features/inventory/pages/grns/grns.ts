@@ -1,13 +1,11 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute } from '@angular/router';
-import { catchError, finalize, throwError, timeout } from 'rxjs';
+import { Router } from '@angular/router';
+import { catchError, throwError, timeout } from 'rxjs';
 import { GrnService } from '../../services/grn.service';
-import { AssetOption, CreateGrnRequest, Grn, PurchasingOrderOption } from '../../models/grn.model';
+import { Grn, PurchasingOrderOption } from '../../models/grn.model';
 import { ToastService } from '../../../../shared/services/toast.service';
-import { AuthService } from '../../../../core/auth/auth.service';
-import { ProcurementService } from '../../../procurement/services/procurement.service';
 
 @Component({
     selector: 'app-grns',
@@ -18,33 +16,22 @@ import { ProcurementService } from '../../../procurement/services/procurement.se
 })
 export class GrnsComponent implements OnInit {
     private svc = inject(GrnService);
-    private auth = inject(AuthService);
     private toast = inject(ToastService);
     private cdr = inject(ChangeDetectorRef);
-    private route = inject(ActivatedRoute);
-    private procurementService = inject(ProcurementService);
+    private router = inject(Router);
 
     allGrns: Grn[] = [];
     viewGrns: Grn[] = [];
     loading = true;
     loadError = false;
     searchTerm = '';
-    informingId: number | null = null;
 
-    /* ── New GRN modal ── */
-    showCreateModal = false;
-    creating = false;
+    /* ── "New GRN" -> pick a Purchasing Order, then go register the asset against it ── */
+    showPoPicker = false;
+    loadingPos = false;
     submitted = false;
     purchasingOrders: PurchasingOrderOption[] = [];
-    assets: AssetOption[] = [];
-
-    createForm: CreateGrnRequest = {
-        purchasingOrderId: 0,
-        assetId: 0,
-        receivedDate: '',
-        receivedBy: '',
-        notes: '',
-    };
+    selectedPoId = 0;
 
     /* ── Detail drawer ── */
     showDetail = false;
@@ -56,14 +43,6 @@ export class GrnsComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadData();
-        this.route.queryParams.subscribe((params) => {
-            if (params['informingId']) {
-                this.informingId = Number(params['informingId']);
-            }
-            if (params['po'] || params['informingId']) {
-                this.openCreateModal(params['po'], params['model']);
-            }
-        });
     }
 
     loadData(): void {
@@ -115,120 +94,64 @@ export class GrnsComponent implements OnInit {
         this.applyFilter();
     }
 
-    onPoChange(): void {
-        const selectedPo = this.purchasingOrders.find(p => p.id === this.createForm.purchasingOrderId);
-        if (selectedPo) {
-            this.createForm.notes = `Received in good condition as per ${selectedPo.orderNumber}.`;
-        }
+    checkoutGrn(grn: Grn): void {
+        this.router.navigate(['/inventory/check-out'], {
+            queryParams: {
+                assetId: grn.assetId ? String(grn.assetId) : undefined,
+                item: grn.productName,
+                poId: grn.purchasingOrderId ? String(grn.purchasingOrderId) : undefined,
+            }
+        });
     }
 
-    /* ── New GRN modal ── */
-    openCreateModal(preselectPo?: string, preselectModel?: string): void {
+    /**
+     * A GRN records goods physically received against a Purchasing Order, and receiving goods
+     * means an asset needs to be registered for them — so "New GRN" opens a Purchasing Order
+     * picker, then takes the storekeeper to asset registration with that PO already selected
+     * (so its Supplier/Division/Product/Value/Warranty auto-fill fires immediately, not only
+     * after they separately pick the PO again on that page). Saving the asset there is what
+     * creates the GRN's linked record.
+     */
+    goToNewAsset(): void {
         this.submitted = false;
-        this.creating = false;
-
-        const currentUserName = this.auth.getUserName() || this.auth.getFirstName() || 'Test Storekeeper';
-        const formattedUserName = currentUserName.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-
-        this.createForm = {
-            purchasingOrderId: 0,
-            assetId: 0, // 0 = Auto-register new asset from PO
-            receivedDate: new Date().toISOString().slice(0, 10),
-            receivedBy: formattedUserName,
-            notes: preselectPo ? `Received in good condition as per ${preselectPo}.` : 'Received in good condition.',
-            informingId: this.informingId || undefined,
-            itemName: preselectPo || undefined,
-            model: preselectModel || undefined,
-        };
-        this.showCreateModal = true;
+        this.selectedPoId = 0;
+        this.showPoPicker = true;
+        this.loadingPos = true;
 
         this.svc.getPurchasingOrderOptions().subscribe({
             next: (orders) => {
                 this.purchasingOrders = orders;
-                if (preselectPo) {
-                    const cleanPo = preselectPo.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-                    const rawPo = preselectPo.trim().toLowerCase();
-
-                    let match = this.purchasingOrders.find((p) => {
-                        const pClean = p.orderNumber.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-                        const pRaw = p.orderNumber.trim().toLowerCase();
-                        return pRaw === rawPo || pClean === cleanPo ||
-                               pRaw.includes(rawPo) || rawPo.includes(pRaw) ||
-                               pClean.includes(cleanPo) || cleanPo.includes(pClean);
-                    });
-
-                    if (!match) {
-                        const digits = preselectPo.replace(/\D/g, '');
-                        if (digits.length >= 4) {
-                            match = this.purchasingOrders.find(p => {
-                                const pDigits = p.orderNumber.replace(/\D/g, '');
-                                return pDigits.includes(digits) || digits.includes(pDigits);
-                            });
-                        }
-                    }
-
-                    if (match) {
-                        this.createForm.purchasingOrderId = match.id;
-                        this.createForm.notes = `Received in good condition as per ${match.orderNumber}.`;
-                    } else if (this.purchasingOrders.length > 0 && !this.createForm.purchasingOrderId) {
-                        this.createForm.purchasingOrderId = this.purchasingOrders[0].id;
-                        this.createForm.notes = `Received in good condition as per ${this.purchasingOrders[0].orderNumber}.`;
-                    }
-                } else if (this.purchasingOrders.length > 0 && !this.createForm.purchasingOrderId) {
-                    this.createForm.purchasingOrderId = this.purchasingOrders[0].id;
+                if (orders.length === 1) {
+                    this.selectedPoId = orders[0].id;
                 }
+                this.loadingPos = false;
                 this.cdr.detectChanges();
             },
-            error: () => { this.purchasingOrders = []; this.toast.error('Failed to load purchasing orders'); },
-        });
-
-        this.svc.getAssetOptions().subscribe({
-            next: (assets) => {
-                this.assets = assets;
+            error: () => {
+                this.purchasingOrders = [];
+                this.loadingPos = false;
+                this.toast.error('Failed to load purchasing orders');
                 this.cdr.detectChanges();
             },
-            error: () => { this.assets = []; this.toast.error('Failed to load assets'); },
         });
     }
 
-    isAssetAlreadyReceived(assetId: number): boolean {
-        return this.allGrns.some(g => g.assetId === assetId);
+    cancelPoPicker(): void {
+        this.showPoPicker = false;
     }
 
-    cancelCreate(): void {
-        if (this.creating) return;
-        this.showCreateModal = false;
-    }
-
-    confirmCreate(): void {
+    continueToAssetForm(): void {
         this.submitted = true;
-        if (!this.createForm.purchasingOrderId || !this.createForm.receivedDate) {
-            return;
-        }
+        if (!this.selectedPoId) return;
 
-        this.creating = true;
-        this.svc.create(this.createForm).pipe(
-            timeout(15000),
-            catchError((err) => {
-                if (err?.name === 'TimeoutError') {
-                    this.toast.error('GRN creation timed out. Please try again.');
-                }
-                return throwError(() => err);
-            }),
-            finalize(() => { this.creating = false; })
-        ).subscribe({
-            next: (grn) => {
-                this.showCreateModal = false;
-                this.toast.success(`GRN "${grn.grnNumber}" recorded & Asset ${grn.assetCode} registered.`);
-                this.loadData();
-            },
-            error: (err) => {
-                const message = err?.error?.detail || err?.error?.Detail
-                    || err?.error?.title || err?.error?.Message
-                    || 'Failed to record GRN. Please try again.';
-                this.toast.error(message);
-            },
-        });
+        this.showPoPicker = false;
+        this.router.navigate(['/inventory/assets/new'], { queryParams: { poId: this.selectedPoId } });
+    }
+
+    /** Lets a storekeeper register an asset with no PO behind it (e.g. a donation or a find). */
+    skipToAssetFormWithoutPo(): void {
+        this.showPoPicker = false;
+        this.router.navigate(['/inventory/assets/new']);
     }
 
     /* ── Detail drawer ── */
@@ -240,6 +163,24 @@ export class GrnsComponent implements OnInit {
     closeDetail(): void {
         this.showDetail = false;
         this.detailGrn = null;
+    }
+
+    /**
+     * From the detail drawer: if a GRN already has a linked asset, open it for editing
+     * (all fields are already saved). If there is no asset yet, go to the create form
+     * with the GRN's PO pre-selected so Supplier/Division/Product/Value/Warranty auto-fill.
+     */
+    goToAsset(grn: Grn): void {
+        this.showDetail = false;
+        this.detailGrn = null;
+        if (grn.assetId && grn.assetId > 0) {
+            this.router.navigate(['/inventory/assets', grn.assetId, 'edit']);
+        } else {
+            this.router.navigate(
+                ['/inventory/assets/new'],
+                { queryParams: { poId: grn.purchasingOrderId } }
+            );
+        }
     }
 
     formatDate(dateStr: string | undefined): string {

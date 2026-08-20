@@ -48,6 +48,7 @@ export class CheckoutComponent implements OnInit {
     showCheckoutModal = false;
     checkoutProcessing = false;
     submitted = false;
+    unmatchedItemName: string | null = null;
     availableAssets: { id: string; name: string; serial: string; category: string }[] = [];
     employees: CheckoutEmployee[] = [];
 
@@ -133,25 +134,30 @@ export class CheckoutComponent implements OnInit {
                     if (params['informingId'] || params['employeeId'] || params['item'] || params['assetId']) {
                         let empId = params['employeeId'];
                         let itemName = params['item'];
-                        const directAssetId = params['assetId'];
+                        let directAssetId = params['assetId'];
 
-                        if (!empId && this.informingId && arrivals && arrivals.length > 0) {
+                        if (this.informingId && arrivals && arrivals.length > 0) {
                             const arrival = arrivals.find(a => a.id === this.informingId);
                             if (arrival) {
-                                if (arrival.targetEmployeeId) {
-                                    empId = String(arrival.targetEmployeeId);
-                                } else if (arrival.divisionId || arrival.divisionName) {
-                                    const divName = (arrival.divisionName || '').trim().toLowerCase();
-                                    const match = this.employees.find(e =>
-                                        (arrival.divisionId && e.divisionId === arrival.divisionId) ||
-                                        (divName && e.division && e.division.toLowerCase() === divName)
-                                    );
-                                    if (match) {
-                                        empId = String(match.id);
+                                if (!directAssetId && arrival.assetId) {
+                                    directAssetId = String(arrival.assetId);
+                                }
+                                if (!empId) {
+                                    if (arrival.targetEmployeeId) {
+                                        empId = String(arrival.targetEmployeeId);
+                                    } else if (arrival.divisionId || arrival.divisionName) {
+                                        const divName = (arrival.divisionName || '').trim().toLowerCase();
+                                        const match = this.employees.find(e =>
+                                            (arrival.divisionId && e.divisionId === arrival.divisionId) ||
+                                            (divName && e.division && e.division.toLowerCase() === divName)
+                                        );
+                                        if (match) {
+                                            empId = String(match.id);
+                                        }
                                     }
                                 }
                                 if (!itemName) {
-                                    itemName = arrival.itemName;
+                                    itemName = arrival.model && arrival.itemName.startsWith('PO-') ? arrival.model : arrival.itemName;
                                 }
                             }
                         }
@@ -299,31 +305,72 @@ export class CheckoutComponent implements OnInit {
 
         let preselectedAssetId = '';
 
-        // 1. Prefer direct assetId match (most reliable — from GRN-linked asset)
+        // 1. Prefer direct assetId match (most reliable — from GRN / Arrival linked asset)
         if (directAssetId && this.availableAssets.length > 0) {
-            const directMatch = this.availableAssets.find(a => String(a.id) === String(directAssetId));
+            const directMatch = this.availableAssets.find(a =>
+                String(a.id) === String(directAssetId) ||
+                (a as any).assetCode?.toLowerCase() === String(directAssetId).toLowerCase()
+            );
             if (directMatch) {
                 preselectedAssetId = directMatch.id;
             }
         }
 
-        // 2. Fall back to fuzzy name match
+        // 2. Smart fuzzy matching based on item / product name (stripping AST suffixes)
         if (!preselectedAssetId && preselectItem && this.availableAssets.length > 0) {
-            const cleanItem = preselectItem.trim().toLowerCase();
-            const match = this.availableAssets.find(a =>
-                a.name.toLowerCase().includes(cleanItem) ||
-                cleanItem.includes(a.name.toLowerCase()) ||
-                a.serial.toLowerCase().includes(cleanItem)
-            );
-            if (match) {
-                preselectedAssetId = match.id;
+            const cleanItem = preselectItem
+                .replace(/\s*\(AST-[A-Z0-9-]+\)\s*/gi, '')
+                .replace(/^PO-\d+\s*-?\s*/gi, '')
+                .trim()
+                .toLowerCase();
+
+            if (cleanItem) {
+                // a) Exact match on asset name, serial, or assetCode
+                let match = this.availableAssets.find(a => {
+                    const aname = a.name.trim().toLowerCase();
+                    const aserial = a.serial.trim().toLowerCase();
+                    const acode = ((a as any).assetCode || '').trim().toLowerCase();
+                    return aname === cleanItem || aserial === cleanItem || acode === cleanItem;
+                });
+
+                // b) Substring match in either direction
+                if (!match) {
+                    match = this.availableAssets.find(a => {
+                        const aname = a.name.trim().toLowerCase();
+                        return aname.includes(cleanItem) || cleanItem.includes(aname);
+                    });
+                }
+
+                // d) Keyword & Synonym matching (e.g., NIC <-> network card)
+                if (!match) {
+                    const synonymMap: Record<string, string[]> = {
+                        'nic': ['network', 'ethernet', 'lan', 'interface', 'card'],
+                        'pc': ['computer', 'desktop', 'all-in-one', 'workstation'],
+                        'laptop': ['notebook', 'macbook', 'thinkpad'],
+                        'display': ['monitor', 'screen', 'tv'],
+                    };
+
+                    const words = cleanItem.split(/\s+/);
+                    for (const word of words) {
+                        const synonyms = synonymMap[word] || [];
+                        if (synonyms.length > 0) {
+                            match = this.availableAssets.find(a => {
+                                const aname = a.name.toLowerCase();
+                                return synonyms.some(syn => aname.includes(syn));
+                            });
+                            if (match) break;
+                        }
+                    }
+                }
+
+                if (match) {
+                    preselectedAssetId = match.id;
+                }
             }
         }
 
-        // 3. Last resort: pick the first available asset
-        if (!preselectedAssetId && this.availableAssets && this.availableAssets.length > 0) {
-            preselectedAssetId = this.availableAssets[0].id;
-        }
+        // Record unmatched item name so template can show warning if no asset in store matched
+        this.unmatchedItemName = (!preselectedAssetId && preselectItem) ? preselectItem : null;
 
         this.checkoutForm = {
             assetId: preselectedAssetId,

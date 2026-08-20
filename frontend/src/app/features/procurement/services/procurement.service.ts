@@ -190,6 +190,11 @@ export class ProcurementService {
         return this.http.get<AssetInformingDto[]>(url);
     }
 
+    /** Fetch a single informing record by its ID. */
+    getInformingById(id: number): Observable<AssetInformingDto> {
+        return this.http.get<AssetInformingDto>(`${this.informingUrl}/${id}`);
+    }
+
     /**
      * Inform stores about new arrivals
      */

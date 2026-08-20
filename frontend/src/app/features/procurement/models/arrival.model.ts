@@ -15,6 +15,7 @@ export interface AssetInformingDto {
     createdAt: string;
     assetId?: number;
     assetCode?: string;
+    purchasingOrderId?: number;
 }
 
 export interface InformStoresRequest {

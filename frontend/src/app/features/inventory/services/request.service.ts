@@ -70,15 +70,15 @@ export class RequestService {
   }
 
   approve(id: number | string, notes: string): Observable<AssetRequest> {
-    return this.http.put<AssetRequest>(`${this.apiUrl}/${id}/status`, { status: 'Approved', notes });
+    return this.http.put<AssetRequest>(`${this.apiUrl}/${id}/status`, { id: Number(id), status: 'Approved', notes });
   }
 
   reject(id: number | string, notes: string): Observable<AssetRequest> {
-    return this.http.put<AssetRequest>(`${this.apiUrl}/${id}/status`, { status: 'Rejected', notes });
+    return this.http.put<AssetRequest>(`${this.apiUrl}/${id}/status`, { id: Number(id), status: 'Rejected', notes });
   }
 
   fulfill(id: number | string): Observable<AssetRequest> {
-    return this.http.put<AssetRequest>(`${this.apiUrl}/${id}/status`, { status: 'Fulfilled' });
+    return this.http.put<AssetRequest>(`${this.apiUrl}/${id}/status`, { id: Number(id), status: 'Fulfilled' });
   }
 
   // Fetch approved new asset requests from division head (assetrequests endpoint)
