@@ -20,12 +20,6 @@ export const routes: Routes = [
         canActivate: [authGuard],
     },
     {
-        path: 'register-system-admin',
-        loadComponent: () => import('./features/auth/pages/register-system-admin/register-system-admin').then(m => m.RegisterSystemAdminComponent),
-        canActivate: [authGuard, roleGuard],
-        data: { roles: [ROLES.SYSTEM_ADMIN] },
-    },
-    {
         path: 'reporting',
         component: ShellComponent,
         children: [

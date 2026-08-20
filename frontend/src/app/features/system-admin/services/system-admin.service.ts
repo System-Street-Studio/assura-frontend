@@ -70,17 +70,4 @@ export class SystemAdminService {
     createHrAccount(): Observable<{ username: string; temporaryPassword: string }> {
         return this.http.post<{ username: string; temporaryPassword: string }>(`${this.apiUrl}/users/create-hr`, {});
     }
-
-    createSystemAdminUser(payload: CreatePrivilegedUserPayload): Observable<{ userId: number }> {
-        return this.http.post<{ userId: number }>(`${this.apiUrl}/users/create-system-admin`, payload);
-    }
-}
-
-export interface CreatePrivilegedUserPayload {
-    username: string;
-    password: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber?: string;
 }

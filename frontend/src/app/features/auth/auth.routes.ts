@@ -10,6 +10,10 @@ export const authRoutes: Routes = [
         loadComponent: () => import('./pages/register/register').then(m => m.RegisterComponent)
     },
     {
+        path: 'register-system-admin',
+        loadComponent: () => import('./pages/register-system-admin/register-system-admin').then(m => m.RegisterSystemAdminComponent)
+    },
+    {
         path: 'forgot-password',
         loadComponent: () => import('./pages/forgot-password/forgot-password').then(m => m.ForgotPasswordComponent)
     },
