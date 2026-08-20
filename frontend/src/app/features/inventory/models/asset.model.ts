@@ -22,6 +22,7 @@ export interface Asset {
   // Set when this asset is registered from a selected Purchase Order, so the backend can
   // later resolve which request was waiting on that PO once it's marked complete.
   purchasingOrderId?: number;
+  informingId?: number;
   qrCode?: string;
   selected?: boolean;
 

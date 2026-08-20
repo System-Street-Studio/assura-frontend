@@ -606,22 +606,25 @@ export class AssetFormComponent implements OnInit {
           // auto-creating a second asset) and mark the PO completed/registered. This also
           // flips the originating "informed arrival" to fulfilled, if there is one, so it
           // stops showing as outstanding on the Informed Arrivals page.
-          if (this.selectedPoId && this.selectedPoId > 0) {
+          if ((this.selectedPoId && this.selectedPoId > 0) || this.informingId) {
             this.grnService.create({
-              purchasingOrderId: this.selectedPoId,
+              purchasingOrderId: this.selectedPoId || 0,
               assetId: Number(created.id),
               receivedDate: this.getTodayDateString(),
               receivedBy: '',
               notes: `Registered via asset form${this.informingId ? ' from informed arrival' : ''}.`,
               informingId: this.informingId ?? undefined,
             }).subscribe({
+              next: () => console.log('[GRN] Recorded successfully for asset', created.id),
               error: (err) => console.warn('[GRN] Could not record GRN for this asset:', err),
             });
 
-            this.procurementService.completeOrder(this.selectedPoId).subscribe({
-              next: () => console.log(`[PO] Order #${this.selectedPoId} marked as registered.`),
-              error: (err) => console.warn('[PO] Could not update PO status:', err)
-            });
+            if (this.selectedPoId && this.selectedPoId > 0) {
+              this.procurementService.completeOrder(this.selectedPoId).subscribe({
+                next: () => console.log(`[PO] Order #${this.selectedPoId} marked as registered.`),
+                error: (err) => console.warn('[PO] Could not update PO status:', err)
+              });
+            }
           }
 
           this.saving = false;
@@ -748,9 +751,10 @@ export class AssetFormComponent implements OnInit {
             if (inferredPrice > 0) this.assetForm.patchValue({ purchaseValue: inferredPrice });
           }
         } else {
-          // No matching product — open quick-add box with the cleaned name.
+          // No matching product — do not automatically open quick-add box.
+          // Pre-fill newProductName if storekeeper manually chooses to click + Add Product.
           this.newProductName = cleanName;
-          this.showAddProduct = true;
+          this.showAddProduct = false;
 
           // Even without a matched product, auto-detect category from the item name.
           const detectedCatId = this.detectCategoryId(cleanName);
@@ -779,7 +783,25 @@ export class AssetFormComponent implements OnInit {
     if (!divisions.length) this.toast.error('Failed to load divisions');
     if (!categories.length) this.toast.error('Failed to load categories');
 
-    // If a PO was queued for auto-select (from query param or by fetching the informing),
+    // If no PO was queued directly, try matching an available PO by item/product name or division
+    if (this.mode === 'create' && !this.pendingPoId && !this.selectedPoId && this.purchasingOrders.length > 0) {
+      const cleanTarget = (this.pendingProductName || '').replace(/\s*\(AST-[A-Z0-9-]+\)\s*/gi, '').trim().toLowerCase();
+      const matchedPo = this.purchasingOrders.find(po => {
+        const orderNum = (po.orderNumber || '').toLowerCase();
+        if (cleanTarget && orderNum && cleanTarget.includes(orderNum)) return true;
+        if (po.supplierName && cleanTarget && cleanTarget.includes(po.supplierName.toLowerCase())) return true;
+        return false;
+      });
+
+      if (matchedPo) {
+        this.pendingPoId = matchedPo.id;
+      } else if (this.informingId && this.purchasingOrders.length === 1) {
+        // If registering an arrival and exactly 1 PO is available, pre-select it
+        this.pendingPoId = this.purchasingOrders[0].id;
+      }
+    }
+
+    // If a PO was queued for auto-select (from query param, informing, or auto-matching),
     // trigger it NOW — all dropdowns are populated so supplier/product matching will work.
     if (this.pendingPoId > 0) {
       const poId = this.pendingPoId;
@@ -811,7 +833,9 @@ export class AssetFormComponent implements OnInit {
         totalAmount: po.totalAmount,
         status: po.status,
       };
-      this.purchasingOrders = [summary, ...this.purchasingOrders];
+      if (!this.purchasingOrders.some(p => p.id === po.id)) {
+        this.purchasingOrders = [summary, ...this.purchasingOrders];
+      }
       this.selectedPoId = poId;
       this.currentPo = po;
       this.poItems = po.items || [];
@@ -1173,6 +1197,17 @@ if (prod) {
       this.assetForm.patchValue({ categoryId: detectedCatId });
     }
   }
+
+  if (!this.assetForm.value.supplierId) {
+    const inferredSupplierId = this.inferSupplierFromHistory(selectedId, 0);
+    if (inferredSupplierId > 0) this.assetForm.patchValue({ supplierId: inferredSupplierId });
+  }
+
+  const currentPrice = Number(this.assetForm.value.purchaseValue || 0);
+  if (currentPrice <= 0) {
+    const inferredPrice = this.inferPriceFromHistory(selectedId, 0);
+    if (inferredPrice > 0) this.assetForm.patchValue({ purchaseValue: inferredPrice });
+  }
 }
 }
 
@@ -1275,6 +1310,7 @@ onCancel(): void {
     supplierId: Number(raw.supplierId),
     assignedUserId: assignedUserId,
     purchasingOrderId: this.selectedPoId > 0 ? this.selectedPoId : undefined,
+    informingId: this.informingId ?? undefined,
   };
 }
 

@@ -63,9 +63,15 @@
                                         }
                                     </td>
                                     <td class="assura-td" style="text-align: right;">
-                                        <button class="assura-btn assura-btn-secondary" style="padding: 6px;" (click)="openDetail(grn)" title="View Details">
-                                            <mat-icon style="font-size: 16px;">visibility</mat-icon>
-                                        </button>
+                                        <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                            <button class="assura-btn assura-btn-primary" style="padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;" (click)="checkoutGrn(grn)" title="Checkout asset">
+                                                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">output</mat-icon>
+                                                <span>Checkout</span>
+                                            </button>
+                                            <button class="assura-btn assura-btn-secondary" style="padding: 6px;" (click)="openDetail(grn)" title="View Details">
+                                                <mat-icon style="font-size: 16px;">visibility</mat-icon>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             }

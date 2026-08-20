@@ -61,8 +61,8 @@
                                 <span>Re-inform</span>
                             </button>
 
-                            <!-- State 3a: Confirmed by Employee -> Show Record GRN -->
-                            <button *ngIf="(item.status || '').toLowerCase() === 'confirmed'"
+                            <!-- State 3a: Confirmed by Employee & GRN not yet recorded -> Show Record GRN -->
+                            <button *ngIf="(item.status || '').toLowerCase() === 'confirmed' && !item.assetId"
                                 class="assura-btn assura-btn-success"
                                 style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px; background: #059669; color: #fff;"
                                 (click)="registerArrival(item)"
@@ -71,8 +71,8 @@
                                 <span>Record GRN</span>
                             </button>
 
-                            <!-- State 3b: Confirmed or GRN Recorded -> Show Checkout -->
-                            <button *ngIf="(item.status || '').toLowerCase() === 'confirmed' || (item.status || '').toLowerCase() === 'grn recorded' || (item.status || '').toLowerCase() === 'grnrecorded' || (item.status || '').toLowerCase() === 'received'"
+                            <!-- State 3b: GRN Recorded -> Show Checkout (Stays visible until completed) -->
+                            <button *ngIf="(item.assetId || (item.status || '').toLowerCase() === 'grn recorded' || (item.status || '').toLowerCase() === 'grnrecorded' || (item.status || '').toLowerCase() === 'registered' || (item.status || '').toLowerCase() === 'received') && (item.status || '').toLowerCase() !== 'completed'"
                                 class="assura-btn assura-btn-primary"
                                 style="padding: 6px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px;"
                                 (click)="checkoutArrival(item)"

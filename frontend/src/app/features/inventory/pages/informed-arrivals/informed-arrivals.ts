@@ -127,13 +127,15 @@ export class InformedArrivalsComponent implements OnInit {
     }
 
     checkoutArrival(item: AssetInformingDto): void {
-        const itemName = item.model && item.itemName.startsWith('PO-') ? item.model : item.itemName;
+        const rawName = item.model && item.itemName.startsWith('PO-') ? item.model : item.itemName;
+        const itemName = (rawName || '').replace(/\s*\(AST-[A-Z0-9-]+\)\s*/gi, '').trim();
         this.router.navigate(['/inventory/check-out'], {
             queryParams: {
                 informingId: item.id,
                 employeeId: item.targetEmployeeId ? String(item.targetEmployeeId) : undefined,
-                item: itemName,
-                assetId: item.assetId ? String(item.assetId) : undefined
+                item: itemName || item.itemName,
+                assetId: item.assetId ? String(item.assetId) : undefined,
+                poId: item.purchasingOrderId ? String(item.purchasingOrderId) : undefined,
             }
         });
     }

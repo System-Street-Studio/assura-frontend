@@ -94,6 +94,16 @@ export class GrnsComponent implements OnInit {
         this.applyFilter();
     }
 
+    checkoutGrn(grn: Grn): void {
+        this.router.navigate(['/inventory/check-out'], {
+            queryParams: {
+                assetId: grn.assetId ? String(grn.assetId) : undefined,
+                item: grn.productName,
+                poId: grn.purchasingOrderId ? String(grn.purchasingOrderId) : undefined,
+            }
+        });
+    }
+
     /**
      * A GRN records goods physically received against a Purchasing Order, and receiving goods
      * means an asset needs to be registered for them — so "New GRN" opens a Purchasing Order
