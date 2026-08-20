@@ -8,7 +8,7 @@ export const shellRoutes: Routes = [
   {
     path: 'system-admin',
     canActivate: [roleGuard],
-    data: { roles: [ROLES.SYSTEM_ADMIN] },
+    data: { roles: [ROLES.SYSTEM_ADMIN, ROLES.ADMIN] },
     loadChildren: () => import('../system-admin/system-admin.routes').then(m => m.systemAdminRoutes)
   },
   {

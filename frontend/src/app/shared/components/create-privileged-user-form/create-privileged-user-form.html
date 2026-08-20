@@ -1,0 +1,84 @@
+<div class="glass-panel" style="max-width: 600px; margin: 0 auto;">
+    <div class="locked-attrs">
+        <div class="locked-attr">
+            <span class="locked-attr-label">Role</span>
+            <span class="locked-attr-value">{{ roleLabel() }}</span>
+        </div>
+        <div class="locked-attr">
+            <span class="locked-attr-label">Division</span>
+            <span class="locked-attr-value">{{ divisionLabel() }}</span>
+        </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="privileged-form">
+        @if (errorMessage()) {
+            <div class="error-alert">{{ errorMessage() }}</div>
+        }
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="assura-label">First Name</label>
+                <input type="text" formControlName="firstName" class="assura-input" placeholder="First Name" />
+                @if (form.get('firstName')?.touched && form.get('firstName')?.invalid) {
+                    <div class="error-message">First name is required</div>
+                }
+            </div>
+            <div class="form-group">
+                <label class="assura-label">Last Name</label>
+                <input type="text" formControlName="lastName" class="assura-input" placeholder="Last Name" />
+                @if (form.get('lastName')?.touched && form.get('lastName')?.invalid) {
+                    <div class="error-message">Last name is required</div>
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="assura-label">Username</label>
+            <input type="text" formControlName="username" class="assura-input" placeholder="Username" />
+            @if (form.get('username')?.touched && form.get('username')?.invalid) {
+                <div class="error-message">Username is required</div>
+            }
+        </div>
+
+        <div class="form-group">
+            <label class="assura-label">Email</label>
+            <input type="email" formControlName="email" class="assura-input" placeholder="Email" />
+            @if (form.get('email')?.touched && form.get('email')?.invalid) {
+                <div class="error-message">A valid email is required</div>
+            }
+        </div>
+
+        <div class="form-group">
+            <label class="assura-label">Phone Number (optional)</label>
+            <input type="text" formControlName="phoneNumber" class="assura-input" placeholder="Phone Number" />
+        </div>
+
+        <div class="form-group">
+            <label class="assura-label">Password</label>
+            <div class="password-input-wrapper">
+                <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="assura-input" placeholder="Password" />
+                <button type="button" class="password-toggle-btn" (click)="showPassword = !showPassword">{{ showPassword ? 'Hide' : 'Show' }}</button>
+            </div>
+            @if (form.get('password')?.touched && form.get('password')?.invalid) {
+                <div class="error-message">Password is required (min 6 chars)</div>
+            }
+        </div>
+
+        <div class="form-group">
+            <label class="assura-label">Confirm Password</label>
+            <div class="password-input-wrapper">
+                <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" class="assura-input" placeholder="Confirm Password" />
+                <button type="button" class="password-toggle-btn" (click)="showConfirmPassword = !showConfirmPassword">{{ showConfirmPassword ? 'Hide' : 'Show' }}</button>
+            </div>
+            @if (form.get('confirmPassword')?.touched && form.errors?.['mismatch']) {
+                <div class="error-message">Passwords must match</div>
+            }
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 12px;">
+            <button type="submit" class="assura-btn assura-btn-primary" [disabled]="form.invalid || loading()">
+                {{ loading() ? 'Creating Account...' : 'Create Account' }}
+            </button>
+        </div>
+    </form>
+</div>

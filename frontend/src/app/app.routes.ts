@@ -15,6 +15,11 @@ export const routes: Routes = [
         loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
     },
     {
+        path: 'pending-assignment',
+        loadComponent: () => import('./features/auth/pages/pending-assignment/pending-assignment').then(m => m.PendingAssignmentComponent),
+        canActivate: [authGuard],
+    },
+    {
         path: 'reporting',
         component: ShellComponent,
         children: [

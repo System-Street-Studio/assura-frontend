@@ -27,13 +27,20 @@ export class LoginComponent implements OnInit {
     });
 
     errorMessage: string | null = null;
+    infoMessage: string | null = null;
     isLoading = false;
     showPassword = false;
+    private returnUrl: string | null = null;
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
             if (params['sessionExpired'] === 'true') {
                 this.errorMessage = 'You have been logged out because this account was logged into on another device.';
+                this.cdr.detectChanges();
+            }
+            if (params['returnUrl']) {
+                this.returnUrl = params['returnUrl'];
+                this.infoMessage = 'Please log in to continue to that page.';
                 this.cdr.detectChanges();
             }
         });
@@ -60,8 +67,11 @@ export class LoginComponent implements OnInit {
             )
             .subscribe({
                 next: (response) => {
-                    const dashboardUrl = this.authService.getDashboardUrl();
-                    this.router.navigate([dashboardUrl]);
+                    // If they were bounced here from a guarded page (e.g. /register-system-admin),
+                    // send them back there — the route's own guards re-validate the role, so this
+                    // is safe even if they don't actually have access to that page.
+                    const destination = this.returnUrl || this.authService.getDashboardUrl();
+                    this.router.navigateByUrl(destination);
                 },
                 error: (err: HttpErrorResponse) => {
                     const backendMessage = err.error?.message || err.error?.Message;

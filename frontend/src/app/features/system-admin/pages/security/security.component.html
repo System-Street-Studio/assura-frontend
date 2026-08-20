@@ -24,8 +24,14 @@
                     <h3 style="margin: 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #f8fafc;">User Access Control</h3>
                     <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 14px;">Manage system access and lock/unlock user accounts.</p>
                 </div>
-                <div style="width: 300px;">
-                    <input type="text" [(ngModel)]="searchTerm" placeholder="Search users..." class="assura-input">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <ng-container *ngIf="isSystemAdmin">
+                        <button type="button" class="assura-btn assura-btn-secondary" style="padding: 8px 16px; font-size: 13px;" (click)="generateHrAccount()" [disabled]="generatingHrAccount">
+                            {{ generatingHrAccount ? 'Generating...' : 'Generate HR Account' }}
+                        </button>
+                        <a routerLink="/auth/register-system-admin" class="assura-btn assura-btn-secondary" style="padding: 8px 16px; font-size: 13px;">Create System Admin Account</a>
+                    </ng-container>
+                    <input type="text" [(ngModel)]="searchTerm" placeholder="Search users..." class="assura-input" style="width: 260px;">
                 </div>
             </div>
             <table class="assura-table">
@@ -107,6 +113,28 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Generated HR Credentials Modal -->
+    <div *ngIf="generatedHrCredentials" class="credentials-modal-backdrop">
+        <div class="glass-panel credentials-modal">
+            <h3 style="margin: 0 0 8px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600; color: #f8fafc;">HR Account Created</h3>
+            <p style="margin: 0 0 20px 0; color: #94a3b8; font-size: 14px; line-height: 1.5;">
+                Share these credentials with the HR employee. They'll be asked to set their own
+                password and details the first time they log in. This password will not be shown again.
+            </p>
+            <div class="credential-row">
+                <span class="credential-label">Username</span>
+                <span class="credential-value">{{ generatedHrCredentials.username }}</span>
+            </div>
+            <div class="credential-row">
+                <span class="credential-label">Temporary Password</span>
+                <span class="credential-value">{{ generatedHrCredentials.temporaryPassword }}</span>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="assura-btn assura-btn-primary" (click)="generatedHrCredentials = null">Done</button>
+            </div>
         </div>
     </div>
 </div>

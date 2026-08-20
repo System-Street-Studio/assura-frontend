@@ -30,10 +30,10 @@ export class SharedSidebarComponent {
     { label: 'Track Assets', icon: 'track_changes', link: '/admin/track-assets', roles: ['Admin'] },
 
     // System Admin section
-    { label: 'Dashboard', icon: 'dashboard', link: '/system-admin/overview', roles: ['SystemAdmin'] },
-    { label: 'Master Data', icon: 'settings', link: '/system-admin/master-data', roles: ['SystemAdmin'] },
-    { label: 'Security', icon: 'security', link: '/system-admin/security', roles: ['SystemAdmin'] },
-    { label: 'System Logs', icon: 'build', link: '/system-admin/maintenance', roles: ['SystemAdmin'] },
+    { label: 'Dashboard', icon: 'dashboard', link: '/system-admin/overview', roles: ['SystemAdmin', 'Admin'] },
+    { label: 'Master Data', icon: 'settings', link: '/system-admin/master-data', roles: ['SystemAdmin', 'Admin'] },
+    { label: 'Security', icon: 'security', link: '/system-admin/security', roles: ['SystemAdmin', 'Admin'] },
+    { label: 'System Logs', icon: 'build', link: '/system-admin/maintenance', roles: ['SystemAdmin', 'Admin'] },
 
     // Procurement section
     { label: 'Overview', icon: 'home', link: '/procurement/overview', roles: ['Procurement', 'Admin'] },

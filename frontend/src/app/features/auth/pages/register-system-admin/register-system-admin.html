@@ -1,0 +1,20 @@
+<div class="auth-container" style="align-items: flex-start; padding-top: 64px; padding-bottom: 64px; height: auto; min-height: 100vh; overflow-y: auto;">
+    <div style="width: 100%; max-width: 600px; z-index: 1;">
+        <div class="auth-header" style="text-align: center; margin-bottom: 28px;">
+            <h2><span>Assura</span></h2>
+            <p>Register a System Administrator Account</p>
+        </div>
+
+        <app-create-privileged-user-form
+            roleLabel="System Admin"
+            divisionLabel="No Division"
+            [loading]="loading()"
+            [errorMessage]="errorMessage()"
+            (formSubmit)="onSubmit($event)"
+        />
+
+        <div class="auth-footer" style="text-align: center; margin-top: 20px;">
+            <a routerLink="/auth/login">Back to Login</a>
+        </div>
+    </div>
+</div>

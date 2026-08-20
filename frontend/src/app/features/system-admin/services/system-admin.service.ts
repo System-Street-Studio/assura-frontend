@@ -66,4 +66,8 @@ export class SystemAdminService {
     resetUserPassword(userId: number): Observable<{ temporaryPassword: string }> {
         return this.http.post<{ temporaryPassword: string }>(`${this.apiUrl}/users/${userId}/reset-password`, {});
     }
+
+    createHrAccount(): Observable<{ username: string; temporaryPassword: string }> {
+        return this.http.post<{ username: string; temporaryPassword: string }>(`${this.apiUrl}/users/create-hr`, {});
+    }
 }

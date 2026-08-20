@@ -3,20 +3,23 @@ import { RouterOutlet } from '@angular/router';
 import { SharedNavbarComponent } from '../../shared/components/navbar/navbar';
 import { SharedSidebarComponent } from '../../shared/components/sidebar/sidebar';
 import { ToastComponent } from '../../shared/components/toast/toast';
+import { OnboardingModalComponent } from '../../shared/components/onboarding-modal/onboarding-modal';
 import { AuthService } from '../../core/auth/auth.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterOutlet, SharedNavbarComponent, SharedSidebarComponent, ToastComponent, CommonModule],
+  imports: [RouterOutlet, SharedNavbarComponent, SharedSidebarComponent, ToastComponent, OnboardingModalComponent, CommonModule],
   template: `
     <div class="shell-layout">
       <app-shared-sidebar></app-shared-sidebar>
       <div class="main-area">
         <app-shared-navbar></app-shared-navbar>
         <main class="content">
-          @if (isPendingUser) {
+          @if (requiresOnboarding) {
+            <app-onboarding-modal></app-onboarding-modal>
+          } @else if (isPendingUser) {
             <div class="pending-user-view" style="display: flex; align-items: center; justify-content: center; height: calc(100vh - 120px); text-align: center; flex-direction: column;">
               <div class="glass-card" style="padding: 48px; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 24px; border: 1px solid rgba(245, 158, 11, 0.3);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -40,12 +43,10 @@ import { CommonModule } from '@angular/common';
 })
 export class ShellComponent {
   isPendingUser = false;
+  requiresOnboarding = false;
 
   constructor(public authService: AuthService) {
     this.isPendingUser = this.authService.isPendingUser();
-    
-    console.log('[DEBUG ShellComponent] Roles:', this.authService.getRoles());
-    console.log('[DEBUG ShellComponent] divisionId:', this.authService.getDivisionId());
-    console.log('[DEBUG ShellComponent] isPendingUser:', this.isPendingUser);
+    this.requiresOnboarding = this.authService.requiresOnboarding();
   }
 }

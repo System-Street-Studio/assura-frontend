@@ -18,6 +18,11 @@
             {{ errorMessage }}
         </div>
         }
+        @if (infoMessage && !errorMessage) {
+        <div class="info-message">
+            {{ infoMessage }}
+        </div>
+        }
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
             <div class="form-group">

@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { AdminService } from '../../../../core/services/admin.service';
 import { AdminStats } from '../../models/admin-stats.model';
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, RouterLink],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css']
 })
