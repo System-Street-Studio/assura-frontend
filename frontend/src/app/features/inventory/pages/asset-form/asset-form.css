@@ -1,4 +1,320 @@
 /* =========================================================
+   PAGE CONTAINER & LAYOUT
+   ========================================================= */
+.asset-form-container {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.asset-form-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.asset-form-back-btn {
+  padding: 8px;
+}
+
+.asset-form-back-icon {
+  font-size: 20px;
+}
+
+.asset-form-breadcrumb {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.asset-form-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.asset-form-title {
+  margin-bottom: 0;
+}
+
+.asset-form-code-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.asset-form-code-badge-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+.asset-form-main {
+  padding: 24px;
+}
+
+/* =========================================================
+   PURCHASE ORDER (PO) AUTO-FILL SECTION
+   ========================================================= */
+.po-section {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 28px;
+}
+
+.po-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.po-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.po-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.po-icon-box-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.po-title {
+  font-family: 'Jost';
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+.po-description {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.po-badge {
+  font-size: 12px;
+}
+
+.po-dropdown-wrapper {
+  position: relative;
+}
+
+.po-select {
+  font-weight: 500;
+}
+
+.po-label-small {
+  font-size: 12px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.po-info-bar {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(99, 102, 241, 0.12);
+  border-radius: 8px;
+  font-size: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  color: #c7d2fe;
+}
+
+.po-info-strong {
+  color: #ffffff;
+}
+
+.po-info-loading {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #818cf8;
+}
+
+.po-loading-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+/* =========================================================
+   FORM SECTIONS & FIELDS
+   ========================================================= */
+.section-title {
+  margin: 0 0 20px 0;
+  font-family: 'Jost';
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.form-field {
+  margin-bottom: 20px;
+}
+
+.form-field-row {
+  display: flex;
+  gap: 8px;
+}
+
+.form-grid {
+  margin-top: 0;
+  gap: 32px;
+}
+
+.form-grid-small {
+  margin-top: 0;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.additional-section {
+  margin-top: 12px;
+  margin-bottom: 32px;
+}
+
+.required-asterisk {
+  color: #ef4444;
+}
+
+.field-label-with-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: normal;
+}
+
+/* =========================================================
+   QUICK-ADD PRODUCT
+   The "+ Add new product" toggle beneath the Product dropdown.
+   ========================================================= */
+.assura-btn-link {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  color: #4f46e5;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.assura-btn-link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.assura-btn-link:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.quick-add-product {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: flex-start;
+}
+
+.quick-add-product {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: flex-start;
+}
+
+.quick-add-icon {
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+/* =========================================================
+   CURRENCY INPUT STYLING
+   ========================================================= */
+.currency-input-wrapper {
+  display: flex;
+  align-items: stretch;
+}
+
+.currency-badge {
+  padding: 10px 16px;
+  border: 1px solid #cbd5e1;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.currency-input {
+  border-radius: 0 8px 8px 0;
+  flex-grow: 1;
+}
+
+/* =========================================================
+   BUTTONS WITH CUSTOM SIZING
+   ========================================================= */
+.btn-auto-generate {
+  padding: 0 14px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.btn-auto-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.btn-submit-icon {
+  font-size: 18px;
+}
+
+.btn-submit-icon-saving {
+  font-size: 18px;
+  animation: spin 1s linear infinite;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* =========================================================
    FORM VALIDATION FEEDBACK
    Applied by [class.field-invalid] / [class.field-shake] in the template.
    ========================================================= */
@@ -21,22 +337,36 @@
 }
 
 @keyframes field-shake {
+
   10%,
   90% {
     transform: translateX(-2px);
   }
+
   20%,
   80% {
     transform: translateX(4px);
   }
+
   30%,
   50%,
   70% {
     transform: translateX(-7px);
   }
+
   40%,
   60% {
     transform: translateX(7px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
 

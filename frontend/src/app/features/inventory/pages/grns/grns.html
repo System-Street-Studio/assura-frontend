@@ -5,7 +5,7 @@
             <h1 class="assura-page-title" style="margin-bottom: 4px;">Goods Received Notes</h1>
             <span style="font-size: 14px; color: #64748b;">{{ totalCount }} GRN{{ totalCount === 1 ? '' : 's' }} recorded</span>
         </div>
-        <button class="assura-btn assura-btn-primary" (click)="openCreateModal()">
+        <button class="assura-btn assura-btn-primary" (click)="goToNewAsset()">
             <mat-icon style="font-size: 18px; vertical-align: middle;">add</mat-icon>
             New GRN
         </button>
@@ -76,7 +76,7 @@
                         <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;">inventory_2</mat-icon>
                         <h3 style="margin: 0 0 8px 0; font-family: 'Jost'; font-size: 18px; font-weight: 600;">No GRNs Found</h3>
                         <p style="margin: 0 0 20px 0; color: #64748b;">No Goods Received Notes match your search, or none have been recorded yet.</p>
-                        <button class="assura-btn assura-btn-primary" (click)="openCreateModal()">Record a GRN</button>
+                        <button class="assura-btn assura-btn-primary" (click)="goToNewAsset()">Record a GRN</button>
                     </div>
                 }
             }
@@ -99,10 +99,10 @@
     </section>
 </div>
 
-<!-- ================= NEW GRN MODAL ================= -->
-@if (showCreateModal) {
+<!-- ================= NEW GRN: PURCHASING ORDER PICKER ================= -->
+@if (showPoPicker) {
     <div class="modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 24px;">
-        <div class="assura-card" style="width: 100%; max-width: 540px; padding: 0; overflow: hidden; background: #0f172a; border: 1px solid #1e293b; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border-radius: 16px;">
+        <div class="assura-card" style="width: 100%; max-width: 480px; padding: 0; overflow: hidden; background: #0f172a; border: 1px solid #1e293b; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border-radius: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #1e293b; background: rgba(30, 41, 59, 0.3);">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(99, 102, 241, 0.15); display: flex; align-items: center; justify-content: center; color: #818cf8;">
@@ -110,66 +110,44 @@
                     </div>
                     <div>
                         <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #f8fafc;">New Goods Received Note</h2>
-                        <span style="font-size: 12px; color: #94a3b8;">Record physical arrival against a Purchasing Order</span>
+                        <span style="font-size: 12px; color: #94a3b8;">Which Purchasing Order is this against?</span>
                     </div>
                 </div>
-                <button style="background: none; border: none; cursor: pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 6px;" (click)="cancelCreate()" aria-label="Close"><mat-icon>close</mat-icon></button>
+                <button style="background: none; border: none; cursor: pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 6px;" (click)="cancelPoPicker()" aria-label="Close"><mat-icon>close</mat-icon></button>
             </div>
-            <div style="padding: 24px; max-height: 65vh; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
-                <div>
-                    <label for="grn-po" class="assura-label" style="color: #cbd5e1; font-weight: 500; margin-bottom: 6px; display: block;">Purchasing Order *</label>
-                    <select id="grn-po" class="assura-input" style="background: #1e293b; border-color: #334155; color: #f8fafc;" [(ngModel)]="createForm.purchasingOrderId" (ngModelChange)="onPoChange()">
-                        <option [ngValue]="0" disabled>Select a purchasing order</option>
-                        @for (po of purchasingOrders; track po.id) {
-                            <option [ngValue]="po.id">{{ po.orderNumber }} — {{ po.supplierName }}</option>
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                @if (loadingPos) {
+                    <div style="color: #94a3b8; font-size: 14px;">Loading purchasing orders...</div>
+                } @else if (purchasingOrders.length === 0) {
+                    <div style="color: #94a3b8; font-size: 14px;">No open purchasing orders found. You can still register an asset directly.</div>
+                } @else {
+                    <div>
+                        <label for="grn-po" class="assura-label" style="color: #cbd5e1; font-weight: 500; margin-bottom: 6px; display: block;">Purchasing Order *</label>
+                        <select id="grn-po" class="assura-input" style="background: #1e293b; border-color: #334155; color: #f8fafc;" [(ngModel)]="selectedPoId">
+                            <option [ngValue]="0" disabled>Select a purchasing order</option>
+                            @for (po of purchasingOrders; track po.id) {
+                                <option [ngValue]="po.id">{{ po.orderNumber }} — {{ po.supplierName }}</option>
+                            }
+                        </select>
+                        @if (submitted && !selectedPoId) {
+                            <div style="color: #f87171; font-size: 12px; margin-top: 4px;">Purchasing order is required.</div>
                         }
-                    </select>
-                    @if (submitted && !createForm.purchasingOrderId) {
-                        <div style="color: #f87171; font-size: 12px; margin-top: 4px;">Purchasing order is required.</div>
-                    }
-                </div>
-
-                <div>
-                    <label for="grn-asset" class="assura-label" style="color: #cbd5e1; font-weight: 500; margin-bottom: 6px; display: block;">Asset Register Entry</label>
-                    <select id="grn-asset" class="assura-input" style="background: #1e293b; border-color: #334155; color: #f8fafc;" [(ngModel)]="createForm.assetId">
-                        <option [ngValue]="0">✨ Auto-register new asset from PO (Recommended)</option>
-                        @for (asset of assets; track asset.id) {
-                            <option [ngValue]="asset.id" [disabled]="isAssetAlreadyReceived(asset.id)">
-                                {{ asset.assetCode }} — {{ asset.productName }} {{ isAssetAlreadyReceived(asset.id) ? '(GRN Already Recorded)' : '' }}
-                            </option>
-                        }
-                    </select>
-                    <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
-                        {{ createForm.assetId === 0 ? 'A new asset will be created in inventory and linked to this GRN.' : 'GRN will be linked to this existing asset register entry.' }}
+                        <div style="color: #94a3b8; font-size: 12px; margin-top: 8px;">
+                            You'll register the asset next — Supplier, Division, Product, Value and Warranty will be auto-filled from this order.
+                        </div>
                     </div>
-                </div>
-
-                <div>
-                    <label for="grn-date" class="assura-label" style="color: #cbd5e1; font-weight: 500; margin-bottom: 6px; display: block;">Received Date *</label>
-                    <input id="grn-date" type="date" class="assura-input" style="background: #1e293b; border-color: #334155; color: #f8fafc;" [(ngModel)]="createForm.receivedDate" />
-                    @if (submitted && !createForm.receivedDate) {
-                        <div style="color: #f87171; font-size: 12px; margin-top: 4px;">Received date is required.</div>
-                    }
-                </div>
-
-                <div>
-                    <label for="grn-received-by" class="assura-label" style="color: #cbd5e1; font-weight: 500; margin-bottom: 6px; display: block;">Received By</label>
-                    <input id="grn-received-by" class="assura-input" style="background: #1e293b; border-color: #334155; color: #f8fafc;" placeholder="Name of receiver" [(ngModel)]="createForm.receivedBy" />
-                </div>
-
-                <div>
-                    <label for="grn-notes" class="assura-label" style="color: #cbd5e1; font-weight: 500; margin-bottom: 6px; display: block;">Notes / Inspection Remarks</label>
-                    <textarea id="grn-notes" class="assura-input" style="background: #1e293b; border-color: #334155; color: #f8fafc;" rows="3" placeholder="Condition, serials, packaging notes..." [(ngModel)]="createForm.notes"></textarea>
-                </div>
+                }
             </div>
-            <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 18px 24px; border-top: 1px solid #1e293b; background: rgba(30, 41, 59, 0.2);">
-                <button class="assura-btn assura-btn-secondary" (click)="cancelCreate()" [disabled]="creating">Cancel</button>
-                <button class="assura-btn assura-btn-primary" (click)="confirmCreate()" [disabled]="creating">
-                    @if (!creating) {
-                        <mat-icon style="font-size: 16px; width: 16px; height: 16px; margin-right: 4px;">save</mat-icon>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 24px; border-top: 1px solid #1e293b; background: rgba(30, 41, 59, 0.2);">
+                <button class="assura-btn assura-btn-secondary" (click)="skipToAssetFormWithoutPo()">Register without a PO</button>
+                <div style="display: flex; gap: 12px;">
+                    <button class="assura-btn assura-btn-secondary" (click)="cancelPoPicker()">Cancel</button>
+                    @if (purchasingOrders.length > 0) {
+                        <button class="assura-btn assura-btn-primary" (click)="continueToAssetForm()">
+                            Continue <mat-icon style="font-size: 16px; width: 16px; height: 16px; margin-left: 4px; vertical-align: middle;">arrow_forward</mat-icon>
+                        </button>
                     }
-                    {{ creating ? 'Recording...' : 'Record GRN' }}
-                </button>
+                </div>
             </div>
         </div>
     </div>

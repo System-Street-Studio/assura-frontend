@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { RequestService, SuggestedAsset } from '../../services/requests.service';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-new-asset-details',
@@ -17,6 +18,7 @@ export class NewAssetDetailsComponent implements OnInit {
   private requestService = inject(RequestService);
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
+  private toast = inject(ToastService);
 
   request = signal<any>({});
   processing = signal(false);
@@ -45,24 +47,35 @@ export class NewAssetDetailsComponent implements OnInit {
       if (id) {
         console.log("get request by ID:", id);
         this.loadSuggestedAssets(Number(id));
-        this.requestService.getRequestById(+id).subscribe({
-          next: (data) => {
-            console.log("Data fetched:", data);
-            this.request.set(this.mapRequestForView(data));
-            this.isLoading.set(false);
-          },
-          error: (err) => {
-            console.error('Load request by id error:', err);
-            this.error.set('Failed to load request details');
-            this.isLoading.set(false);
-          }
-        });
+        this.loadRequest(Number(id));
       } else {
         console.warn("No ID found in route");
         this.error.set('No request ID provided');
         this.isLoading.set(false);
       }
     }
+  }
+
+  /**
+   * This page only ever shows AssetRequests-table records, keyed by that table's own (positive)
+   * id — always re-fetch through the dedicated AssetRequests lookup, never the unified
+   * /requests/{id} endpoint, which would treat a raw positive id as belonging to the separate
+   * Requests table instead. Used both on initial load and after every action below, so the
+   * displayed status always reflects what the backend actually persisted rather than an assumed
+   * local patch.
+   */
+  private loadRequest(id: number): void {
+    this.requestService.getAssetRequestById(id).subscribe({
+      next: (data) => {
+        this.request.set(data);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Load request by id error:', err);
+        this.error.set('Failed to load request details');
+        this.isLoading.set(false);
+      }
+    });
   }
 
   showPopup = signal(false);
@@ -146,15 +159,16 @@ export class NewAssetDetailsComponent implements OnInit {
     this.requestService.approveRequest(id).subscribe({
       next: () => {
         this.processing.set(false);
-        this.request.set({ ...this.request(), status: 'PendingStorekeeperReview' });
+        this.loadRequest(id);
         this.popupMessage.set('Request Approved Successfully');
         this.popupType.set('success');
         this.showPopup.set(true);
-       
+
       },
       error: (err) => {
         this.processing.set(false);
         console.error('Approve error:', err);
+        this.toast.error(err?.error?.message || 'Failed to approve request. Please try again.');
       }
     });
   }
@@ -170,15 +184,16 @@ export class NewAssetDetailsComponent implements OnInit {
     this.requestService.rejectRequest(id, remarks).subscribe({
       next: () => {
         this.processing.set(false);
-        this.request.set({ ...this.request(), status: 'Rejected' });
+        this.loadRequest(id);
         this.popupMessage.set('Request Rejected Successfully!');
         this.popupType.set('reject');
         this.showPopup.set(true);
-        
+
       },
       error: (err) => {
         this.processing.set(false);
         console.error('Reject error:', err);
+        this.toast.error(err?.error?.message || 'Failed to reject request. Please try again.');
       }
     });
   }
@@ -201,7 +216,7 @@ export class NewAssetDetailsComponent implements OnInit {
     this.requestService.processByStorekeeper(id, true, assetId, remarks).subscribe({
       next: () => {
         this.processing.set(false);
-        this.request.set({ ...this.request(), status: 'TemporaryAssigned', assetId });
+        this.loadRequest(id);
         this.popupMessage.set('Asset reserved temporarily. Waiting for pickup confirmation.');
         this.popupType.set('success');
         this.showPopup.set(true);
@@ -209,6 +224,7 @@ export class NewAssetDetailsComponent implements OnInit {
       error: (err) => {
         this.processing.set(false);
         console.error('In-stock processing error:', err);
+        this.toast.error(err?.error?.message || 'Failed to reserve asset. Please try again.');
       }
     });
   }
@@ -224,7 +240,7 @@ export class NewAssetDetailsComponent implements OnInit {
     this.requestService.processByStorekeeper(id, false, undefined, remarks).subscribe({
       next: () => {
         this.processing.set(false);
-        this.request.set({ ...this.request(), status: 'PendingProcurement' });
+        this.loadRequest(id);
         this.popupMessage.set('Escalated to procurement successfully.');
         this.popupType.set('success');
         this.showPopup.set(true);
@@ -232,6 +248,7 @@ export class NewAssetDetailsComponent implements OnInit {
       error: (err) => {
         this.processing.set(false);
         console.error('Out-of-stock processing error:', err);
+        this.toast.error(err?.error?.message || 'Failed to escalate to procurement. Please try again.');
       }
     });
   }
@@ -247,7 +264,7 @@ export class NewAssetDetailsComponent implements OnInit {
     this.requestService.confirmTemporaryAssignment(id, remarks).subscribe({
       next: () => {
         this.processing.set(false);
-        this.request.set({ ...this.request(), status: 'Approved' });
+        this.loadRequest(id);
         this.popupMessage.set('Temporary assignment confirmed and finalized.');
         this.popupType.set('success');
         this.showPopup.set(true);
@@ -255,6 +272,7 @@ export class NewAssetDetailsComponent implements OnInit {
       error: (err) => {
         this.processing.set(false);
         console.error('Confirm temporary assignment error:', err);
+        this.toast.error(err?.error?.message || 'Failed to confirm handover. Please try again.');
       }
     });
   }
@@ -268,23 +286,6 @@ export class NewAssetDetailsComponent implements OnInit {
     this.showPopup.set(false);
     const returnTab = this.route.snapshot.queryParamMap.get('tab') || 'new';
     this.router.navigate(['approvals/requests'], { queryParams: { tab: returnTab } });
-  }
-
-  private mapRequestForView(data: any): any {
-    return {
-      ...data,
-      name: data.requesterName ?? data.name,
-      employee: data.requesterId?.toString() ?? data.employee,
-      assetName: data.assetName ?? 'N/A',
-      division: data.department ?? data.division ?? 'N/A',
-      date: data.createdAt ?? data.date,
-      specs: data.description ?? data.specs,
-      justification: data.description ?? data.justification,
-      reason: data.description ?? data.reason,
-      type: data.type ?? 'Asset',
-      category: data.type ?? 'Asset',
-      attachments: data.attachments?.length ? data.attachments : []
-    };
   }
 
   //format file sizes

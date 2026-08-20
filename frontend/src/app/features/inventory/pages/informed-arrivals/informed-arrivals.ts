@@ -103,12 +103,19 @@ export class InformedArrivalsComponent implements OnInit {
         return 'assura-badge-warning';
     }
 
+    // Takes the storekeeper straight to full asset registration (serial number, product,
+    // category, etc.) instead of the old GRN-only modal, which had no serial number field and
+    // no way to add a product that doesn't already exist. `informingId` lets the asset form
+    // record the formal GRN and mark this arrival fulfilled once the asset is saved.
     registerArrival(item: AssetInformingDto): void {
-        this.router.navigate(['/inventory/grns'], {
+        const productName = item.model && item.itemName.startsWith('PO-') ? item.model : item.itemName;
+        this.router.navigate(['/inventory/assets/new'], {
             queryParams: {
                 informingId: item.id,
-                po: item.itemName,
-                model: item.model || ''
+                productName: productName || '',
+                warranty: item.warranty || '',
+                price: item.purchasedPrice || undefined,
+                divisionId: item.divisionId || undefined,
             }
         });
     }
