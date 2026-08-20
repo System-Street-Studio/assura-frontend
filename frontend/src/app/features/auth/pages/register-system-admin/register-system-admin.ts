@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CreatePrivilegedUserFormComponent, CreatePrivilegedUserFormValue } from '../../../../shared/components/create-privileged-user-form/create-privileged-user-form';
-import { SystemAdminService } from '../../../system-admin/services/system-admin.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
     styleUrls: ['../register/register.css'],
 })
 export class RegisterSystemAdminComponent {
-    private systemAdminService = inject(SystemAdminService);
+    private authService = inject(AuthService);
     private toastService = inject(ToastService);
     private router = inject(Router);
 
@@ -24,15 +24,15 @@ export class RegisterSystemAdminComponent {
         this.loading.set(true);
         this.errorMessage.set(null);
 
-        this.systemAdminService.createSystemAdminUser(value).subscribe({
+        this.authService.registerSystemAdmin(value).subscribe({
             next: () => {
                 this.loading.set(false);
-                this.toastService.success('System Administrator account created successfully.');
-                this.router.navigate(['/system-admin/security']);
+                this.toastService.success('System Administrator account created successfully. Please log in.');
+                this.router.navigate(['/auth/login']);
             },
             error: (err) => {
                 this.loading.set(false);
-                this.errorMessage.set(err.error || 'Failed to create System Administrator account. Username or email might already exist.');
+                this.errorMessage.set(err.error?.Message || err.error?.message || 'Failed to create System Administrator account. Username or email might already exist.');
             },
         });
     }

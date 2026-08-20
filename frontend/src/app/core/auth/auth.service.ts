@@ -35,6 +35,20 @@ export class AuthService {
   }
 
   /**
+   * Register a new System Administrator account (POST Request)
+   */
+  registerSystemAdmin(userData: {
+    username: string;
+    password: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber?: string;
+  }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register-system-admin`, userData);
+  }
+
+  /**
    * Request a password reset link
    */
   forgotPassword(data: ForgotPasswordRequest): Observable<any> {
