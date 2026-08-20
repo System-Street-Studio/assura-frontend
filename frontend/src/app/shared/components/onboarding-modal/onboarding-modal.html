@@ -1,0 +1,59 @@
+<div class="onboarding-backdrop">
+    <div class="onboarding-card">
+        <h2 class="onboarding-title">Welcome — Let's Set Up Your Account</h2>
+        <p class="onboarding-subtitle">
+            This account was created for you with a temporary password. Choose your own password
+            and confirm your details to continue.
+        </p>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="onboarding-form">
+            @if (errorMessage()) {
+                <div class="error-alert">{{ errorMessage() }}</div>
+            }
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="assura-label">First Name</label>
+                    <input type="text" formControlName="firstName" class="assura-input" placeholder="First Name" />
+                </div>
+                <div class="form-group">
+                    <label class="assura-label">Last Name</label>
+                    <input type="text" formControlName="lastName" class="assura-input" placeholder="Last Name" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="assura-label">Email</label>
+                <input type="email" formControlName="email" class="assura-input" placeholder="Email" />
+                @if (form.get('email')?.touched && form.get('email')?.invalid) {
+                    <div class="error-message">A valid email is required</div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label class="assura-label">Phone Number (optional)</label>
+                <input type="text" formControlName="phoneNumber" class="assura-input" placeholder="Phone Number" />
+            </div>
+
+            <div class="form-group">
+                <label class="assura-label">New Password</label>
+                <input [type]="showPassword ? 'text' : 'password'" formControlName="newPassword" class="assura-input" placeholder="New Password" />
+                @if (form.get('newPassword')?.touched && form.get('newPassword')?.invalid) {
+                    <div class="error-message">Password is required (min 6 chars)</div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label class="assura-label">Confirm New Password</label>
+                <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" class="assura-input" placeholder="Confirm New Password" />
+                @if (form.get('confirmPassword')?.touched && form.errors?.['mismatch']) {
+                    <div class="error-message">Passwords must match</div>
+                }
+            </div>
+
+            <button type="submit" class="assura-btn assura-btn-primary" style="width: 100%; margin-top: 8px;" [disabled]="form.invalid || loading()">
+                {{ loading() ? 'Saving...' : 'Save and Continue' }}
+            </button>
+        </form>
+    </div>
+</div>

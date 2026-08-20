@@ -15,6 +15,17 @@ export const routes: Routes = [
         loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
     },
     {
+        path: 'pending-assignment',
+        loadComponent: () => import('./features/auth/pages/pending-assignment/pending-assignment').then(m => m.PendingAssignmentComponent),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'register-system-admin',
+        loadComponent: () => import('./features/auth/pages/register-system-admin/register-system-admin').then(m => m.RegisterSystemAdminComponent),
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [ROLES.ADMIN, ROLES.SYSTEM_ADMIN] },
+    },
+    {
         path: 'reporting',
         component: ShellComponent,
         children: [

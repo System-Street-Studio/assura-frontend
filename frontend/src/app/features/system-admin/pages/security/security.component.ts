@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { SystemAdminService, SystemAdminUser, SystemAdminAuditLog } from '../../services/system-admin.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ConfirmationService } from '../../../../shared/services/confirmation.service';
@@ -8,7 +9,7 @@ import { ConfirmationService } from '../../../../shared/services/confirmation.se
 @Component({
   selector: 'app-security',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './security.component.html',
   styleUrls: ['./security.component.css']
 })
@@ -23,6 +24,9 @@ export class SecurityComponent implements OnInit {
   users: SystemAdminUser[] = [];
   logs: SystemAdminAuditLog[] = [];
   loading = false;
+
+  generatingHrAccount = false;
+  generatedHrCredentials: { username: string; temporaryPassword: string } | null = null;
 
   get filteredUsers(): SystemAdminUser[] {
     if (!this.searchTerm) return this.users;
@@ -81,6 +85,22 @@ export class SecurityComponent implements OnInit {
         }
       });
     }
+  }
+
+  generateHrAccount(): void {
+    this.generatingHrAccount = true;
+    this.systemAdminService.createHrAccount().subscribe({
+      next: (result) => {
+        this.generatingHrAccount = false;
+        this.generatedHrCredentials = result;
+        this.loadData();
+      },
+      error: (err) => {
+        console.error('Failed to generate HR account', err);
+        this.toastService.show(err.error || 'Failed to generate HR account.', 'error');
+        this.generatingHrAccount = false;
+      }
+    });
   }
 
   toggleLock(user: SystemAdminUser) {

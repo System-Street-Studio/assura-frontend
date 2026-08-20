@@ -192,6 +192,8 @@ export class AuthService {
   }
 
   getDashboardUrl(): string {
+    if (this.isPendingUser()) return '/pending-assignment';
+
     const roles = this.getRoles();
     if (roles.includes('SystemAdmin')) return '/system-admin/overview';
     if (roles.includes('Admin')) return '/admin/overview';
@@ -209,11 +211,40 @@ export class AuthService {
   isPendingUser(): boolean {
     const hasPendingRole = this.hasRole('Pending');
     const isSysAdmin = this.hasRole('SystemAdmin');
-    
+
     // Explicitly check if it's null or undefined
     const divisionId = this.getDivisionId();
     const noDivision = divisionId === null || divisionId === undefined || isNaN(divisionId) || divisionId === 0;
-    
+
     return hasPendingRole || (noDivision && !isSysAdmin);
+  }
+
+  // True for an account created with system-generated credentials (e.g. an HR account created
+  // by an Admin/SystemAdmin) whose owner hasn't yet set their own password/details.
+  requiresOnboarding(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+    try {
+      const decoded: any = jwtDecode(token);
+      return decoded.RequiresOnboarding === 'true' || decoded.RequiresOnboarding === true;
+    } catch {
+      return false;
+    }
+  }
+
+  completeOnboarding(payload: {
+    newPassword: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber?: string;
+  }): Observable<{ token: string }> {
+    return this.http.post<{ token: string }>(`${this.apiUrl}/complete-onboarding`, payload).pipe(
+      tap((response) => {
+        if (response.token) {
+          localStorage.setItem(this.TOKEN_KEY, response.token);
+        }
+      })
+    );
   }
 }
