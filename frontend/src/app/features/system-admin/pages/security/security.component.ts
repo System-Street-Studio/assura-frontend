@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { SystemAdminService, SystemAdminUser, SystemAdminAuditLog } from '../../services/system-admin.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ConfirmationService } from '../../../../shared/services/confirmation.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-security',
@@ -17,6 +18,11 @@ export class SecurityComponent implements OnInit {
   private systemAdminService = inject(SystemAdminService);
   private toastService = inject(ToastService);
   private confirmationService = inject(ConfirmationService);
+  private authService = inject(AuthService);
+
+  // Creating privileged accounts (System Admin registration, HR credential generation) is a
+  // SystemAdmin-only process — an Admin can view this page but not perform either action.
+  isSystemAdmin = this.authService.hasRole('SystemAdmin');
 
   activeTab: 'users' | 'logs' = 'users';
   searchTerm = '';

@@ -2,14 +2,22 @@
     <div class="onboarding-card">
         <h2 class="onboarding-title">Welcome — Let's Set Up Your Account</h2>
         <p class="onboarding-subtitle">
-            This account was created for you with a temporary password. Choose your own password
-            and confirm your details to continue.
+            This account was created for you with a temporary username and password. Choose your
+            own username and password and confirm your details to continue.
         </p>
 
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="onboarding-form">
             @if (errorMessage()) {
                 <div class="error-alert">{{ errorMessage() }}</div>
             }
+
+            <div class="form-group">
+                <label class="assura-label">Username</label>
+                <input type="text" formControlName="newUsername" class="assura-input" placeholder="Choose a username" />
+                @if (form.get('newUsername')?.touched && form.get('newUsername')?.invalid) {
+                    <div class="error-message">Username is required</div>
+                }
+            </div>
 
             <div class="form-row">
                 <div class="form-group">

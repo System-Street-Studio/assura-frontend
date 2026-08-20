@@ -233,6 +233,7 @@ export class AuthService {
   }
 
   completeOnboarding(payload: {
+    newUsername: string;
     newPassword: string;
     firstName: string;
     lastName: string;

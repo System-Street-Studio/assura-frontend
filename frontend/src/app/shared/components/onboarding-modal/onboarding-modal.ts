@@ -22,6 +22,7 @@ export class OnboardingModalComponent {
     showConfirmPassword = false;
 
     form = this.fb.group({
+        newUsername: ['', Validators.required],
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
@@ -40,8 +41,9 @@ export class OnboardingModalComponent {
         this.loading.set(true);
         this.errorMessage.set(null);
 
-        const { firstName, lastName, email, phoneNumber, newPassword } = this.form.value;
+        const { newUsername, firstName, lastName, email, phoneNumber, newPassword } = this.form.value;
         this.authService.completeOnboarding({
+            newUsername: newUsername!,
             firstName: firstName!,
             lastName: lastName!,
             email: email!,

@@ -25,10 +25,12 @@
                     <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 14px;">Manage system access and lock/unlock user accounts.</p>
                 </div>
                 <div style="display: flex; gap: 12px; align-items: center;">
-                    <button type="button" class="assura-btn assura-btn-secondary" style="padding: 8px 16px; font-size: 13px;" (click)="generateHrAccount()" [disabled]="generatingHrAccount">
-                        {{ generatingHrAccount ? 'Generating...' : 'Generate HR Account' }}
-                    </button>
-                    <a routerLink="/register-system-admin" class="assura-btn assura-btn-secondary" style="padding: 8px 16px; font-size: 13px;">Create System Admin Account</a>
+                    <ng-container *ngIf="isSystemAdmin">
+                        <button type="button" class="assura-btn assura-btn-secondary" style="padding: 8px 16px; font-size: 13px;" (click)="generateHrAccount()" [disabled]="generatingHrAccount">
+                            {{ generatingHrAccount ? 'Generating...' : 'Generate HR Account' }}
+                        </button>
+                        <a routerLink="/register-system-admin" class="assura-btn assura-btn-secondary" style="padding: 8px 16px; font-size: 13px;">Create System Admin Account</a>
+                    </ng-container>
                     <input type="text" [(ngModel)]="searchTerm" placeholder="Search users..." class="assura-input" style="width: 260px;">
                 </div>
             </div>
