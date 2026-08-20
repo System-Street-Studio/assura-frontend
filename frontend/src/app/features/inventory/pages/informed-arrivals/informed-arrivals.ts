@@ -108,14 +108,20 @@ export class InformedArrivalsComponent implements OnInit {
     // no way to add a product that doesn't already exist. `informingId` lets the asset form
     // record the formal GRN and mark this arrival fulfilled once the asset is saved.
     registerArrival(item: AssetInformingDto): void {
-        const productName = item.model && item.itemName.startsWith('PO-') ? item.model : item.itemName;
+        const rawName = item.model && item.itemName.startsWith('PO-') ? item.model : item.itemName;
+        // Strip embedded asset-code suffixes like "(AST-0050)" that sometimes get appended
+        // by the procurement flow, so the asset form can match the product name cleanly.
+        const productName = (rawName || '').replace(/\s*\(AST-[A-Z0-9-]+\)\s*/gi, '').trim();
         this.router.navigate(['/inventory/assets/new'], {
             queryParams: {
                 informingId: item.id,
                 productName: productName || '',
                 warranty: item.warranty || '',
-                price: item.purchasedPrice || undefined,
+                // Always send the price — even 0 — so the form shows the value from the
+                // informing record rather than silently defaulting to 0 with no context.
+                price: Number(item.purchasedPrice) || 0,
                 divisionId: item.divisionId || undefined,
+                poId: item.purchasingOrderId || undefined,
             }
         });
     }

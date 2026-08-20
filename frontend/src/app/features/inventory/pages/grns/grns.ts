@@ -155,6 +155,24 @@ export class GrnsComponent implements OnInit {
         this.detailGrn = null;
     }
 
+    /**
+     * From the detail drawer: if a GRN already has a linked asset, open it for editing
+     * (all fields are already saved). If there is no asset yet, go to the create form
+     * with the GRN's PO pre-selected so Supplier/Division/Product/Value/Warranty auto-fill.
+     */
+    goToAsset(grn: Grn): void {
+        this.showDetail = false;
+        this.detailGrn = null;
+        if (grn.assetId && grn.assetId > 0) {
+            this.router.navigate(['/inventory/assets', grn.assetId, 'edit']);
+        } else {
+            this.router.navigate(
+                ['/inventory/assets/new'],
+                { queryParams: { poId: grn.purchasingOrderId } }
+            );
+        }
+    }
+
     formatDate(dateStr: string | undefined): string {
         if (!dateStr) return '-';
         return new Date(dateStr).toLocaleDateString();

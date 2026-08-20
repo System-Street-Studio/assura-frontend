@@ -158,6 +158,16 @@ export class AssetFormComponent implements OnInit {
   categories: Category[] = [];
   employees: CheckoutEmployee[] = [];
 
+  /** Full asset list kept in memory so supplier inference can scan purchase history. */
+  private existingAssets: AssetDetail[] = [];
+
+  /**
+   * PO ID that should be auto-selected once all dropdowns have loaded.
+   * Set from query params or by fetching the linked informing record.
+   * Consumed at the end of loadDropdownData's subscribe so the dropdowns are ready.
+   */
+  private pendingPoId = 0;
+
   // ── Purchase Order Auto-Fill State ──
   /** List of all purchasing orders loaded from backend, sorted with latest at top. */
   purchasingOrders: PurchasingOrderSummaryDto[] = [];
@@ -247,13 +257,39 @@ export class AssetFormComponent implements OnInit {
         const initialCode = params['code'] || this.generateAssetCode();
         this.informingId = params['informingId'] ? Number(params['informingId']) : null;
         this.pendingProductName = params['productName'] || '';
+
         this.assetForm.patchValue({
           assetCode: initialCode,
           warranty: params['warranty'] || '',
-          purchaseValue: params['price'] ? Number(params['price']) : 0,
+          // params['price'] is a string — use != null so "0" is not treated as falsy.
+          purchaseValue: params['price'] != null ? Number(params['price']) : 0,
           divisionId: params['divisionId'] ? Number(params['divisionId']) : 0,
           assignedUserId: params['assignedUserId'] ? Number(params['assignedUserId']) : 0,
         });
+
+        // If the PO id was passed directly (e.g. from GRN page), loadDropdownData handles
+        // it via the pendingPoId flag consumed at the end of its subscribe callback.
+        // When navigating from New Arrivals without a poId (older informing records), fetch
+        // the informing to see if it has a linked PO and store it in the same flag.
+        const queryPoId = params['poId'] ? Number(params['poId']) : 0;
+        if (queryPoId > 0) {
+          this.pendingPoId = queryPoId;
+        } else if (this.informingId) {
+          this.procurementService.getInformingById(this.informingId).subscribe({
+            next: (informing) => {
+              if (informing?.purchasingOrderId) {
+                // If loadDropdownData already finished, trigger immediately;
+                // otherwise store it so loadDropdownData picks it up.
+                if (this.suppliers.length > 0) {
+                  this.onPoChange(informing.purchasingOrderId!);
+                } else {
+                  this.pendingPoId = informing.purchasingOrderId!;
+                }
+              }
+            },
+            error: () => { /* non-critical */ }
+          });
+        }
       });
     } else if (this.assetId) {
       this.assetService.getAssetById(this.assetId).subscribe({
@@ -634,6 +670,7 @@ export class AssetFormComponent implements OnInit {
       this.divisions = divisions;
       this.categories = categories;
       this.employees = employees || [];
+      this.existingAssets = existingAssets || [];
 
       // Reuse the asset list for client-side asset-code/serial-number uniqueness. The backend
       // validates both authoritatively too; this only gives the user immediate feedback.
@@ -669,27 +706,11 @@ export class AssetFormComponent implements OnInit {
           return (b.id || 0) - (a.id || 0);
         });
 
-      // If in create mode and queryParams had poId, auto select
-      if (this.mode === 'create') {
+      // If queryParams had poId and pendingPoId wasn't queued yet, queue it now
+      if (this.mode === 'create' && !this.pendingPoId) {
         const queryPoId = Number(this.route.snapshot.queryParams['poId']);
-        if (queryPoId && queryPoId > 0) {
-          console.log('[AssetForm] Query param poId found:', queryPoId);
-          // Delay to allow template to render and ngModel binding to establish
-          setTimeout(() => {
-            // Check if the PO is in the filtered list
-            const poInList = this.purchasingOrders.some(p => p.id === queryPoId);
-            console.log('[AssetForm] PO in list?', poInList, 'Available POs:', this.purchasingOrders.map(p => p.id));
-            if (poInList) {
-              // PO is in the filtered list, proceed with auto-select
-              console.log('[AssetForm] Calling onPoChange with poId:', queryPoId);
-              this.onPoChange(queryPoId);
-            } else {
-              // PO might have been filtered out or is not in the unregistered list
-              // Load it directly and use it anyway (user selected it from GRN, so it should be used)
-              console.log('[AssetForm] PO not in list, loading from API:', queryPoId);
-              this.loadAndSelectPoFromGrn(queryPoId);
-            }
-          }, 100);
+        if (queryPoId > 0) {
+          this.pendingPoId = queryPoId;
         }
       }
 
@@ -697,14 +718,58 @@ export class AssetFormComponent implements OnInit {
       // existing product; if none exists, open the quick-add box pre-filled with that name
       // instead of leaving the storekeeper stuck with no way to register a genuinely new item.
       if (this.pendingProductName && !this.assetForm.value.productId) {
-        const target = this.pendingProductName.trim().toLowerCase();
-        const match = this.products.find((p) => p.name.trim().toLowerCase() === target);
+        // Strip embedded asset-code suffixes like "(AST-0050)" that procurement sometimes
+        // appends to the item name, so they don't prevent a product match.
+        const cleanName = this.pendingProductName
+          .replace(/\s*\(AST-[A-Z0-9-]+\)\s*/gi, '')
+          .trim();
+        const target = cleanName.toLowerCase();
+
+        // Try exact match first, then partial containment in either direction.
+        const match = this.products.find((p) => {
+          const pn = p.name.trim().toLowerCase();
+          return pn === target || pn.includes(target) || target.includes(pn);
+        });
+
         if (match) {
           this.assetForm.patchValue({ productId: Number(match.id) });
-          this.onProductChange(Number(match.id));
+          this.onProductChange(Number(match.id));  // also auto-fills category
+
+          // Infer supplier from purchase history for this product (only if not already set).
+          if (!this.assetForm.value.supplierId) {
+            const inferredSupplierId = this.inferSupplierFromHistory(Number(match.id), 0);
+            if (inferredSupplierId > 0) this.assetForm.patchValue({ supplierId: inferredSupplierId });
+          }
+
+          // Infer price from purchase history for this product (if price is 0 or empty).
+          const currentPrice = Number(this.assetForm.value.purchaseValue || 0);
+          if (currentPrice <= 0) {
+            const inferredPrice = this.inferPriceFromHistory(Number(match.id), 0);
+            if (inferredPrice > 0) this.assetForm.patchValue({ purchaseValue: inferredPrice });
+          }
         } else {
-          this.newProductName = this.pendingProductName.trim();
+          // No matching product — open quick-add box with the cleaned name.
+          this.newProductName = cleanName;
           this.showAddProduct = true;
+
+          // Even without a matched product, auto-detect category from the item name.
+          const detectedCatId = this.detectCategoryId(cleanName);
+          if (detectedCatId > 0 && !this.assetForm.value.categoryId) {
+            this.assetForm.patchValue({ categoryId: detectedCatId });
+
+            // Also infer supplier from the detected category's purchase history.
+            if (!this.assetForm.value.supplierId) {
+              const inferredSupplierId = this.inferSupplierFromHistory(0, detectedCatId);
+              if (inferredSupplierId > 0) this.assetForm.patchValue({ supplierId: inferredSupplierId });
+            }
+
+            // Also infer price from the detected category's purchase history.
+            const currentPrice = Number(this.assetForm.value.purchaseValue || 0);
+            if (currentPrice <= 0) {
+              const inferredPrice = this.inferPriceFromHistory(0, detectedCatId);
+              if (inferredPrice > 0) this.assetForm.patchValue({ purchaseValue: inferredPrice });
+            }
+          }
         }
       }
 
@@ -714,12 +779,14 @@ export class AssetFormComponent implements OnInit {
     if (!divisions.length) this.toast.error('Failed to load divisions');
     if (!categories.length) this.toast.error('Failed to load categories');
 
-    // Without this, the dropdowns above can be left permanently blank: this callback runs
-    // once all seven parallel requests have settled, and on this route that resolution
-    // sometimes lands in a change-detection pass this view's own tick doesn't pick up,
-    // leaving Product/Category/Supplier/Division stuck on their placeholder option even
-    // though the arrays above are already populated. Forcing a synchronous check here
-    // guarantees the view reflects the data that just arrived.
+    // If a PO was queued for auto-select (from query param or by fetching the informing),
+    // trigger it NOW — all dropdowns are populated so supplier/product matching will work.
+    if (this.pendingPoId > 0) {
+      const poId = this.pendingPoId;
+      this.pendingPoId = 0; // clear so it doesn't fire again
+      this.loadAndSelectPoFromGrn(poId);
+    }
+
     this.cdr.detectChanges();
   });
 }
@@ -802,6 +869,73 @@ export class AssetFormComponent implements OnInit {
       this.cdr.detectChanges();
     }
   });
+}
+
+/**
+ * Infers the most likely supplier for a new asset by scanning purchase history
+ * (the already-loaded existingAssets list). Falls back from product-level match to
+ * category-level match so even a genuinely new product can get a sensible suggestion.
+ *
+ * @param productId  Match assets with this product ID first (pass 0 to skip).
+ * @param categoryId Broader fallback: match assets with this category ID (pass 0 to skip).
+ * @returns The most-used supplier's ID, or 0 if nothing useful found.
+ */
+private inferSupplierFromHistory(productId: number, categoryId: number): number {
+  if (!this.existingAssets.length || !this.suppliers.length) return 0;
+
+  // Count supplier occurrences — product-level hits are weighted 3× over category-level.
+  const tally = new Map<number, number>();
+
+  for (const asset of this.existingAssets) {
+    const sid = Number(asset.supplierId);
+    if (!sid || sid <= 0) continue;
+    if (!this.suppliers.some(s => Number(s.id) === sid)) continue; // must exist in dropdown
+
+    if (productId > 0 && Number(asset.productId) === productId) {
+      tally.set(sid, (tally.get(sid) ?? 0) + 3);
+    } else if (categoryId > 0 && Number(asset.categoryId) === categoryId) {
+      tally.set(sid, (tally.get(sid) ?? 0) + 1);
+    }
+  }
+
+  if (!tally.size) return 0;
+
+  // Return the supplier with the highest cumulative score.
+  return [...tally.entries()].sort((a, b) => b[1] - a[1])[0][0];
+}
+
+/**
+ * Infers the typical purchase value for a product or category by scanning
+ * past asset purchase history (existingAssets).
+ *
+ * @param productId  Match assets with this product ID first (pass 0 to skip).
+ * @param categoryId Fallback: match assets with this category ID (pass 0 to skip).
+ * @returns Historical purchase cost/value, or 0 if none found.
+ */
+private inferPriceFromHistory(productId: number, categoryId: number): number {
+  if (!this.existingAssets.length) return 0;
+
+  // 1. Try exact product match
+  if (productId > 0) {
+    const productAsset = this.existingAssets.find(
+      (a) => Number(a.productId) === productId && Number(a.purchaseValue || a.purchaseCost || 0) > 0
+    );
+    if (productAsset) {
+      return Number(productAsset.purchaseValue || productAsset.purchaseCost || 0);
+    }
+  }
+
+  // 2. Fall back to category match
+  if (categoryId > 0) {
+    const categoryAsset = this.existingAssets.find(
+      (a) => Number(a.categoryId) === categoryId && Number(a.purchaseValue || a.purchaseCost || 0) > 0
+    );
+    if (categoryAsset) {
+      return Number(categoryAsset.purchaseValue || categoryAsset.purchaseCost || 0);
+    }
+  }
+
+  return 0;
 }
 
 /**
