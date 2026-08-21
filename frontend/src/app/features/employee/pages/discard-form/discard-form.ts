@@ -51,16 +51,21 @@ export class DiscardFormComponent implements OnInit {
   ngOnInit(): void {
     this.assetService.getAll(true).subscribe({
       next: (assets) => {
-        this.assignedAssets.set(assets);
+        // Filter out assets that are under maintenance (cannot be discarded)
+        const selectableAssets = assets.filter(a => (a.status as string) !== 'UnderMaintenance');
+        this.assignedAssets.set(selectableAssets);
 
         // Auto-select asset from route state
         const passedAssetName = this.route.snapshot.data['assetName'] || window.history.state?.assetName;
         if (passedAssetName) {
-          // Find the matching asset and set it with full format
           const matchedAsset = assets.find(a => a.productName === passedAssetName);
           if (matchedAsset) {
-            this.asset.set(matchedAsset.productName + ' (' + matchedAsset.assetCode + ')');
-            this.selectedAssetId.set(Number(matchedAsset.id));
+            if ((matchedAsset.status as string) === 'UnderMaintenance') {
+              this.toastService.error('Assets under maintenance cannot be discarded.');
+            } else {
+              this.asset.set(matchedAsset.productName + ' (' + matchedAsset.assetCode + ')');
+              this.selectedAssetId.set(Number(matchedAsset.id));
+            }
           }
         }
       },

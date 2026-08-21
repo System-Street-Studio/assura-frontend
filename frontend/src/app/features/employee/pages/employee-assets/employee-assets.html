@@ -230,7 +230,7 @@
           </div>
         </div>
 
-        @if (selectedAsset()?.status !== 'Discarded') {
+        @if (selectedAsset()?.status !== 'Discarded' && !selectedAsset()?.assetId?.toString()?.startsWith('transfer-')) {
           <div class="detail-actions-footer">
             <button class="assura-btn-secondary" (click)="goToMaintenanceForm()">
               <mat-icon>build</mat-icon> Request Maintenance

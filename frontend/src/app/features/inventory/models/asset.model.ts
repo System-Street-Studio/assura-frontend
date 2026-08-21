@@ -64,3 +64,19 @@ export interface AvailableCheckoutAsset {
   categoryName: string;
   serialNumber?: string;
 }
+
+/** One row from GET /api/transfers/asset/{id} — a Transfer this asset was part of. */
+export interface AssetTransferHistoryEntry {
+  id: number;
+  transferNumber: string;
+  transferDate: string;
+  returnDate?: string;
+  fromDivisionName: string;
+  toDivisionName: string;
+  currentHolderName?: string;
+  targetUserName?: string;
+  transferByName: string;
+  status: string;
+  reason?: string;
+  transferPeriod?: string;
+}
