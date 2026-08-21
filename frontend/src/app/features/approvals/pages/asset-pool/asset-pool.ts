@@ -2,6 +2,7 @@ import { Component, signal, computed, inject, OnInit, OnDestroy } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { AssetPoolService, PoolAsset } from '../../services/asset-pool.service';
 import { RequestService } from '../../services/requests.service';
@@ -34,6 +35,12 @@ export class AssetPoolComponent implements OnInit, OnDestroy {
   private requestService = inject(RequestService);
   private transferService = inject(HeadTransferService);
   private authService = inject(AuthService);
+  private router = inject(Router);
+
+  // Captured in the constructor — `getCurrentNavigation()` is only populated
+  // while this component's navigation is in flight, not by the time ngOnInit runs.
+  private incomingTransferRequestId: number | null =
+    (this.router.getCurrentNavigation()?.extras.state?.['transferRequestId'] as number | undefined) ?? null;
 
   private searchSubject = new Subject<string>();
   private specValueSubject = new Subject<string>();
@@ -152,7 +159,15 @@ export class AssetPoolComponent implements OnInit, OnDestroy {
 
   loadApprovedTransferRequests() {
     this.requestService.getApprovedTransferRequests().subscribe({
-      next: (requests: any[]) => this.approvedTransferRequests.set(requests),
+      next: (requests: any[]) => {
+        this.approvedTransferRequests.set(requests);
+
+        if (this.incomingTransferRequestId != null) {
+          const preselected = requests.find(req => req.id === this.incomingTransferRequestId);
+          if (preselected) this.selectedTransferRequest.set(preselected);
+          this.incomingTransferRequestId = null;
+        }
+      },
       error: (err) => console.error('Error loading approved transfer requests:', err)
     });
   }

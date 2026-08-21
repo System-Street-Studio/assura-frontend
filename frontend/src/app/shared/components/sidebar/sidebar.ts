@@ -80,10 +80,10 @@ export class SharedSidebarComponent {
     { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'] },
 
     // Approvals / Division Head section
-    { label: 'Overview', icon: 'home', link: '/approvals/overview', roles: ['DivisionHead', 'Admin'] },
-    { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['DivisionHead', 'Admin'] },
-    { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['DivisionHead', 'Admin'] },
-    { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['DivisionHead', 'Admin'] },
+    { label: 'Overview', icon: 'home', link: '/approvals/overview', roles: ['DivisionHead'] },
+    { label: 'Assets', icon: 'inventory', link: '/approvals/assets', roles: ['DivisionHead'] },
+    { label: 'Requests', icon: 'request_quote', link: '/approvals/requests', roles: ['DivisionHead'] },
+    { label: 'Transfers', icon: 'transfer_within_a_station', link: '/approvals/transfers', roles: ['DivisionHead'] },
 
     // Employee section
     { label: 'Emp - Dashboard', icon: 'dashboard', link: '/employee/employee-overview', roles: ['ANY'], section: 'employee', isGlobal: true },

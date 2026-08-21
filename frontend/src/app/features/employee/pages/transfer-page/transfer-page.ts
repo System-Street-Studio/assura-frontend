@@ -228,8 +228,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   
   // loads the counts for each transfer category
   loadAllCounts() {
-    const userId = Number(this.authService.getUserId());
-    this.employeeTransferService.getTransferCounts(userId).subscribe({
+    this.employeeTransferService.getTransferCounts().subscribe({
       next: (counts) => {
         if (counts) {
           this.incomingCount.set(counts.incomingCount);
