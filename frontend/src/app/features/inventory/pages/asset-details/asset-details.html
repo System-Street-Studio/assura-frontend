@@ -135,8 +135,48 @@
         </div>
       </section>
 
+      <!-- Transfer History tab -->
+      @if (activeTab === 'transfers') {
+        <section>
+          @if (transferHistoryLoading) {
+            <div style="display: flex; align-items: center; justify-content: center; padding: 64px 0;">
+              <p style="margin: 0; font-size: 14px; opacity: 0.7;">Loading transfer history...</p>
+            </div>
+          } @else if (transferHistory.length === 0) {
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 0;">
+              <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #64748b;">history</mat-icon>
+              <p style="margin: 0; font-size: 16px; font-weight: 500;">This asset has never been transferred.</p>
+            </div>
+          } @else {
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              @for (entry of transferHistory; track entry.id) {
+                <div style="padding: 16px; border-radius: 8px; border: 1px solid rgba(148, 163, 184, 0.2);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-weight: 600; font-size: 14px;">{{ entry.transferNumber }}</span>
+                    <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; opacity: 0.7;">{{ entry.status }}</span>
+                  </div>
+                  <div style="font-size: 14px; line-height: 1.6;">
+                    {{ entry.currentHolderName || 'Unknown' }} ({{ entry.fromDivisionName }}) &rarr;
+                    {{ entry.targetUserName || 'Unknown' }} ({{ entry.toDivisionName }})
+                  </div>
+                  <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">
+                    Initiated {{ entry.transferDate | date:'mediumDate' }} by {{ entry.transferByName }}
+                    @if (entry.returnDate) {
+                      &middot; Returned {{ entry.returnDate | date:'mediumDate' }}
+                    }
+                  </div>
+                  @if (entry.reason) {
+                    <div style="font-size: 13px; margin-top: 8px;">{{ entry.reason }}</div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </section>
+      }
+
       <!-- Placeholder for other tabs -->
-      <section style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 0;" *ngIf="activeTab !== 'about'">
+      <section style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 0;" *ngIf="activeTab !== 'about' && activeTab !== 'transfers'">
         <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #64748b;">history</mat-icon>
         <p style="margin: 0; font-size: 16px; font-weight: 500;">
           {{ activeTab === 'checkout-log' ? 'Maintenance and assignment history coming soon.' : 'Additional details.' }}

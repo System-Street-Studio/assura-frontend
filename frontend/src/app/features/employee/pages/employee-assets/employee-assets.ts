@@ -3,9 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, Router } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
 import { AssetService } from '../../../../features/inventory/services/asset.service';
 import { AssetDetail } from '../../../../features/inventory/models/asset.model';
+import { EmployeeTransferService } from '../../services/asset-transfer.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 interface Asset {
   assetId: string;
@@ -30,6 +34,8 @@ interface Asset {
 })
 export class EmployeeAssetsComponent implements OnInit {
   private assetService = inject(AssetService);
+  private employeeTransferService = inject(EmployeeTransferService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   @HostListener('document:click', ['$event'])
@@ -77,9 +83,16 @@ export class EmployeeAssetsComponent implements OnInit {
   //map asset details
   ngOnInit() {
     this.isLoading.set(true);
-    this.assetService.getAll(true).subscribe({
-      next: (data: AssetDetail[]) => {
-        const mapped = data.map(a => ({
+
+    // Assets currently assigned to me, plus assets I used to hold that are still out
+    // on an active transfer — without the latter, an asset silently disappears from
+    // this page the moment it's transferred away, with no trace it ever existed here.
+    forkJoin({
+      owned: this.assetService.getAll(true),
+      transferredAway: this.employeeTransferService.getTransfers('active').pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ owned, transferredAway }) => {
+        const mapped = owned.map(a => ({
           assetId: a.id.toString(),
           assetCode: a.assetCode,
           assetName: a.productName,
@@ -92,7 +105,25 @@ export class EmployeeAssetsComponent implements OnInit {
           status: this.formatStatus(a.status),
           image: ''
         }));
-        this.assets.set(mapped);
+
+        const myUserId = Number(this.authService.getUserId());
+        const awayMapped = transferredAway
+          .filter((t: any) => t.currentHolderId === myUserId)
+          .map((t: any) => ({
+            assetId: `transfer-${t.id}`,
+            assetCode: t.assetCode,
+            assetName: t.productName || t.assetCode,
+            category: 'N/A',
+            serialNumber: 'N/A',
+            description: `Currently with ${t.targetUserName || 'another employee'} (${t.toDivisionName || 'N/A'}) since ${new Date(t.transferDate).toLocaleDateString()}.${t.reason ? ' Reason: ' + t.reason : ''}`,
+            assignedEmployee: t.targetUserName || 'N/A',
+            assignedDate: 'N/A',
+            conditionStatus: 'N/A',
+            status: 'Transferred',
+            image: ''
+          }));
+
+        this.assets.set([...mapped, ...awayMapped]);
         this.isLoading.set(false);
       },
       error: () => {
@@ -222,9 +253,14 @@ export class EmployeeAssetsComponent implements OnInit {
 
   //button for go to discard form
   goToDiscardForm(): void {
-    if (this.selectedAsset()) {
+    const currentAsset = this.selectedAsset();
+    if (currentAsset) {
+      if (currentAsset.status === 'Maintenance' || currentAsset.status === 'Under Maintenance' || currentAsset.status === 'UnderMaintenance') {
+        alert('Assets under maintenance cannot be discarded.');
+        return;
+      }
       this.router.navigate(['/employee/discard-form'], {
-        state: { assetName: this.selectedAsset()?.assetName }
+        state: { assetName: currentAsset.assetName }
       });
     }
   }
