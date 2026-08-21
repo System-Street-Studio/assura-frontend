@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetService } from '../../services/asset.service';
-import { AssetDetail } from '../../models/asset.model';
+import { AssetDetail, AssetTransferHistoryEntry } from '../../models/asset.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import QRCode from 'qrcode';
 
@@ -45,7 +45,12 @@ export class AssetDetailsComponent implements OnInit {
     { id: 'about', label: 'About' },
     { id: 'checkout-log', label: 'Checkout Log' },
     { id: 'maintenances', label: 'Maintenances' },
+    { id: 'transfers', label: 'Transfer History' },
   ];
+
+  transferHistory: AssetTransferHistoryEntry[] = [];
+  transferHistoryLoading = false;
+  transferHistoryLoaded = false;
 
   /**
    * Initializes the component by fetching the asset details based on the ID from the route.
@@ -108,6 +113,26 @@ export class AssetDetailsComponent implements OnInit {
 
   setTab(tabId: string): void {
     this.activeTab = tabId;
+    if (tabId === 'transfers' && !this.transferHistoryLoaded) {
+      this.loadTransferHistory();
+    }
+  }
+
+  private loadTransferHistory(): void {
+    this.transferHistoryLoading = true;
+    this.assetService.getTransferHistory(this.asset.id).subscribe({
+      next: (history) => {
+        this.transferHistory = history;
+        this.transferHistoryLoaded = true;
+        this.transferHistoryLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.transferHistoryLoading = false;
+        this.toast.error('Failed to load transfer history');
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   getStatusClass(): string {

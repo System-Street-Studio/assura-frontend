@@ -42,9 +42,9 @@ export class EmployeeTransferService {
     return this.http.post<any>(`${this.baseUrl}/transfers/${transferId}/return`, {});
   }
 
-  //get transfer counts for the logged-in employee
-  getTransferCounts(userId: number): Observable<any> {
-  return this.http.get<any>(`${this.baseUrl}/transfers/counts?userId=${userId}`);
+  //get transfer counts for the logged-in employee (caller is derived from the JWT server-side)
+  getTransferCounts(): Observable<any> {
+  return this.http.get<any>(`${this.baseUrl}/transfers/counts`);
   }
   
 }

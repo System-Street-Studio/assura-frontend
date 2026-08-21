@@ -42,8 +42,9 @@ export class HeadTransferService {
     );
   }
   
-  getTransferCounts(userId: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/transfers/counts?userId=${userId}`);
+  // caller is derived from the JWT server-side
+  getTransferCounts(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/transfers/counts`);
   }
   getDivisionHeadTransfers(tab: string): Observable<any[]> {
     const cacheBuster = new Date().getTime().toString();

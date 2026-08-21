@@ -69,7 +69,7 @@ export const shellRoutes: Routes = [
   {
     path: 'approvals',
     canActivate: [roleGuard],
-    data: { roles: [ROLES.DIVISION_HEAD, ROLES.ADMIN] },
+    data: { roles: [ROLES.DIVISION_HEAD] },
     loadChildren: () => import('../approvals/approvals.routes').then(m => m.approvalsRoutes)
   },
   {

@@ -85,9 +85,7 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   }
 
   loadAllCounts() {
-    const userId = Number(this.authService.getUserId());
-    
-    this.transferService.getTransferCounts(userId).subscribe({
+    this.transferService.getTransferCounts().subscribe({
       next: (counts) => {
         if (counts) {
           this.outgoingCount.set(counts.outgoingCount);
