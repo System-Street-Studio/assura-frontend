@@ -126,15 +126,16 @@ export class TransferPageComponent implements OnInit, OnDestroy {
   returnAsset(id: string) {
     if (confirm('Are you sure you want to return this asset? This will change asset status to "In Use" and complete the transfer.')) {
       this.employeeTransferService.returnActiveTransfer(Number(id)).subscribe({
-        next: () => {
+        next: (res: any) => {
           this.loadTransfers();
           this.loadAllCounts();
           this.expandedItemId.set(null);
-          this.showActionPopup('Asset returned successfully. Transfer has been completed.', 'success');
+          this.showActionPopup(res?.message || 'Asset returned successfully. Transfer has been completed.', 'success');
         },
         error: (err) => {
           console.error('Error returning asset:', err);
-          this.showActionPopup('Failed to return asset. Please try again.', 'reject');
+          const serverMsg = err.error?.message || err.error?.error || 'Failed to return asset. Please try again.';
+          this.showActionPopup(serverMsg, 'reject');
         }
       });
     }
