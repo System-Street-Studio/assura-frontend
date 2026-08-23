@@ -2,6 +2,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LostItemsService, LostItem } from '../../../services/lost-items.service';
+import { AssetsService } from '../../../services/assets.service';
+import { Asset } from '../../my-assets/models/asset.model';
 import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
@@ -13,6 +15,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 })
 export class LostItemsComponent implements OnInit {
     items: LostItem[] = [];
+    availableAssets: Asset[] = [];
     selectedItem: LostItem | null = null;
     isLoading = true;
     isSubmitting = false;
@@ -23,11 +26,13 @@ export class LostItemsComponent implements OnInit {
 
     constructor(
         private lostItemsService: LostItemsService,
+        private assetsService: AssetsService,
         private cdr: ChangeDetectorRef,
         private toastService: ToastService,
         private fb: FormBuilder
     ) {
         this.reportForm = this.fb.group({
+            assetId: [null],
             assetName: ['', [Validators.required, Validators.maxLength(200)]],
             division: ['', [Validators.required, Validators.maxLength(100)]],
             assetType: ['', [Validators.maxLength(100)]],
@@ -39,6 +44,17 @@ export class LostItemsComponent implements OnInit {
 
     ngOnInit() {
         this.loadItems();
+        this.loadAssets();
+    }
+
+    loadAssets() {
+        this.assetsService.getAll().subscribe({
+            next: (data) => {
+                this.availableAssets = data || [];
+                this.cdr.markForCheck();
+            },
+            error: (err) => console.error('Failed to load assets for select:', err)
+        });
     }
 
     loadItems() {
@@ -76,12 +92,37 @@ export class LostItemsComponent implements OnInit {
     }
 
     openReportModal() {
-        this.reportForm.reset({ assetName: '', division: '', assetType: '', description: '' });
+        this.reportForm.reset({ assetId: null, assetName: '', division: '', assetType: '', description: '' });
+        this.loadAssets();
         this.showReportModal = true;
     }
 
     closeReportModal() {
         this.showReportModal = false;
+    }
+
+    onAssetSelectChange(event: Event) {
+        const selectEl = event.target as HTMLSelectElement;
+        const selectedId = selectEl.value;
+        if (!selectedId) {
+            this.reportForm.patchValue({
+                assetId: null,
+                assetName: '',
+                division: '',
+                assetType: ''
+            });
+            return;
+        }
+
+        const foundAsset = this.availableAssets.find(a => a.id.toString() === selectedId.toString());
+        if (foundAsset) {
+            this.reportForm.patchValue({
+                assetId: parseInt(foundAsset.id, 10) || null,
+                assetName: foundAsset.name || '',
+                division: foundAsset.division || '',
+                assetType: foundAsset.type || ''
+            });
+        }
     }
 
     submitReport() {
@@ -92,6 +133,7 @@ export class LostItemsComponent implements OnInit {
         this.isSubmitting = true;
         const formVal = this.reportForm.value;
         this.lostItemsService.create({
+            assetId: formVal.assetId ? Number(formVal.assetId) : null,
             assetName: (formVal.assetName ?? '').trim(),
             division: (formVal.division ?? '').trim(),
             assetType: (formVal.assetType ?? '').trim(),

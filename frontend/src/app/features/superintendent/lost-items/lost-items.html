@@ -103,6 +103,16 @@
 
         <form [formGroup]="reportForm" (ngSubmit)="submitReport()">
             <div class="form-field">
+                <label for="assetSelect">Select Registered Asset (ID / Name)</label>
+                <select id="assetSelect" class="assura-input" (change)="onAssetSelectChange($event)">
+                    <option value="">-- Choose Asset ID to Auto-Fill --</option>
+                    <option *ngFor="let a of availableAssets" [value]="a.id">
+                        [ID: {{ a.id }}] {{ a.name }} - {{ a.division }} ({{ a.type || 'N/A' }})
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-field">
                 <label for="assetName">Asset Name *</label>
                 <input id="assetName" type="text" formControlName="assetName" class="assura-input" />
                 <span class="field-error" *ngIf="f['assetName'].touched && f['assetName'].invalid">Asset name is required.</span>
