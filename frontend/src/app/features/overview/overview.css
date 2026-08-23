@@ -557,6 +557,20 @@
   border-color: #ef4444;
 }
 
+.buyer-select-label {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+select.assura-input.input-invalid {
+  border-color: #ef4444;
+}
+
 .field-error {
   display: block;
   margin-top: 6px;

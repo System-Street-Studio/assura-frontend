@@ -32,6 +32,8 @@ export const routes: Routes = [
     {
         path: 'superintendent',
         component: SuperintendentComponent,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: [ROLES.SUPERINTENDENT, ROLES.ADMIN] },
         children: superintendentRoutes
     },
     {

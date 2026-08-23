@@ -13,8 +13,4 @@ export class DiscardedNotesService {
   getAll(): Observable<DiscardedNote[]> {
     return this.http.get<DiscardedNote[]>(this.apiUrl);
   }
-
-  updateStatus(id: string, status: string, note: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}/status`, { id: +id, status, note });
-  }
 }

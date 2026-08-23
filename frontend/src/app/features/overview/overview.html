@@ -248,6 +248,26 @@
                     {{ reviewNoteControl.errors?.['required'] ? 'A decision note is required.' : (reviewNoteControl.errors?.['minlength'] ? 'Note must be at least 5 characters.' : 'Note cannot exceed 1000 characters.') }}
                   </span>
                 }
+                @if (reviewAction === 'done') {
+                  <label class="buyer-select-label" for="buyerSelect">Assign Buyer *</label>
+                  <select id="buyerSelect" class="assura-input" [formControl]="buyerIdControl"
+                          [class.input-invalid]="buyerIdControl.invalid && buyerIdControl.touched">
+                    <option [ngValue]="null" disabled>Select a buyer...</option>
+                    @for (buyer of buyers; track buyer.id) {
+                      <option [ngValue]="+buyer.id">{{ buyer.name }}</option>
+                    }
+                  </select>
+                  @if (buyerIdControl.invalid && buyerIdControl.touched) {
+                    <span class="field-error">A buyer must be assigned before approving this request.</span>
+                  }
+
+                  <label class="buyer-select-label" for="soldPriceInput" style="margin-top: 12px;">Sold Price ($) *</label>
+                  <input id="soldPriceInput" type="number" step="0.01" min="0" placeholder="0.00" class="assura-input"
+                         [formControl]="soldPriceControl" [class.input-invalid]="soldPriceControl.invalid && soldPriceControl.touched" />
+                  @if (soldPriceControl.invalid && soldPriceControl.touched) {
+                    <span class="field-error">A valid sold price must be entered.</span>
+                  }
+                }
                 <div class="review-notes-btns">
                   <button class="cancel-link" (click)="cancelReview()" [disabled]="isSubmitting">Back</button>
                   <button class="submit-btn" [ngClass]="reviewAction" (click)="submitReview()" [disabled]="isSubmitting">

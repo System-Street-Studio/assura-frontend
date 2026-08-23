@@ -64,6 +64,14 @@
                         <span class="status-discarded">Discarded</span>
                     </div>
                     <div class="detail-panel-item">
+                        <label>Buyer</label>
+                        <span>{{ selectedItem.buyerName || 'Not assigned' }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Sold Price</label>
+                        <span>{{ selectedItem.soldPrice !== null && selectedItem.soldPrice !== undefined ? ('$' + selectedItem.soldPrice) : 'N/A' }}</span>
+                    </div>
+                    <div class="detail-panel-item">
                         <label>Value at Purchasing</label>
                         <span>{{ selectedItem.valueAtPurchasing }}</span>
                     </div>

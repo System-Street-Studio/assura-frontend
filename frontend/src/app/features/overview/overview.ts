@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { QueueItemsService, QueueItem } from '../../services/queue-items.service';
+import { BuyersService, Buyer } from '../../services/buyers.service';
 import { ToastService } from '../../shared/services/toast.service';
 import { AuthService } from '../../core/auth/auth.service';
 
@@ -32,6 +33,9 @@ export class OverviewComponent implements OnInit {
   reviewStep: 'idle' | 'choose' | 'notes' = 'idle';
   reviewAction: 'done' | 'reject' | '' = '';
   reviewNoteControl = new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(1000)]);
+  buyerIdControl = new FormControl<any>(null);
+  soldPriceControl = new FormControl<any>(null, [Validators.required, Validators.min(0)]);
+  buyers: Buyer[] = [];
 
   greeting = 'Welcome';
   firstName = 'Superintendent';
@@ -39,6 +43,7 @@ export class OverviewComponent implements OnInit {
 
   constructor(
     private queueItemsService: QueueItemsService,
+    private buyersService: BuyersService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private authService: AuthService,
@@ -55,6 +60,14 @@ export class OverviewComponent implements OnInit {
 
     const hour = new Date().getHours();
     this.greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
+    this.buyersService.getAll().subscribe({
+      next: (data) => {
+        this.buyers = data;
+        this.cdr.markForCheck();
+      },
+      error: (err) => console.error('Failed to load buyers:', err)
+    });
 
     this.queueItemsService.getAll().subscribe({
       next: (data) => {
@@ -120,28 +133,51 @@ export class OverviewComponent implements OnInit {
     this.reviewAction = action;
     this.reviewStep = 'notes';
     this.reviewNoteControl.reset('');
+    this.buyerIdControl.reset(null);
+    this.soldPriceControl.reset(null);
   }
 
   submitReview() {
     if (!this.selectedItem || this.isSubmitting) return;
 
-    if (this.reviewNoteControl.invalid) {
-      this.reviewNoteControl.markAsTouched();
-      return;
-    }
+    let hasError = false;
 
     const note = (this.reviewNoteControl.value ?? '').trim();
-    if (note.length < 5) {
-      this.reviewNoteControl.setErrors({ minlength: true });
+    if (!note || note.length < 5) {
       this.reviewNoteControl.markAsTouched();
+      this.reviewNoteControl.setErrors({ minlength: true });
+      hasError = true;
+    }
+
+    const action = this.reviewAction;
+
+    if (action === 'done') {
+      const rawBuyerId = this.buyerIdControl.value;
+      if (rawBuyerId === null || rawBuyerId === undefined || rawBuyerId === '' || isNaN(Number(rawBuyerId))) {
+        this.buyerIdControl.markAsTouched();
+        this.buyerIdControl.setErrors({ required: true });
+        hasError = true;
+      }
+
+      const rawPrice = this.soldPriceControl.value;
+      if (rawPrice === null || rawPrice === undefined || rawPrice === '' || isNaN(Number(rawPrice)) || Number(rawPrice) < 0) {
+        this.soldPriceControl.markAsTouched();
+        this.soldPriceControl.setErrors({ required: true });
+        hasError = true;
+      }
+    }
+
+    if (hasError) {
+      this.cdr.markForCheck();
       return;
     }
 
     this.isSubmitting = true;
-    const action = this.reviewAction;
     const newStatus = action === 'done' ? 'Approved' : 'Rejected';
+    const buyerId = action === 'done' ? Number(this.buyerIdControl.value) : null;
+    const soldPrice = action === 'done' ? Number(this.soldPriceControl.value) : null;
 
-    this.queueItemsService.updateStatus(this.selectedItem.id, newStatus, note).subscribe({
+    this.queueItemsService.updateStatus(this.selectedItem.id, newStatus, note, buyerId, soldPrice).subscribe({
       next: () => {
         this.isSubmitting = false;
         if (this.selectedItem) {
@@ -181,5 +217,7 @@ export class OverviewComponent implements OnInit {
     this.reviewStep = 'idle';
     this.reviewAction = '';
     this.reviewNoteControl.reset('');
+    this.buyerIdControl.reset(null);
+    this.soldPriceControl.reset(null);
   }
 }
