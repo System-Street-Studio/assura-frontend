@@ -81,6 +81,9 @@ export class EmployeeAssetsComponent implements OnInit {
   pageSize = 20;
   currentPage = signal(1);
 
+  reportedLostAssetIds = signal<Set<number>>(new Set());
+  reportedLostAssetNames = signal<Set<string>>(new Set());
+
   assets = signal<Asset[]>([]);
 
   //map asset details
@@ -92,9 +95,21 @@ export class EmployeeAssetsComponent implements OnInit {
     // this page the moment it's transferred away, with no trace it ever existed here.
     forkJoin({
       owned: this.assetService.getAll(true),
-      transferredAway: this.employeeTransferService.getTransfers('active').pipe(catchError(() => of([])))
+      transferredAway: this.employeeTransferService.getTransfers('active').pipe(catchError(() => of([]))),
+      lostItems: this.lostItemsService.getAll().pipe(catchError(() => of([])))
     }).subscribe({
-      next: ({ owned, transferredAway }) => {
+      next: ({ owned, transferredAway, lostItems }) => {
+        const idsSet = new Set<number>();
+        const namesSet = new Set<string>();
+
+        (lostItems || []).forEach((item: any) => {
+          if (item.assetId) idsSet.add(Number(item.assetId));
+          if (item.assetName) namesSet.add(item.assetName.toLowerCase().trim());
+        });
+
+        this.reportedLostAssetIds.set(idsSet);
+        this.reportedLostAssetNames.set(namesSet);
+
         const mapped = owned.map(a => ({
           assetId: a.id.toString(),
           realAssetId: Number(a.id),
@@ -270,9 +285,26 @@ export class EmployeeAssetsComponent implements OnInit {
     }
   }
 
+  isAssetReportedLost(asset: Asset | null): boolean {
+    if (!asset) return false;
+    const targetId = asset.realAssetId || parseInt(asset.assetId, 10);
+    if (!isNaN(targetId!) && this.reportedLostAssetIds().has(targetId!)) {
+      return true;
+    }
+    if (asset.assetName && this.reportedLostAssetNames().has(asset.assetName.toLowerCase().trim())) {
+      return true;
+    }
+    return false;
+  }
+
   reportLostAsset(): void {
     const currentAsset = this.selectedAsset();
     if (!currentAsset) return;
+
+    if (this.isAssetReportedLost(currentAsset)) {
+      alert(`Asset "${currentAsset.assetName}" has already been reported as lost. It is currently under review by the Superintendent.`);
+      return;
+    }
 
     if (confirm(`Are you sure you want to report asset "${currentAsset.assetName}" (#${currentAsset.assetCode}) as lost?`)) {
       const rawId = currentAsset.realAssetId || parseInt(currentAsset.assetId, 10);

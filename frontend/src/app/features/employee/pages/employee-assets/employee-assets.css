@@ -686,10 +686,38 @@
   color: #fbbf24;
 }
 
-.assura-btn-warning:hover {
+.assura-btn-warning:hover:not(:disabled) {
   background: rgba(245, 158, 11, 0.25);
   border-color: rgba(245, 158, 11, 0.5);
   color: #fde047;
+}
+
+.assura-btn-warning:disabled,
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+  background: rgba(148, 163, 184, 0.15) !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+  color: #94a3b8 !important;
+}
+
+.already-reported-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #fbbf24;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.already-reported-banner mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 .pagination-wrapper {
