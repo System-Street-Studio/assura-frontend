@@ -230,16 +230,18 @@
           </div>
         </div>
 
-        @if (selectedAsset()?.status !== 'Discarded' && !selectedAsset()?.assetId?.toString()?.startsWith('transfer-')) {
+        @if (selectedAsset()?.status !== 'Discarded') {
           <div class="detail-actions-footer">
-            <button class="assura-btn-secondary" (click)="goToMaintenanceForm()">
-              <mat-icon>build</mat-icon> Request Maintenance
-            </button>
+            @if (!selectedAsset()?.assetId?.toString()?.startsWith('transfer-')) {
+              <button class="assura-btn-secondary" (click)="goToMaintenanceForm()">
+                <mat-icon>build</mat-icon> Request Maintenance
+              </button>
+              <button class="assura-btn-danger" (click)="goToDiscardForm()">
+                <mat-icon>delete_outline</mat-icon> Request Discard
+              </button>
+            }
             <button class="assura-btn-warning" (click)="reportLostAsset()">
               <mat-icon>report_problem</mat-icon> Report Lost
-            </button>
-            <button class="assura-btn-danger" (click)="goToDiscardForm()">
-              <mat-icon>delete_outline</mat-icon> Request Discard
             </button>
           </div>
         }

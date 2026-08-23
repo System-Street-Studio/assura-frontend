@@ -14,6 +14,7 @@ import { LostItemsService } from '../../../../services/lost-items.service';
 
 interface Asset {
   assetId: string;
+  realAssetId?: number | null;
   assetCode: string;
   assetName: string;
   image: string;
@@ -96,6 +97,7 @@ export class EmployeeAssetsComponent implements OnInit {
       next: ({ owned, transferredAway }) => {
         const mapped = owned.map(a => ({
           assetId: a.id.toString(),
+          realAssetId: Number(a.id),
           assetCode: a.assetCode,
           assetName: a.productName,
           category: a.categoryName,
@@ -113,6 +115,7 @@ export class EmployeeAssetsComponent implements OnInit {
           .filter((t: any) => t.currentHolderId === myUserId)
           .map((t: any) => ({
             assetId: `transfer-${t.id}`,
+            realAssetId: t.assetId ? Number(t.assetId) : null,
             assetCode: t.assetCode,
             assetName: t.productName || t.assetCode,
             category: 'N/A',
@@ -272,9 +275,11 @@ export class EmployeeAssetsComponent implements OnInit {
     if (!currentAsset) return;
 
     if (confirm(`Are you sure you want to report asset "${currentAsset.assetName}" (#${currentAsset.assetCode}) as lost?`)) {
-      const assetIdNum = parseInt(currentAsset.assetId, 10);
+      const rawId = currentAsset.realAssetId || parseInt(currentAsset.assetId, 10);
+      const assetIdNum = isNaN(rawId!) ? null : rawId;
+
       this.lostItemsService.create({
-        assetId: isNaN(assetIdNum) ? null : assetIdNum,
+        assetId: assetIdNum,
         assetName: currentAsset.assetName,
         division: 'Employee Division',
         assetType: currentAsset.category || '',
