@@ -33,8 +33,8 @@ export class OverviewComponent implements OnInit {
   reviewStep: 'idle' | 'choose' | 'notes' = 'idle';
   reviewAction: 'done' | 'reject' | '' = '';
   reviewNoteControl = new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(1000)]);
-  buyerIdControl = new FormControl<number | null>(null);
-  soldPriceControl = new FormControl<number | null>(null, [Validators.required, Validators.min(0)]);
+  buyerIdControl = new FormControl<any>(null);
+  soldPriceControl = new FormControl<any>(null, [Validators.required, Validators.min(0)]);
   buyers: Buyer[] = [];
 
   greeting = 'Welcome';
@@ -140,38 +140,41 @@ export class OverviewComponent implements OnInit {
   submitReview() {
     if (!this.selectedItem || this.isSubmitting) return;
 
-    if (this.reviewNoteControl.invalid) {
-      this.reviewNoteControl.markAsTouched();
-      return;
-    }
+    let hasError = false;
 
     const note = (this.reviewNoteControl.value ?? '').trim();
-    if (note.length < 5) {
-      this.reviewNoteControl.setErrors({ minlength: true });
+    if (!note || note.length < 5) {
       this.reviewNoteControl.markAsTouched();
-      return;
+      this.reviewNoteControl.setErrors({ minlength: true });
+      hasError = true;
     }
 
     const action = this.reviewAction;
 
     if (action === 'done') {
-      let hasError = false;
-      if (!this.buyerIdControl.value) {
+      const rawBuyerId = this.buyerIdControl.value;
+      if (rawBuyerId === null || rawBuyerId === undefined || rawBuyerId === '' || isNaN(Number(rawBuyerId))) {
         this.buyerIdControl.markAsTouched();
         this.buyerIdControl.setErrors({ required: true });
         hasError = true;
       }
-      if (this.soldPriceControl.value === null || this.soldPriceControl.value === undefined || this.soldPriceControl.invalid) {
+
+      const rawPrice = this.soldPriceControl.value;
+      if (rawPrice === null || rawPrice === undefined || rawPrice === '' || isNaN(Number(rawPrice)) || Number(rawPrice) < 0) {
         this.soldPriceControl.markAsTouched();
         this.soldPriceControl.setErrors({ required: true });
         hasError = true;
       }
-      if (hasError) return;
+    }
+
+    if (hasError) {
+      this.cdr.markForCheck();
+      return;
     }
 
     this.isSubmitting = true;
     const newStatus = action === 'done' ? 'Approved' : 'Rejected';
-    const buyerId = action === 'done' ? this.buyerIdControl.value : null;
+    const buyerId = action === 'done' ? Number(this.buyerIdControl.value) : null;
     const soldPrice = action === 'done' ? Number(this.soldPriceControl.value) : null;
 
     this.queueItemsService.updateStatus(this.selectedItem.id, newStatus, note, buyerId, soldPrice).subscribe({
