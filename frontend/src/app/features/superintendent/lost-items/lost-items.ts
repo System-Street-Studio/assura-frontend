@@ -108,6 +108,21 @@ export class LostItemsComponent implements OnInit {
         this.showReportModal = false;
     }
 
+    getAssetName(asset: any): string {
+        if (!asset) return '';
+        return asset.name || asset.productName || asset.assetName || asset.assetCode || `Asset #${asset.id}`;
+    }
+
+    getAssetDivision(asset: any): string {
+        if (!asset) return '';
+        return asset.division || asset.divisionName || '';
+    }
+
+    getAssetType(asset: any): string {
+        if (!asset) return '';
+        return asset.type || asset.categoryName || asset.assetType || '';
+    }
+
     onAssetSearchInput() {
         const term = (this.assetSearchTerm || '').trim().toLowerCase();
         if (!term) {
@@ -119,27 +134,43 @@ export class LostItemsComponent implements OnInit {
                 division: '',
                 assetType: ''
             });
+            this.cdr.markForCheck();
             return;
         }
 
-        this.filteredAssets = this.availableAssets.filter(a =>
-            a.id.toString().toLowerCase().includes(term) ||
-            (a.name || '').toLowerCase().includes(term) ||
-            (a.serialNumber || '').toLowerCase().includes(term) ||
-            (a.division || '').toLowerCase().includes(term)
-        );
+        this.filteredAssets = this.availableAssets.filter((a: any) => {
+            const idStr = (a.id ?? '').toString().toLowerCase();
+            const codeStr = (a.assetCode ?? '').toLowerCase();
+            const nameStr = this.getAssetName(a).toLowerCase();
+            const serialStr = (a.serialNumber ?? '').toLowerCase();
+            const divStr = this.getAssetDivision(a).toLowerCase();
+
+            return idStr.includes(term) ||
+                   codeStr.includes(term) ||
+                   nameStr.includes(term) ||
+                   serialStr.includes(term) ||
+                   divStr.includes(term);
+        });
         this.showSuggestions = true;
+        this.cdr.markForCheck();
     }
 
-    selectSuggestedAsset(asset: Asset) {
-        this.assetSearchTerm = `[ID: ${asset.id}] ${asset.name}`;
+    selectSuggestedAsset(asset: any) {
+        const name = this.getAssetName(asset);
+        const division = this.getAssetDivision(asset);
+        const type = this.getAssetType(asset);
+
+        this.assetSearchTerm = `[ID: ${asset.id}] ${name}`;
         this.showSuggestions = false;
+
         this.reportForm.patchValue({
             assetId: parseInt(asset.id, 10) || null,
-            assetName: asset.name || '',
-            division: asset.division || '',
-            assetType: asset.type || ''
+            assetName: name,
+            division: division,
+            assetType: type
         });
+
+        this.cdr.markForCheck();
     }
 
     hideSuggestionsWithDelay() {

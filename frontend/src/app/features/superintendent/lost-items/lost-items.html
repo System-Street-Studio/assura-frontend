@@ -116,10 +116,10 @@
                        autocomplete="off" />
 
                 <ul class="suggestions-dropdown" *ngIf="showSuggestions && filteredAssets.length > 0">
-                    <li *ngFor="let a of filteredAssets" (mousedown)="selectSuggestedAsset(a)">
+                    <li *ngFor="let a of filteredAssets" (mousedown)="$event.preventDefault(); selectSuggestedAsset(a)">
                         <span class="asset-id-badge">ID: {{ a.id }}</span>
-                        <span class="asset-title">{{ a.name }}</span>
-                        <span class="asset-sub">{{ a.division }} ({{ a.type || 'N/A' }})</span>
+                        <span class="asset-title">{{ getAssetName(a) }}</span>
+                        <span class="asset-sub">{{ getAssetDivision(a) }} <ng-container *ngIf="getAssetType(a)">({{ getAssetType(a) }})</ng-container></span>
                     </li>
                 </ul>
 
