@@ -169,11 +169,14 @@ export class AccOverviewComponent implements OnInit {
         this.fileError = false;
         this.fileErrorMessage = '';
 
-        const rawAmount = parseFloat(
-            (this.selectedItem.currentValue || '').replace(/[^0-9.]/g, '')
-        ) || parseFloat(
-            (this.selectedItem.valueAtPurchasing || '').replace(/[^0-9.]/g, '')
-        ) || 0;
+        const soldPrice = this.selectedItem.soldPrice;
+        const rawAmount = (soldPrice !== null && soldPrice !== undefined && !isNaN(Number(soldPrice)))
+            ? Number(soldPrice)
+            : parseFloat(
+                (this.selectedItem.currentValue || '').replace(/[^0-9.]/g, '')
+            ) || parseFloat(
+                (this.selectedItem.valueAtPurchasing || '').replace(/[^0-9.]/g, '')
+            ) || 0;
 
         const newReceipt = {
             assetName: this.selectedItem.name || 'Asset',
