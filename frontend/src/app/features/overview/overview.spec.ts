@@ -109,7 +109,7 @@ describe('OverviewComponent', () => {
     expect(component.buyerIdControl.touched).toBeTrue();
   });
 
-  it('clicking Confirm Approval with a valid note and buyer should call the backend and complete the review', async () => {
+  it('clicking Confirm Approval with a valid note, buyer, and sold price should call the backend and complete the review', async () => {
     const el: HTMLElement = fixture.debugElement.nativeElement;
     el.querySelector<HTMLButtonElement>('.review-section .assura-btn-primary')!.click();
     await fixture.whenStable();
@@ -118,13 +118,14 @@ describe('OverviewComponent', () => {
 
     component.reviewNoteControl.setValue('Verified and disposed');
     component.buyerIdControl.setValue(5);
+    component.soldPriceControl.setValue(150);
     await fixture.whenStable();
 
     const submitBtn = el.querySelector<HTMLButtonElement>('.review-notes .submit-btn');
     submitBtn!.click();
     await fixture.whenStable();
 
-    expect(queueItemsServiceSpy.updateStatus).toHaveBeenCalledWith('1', 'Approved', 'Verified and disposed', 5);
+    expect(queueItemsServiceSpy.updateStatus).toHaveBeenCalledWith('1', 'Approved', 'Verified and disposed', 5, 150);
     expect(component.reviewStep).toBe('idle');
   });
 });
