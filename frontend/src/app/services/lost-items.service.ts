@@ -17,6 +17,14 @@ export interface LostItem {
   description: string;
 }
 
+export interface CreateLostItemPayload {
+  assetName: string;
+  division: string;
+  assetType: string;
+  description: string;
+  assetId?: number | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LostItemsService {
   private apiUrl = `${environment.apiUrl}/LostItems`;
@@ -25,5 +33,13 @@ export class LostItemsService {
 
   getAll(): Observable<LostItem[]> {
     return this.http.get<LostItem[]>(this.apiUrl);
+  }
+
+  create(payload: CreateLostItemPayload): Observable<number> {
+    return this.http.post<number>(this.apiUrl, payload);
+  }
+
+  updateStatus(id: string, status: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/status`, { id: +id, status });
   }
 }

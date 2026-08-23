@@ -26,7 +26,7 @@ export class QueueItemsService {
     return this.http.get<QueueItem[]>(this.apiUrl);
   }
 
-  updateStatus(id: string, status: string, reviewNote?: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}/status`, { id: +id, status, reviewNote });
+  updateStatus(id: string, status: string, reviewNote?: string, buyerId?: number | null, soldPrice?: number | null): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/status`, { id: +id, status, reviewNote, buyerId, soldPrice });
   }
 }

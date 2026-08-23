@@ -22,6 +22,8 @@ interface PendingItem {
     valueAtPurchasing: string;
     currentValue: string;
     isHighlighted?: boolean;
+    buyerName?: string | null;
+    soldPrice?: number | null;
 }
 
 @Component({
@@ -39,9 +41,11 @@ export class AccOverviewComponent implements OnInit {
 
     allItems: PendingItem[] = [];
     filteredItems: PendingItem[] = [];
+    pagedItems: PendingItem[] = [];
     selectedItem: PendingItem | null = null;
     currentPage = 1;
-    totalPages = 3;
+    pageSize = 8;
+    totalPages = 1;
     showConfirmModal = false;
     fileError = false;
     fileErrorMessage = '';
@@ -80,6 +84,7 @@ export class AccOverviewComponent implements OnInit {
                 });
 
                 this.updateCounts();
+                this.updatePagination();
                 this.isLoading = false;
                 this.cdr.markForCheck();
             },
@@ -105,6 +110,16 @@ export class AccOverviewComponent implements OnInit {
         }
         this.selectedItem = this.filteredItems.length > 0 ? this.filteredItems[0] : null;
         this.currentPage = 1;
+        this.updatePagination();
+    }
+
+    private updatePagination() {
+        this.totalPages = Math.max(1, Math.ceil(this.filteredItems.length / this.pageSize));
+        if (this.currentPage > this.totalPages) {
+            this.currentPage = this.totalPages;
+        }
+        const start = (this.currentPage - 1) * this.pageSize;
+        this.pagedItems = this.filteredItems.slice(start, start + this.pageSize);
     }
 
     selectItem(item: PendingItem) {
@@ -217,18 +232,26 @@ export class AccOverviewComponent implements OnInit {
     onPageChange(page: number) {
         if (page >= 1 && page <= this.totalPages) {
             this.currentPage = page;
+            this.updatePagination();
         }
     }
 
     goToPage(page: number) {
         this.currentPage = page;
+        this.updatePagination();
     }
 
     previousPage() {
-        if (this.currentPage > 1) this.currentPage--;
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.updatePagination();
+        }
     }
 
     nextPage() {
-        if (this.currentPage < this.totalPages) this.currentPage++;
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.updatePagination();
+        }
     }
 }

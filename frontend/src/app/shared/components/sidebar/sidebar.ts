@@ -78,6 +78,7 @@ export class SharedSidebarComponent {
     { label: 'Depreciation', icon: 'trending_down', link: '/superintendent/depreciation', roles: ['Superintendent', 'Admin'] },
     { label: 'Discarded Notes', icon: 'note_alt', link: '/superintendent/discarded-notes', roles: ['Superintendent', 'Admin'] },
     { label: 'Buyer', icon: 'shopping_cart', link: '/superintendent/buyer', roles: ['Superintendent', 'Admin'] },
+    { label: 'Lost Items', icon: 'search_off', link: '/superintendent/lost-items', roles: ['Superintendent', 'Admin'] },
 
     // Approvals / Division Head section
     { label: 'Overview', icon: 'home', link: '/approvals/overview', roles: ['DivisionHead'] },

@@ -61,12 +61,6 @@ export const shellRoutes: Routes = [
     loadChildren: () => import('../maintenance/maintenance.routes').then(m => m.maintenanceRoutes)
   },
   {
-    path: 'superintendent',
-    canActivate: [roleGuard],
-    data: { roles: [ROLES.SUPERINTENDENT, ROLES.ADMIN] },
-    loadChildren: () => import('../superintendent/superintendent.routes').then(m => m.superintendentRoutes)
-  },
-  {
     path: 'approvals',
     canActivate: [roleGuard],
     data: { roles: [ROLES.DIVISION_HEAD] },

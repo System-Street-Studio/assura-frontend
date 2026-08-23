@@ -19,6 +19,9 @@ export interface AccPendingItem {
   valueAtPurchasing: string;
   currentValue: string;
   isHighlighted: boolean;
+  buyerId?: number | null;
+  buyerName?: string | null;
+  soldPrice?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })

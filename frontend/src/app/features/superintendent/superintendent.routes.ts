@@ -17,5 +17,9 @@ export const superintendentRoutes: Routes = [
         path: 'buyer',
         loadComponent: () => import('../buyer/buyer').then(m => m.BuyerComponent)
     },
-    { path: '', redirectTo: 'discarded-notes', pathMatch: 'full' }
+    {
+        path: 'lost-items',
+        loadComponent: () => import('./lost-items/lost-items').then(m => m.LostItemsComponent)
+    },
+    { path: '', redirectTo: 'overview', pathMatch: 'full' }
 ];

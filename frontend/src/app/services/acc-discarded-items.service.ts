@@ -15,6 +15,9 @@ export interface AccDiscardedItem {
   valueAtPurchasing: string;
   currentValue: string;
   time: string;
+  buyerId?: number | null;
+  buyerName?: string | null;
+  soldPrice?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })

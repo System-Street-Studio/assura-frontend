@@ -28,7 +28,7 @@
             <h2 class="section-title">Discarding Confirmation Queue</h2>
 
             <div class="queue-list">
-                <div class="queue-card" *ngFor="let item of filteredItems" [class.highlighted]="item.isHighlighted"
+                <div class="queue-card" *ngFor="let item of pagedItems" [class.highlighted]="item.isHighlighted"
                     [class.selected]="selectedItem?.id === item.id" (click)="selectItem(item)">
                     <div class="queue-card-info">
                         <span class="queue-name" [class.bold]="item.isHighlighted">{{ item.name }}</span>
@@ -90,6 +90,14 @@
                     <div class="info-item">
                         <label>Assigned To</label>
                         <span>{{ selectedItem.assigneeName || 'Unassigned' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Buyer</label>
+                        <span>{{ selectedItem.buyerName || 'Not assigned' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Sold Price</label>
+                        <span>{{ selectedItem.soldPrice !== null && selectedItem.soldPrice !== undefined ? ('$' + selectedItem.soldPrice) : 'N/A' }}</span>
                     </div>
                     <div class="info-item">
                         <label>Current User</label>
@@ -158,6 +166,14 @@
             <div class="confirm-info-item">
                 <label>Assigned To</label>
                 <span>{{ selectedItem.assigneeName || 'Unassigned' }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Buyer</label>
+                <span>{{ selectedItem.buyerName || 'Not assigned' }}</span>
+            </div>
+            <div class="confirm-info-item">
+                <label>Sold Price</label>
+                <span>{{ selectedItem.soldPrice !== null && selectedItem.soldPrice !== undefined ? ('$' + selectedItem.soldPrice) : 'N/A' }}</span>
             </div>
             <div class="confirm-info-item">
                 <label>Current User</label>

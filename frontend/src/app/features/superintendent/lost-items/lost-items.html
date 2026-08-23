@@ -1,0 +1,135 @@
+<div class="lost-items-container">
+    <div class="page-header">
+        <h1 class="assura-page-title">Lost Items</h1>
+        <button class="assura-btn assura-btn-primary" (click)="openReportModal()">+ Report Lost Asset</button>
+    </div>
+
+    <div class="lost-layout">
+        <div class="glass-panel assura-table-container table-wrapper">
+            <table class="assura-table lost-table">
+                <thead>
+                    <tr>
+                        <th>Asset Name</th>
+                        <th>Division</th>
+                        <th>Date Reported</th>
+                        <th>Reported By</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of items" (click)="selectItem(item)"
+                        [class.active-row]="selectedItem === item">
+                        <td>{{ item.assetName }}</td>
+                        <td>{{ item.division }}</td>
+                        <td>{{ item.date }}</td>
+                        <td>{{ item.reportedBy }}</td>
+                        <td>
+                            <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{ item.status }}</span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="items.length === 0 && !isLoading">
+                        <td colspan="5" class="empty-row">No lost items reported.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Detail Panel -->
+        <div class="detail-panel" *ngIf="selectedItem">
+            <div class="glass-panel detail-panel-card">
+                <div class="detail-panel-header">
+                    <h3 class="detail-panel-name">{{ selectedItem.assetName }}</h3>
+                    <button class="btn-close-detail" (click)="closeDetail()">✕</button>
+                </div>
+                <span class="status-badge detail-badge" [ngClass]="getStatusClass(selectedItem.status)">{{
+                    selectedItem.status }}</span>
+                <hr class="detail-panel-divider" />
+
+                <div class="detail-panel-grid">
+                    <div class="detail-panel-item">
+                        <label>Division</label>
+                        <span>{{ selectedItem.division }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Date Reported</label>
+                        <span>{{ selectedItem.date }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Asset Type</label>
+                        <span>{{ selectedItem.assetType }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Time</label>
+                        <span>{{ selectedItem.time }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Reported By</label>
+                        <span>{{ selectedItem.reportedBy }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Value at Purchasing</label>
+                        <span>{{ selectedItem.valueAtPurchasing }}</span>
+                    </div>
+                    <div class="detail-panel-item">
+                        <label>Current Value</label>
+                        <span>{{ selectedItem.currentValue }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-panel-note">
+                    <label>Description</label>
+                    <div class="detail-panel-note-box">{{ selectedItem.description || 'No description' }}</div>
+                </div>
+
+                <div class="detail-panel-actions" *ngIf="selectedItem.status !== 'Confirmed Lost'">
+                    <button class="assura-btn assura-btn-secondary" [disabled]="isUpdatingStatus"
+                        *ngIf="selectedItem.status === 'Reported'" (click)="startInvestigation(selectedItem)">
+                        Start Investigation
+                    </button>
+                    <button class="assura-btn assura-btn-danger" [disabled]="isUpdatingStatus"
+                        (click)="confirmLost(selectedItem)">
+                        Confirm Lost
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Lost Asset Modal -->
+<div class="confirm-modal-overlay" *ngIf="showReportModal" (click)="closeReportModal()">
+    <div class="glass-panel confirm-modal-card" (click)="$event.stopPropagation()">
+        <h3 class="confirm-modal-name">Report Lost Asset</h3>
+
+        <form [formGroup]="reportForm" (ngSubmit)="submitReport()">
+            <div class="form-field">
+                <label for="assetName">Asset Name *</label>
+                <input id="assetName" type="text" formControlName="assetName" class="assura-input" />
+                <span class="field-error" *ngIf="f['assetName'].touched && f['assetName'].invalid">Asset name is required.</span>
+            </div>
+
+            <div class="form-field">
+                <label for="division">Division *</label>
+                <input id="division" type="text" formControlName="division" class="assura-input" />
+                <span class="field-error" *ngIf="f['division'].touched && f['division'].invalid">Division is required.</span>
+            </div>
+
+            <div class="form-field">
+                <label for="assetType">Asset Type</label>
+                <input id="assetType" type="text" formControlName="assetType" class="assura-input" />
+            </div>
+
+            <div class="form-field">
+                <label for="description">Description</label>
+                <textarea id="description" formControlName="description" class="assura-input" rows="3"></textarea>
+            </div>
+
+            <div class="confirm-modal-actions">
+                <button type="button" class="assura-btn assura-btn-secondary" [disabled]="isSubmitting" (click)="closeReportModal()">Cancel</button>
+                <button type="submit" class="assura-btn assura-btn-primary" [disabled]="isSubmitting">
+                    {{ isSubmitting ? 'Reporting...' : 'Report' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
