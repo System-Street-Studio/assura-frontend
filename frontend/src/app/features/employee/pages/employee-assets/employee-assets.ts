@@ -10,6 +10,7 @@ import { AssetService } from '../../../../features/inventory/services/asset.serv
 import { AssetDetail } from '../../../../features/inventory/models/asset.model';
 import { EmployeeTransferService } from '../../services/asset-transfer.service';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { LostItemsService } from '../../../../services/lost-items.service';
 
 interface Asset {
   assetId: string;
@@ -36,6 +37,7 @@ export class EmployeeAssetsComponent implements OnInit {
   private assetService = inject(AssetService);
   private employeeTransferService = inject(EmployeeTransferService);
   private authService = inject(AuthService);
+  private lostItemsService = inject(LostItemsService);
   private router = inject(Router);
 
   @HostListener('document:click', ['$event'])
@@ -261,6 +263,32 @@ export class EmployeeAssetsComponent implements OnInit {
       }
       this.router.navigate(['/employee/discard-form'], {
         state: { assetName: currentAsset.assetName }
+      });
+    }
+  }
+
+  reportLostAsset(): void {
+    const currentAsset = this.selectedAsset();
+    if (!currentAsset) return;
+
+    if (confirm(`Are you sure you want to report asset "${currentAsset.assetName}" (#${currentAsset.assetCode}) as lost?`)) {
+      const assetIdNum = parseInt(currentAsset.assetId, 10);
+      this.lostItemsService.create({
+        assetId: isNaN(assetIdNum) ? null : assetIdNum,
+        assetName: currentAsset.assetName,
+        division: 'Employee Division',
+        assetType: currentAsset.category || '',
+        description: `Reported lost by employee.`
+      }).subscribe({
+        next: () => {
+          alert(`Asset "${currentAsset.assetName}" reported lost. The Superintendent will review it.`);
+          this.selectedAsset.set(null);
+          this.ngOnInit();
+        },
+        error: (err) => {
+          console.error('Failed to report lost asset:', err);
+          alert('Failed to report lost asset. Please try again.');
+        }
       });
     }
   }

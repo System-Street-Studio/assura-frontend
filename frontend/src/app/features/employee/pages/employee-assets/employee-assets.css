@@ -680,6 +680,18 @@
   color: #fca5a5;
 }
 
+.assura-btn-warning {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+.assura-btn-warning:hover {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: rgba(245, 158, 11, 0.5);
+  color: #fde047;
+}
+
 .pagination-wrapper {
   margin-top: 8px;
 }
