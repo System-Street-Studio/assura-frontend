@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 
 export interface LostItem {
   id: string;
+  assetId?: number | null;
   assetName: string;
   division: string;
   date: string;

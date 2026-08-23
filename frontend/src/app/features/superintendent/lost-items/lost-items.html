@@ -102,6 +102,32 @@
         <h3 class="confirm-modal-name">Report Lost Asset</h3>
 
         <form [formGroup]="reportForm" (ngSubmit)="submitReport()">
+            <div class="form-field autocomplete-container">
+                <label for="assetSearch">Search Asset by ID or Name</label>
+                <input id="assetSearch"
+                       type="text"
+                       class="assura-input"
+                       placeholder="Type Asset ID (e.g. 16) or Name..."
+                       [(ngModel)]="assetSearchTerm"
+                       [ngModelOptions]="{standalone: true}"
+                       (input)="onAssetSearchInput()"
+                       (focus)="onAssetSearchInput()"
+                       (blur)="hideSuggestionsWithDelay()"
+                       autocomplete="off" />
+
+                <ul class="suggestions-dropdown" *ngIf="showSuggestions && filteredAssets.length > 0">
+                    <li *ngFor="let a of filteredAssets" (mousedown)="$event.preventDefault(); selectSuggestedAsset(a)">
+                        <span class="asset-id-badge">ID: {{ a.id }}</span>
+                        <span class="asset-title">{{ getAssetName(a) }}</span>
+                        <span class="asset-sub">{{ getAssetDivision(a) }} <ng-container *ngIf="getAssetType(a)">({{ getAssetType(a) }})</ng-container></span>
+                    </li>
+                </ul>
+
+                <div class="no-suggestions" *ngIf="showSuggestions && filteredAssets.length === 0 && assetSearchTerm.trim().length > 0">
+                    No matching assets found for "{{ assetSearchTerm }}".
+                </div>
+            </div>
+
             <div class="form-field">
                 <label for="assetName">Asset Name *</label>
                 <input id="assetName" type="text" formControlName="assetName" class="assura-input" />

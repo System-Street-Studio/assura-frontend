@@ -10,9 +10,11 @@ import { AssetService } from '../../../../features/inventory/services/asset.serv
 import { AssetDetail } from '../../../../features/inventory/models/asset.model';
 import { EmployeeTransferService } from '../../services/asset-transfer.service';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { LostItemsService } from '../../../../services/lost-items.service';
 
 interface Asset {
   assetId: string;
+  realAssetId?: number | null;
   assetCode: string;
   assetName: string;
   image: string;
@@ -36,6 +38,7 @@ export class EmployeeAssetsComponent implements OnInit {
   private assetService = inject(AssetService);
   private employeeTransferService = inject(EmployeeTransferService);
   private authService = inject(AuthService);
+  private lostItemsService = inject(LostItemsService);
   private router = inject(Router);
 
   @HostListener('document:click', ['$event'])
@@ -78,6 +81,9 @@ export class EmployeeAssetsComponent implements OnInit {
   pageSize = 20;
   currentPage = signal(1);
 
+  reportedLostAssetIds = signal<Set<number>>(new Set());
+  reportedLostAssetNames = signal<Set<string>>(new Set());
+
   assets = signal<Asset[]>([]);
 
   //map asset details
@@ -89,11 +95,24 @@ export class EmployeeAssetsComponent implements OnInit {
     // this page the moment it's transferred away, with no trace it ever existed here.
     forkJoin({
       owned: this.assetService.getAll(true),
-      transferredAway: this.employeeTransferService.getTransfers('active').pipe(catchError(() => of([])))
+      transferredAway: this.employeeTransferService.getTransfers('active').pipe(catchError(() => of([]))),
+      lostItems: this.lostItemsService.getAll().pipe(catchError(() => of([])))
     }).subscribe({
-      next: ({ owned, transferredAway }) => {
+      next: ({ owned, transferredAway, lostItems }) => {
+        const idsSet = new Set<number>();
+        const namesSet = new Set<string>();
+
+        (lostItems || []).forEach((item: any) => {
+          if (item.assetId) idsSet.add(Number(item.assetId));
+          if (item.assetName) namesSet.add(item.assetName.toLowerCase().trim());
+        });
+
+        this.reportedLostAssetIds.set(idsSet);
+        this.reportedLostAssetNames.set(namesSet);
+
         const mapped = owned.map(a => ({
           assetId: a.id.toString(),
+          realAssetId: Number(a.id),
           assetCode: a.assetCode,
           assetName: a.productName,
           category: a.categoryName,
@@ -111,6 +130,7 @@ export class EmployeeAssetsComponent implements OnInit {
           .filter((t: any) => t.currentHolderId === myUserId)
           .map((t: any) => ({
             assetId: `transfer-${t.id}`,
+            realAssetId: t.assetId ? Number(t.assetId) : null,
             assetCode: t.assetCode,
             assetName: t.productName || t.assetCode,
             category: 'N/A',
@@ -261,6 +281,51 @@ export class EmployeeAssetsComponent implements OnInit {
       }
       this.router.navigate(['/employee/discard-form'], {
         state: { assetName: currentAsset.assetName }
+      });
+    }
+  }
+
+  isAssetReportedLost(asset: Asset | null): boolean {
+    if (!asset) return false;
+    const targetId = asset.realAssetId || parseInt(asset.assetId, 10);
+    if (!isNaN(targetId!) && this.reportedLostAssetIds().has(targetId!)) {
+      return true;
+    }
+    if (asset.assetName && this.reportedLostAssetNames().has(asset.assetName.toLowerCase().trim())) {
+      return true;
+    }
+    return false;
+  }
+
+  reportLostAsset(): void {
+    const currentAsset = this.selectedAsset();
+    if (!currentAsset) return;
+
+    if (this.isAssetReportedLost(currentAsset)) {
+      alert(`Asset "${currentAsset.assetName}" has already been reported as lost. It is currently under review by the Superintendent.`);
+      return;
+    }
+
+    if (confirm(`Are you sure you want to report asset "${currentAsset.assetName}" (#${currentAsset.assetCode}) as lost?`)) {
+      const rawId = currentAsset.realAssetId || parseInt(currentAsset.assetId, 10);
+      const assetIdNum = isNaN(rawId!) ? null : rawId;
+
+      this.lostItemsService.create({
+        assetId: assetIdNum,
+        assetName: currentAsset.assetName,
+        division: 'Employee Division',
+        assetType: currentAsset.category || '',
+        description: `Reported lost by employee.`
+      }).subscribe({
+        next: () => {
+          alert(`Asset "${currentAsset.assetName}" reported lost. The Superintendent will review it.`);
+          this.selectedAsset.set(null);
+          this.ngOnInit();
+        },
+        error: (err) => {
+          console.error('Failed to report lost asset:', err);
+          alert('Failed to report lost asset. Please try again.');
+        }
       });
     }
   }
