@@ -24,6 +24,10 @@ export class LostItemsComponent implements OnInit {
     showReportModal = false;
     reportForm: FormGroup;
 
+    assetSearchTerm = '';
+    filteredAssets: Asset[] = [];
+    showSuggestions = false;
+
     constructor(
         private lostItemsService: LostItemsService,
         private assetsService: AssetsService,
@@ -93,6 +97,9 @@ export class LostItemsComponent implements OnInit {
 
     openReportModal() {
         this.reportForm.reset({ assetId: null, assetName: '', division: '', assetType: '', description: '' });
+        this.assetSearchTerm = '';
+        this.filteredAssets = [];
+        this.showSuggestions = false;
         this.loadAssets();
         this.showReportModal = true;
     }
@@ -101,10 +108,11 @@ export class LostItemsComponent implements OnInit {
         this.showReportModal = false;
     }
 
-    onAssetSelectChange(event: Event) {
-        const selectEl = event.target as HTMLSelectElement;
-        const selectedId = selectEl.value;
-        if (!selectedId) {
+    onAssetSearchInput() {
+        const term = (this.assetSearchTerm || '').trim().toLowerCase();
+        if (!term) {
+            this.filteredAssets = [];
+            this.showSuggestions = false;
             this.reportForm.patchValue({
                 assetId: null,
                 assetName: '',
@@ -114,15 +122,31 @@ export class LostItemsComponent implements OnInit {
             return;
         }
 
-        const foundAsset = this.availableAssets.find(a => a.id.toString() === selectedId.toString());
-        if (foundAsset) {
-            this.reportForm.patchValue({
-                assetId: parseInt(foundAsset.id, 10) || null,
-                assetName: foundAsset.name || '',
-                division: foundAsset.division || '',
-                assetType: foundAsset.type || ''
-            });
-        }
+        this.filteredAssets = this.availableAssets.filter(a =>
+            a.id.toString().toLowerCase().includes(term) ||
+            (a.name || '').toLowerCase().includes(term) ||
+            (a.serialNumber || '').toLowerCase().includes(term) ||
+            (a.division || '').toLowerCase().includes(term)
+        );
+        this.showSuggestions = true;
+    }
+
+    selectSuggestedAsset(asset: Asset) {
+        this.assetSearchTerm = `[ID: ${asset.id}] ${asset.name}`;
+        this.showSuggestions = false;
+        this.reportForm.patchValue({
+            assetId: parseInt(asset.id, 10) || null,
+            assetName: asset.name || '',
+            division: asset.division || '',
+            assetType: asset.type || ''
+        });
+    }
+
+    hideSuggestionsWithDelay() {
+        setTimeout(() => {
+            this.showSuggestions = false;
+            this.cdr.markForCheck();
+        }, 200);
     }
 
     submitReport() {

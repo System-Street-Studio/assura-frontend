@@ -102,14 +102,30 @@
         <h3 class="confirm-modal-name">Report Lost Asset</h3>
 
         <form [formGroup]="reportForm" (ngSubmit)="submitReport()">
-            <div class="form-field">
-                <label for="assetSelect">Select Registered Asset (ID / Name)</label>
-                <select id="assetSelect" class="assura-input" (change)="onAssetSelectChange($event)">
-                    <option value="">-- Choose Asset ID to Auto-Fill --</option>
-                    <option *ngFor="let a of availableAssets" [value]="a.id">
-                        [ID: {{ a.id }}] {{ a.name }} - {{ a.division }} ({{ a.type || 'N/A' }})
-                    </option>
-                </select>
+            <div class="form-field autocomplete-container">
+                <label for="assetSearch">Search Asset by ID or Name</label>
+                <input id="assetSearch"
+                       type="text"
+                       class="assura-input"
+                       placeholder="Type Asset ID (e.g. 16) or Name..."
+                       [(ngModel)]="assetSearchTerm"
+                       [ngModelOptions]="{standalone: true}"
+                       (input)="onAssetSearchInput()"
+                       (focus)="onAssetSearchInput()"
+                       (blur)="hideSuggestionsWithDelay()"
+                       autocomplete="off" />
+
+                <ul class="suggestions-dropdown" *ngIf="showSuggestions && filteredAssets.length > 0">
+                    <li *ngFor="let a of filteredAssets" (mousedown)="selectSuggestedAsset(a)">
+                        <span class="asset-id-badge">ID: {{ a.id }}</span>
+                        <span class="asset-title">{{ a.name }}</span>
+                        <span class="asset-sub">{{ a.division }} ({{ a.type || 'N/A' }})</span>
+                    </li>
+                </ul>
+
+                <div class="no-suggestions" *ngIf="showSuggestions && filteredAssets.length === 0 && assetSearchTerm.trim().length > 0">
+                    No matching assets found for "{{ assetSearchTerm }}".
+                </div>
             </div>
 
             <div class="form-field">
