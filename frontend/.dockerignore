@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.angular/
+coverage/
+.git/
+.github/
+.vscode/
+.idea/
+*.md
+.env
+.env.*
+!.env.example

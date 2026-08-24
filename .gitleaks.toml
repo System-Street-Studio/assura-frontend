@@ -1,0 +1,10 @@
+title = "assura-frontend gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known-safe placeholders"
+paths = [
+  '''frontend/src/environments/environment\.ts''',
+]
