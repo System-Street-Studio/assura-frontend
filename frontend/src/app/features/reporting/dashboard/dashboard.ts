@@ -30,11 +30,15 @@ export class ReportingDashboardComponent implements OnInit {
     const legend = this.categoryLegend();
     if (!legend || legend.length === 0) return 'conic-gradient(#94a3b8 0 100%)';
     
+    const totalCount = legend.reduce((sum, item) => sum + (item.count || 0), 0);
     let gradientParts = [];
     let currentPercentage = 0;
     
     for (const item of legend) {
-      const nextPercentage = currentPercentage + (item.percentage || (100 / legend.length));
+      const pct = item.percentage !== undefined && item.percentage !== null
+        ? item.percentage 
+        : (totalCount > 0 ? (item.count / totalCount) * 100 : (100 / legend.length));
+      const nextPercentage = Math.min(100, currentPercentage + pct);
       gradientParts.push(`${item.color} ${currentPercentage}% ${nextPercentage}%`);
       currentPercentage = nextPercentage;
     }

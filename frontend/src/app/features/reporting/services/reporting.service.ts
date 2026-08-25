@@ -12,6 +12,7 @@ export interface ReportingLegendItem {
   label: string;
   color: string;
   count: number;
+  percentage?: number;
 }
 
 export interface ReportingBarItem {
@@ -146,8 +147,8 @@ export class ReportingService {
     return this.apiService.post<boolean>(`${this.basePath}/reports/${id}/complete`, {});
   }
 
-  createReport(data: CreateReportPayload): Observable<string> {
-    return this.apiService.post<string>(`${this.basePath}/reports`, data);
+  createReport(data: CreateReportPayload): Observable<{ id: string }> {
+    return this.apiService.post<{ id: string }>(`${this.basePath}/reports`, data);
   }
 
   getReportData(type: string, startDate?: string, endDate?: string, divisionId?: number): Observable<Record<string, unknown>[]> {
