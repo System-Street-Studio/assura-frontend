@@ -93,12 +93,12 @@
                 <td class="assura-td">{{ report.type }}</td>
                 <td class="assura-td">{{ report.period }}</td>
                 <td class="assura-td">{{ report.generated }}</td>
-                <td class="assura-td"><span class="assura-badge" [class.assura-badge-success]="report.status === 'Ready' || report.status === 'Completed'" [class.assura-badge-warning]="report.status === 'Pending'">{{ report.status }}</span></td>
+                <td class="assura-td"><span class="assura-badge" [class.assura-badge-success]="report.status === 'Ready' || report.status === 'Completed'" [class.assura-badge-warning]="report.status === 'Pending' || report.status === 'Scheduled'">{{ report.status }}</span></td>
                 <td class="assura-td">{{ report.size }}</td>
                 <td class="assura-td">
                   <div class="actions-cell" style="display: flex; gap: 6px;">
                     <button class="assura-btn assura-btn-secondary" style="padding: 4px 8px;" type="button" (click)="exportSingleReport(report)" title="Export Report">↓</button>
-                    @if (report.status === 'Pending' && !report.isSystemGenerated) {
+                    @if ((report.status === 'Pending' || report.status === 'Scheduled') && !report.isSystemGenerated) {
                       <button class="assura-btn assura-btn-secondary" style="padding: 4px 8px; font-size: 12px;" type="button" (click)="markCompleted(report)" title="Mark Completed">✓ Complete</button>
                     }
                   </div>
