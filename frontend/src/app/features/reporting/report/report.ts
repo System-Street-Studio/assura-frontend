@@ -32,7 +32,7 @@ export class ReportingReportComponent implements OnInit {
   });
 
   readonly availableStatuses = computed(() => {
-    const defaults = ['Completed', 'Pending', 'Ready'];
+    const defaults = ['Scheduled', 'Completed', 'Pending', 'Ready'];
     const fromReports = this.reportItems().map(r => r.status).filter(Boolean);
     return ['All', ...Array.from(new Set([...defaults, ...fromReports]))];
   });
@@ -56,7 +56,9 @@ export class ReportingReportComponent implements OnInit {
       const matchesStatus = status === 'All' || 
         rStatus === targetStatus ||
         (targetStatus === 'completed' && rStatus === 'ready') ||
-        (targetStatus === 'ready' && rStatus === 'completed');
+        (targetStatus === 'ready' && rStatus === 'completed') ||
+        (targetStatus === 'scheduled' && (rStatus === 'scheduled' || rStatus === 'pending')) ||
+        (targetStatus === 'pending' && (rStatus === 'pending' || rStatus === 'scheduled'));
 
       return matchesTerm && matchesType && matchesStatus;
     });
