@@ -12,6 +12,7 @@ export interface ReportingLegendItem {
   label: string;
   color: string;
   count: number;
+  percentage?: number;
 }
 
 export interface ReportingBarItem {
