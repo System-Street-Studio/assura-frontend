@@ -66,11 +66,6 @@ export class ReportingReportComponent implements OnInit {
   selectedDateRange = 'this-month';
   selectedExportType = 'Audit';
   isExporting = false;
-  
-  showScheduleModal = false;
-  showNewReportModal = false;
-  newReportTitle = '';
-  newReportType = 'Audit';
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
@@ -312,66 +307,75 @@ export class ReportingReportComponent implements OnInit {
     URL.revokeObjectURL(link.href);
   }
 
+  readonly showScheduleModal = signal(false);
+  readonly showNewReportModal = signal(false);
+  readonly scheduleTitle = signal('');
+  readonly scheduleType = signal('Audit');
+  readonly scheduleFrequency = signal('Daily');
+  readonly newReportTitle = signal('');
+  readonly newReportType = signal('Audit');
+
   openScheduleModal(): void {
-    this.showScheduleModal = true;
+    this.showScheduleModal.set(true);
   }
 
   closeScheduleModal(): void {
-    this.showScheduleModal = false;
-    this.scheduleTitle = '';
-    this.scheduleType = 'Audit';
+    this.showScheduleModal.set(false);
+    this.scheduleTitle.set('');
+    this.scheduleType.set('Audit');
+    this.scheduleFrequency.set('Daily');
   }
 
-  scheduleTitle = '';
-  scheduleType = 'Audit';
-  scheduleFrequency = 'Daily';
-
   scheduleReport(): void {
-    if (!this.scheduleTitle.trim()) return;
+    const title = this.scheduleTitle().trim();
+    if (!title) return;
 
     const payload = {
-      title: this.scheduleTitle,
-      type: this.scheduleType,
+      title,
+      type: this.scheduleType(),
       isScheduled: true,
-      scheduleFrequency: this.scheduleFrequency
+      scheduleFrequency: this.scheduleFrequency()
     };
 
     this.reportingService.createReport(payload).subscribe({
       next: () => {
-        alert('Report scheduled successfully!');
+        this.toastService.success('Report scheduled successfully!');
         this.closeScheduleModal();
         this.loadReports();
       },
       error: () => {
-        alert('Failed to schedule report');
+        this.toastService.error('Failed to schedule report');
       }
     });
   }
 
   openNewReportModal(): void {
-    this.showNewReportModal = true;
+    this.showNewReportModal.set(true);
   }
 
   closeNewReportModal(): void {
-    this.showNewReportModal = false;
-    this.newReportTitle = '';
+    this.showNewReportModal.set(false);
+    this.newReportTitle.set('');
+    this.newReportType.set('Audit');
   }
   
   createNewReport(): void {
-    if (this.newReportTitle.trim()) {
+    const title = this.newReportTitle().trim();
+    if (title) {
       const payload = {
-        title: this.newReportTitle,
-        type: this.newReportType,
+        title,
+        type: this.newReportType(),
         isScheduled: false
       };
 
       this.reportingService.createReport(payload).subscribe({
         next: () => {
+          this.toastService.success('Report created successfully!');
           this.closeNewReportModal();
           this.loadReports();
         },
         error: () => {
-          alert('Failed to create report');
+          this.toastService.error('Failed to create report');
         }
       });
     }
