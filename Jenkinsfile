@@ -5,8 +5,7 @@ pipeline {
     agent none
 
     environment {
-        ECR_REPO    = "CHANGE_ME.dkr.ecr.us-east-1.amazonaws.com/assura-demo-frontend"
-        IMAGE_TAG   = "${env.GIT_COMMIT.take(12)}"
+        ECR_REPO    = "187691954427.dkr.ecr.us-east-1.amazonaws.com/assura-demo-frontend"
         GITOPS_REPO = "https://github.com/System-Street-Studio/assura-gitops.git"
     }
 
@@ -15,6 +14,12 @@ pipeline {
             agent { label 'node' }
             steps {
                 checkout scm
+                // See AssuraBackend/Jenkinsfile's identical stage for why this is computed here
+                // rather than in the top-level environment{} block: that block evaluates before
+                // any agent/checkout under `agent none`, so env.GIT_COMMIT doesn't exist yet.
+                script {
+                    env.IMAGE_TAG = env.GIT_COMMIT.take(12)
+                }
                 sh 'curl -sSfL https://raw.githubusercontent.com/gitleaks/gitleaks/master/install.sh | sh -s -- -b /tmp v8.21.2'
                 sh '/tmp/gitleaks detect --source . --redact --exit-code 1 --config .gitleaks.toml'
             }
@@ -108,7 +113,7 @@ pipeline {
                 sh 'wget -qO /tmp/syft.tar.gz https://github.com/anchore/syft/releases/download/v1.18.0/syft_1.18.0_linux_amd64.tar.gz && tar -xzf /tmp/syft.tar.gz -C /usr/local/bin syft'
                 sh 'wget -qO /usr/local/bin/cosign https://github.com/sigstore/cosign/releases/download/v2.4.1/cosign-linux-amd64 && chmod +x /usr/local/bin/cosign'
                 sh "syft ${ECR_REPO}:${IMAGE_TAG} -o cyclonedx-json > sbom-frontend.json"
-                sh "cosign sign --key awskms:///CHANGE_ME_COSIGN_KEY_ARN ${ECR_REPO}:${IMAGE_TAG}"
+                sh "cosign sign --key awskms:///arn:aws:kms:us-east-1:187691954427:key/9b805e33-ec25-4d7d-b0e9-106a9cab7d11 ${ECR_REPO}:${IMAGE_TAG}"
             }
             post {
                 always { archiveArtifacts artifacts: 'sbom-frontend.json', allowEmptyArchive: true }
