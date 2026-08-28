@@ -1,0 +1,20 @@
+# Included (not just declared at server{} level) inside every location block that also sets its
+# own add_header — e.g. Cache-Control below. nginx's add_header inheritance is all-or-nothing per
+# block: a location that defines even one add_header of its own does NOT inherit the server
+# block's add_header directives, so these must be repeated via `include` everywhere Cache-Control
+# is also set, or they silently vanish from the response (verified against a running container).
+#
+# Partial mitigation for the known JWT-in-localStorage finding (see SECURITY.md): this does not
+# eliminate the XSS risk, but blocks most injected/third-party script execution.
+#
+# connect-src is templated, not hardcoded: docker-entrypoint.d/20-envsubst-config.sh derives
+# ${CSP_CONNECT_SRC_EXTRA} from API_URL at container startup. When API_URL is a relative path
+# (the production default — the ALB serves both apps from one origin) it's empty and connect-src
+# stays 'self' only. When API_URL is an absolute cross-origin URL (e.g. local Docker testing with
+# the frontend and backend on different ports), that origin is added — otherwise the browser
+# silently blocks the login call before it's ever sent, which is exactly the bug this fixes
+# (confirmed live: zero requests reached the backend, because the CSP blocked them client-side).
+add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' ${CSP_CONNECT_SRC_EXTRA}; frame-ancestors 'none'; base-uri 'self'" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-Frame-Options "DENY" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
