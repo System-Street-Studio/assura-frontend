@@ -27,7 +27,7 @@ export class RegisterComponent {
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', Validators.required]
-    }, { validators: this.passwordMatchValidator });
+    }, { validators: [this.passwordMatchValidator, this.passwordNotUsernameValidator] });
 
     isLoading = false;
     isSuccess = false;
@@ -38,6 +38,14 @@ export class RegisterComponent {
     passwordMatchValidator(g: any) {
         return g.get('password').value === g.get('confirmPassword').value
             ? null : { mismatch: true };
+    }
+
+    passwordNotUsernameValidator(g: any) {
+        const username: string = g.get('username').value ?? '';
+        const password: string = g.get('password').value ?? '';
+        return username && password && username.toLowerCase() === password.toLowerCase()
+            ? { passwordSameAsUsername: true }
+            : null;
     }
 
     onSubmit() {
