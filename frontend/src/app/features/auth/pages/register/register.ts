@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -19,6 +19,7 @@ export class RegisterComponent {
     private authService = inject(AuthService);
     private router = inject(Router);
     private toastService = inject(ToastService);
+    private cdr = inject(ChangeDetectorRef);
 
     registerForm = this.fb.group({
         firstName: ['', Validators.required],
@@ -27,7 +28,7 @@ export class RegisterComponent {
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', Validators.required]
-    }, { validators: this.passwordMatchValidator });
+    }, { validators: [this.passwordMatchValidator, this.passwordNotUsernameValidator] });
 
     isLoading = false;
     isSuccess = false;
@@ -38,6 +39,14 @@ export class RegisterComponent {
     passwordMatchValidator(g: any) {
         return g.get('password').value === g.get('confirmPassword').value
             ? null : { mismatch: true };
+    }
+
+    passwordNotUsernameValidator(g: any) {
+        const username: string = g.get('username').value ?? '';
+        const password: string = g.get('password').value ?? '';
+        return username && password && username.toLowerCase() === password.toLowerCase()
+            ? { passwordSameAsUsername: true }
+            : null;
     }
 
     onSubmit() {
@@ -59,15 +68,32 @@ export class RegisterComponent {
             next: () => {
                 this.isLoading = false;
                 this.toastService.success('Account Created Successfully! Please wait for an administrator to assign your role.');
+                this.cdr.detectChanges();
                 setTimeout(() => {
                     this.router.navigate(['/auth/login']);
                 }, 3000);
             },
             error: (err) => {
                 this.isLoading = false;
-                this.errorMessage = err.error?.message || 'Registration failed. Username or email might already exist.';
+                let backendMsg = 'Registration failed. Username or email might already exist.';
+
+                if (err?.error) {
+                    if (typeof err.error === 'string') {
+                        try {
+                            const parsed = JSON.parse(err.error);
+                            backendMsg = parsed.message || parsed.Message || parsed.title || err.error;
+                        } catch {
+                            backendMsg = err.error;
+                        }
+                    } else if (typeof err.error === 'object') {
+                        backendMsg = err.error.message || err.error.Message || err.error.title || err.error.error || backendMsg;
+                    }
+                }
+
+                this.errorMessage = backendMsg;
                 this.toastService.error(this.errorMessage);
                 console.error('Registration failed', err);
+                this.cdr.detectChanges();
             }
         });
     }
