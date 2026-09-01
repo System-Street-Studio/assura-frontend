@@ -73,7 +73,7 @@ export class RegisterComponent {
             },
             error: (err) => {
                 this.isLoading = false;
-                this.errorMessage = err.error?.message || 'Registration failed. Username or email might already exist.';
+                this.errorMessage = err.error?.Message || err.error?.message || 'Registration failed. Please try again.';
                 this.toastService.error(this.errorMessage);
                 console.error('Registration failed', err);
             }
