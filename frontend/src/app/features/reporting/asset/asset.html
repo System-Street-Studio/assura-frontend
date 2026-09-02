@@ -25,7 +25,7 @@
           <th class="assura-th">Warranty</th>
           <th class="assura-th">End of Life</th>
           <th class="assura-th">Code Number</th>
-          <th class="assura-th" style="text-align: right;">Action</th>
+          <th class="assura-th action-th">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -62,7 +62,7 @@
           <td class="assura-td">{{ asset.warranty }}</td>
           <td class="assura-td">{{ asset.endOfLife }}</td>
           <td class="assura-td">{{ asset.codeNumber }}</td>
-          <td class="assura-td" style="text-align: right;">
+          <td class="assura-td action-cell">
             <button class="assura-btn assura-btn-secondary assura-btn-sm" (click)="openAssetUserHistory(asset); $event.stopPropagation();" title="View User History">
               <mat-icon style="font-size: 16px; width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;">history</mat-icon>
               History
