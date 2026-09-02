@@ -25,11 +25,12 @@
           <th class="assura-th">Warranty</th>
           <th class="assura-th">End of Life</th>
           <th class="assura-th">Code Number</th>
+          <th class="assura-th action-th">Action</th>
         </tr>
       </thead>
       <tbody>
         @for (asset of assets(); track asset.id) {
-        <tr class="assura-tr-hover">
+        <tr class="assura-tr-hover clickable-row" (click)="openAssetUserHistory(asset)">
           <td class="assura-td"><strong>{{ asset.assetId }}</strong></td>
 
           <td class="assura-td">
@@ -61,10 +62,16 @@
           <td class="assura-td">{{ asset.warranty }}</td>
           <td class="assura-td">{{ asset.endOfLife }}</td>
           <td class="assura-td">{{ asset.codeNumber }}</td>
+          <td class="assura-td action-cell">
+            <button class="assura-btn assura-btn-secondary assura-btn-sm" (click)="openAssetUserHistory(asset); $event.stopPropagation();" title="View User History">
+              <mat-icon style="font-size: 16px; width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;">history</mat-icon>
+              History
+            </button>
+          </td>
         </tr>
         } @empty {
           <tr>
-            <td colspan="9" class="assura-td" style="text-align: center; padding: 48px;">
+            <td colspan="10" class="assura-td" style="text-align: center; padding: 48px;">
               <div class="empty-state">
                 <span class="empty-icon" aria-hidden="true" style="font-size: 32px; opacity: 0.5;">📭</span>
                 <p style="color: #94a3b8; margin-top: 16px;">No assets found in the system.</p>
@@ -89,4 +96,145 @@
     </app-pagination>
   </div>
 
+  <!-- Asset User History Slide-over Drawer Modal -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="history-modal-drawer" (click)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <div>
+            <h2>{{ selectedAssetRow?.product || 'Asset Details' }}</h2>
+            <div class="modal-sub">
+              Asset Code: <strong>{{ selectedAssetRow?.codeNumber || selectedAssetRow?.assetId }}</strong>
+              &bull; Serial: <strong>{{ selectedAssetRow?.serial || '-' }}</strong>
+            </div>
+          </div>
+          <button class="modal-close-btn" (click)="closeModal()" aria-label="Close modal">&times;</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          @if (modalLoading) {
+            <div style="display: flex; align-items: center; justify-content: center; height: 200px;">
+              <p style="color: #94a3b8;">Loading asset history & details...</p>
+            </div>
+          } @else {
+            <!-- Asset Overview & Current Holder -->
+            <div style="margin-bottom: 24px; padding: 16px; border-radius: 10px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.15);">
+              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #818cf8; font-weight: 700; margin-bottom: 8px;">
+                Current Assignment & Status
+              </div>
+              <div>
+                <div style="font-size: 15px; font-weight: 600; color: #f8fafc;">
+                  Current User: {{ selectedAssetDetail?.assignedUserName || selectedAssetRow?.checkedBy || 'Unassigned / In Store' }}
+                </div>
+                <div style="font-size: 13px; color: #94a3b8; margin-top: 2px;">
+                  Division: {{ selectedAssetDetail?.divisionName || 'N/A' }} &bull; Category: {{ selectedAssetDetail?.categoryName || 'N/A' }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal Tab Navigation -->
+            <div class="modal-tab-nav">
+              <button class="tab-btn" [class.active]="activeModalTab === 'checkout'" (click)="activeModalTab = 'checkout'">
+                User Checkout History ({{ checkoutHistory.length }})
+              </button>
+              <button class="tab-btn" [class.active]="activeModalTab === 'transfers'" (click)="activeModalTab = 'transfers'">
+                Transfer History ({{ transferHistory.length }})
+              </button>
+            </div>
+
+            <!-- Tab 1: User Checkout History -->
+            @if (activeModalTab === 'checkout') {
+              @if (checkoutHistory.length === 0) {
+                <div style="text-align: center; padding: 40px 0; color: #94a3b8;">
+                  <mat-icon style="font-size: 36px; width: 36px; height: 36px; margin-bottom: 8px; opacity: 0.6;">person_outline</mat-icon>
+                  <p style="margin: 0;">No checkout history recorded for this asset.</p>
+                </div>
+              } @else {
+                <div>
+                  @for (record of checkoutHistory; track record.id) {
+                    <div class="history-card">
+                      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div>
+                          <strong style="font-size: 15px; color: #f8fafc;">{{ record.checkedOutTo || 'Unassigned' }}</strong>
+                          <div style="font-size: 12px; color: #94a3b8;">{{ record.division }} &bull; {{ record.email }}</div>
+                        </div>
+                        <span class="assura-badge" [ngClass]="{
+                          'assura-badge-success': record.status === 'Returned',
+                          'assura-badge-warning': record.status === 'Checked Out',
+                          'assura-badge-danger': record.status === 'Overdue'
+                        }">
+                          {{ record.status }}
+                        </span>
+                      </div>
+
+                      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 10px 0; font-size: 12px; color: #cbd5e1; background: rgba(15, 23, 42, 0.4); padding: 8px 12px; border-radius: 6px;">
+                        <div><span style="color: #94a3b8;">Checked Out:</span> {{ record.checkoutDate }}</div>
+                        <div><span style="color: #94a3b8;">Due:</span> {{ record.dueDate }}</div>
+                        <div><span style="color: #94a3b8;">Returned:</span> {{ record.returnDate || '-' }}</div>
+                      </div>
+
+                      <div style="font-size: 12px; color: #94a3b8;">
+                        Checked out by <strong>{{ record.checkedOutBy }}</strong>
+                        <span *ngIf="record.checkedInBy"> &bull; Checked in by <strong>{{ record.checkedInBy }}</strong></span>
+                      </div>
+
+                      @if (record.condition) {
+                        <div style="font-size: 12px; color: #cbd5e1; margin-top: 6px;">
+                          Return Condition: <strong>{{ record.condition }}</strong>
+                        </div>
+                      }
+                      @if (record.checkoutNotes) {
+                        <div style="font-size: 12px; color: #94a3b8; margin-top: 6px; font-style: italic;">
+                          "{{ record.checkoutNotes }}"
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            }
+
+            <!-- Tab 2: Transfer History -->
+            @if (activeModalTab === 'transfers') {
+              @if (transferHistory.length === 0) {
+                <div style="text-align: center; padding: 40px 0; color: #94a3b8;">
+                  <mat-icon style="font-size: 36px; width: 36px; height: 36px; margin-bottom: 8px; opacity: 0.6;">swap_horiz</mat-icon>
+                  <p style="margin: 0;">No transfer history recorded for this asset.</p>
+                </div>
+              } @else {
+                <div>
+                  @for (t of transferHistory; track t.id) {
+                    <div class="history-card">
+                      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div>
+                          <strong style="font-size: 14px; color: #818cf8;">{{ t.transferNumber }}</strong>
+                          <div style="font-size: 13px; color: #f8fafc; margin-top: 2px;">
+                            {{ t.currentHolderName || t.fromDivisionName }} &rarr; {{ t.targetUserName || t.toDivisionName }}
+                          </div>
+                        </div>
+                        <span class="assura-badge assura-badge-info">{{ t.status }}</span>
+                      </div>
+
+                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; font-size: 12px; color: #cbd5e1;">
+                        <div><span style="color: #94a3b8;">Transfer Date:</span> {{ t.transferDate | date:'yyyy-MM-dd' }}</div>
+                        <div><span style="color: #94a3b8;">Initiated By:</span> {{ t.transferByName }}</div>
+                      </div>
+
+                      @if (t.reason) {
+                        <div style="font-size: 12px; color: #94a3b8; margin-top: 4px; font-style: italic;">
+                          Reason: "{{ t.reason }}"
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            }
+          }
+        </div>
+      </div>
+    </div>
+  }
 </section>

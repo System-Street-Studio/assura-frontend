@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { Asset, AssetDetail, AvailableCheckoutAsset, AssetTransferHistoryEntry } from '../models/asset.model';
+import { Asset, AssetDetail, AvailableCheckoutAsset, AssetTransferHistoryEntry, CheckoutRecordDto } from '../models/asset.model';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
 import { RequestCache } from '../../../core/services/request-cache';
@@ -49,6 +49,12 @@ export class AssetService {
   /** Every Transfer row this asset has ever been part of, newest first. */
   getTransferHistory(id: number | string): Observable<AssetTransferHistoryEntry[]> {
     return this.http.get<AssetTransferHistoryEntry[]>(`${environment.apiUrl}/transfers/asset/${id}`);
+  }
+
+  /** Checkout & Checkin history records, optionally filtered by asset ID. */
+  getCheckoutRecords(assetId?: number | string): Observable<CheckoutRecordDto[]> {
+    const url = assetId ? `${this.apiUrl}/checkout-records?assetId=${assetId}` : `${this.apiUrl}/checkout-records`;
+    return this.http.get<CheckoutRecordDto[]>(url);
   }
 
   getAvailableForCheckout(): Observable<AvailableCheckoutAsset[]> {

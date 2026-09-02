@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetService } from '../../services/asset.service';
-import { AssetDetail, AssetTransferHistoryEntry } from '../../models/asset.model';
+import { AssetDetail, AssetTransferHistoryEntry, CheckoutRecordDto } from '../../models/asset.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import QRCode from 'qrcode';
 
@@ -43,14 +43,18 @@ export class AssetDetailsComponent implements OnInit {
 
   tabs = [
     { id: 'about', label: 'About' },
-    { id: 'checkout-log', label: 'Checkout Log' },
-    { id: 'maintenances', label: 'Maintenances' },
+    { id: 'checkout-log', label: 'User & Checkout History' },
     { id: 'transfers', label: 'Transfer History' },
+    { id: 'maintenances', label: 'Maintenances' },
   ];
 
   transferHistory: AssetTransferHistoryEntry[] = [];
   transferHistoryLoading = false;
   transferHistoryLoaded = false;
+
+  checkoutLog: CheckoutRecordDto[] = [];
+  checkoutLogLoading = false;
+  checkoutLogLoaded = false;
 
   /**
    * Initializes the component by fetching the asset details based on the ID from the route.
@@ -116,6 +120,9 @@ export class AssetDetailsComponent implements OnInit {
     if (tabId === 'transfers' && !this.transferHistoryLoaded) {
       this.loadTransferHistory();
     }
+    if (tabId === 'checkout-log' && !this.checkoutLogLoaded) {
+      this.loadCheckoutLog();
+    }
   }
 
   private loadTransferHistory(): void {
@@ -130,6 +137,23 @@ export class AssetDetailsComponent implements OnInit {
       error: () => {
         this.transferHistoryLoading = false;
         this.toast.error('Failed to load transfer history');
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private loadCheckoutLog(): void {
+    this.checkoutLogLoading = true;
+    this.assetService.getCheckoutRecords(this.asset.id).subscribe({
+      next: (records) => {
+        this.checkoutLog = records;
+        this.checkoutLogLoaded = true;
+        this.checkoutLogLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.checkoutLogLoading = false;
+        this.toast.error('Failed to load checkout & user history');
         this.cdr.detectChanges();
       },
     });
