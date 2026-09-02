@@ -124,19 +124,12 @@
               <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #818cf8; font-weight: 700; margin-bottom: 8px;">
                 Current Assignment & Status
               </div>
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <div style="font-size: 15px; font-weight: 600; color: #f8fafc;">
-                    Current User: {{ selectedAssetDetail?.assignedUserName || selectedAssetRow?.checkedBy || 'Unassigned / In Store' }}
-                  </div>
-                  <div style="font-size: 13px; color: #94a3b8; margin-top: 2px;">
-                    Division: {{ selectedAssetDetail?.divisionName || 'N/A' }} &bull; Category: {{ selectedAssetDetail?.categoryName || 'N/A' }}
-                  </div>
+              <div>
+                <div style="font-size: 15px; font-weight: 600; color: #f8fafc;">
+                  Current User: {{ selectedAssetDetail?.assignedUserName || selectedAssetRow?.checkedBy || 'Unassigned / In Store' }}
                 </div>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                  <button class="assura-btn assura-btn-primary assura-btn-sm" (click)="verifyAsset(selectedAssetRow.id)" [disabled]="verifying || selectedAssetRow.status === 'Verified'">
-                    {{ selectedAssetRow.status === 'Verified' ? '✓ Verified' : 'Verify Asset' }}
-                  </button>
+                <div style="font-size: 13px; color: #94a3b8; margin-top: 2px;">
+                  Division: {{ selectedAssetDetail?.divisionName || 'N/A' }} &bull; Category: {{ selectedAssetDetail?.categoryName || 'N/A' }}
                 </div>
               </div>
             </div>

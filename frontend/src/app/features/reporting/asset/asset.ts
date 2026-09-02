@@ -40,7 +40,6 @@ export class ReportingAssetComponent implements OnInit {
   selectedAssetDetail: AssetDetail | null = null;
   checkoutHistory: CheckoutRecordDto[] = [];
   transferHistory: AssetTransferHistoryEntry[] = [];
-  verifying = false;
 
   totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()) || 1);
   pageNumbers = computed(() => {
@@ -117,27 +116,6 @@ export class ReportingAssetComponent implements OnInit {
     this.selectedAssetRow = null;
     this.selectedAssetDetail = null;
     this.cdr.detectChanges();
-  }
-
-  verifyAsset(id: number): void {
-    if (this.verifying) return;
-    this.verifying = true;
-    this.reportingService.verifyAsset(id).subscribe({
-      next: () => {
-        this.toast.success('Asset verified successfully');
-        this.verifying = false;
-        if (this.selectedAssetRow) {
-          this.selectedAssetRow.status = 'Verified';
-        }
-        this.loadAssets();
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.toast.error('Failed to verify asset');
-        this.verifying = false;
-        this.cdr.detectChanges();
-      }
-    });
   }
 }
 
