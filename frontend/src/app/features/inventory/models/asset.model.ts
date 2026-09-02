@@ -80,3 +80,28 @@ export interface AssetTransferHistoryEntry {
   reason?: string;
   transferPeriod?: string;
 }
+
+export interface CheckoutRecordDto {
+  id: string;
+  assetId: string;
+  assetName: string;
+  category: string;
+  serial: string;
+  checkedOutTo: string;
+  division: string;
+  email: string;
+  checkoutDate: string;
+  dueDate: string;
+  returnDate?: string;
+  condition?: string;
+  damageSeverity?: string;
+  repairNeeded: boolean;
+  acknowledged: boolean;
+  evidenceFileName?: string;
+  maintenanceNumber?: string;
+  checkoutNotes?: string;
+  checkinNotes?: string;
+  status: string;
+  checkedOutBy: string;
+  checkedInBy?: string;
+}

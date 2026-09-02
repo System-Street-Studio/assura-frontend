@@ -175,11 +175,86 @@
         </section>
       }
 
+      <!-- User & Checkout History tab -->
+      @if (activeTab === 'checkout-log') {
+        <section>
+          @if (checkoutLogLoading) {
+            <div style="display: flex; align-items: center; justify-content: center; padding: 64px 0;">
+              <p style="margin: 0; font-size: 14px; opacity: 0.7;">Loading user checkout history...</p>
+            </div>
+          } @else if (checkoutLog.length === 0) {
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 0;">
+              <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #64748b;">person_outline</mat-icon>
+              <p style="margin: 0; font-size: 16px; font-weight: 500;">No checkout history found for this asset.</p>
+              <p style="margin-top: 4px; font-size: 13px; opacity: 0.7;" *ngIf="asset.assignedUserName">Currently assigned to {{ asset.assignedUserName }}.</p>
+            </div>
+          } @else {
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div style="font-size: 14px; font-weight: 600; text-transform: uppercase; color: #818cf8; margin-bottom: 4px;">
+                User Assignment & Checkout History ({{ checkoutLog.length }})
+              </div>
+              @for (entry of checkoutLog; track entry.id) {
+                <div style="padding: 20px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(15, 23, 42, 0.3);">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                      <div style="font-size: 16px; font-weight: 700; color: #f8fafc;">{{ entry.checkedOutTo || 'Unassigned' }}</div>
+                      <div style="font-size: 13px; color: #94a3b8;">{{ entry.division }} &bull; {{ entry.email }}</div>
+                    </div>
+                    <span class="assura-badge" [ngClass]="{
+                      'assura-badge-success': entry.status === 'Returned',
+                      'assura-badge-warning': entry.status === 'Checked Out',
+                      'assura-badge-danger': entry.status === 'Overdue'
+                    }">
+                      {{ entry.status }}
+                    </span>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 12px 0; font-size: 13px; background: rgba(30, 41, 59, 0.4); padding: 12px; border-radius: 8px;">
+                    <div>
+                      <span style="color: #94a3b8;">Checked Out:</span> <strong>{{ entry.checkoutDate }}</strong>
+                    </div>
+                    <div>
+                      <span style="color: #94a3b8;">Due Date:</span> <strong>{{ entry.dueDate }}</strong>
+                    </div>
+                    @if (entry.returnDate) {
+                      <div>
+                        <span style="color: #94a3b8;">Returned On:</span> <strong>{{ entry.returnDate }}</strong>
+                      </div>
+                    }
+                    @if (entry.condition) {
+                      <div>
+                        <span style="color: #94a3b8;">Return Condition:</span> <strong>{{ entry.condition }}</strong>
+                      </div>
+                    }
+                  </div>
+
+                  <div style="font-size: 12px; color: #94a3b8; display: flex; flex-wrap: wrap; gap: 16px;">
+                    <span>Checked out by: <strong>{{ entry.checkedOutBy }}</strong></span>
+                    <span *ngIf="entry.checkedInBy">Checked in by: <strong>{{ entry.checkedInBy }}</strong></span>
+                  </div>
+
+                  @if (entry.checkoutNotes) {
+                    <div style="font-size: 13px; margin-top: 10px; padding: 8px 12px; background: rgba(148, 163, 184, 0.1); border-radius: 6px;">
+                      <strong>Notes:</strong> {{ entry.checkoutNotes }}
+                    </div>
+                  }
+                  @if (entry.checkinNotes) {
+                    <div style="font-size: 13px; margin-top: 6px; padding: 8px 12px; background: rgba(148, 163, 184, 0.1); border-radius: 6px;">
+                      <strong>Check-in Notes:</strong> {{ entry.checkinNotes }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </section>
+      }
+
       <!-- Placeholder for other tabs -->
-      <section style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 0;" *ngIf="activeTab !== 'about' && activeTab !== 'transfers'">
+      <section style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 0;" *ngIf="activeTab !== 'about' && activeTab !== 'transfers' && activeTab !== 'checkout-log'">
         <mat-icon style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: #64748b;">history</mat-icon>
         <p style="margin: 0; font-size: 16px; font-weight: 500;">
-          {{ activeTab === 'checkout-log' ? 'Maintenance and assignment history coming soon.' : 'Additional details.' }}
+          Additional details.
         </p>
       </section>
     </div>
