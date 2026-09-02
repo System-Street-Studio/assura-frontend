@@ -93,12 +93,12 @@
                 <td class="assura-td">{{ report.type }}</td>
                 <td class="assura-td">{{ report.period }}</td>
                 <td class="assura-td">{{ report.generated }}</td>
-                <td class="assura-td"><span class="assura-badge" [class.assura-badge-success]="report.status === 'Ready' || report.status === 'Completed'" [class.assura-badge-warning]="report.status === 'Pending'">{{ report.status }}</span></td>
+                <td class="assura-td"><span class="assura-badge" [class.assura-badge-success]="report.status === 'Ready' || report.status === 'Completed'" [class.assura-badge-warning]="report.status === 'Pending' || report.status === 'Scheduled'">{{ report.status }}</span></td>
                 <td class="assura-td">{{ report.size }}</td>
                 <td class="assura-td">
                   <div class="actions-cell" style="display: flex; gap: 6px;">
                     <button class="assura-btn assura-btn-secondary" style="padding: 4px 8px;" type="button" (click)="exportSingleReport(report)" title="Export Report">↓</button>
-                    @if (report.status === 'Pending' && !report.isSystemGenerated) {
+                    @if ((report.status === 'Pending' || report.status === 'Scheduled') && !report.isSystemGenerated) {
                       <button class="assura-btn assura-btn-secondary" style="padding: 4px 8px; font-size: 12px;" type="button" (click)="markCompleted(report)" title="Mark Completed">✓ Complete</button>
                     }
                   </div>
@@ -152,7 +152,7 @@
     </aside>
   </div>
 
-  @if (showScheduleModal) {
+  @if (showScheduleModal()) {
     <div class="global-modal-backdrop">
       <div class="global-modal-panel">
         <header class="global-modal-header">
@@ -163,20 +163,20 @@
           <p style="color: #94a3b8; font-size: 14px;">Set up automated delivery for your reports.</p>
           <label style="display: flex; flex-direction: column; gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600;">
             Report Title
-            <input type="text" class="assura-input" [(ngModel)]="scheduleTitle" placeholder="Enter a descriptive title" />
+            <input type="text" class="assura-input" [ngModel]="scheduleTitle()" (ngModelChange)="scheduleTitle.set($event)" placeholder="Enter a descriptive title" />
           </label>
           <label style="display: flex; flex-direction: column; gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600;">
             Report Type
-            <select class="assura-input" [(ngModel)]="scheduleType">
-              <option>Audit</option>
-              <option>Exception</option>
-              <option>Lifecycle</option>
-              <option>Finance</option>
+            <select class="assura-input" [ngModel]="scheduleType()" (ngModelChange)="scheduleType.set($event)">
+              <option value="Audit">Audit</option>
+              <option value="Exception">Exception</option>
+              <option value="Lifecycle">Lifecycle</option>
+              <option value="Finance">Finance</option>
             </select>
           </label>
           <label style="display: flex; flex-direction: column; gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600;">
             Frequency
-            <select class="assura-input" [(ngModel)]="scheduleFrequency">
+            <select class="assura-input" [ngModel]="scheduleFrequency()" (ngModelChange)="scheduleFrequency.set($event)">
               <option value="Daily">Daily</option>
               <option value="Weekly">Weekly</option>
               <option value="Monthly">Monthly</option>
@@ -185,13 +185,13 @@
         </div>
         <div class="global-modal-footer">
           <button type="button" class="assura-btn assura-btn-secondary" (click)="closeScheduleModal()">Cancel</button>
-          <button type="button" class="assura-btn assura-btn-primary" (click)="scheduleReport()" [disabled]="!scheduleTitle.trim()">Save Schedule</button>
+          <button type="button" class="assura-btn assura-btn-primary" (click)="scheduleReport()" [disabled]="!scheduleTitle().trim()">Save Schedule</button>
         </div>
       </div>
     </div>
   }
 
-  @if (showNewReportModal) {
+  @if (showNewReportModal()) {
     <div class="global-modal-backdrop">
       <div class="global-modal-panel">
         <header class="global-modal-header">
@@ -201,21 +201,21 @@
         <div class="global-modal-body">
           <label style="display: flex; flex-direction: column; gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600;">
             Report Title
-            <input type="text" class="assura-input" [(ngModel)]="newReportTitle" placeholder="Enter a descriptive title" />
+            <input type="text" class="assura-input" [ngModel]="newReportTitle()" (ngModelChange)="newReportTitle.set($event)" placeholder="Enter a descriptive title" />
           </label>
           <label style="display: flex; flex-direction: column; gap: 8px; color: #94a3b8; font-size: 14px; font-weight: 600;">
             Report Type
-            <select class="assura-input" [(ngModel)]="newReportType">
-              <option>Audit</option>
-              <option>Exception</option>
-              <option>Lifecycle</option>
-              <option>Finance</option>
+            <select class="assura-input" [ngModel]="newReportType()" (ngModelChange)="newReportType.set($event)">
+              <option value="Audit">Audit</option>
+              <option value="Exception">Exception</option>
+              <option value="Lifecycle">Lifecycle</option>
+              <option value="Finance">Finance</option>
             </select>
           </label>
         </div>
         <div class="global-modal-footer">
           <button type="button" class="assura-btn assura-btn-secondary" (click)="closeNewReportModal()">Cancel</button>
-          <button type="button" class="assura-btn assura-btn-primary" (click)="createNewReport()" [disabled]="!newReportTitle.trim()">Create</button>
+          <button type="button" class="assura-btn assura-btn-primary" (click)="createNewReport()" [disabled]="!newReportTitle().trim()">Create</button>
         </div>
       </div>
     </div>

@@ -106,6 +106,56 @@
   font-style: italic;
 }
 
+.assura-table-container {
+  overflow-x: auto;
+  max-width: 100%;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.assura-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1100px;
+}
+
+.assura-th {
+  white-space: nowrap;
+  padding: 14px 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.assura-td {
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  white-space: nowrap;
+}
+
+.assura-th.action-th,
+.assura-td.action-cell {
+  text-align: right;
+  position: sticky;
+  right: 0;
+  background: #0f172a !important;
+  z-index: 2;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.clickable-row:hover .action-cell {
+  background: #1e293b !important;
+}
+
 .pagination-container {
   display: flex;
   justify-content: space-between;
@@ -127,4 +177,118 @@
 .page-info strong {
   color: #f8fafc;
   font-weight: 600;
+}
+
+/* Modal overlay & slide-over dialog */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.history-modal-drawer {
+  width: 680px;
+  max-width: 90vw;
+  height: 100vh;
+  background: #0f172a;
+  border-left: 1px solid rgba(148, 163, 184, 0.2);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.modal-header {
+  padding: 24px 28px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: rgba(30, 41, 59, 0.5);
+}
+
+.modal-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.4rem;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.modal-sub {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.modal-close-btn:hover {
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-body {
+  padding: 28px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.modal-tab-nav {
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  margin-bottom: 24px;
+}
+
+.tab-btn {
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tab-btn.active {
+  color: #818cf8;
+  border-bottom-color: #818cf8;
+}
+
+.history-card {
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: rgba(30, 41, 59, 0.35);
+  margin-bottom: 14px;
 }
