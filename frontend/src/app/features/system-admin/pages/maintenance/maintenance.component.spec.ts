@@ -42,15 +42,15 @@ describe('MaintenanceComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should show the returned temporary password in the success toast', () => {
+  it('should show success toast when password reset succeeds and email is sent', () => {
     confirmationServiceSpy.confirmPasswordReset.and.returnValue(of(true));
-    systemAdminServiceSpy.resetUserPassword.and.returnValue(of({ temporaryPassword: 'Xy9!zQmR2@Kp' }));
+    systemAdminServiceSpy.resetUserPassword.and.returnValue(of({ success: true, emailSent: true }));
 
     component.resetPassword(user);
 
     expect(systemAdminServiceSpy.resetUserPassword).toHaveBeenCalledWith(user.id);
     expect(toastServiceSpy.show).toHaveBeenCalledWith(
-      jasmine.stringMatching(/Xy9!zQmR2@Kp/),
+      jasmine.stringMatching(/Password reset for jdoe.*sent to jdoe@assura.com/),
       'success'
     );
   });
