@@ -102,10 +102,21 @@ export class MaintenanceComponent implements OnInit {
       if (confirmed) {
         this.systemAdminService.resetUserPassword(user.id).subscribe({
           next: (result) => {
-            this.toastService.show(
-              `Password reset for ${user.username}. Temporary password: ${result.temporaryPassword} — communicate this to the user directly, it will not be shown again.`,
-              'success'
-            );
+            if (result.success) {
+              if (result.emailSent) {
+                this.toastService.show(
+                  `Password reset for ${user.username}. The temporary password has been sent to ${user.email}.`,
+                  'success'
+                );
+              } else {
+                this.toastService.show(
+                  `Password reset for ${user.username}, but email delivery failed. Please contact the user directly.`,
+                  'warning'
+                );
+              }
+            } else {
+              this.toastService.show(`Failed to reset password for ${user.username}`, 'error');
+            }
           },
           error: (err) => {
             console.error('Failed to reset password', err);
