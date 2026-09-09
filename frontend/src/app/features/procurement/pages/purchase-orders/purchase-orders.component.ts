@@ -73,11 +73,10 @@ export class PurchaseOrdersComponent implements OnInit {
                 this.orders = result.orders;
                 
                 // Filter to show only new asset requests (Asset / NewAsset / New Asset)
-                this.requests = result.requests.filter(r => 
-                    r.type?.toLowerCase() === 'asset' || 
-                    r.type?.toLowerCase() === 'newasset' || 
-                    r.type?.toLowerCase() === 'new asset'
-                );
+                this.requests = result.requests.filter(r => {
+                    const t = (r.type || '').toLowerCase().replace(/[\s_-]/g, '');
+                    return t === 'asset' || t === 'newasset' || t === 'assetrequest';
+                });
 
                 if (this.requests.length > 0) {
                     this.selectedRequest = this.requests[0];
