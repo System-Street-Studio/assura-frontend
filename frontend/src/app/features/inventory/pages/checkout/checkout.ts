@@ -133,14 +133,22 @@ export class CheckoutComponent implements OnInit {
                     if (params['informingId']) {
                         this.informingId = Number(params['informingId']);
                     }
-                    if (params['informingId'] || params['employeeId'] || params['item'] || params['assetId']) {
+                    if (params['informingId'] || params['employeeId'] || params['item'] || params['assetId'] || params['poId']) {
                         let empId = params['employeeId'];
                         let itemName = params['item'];
                         let directAssetId = params['assetId'];
+                        const poId = params['poId'];
 
-                        if (this.informingId && arrivals && arrivals.length > 0) {
-                            const arrival = arrivals.find(a => a.id === this.informingId);
+                        if (arrivals && arrivals.length > 0) {
+                            const arrival = arrivals.find(a =>
+                                (this.informingId && a.id === this.informingId) ||
+                                (poId && a.purchasingOrderId === Number(poId)) ||
+                                (directAssetId && a.assetId === Number(directAssetId))
+                            );
                             if (arrival) {
+                                if (!this.informingId) {
+                                    this.informingId = arrival.id;
+                                }
                                 if (!directAssetId && arrival.assetId) {
                                     directAssetId = String(arrival.assetId);
                                 }
@@ -167,7 +175,7 @@ export class CheckoutComponent implements OnInit {
                         if (directAssetId && !this.availableAssets.some(a => String(a.id) === String(directAssetId) || a.assetCode?.toLowerCase() === String(directAssetId).toLowerCase())) {
                             this.assetService.getAssetById(directAssetId).subscribe({
                                 next: (asset) => {
-                                    if (asset && !asset.assignedUserId) {
+                                    if (asset) {
                                         this.availableAssets.unshift({
                                             id: String(asset.id),
                                             assetCode: asset.assetCode,
@@ -408,6 +416,7 @@ export class CheckoutComponent implements OnInit {
             this.onEmployeeChange();
         }
         this.showCheckoutModal = true;
+        this.cdr.detectChanges();
     }
 
     cancelCheckout(): void {
