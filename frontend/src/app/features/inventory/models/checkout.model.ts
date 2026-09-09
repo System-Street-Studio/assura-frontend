@@ -1,4 +1,4 @@
-export type CheckoutStatus = 'Checked Out' | 'Returned' | 'Overdue';
+export type CheckoutStatus = 'Checked Out' | 'Returned' | 'Overdue' | 'Assigned';
 
 export interface CheckoutRecord {
     id: string;
@@ -10,7 +10,8 @@ export interface CheckoutRecord {
     division: string;
     email: string;
     checkoutDate: string;
-    dueDate: string;
+    dueDate?: string;
+    isPermanent?: boolean;
     returnDate?: string;
     condition?: 'Good' | 'Fair' | 'Damaged';
     damageSeverity?: 'Low' | 'Medium' | 'High' | 'Critical';
@@ -32,7 +33,8 @@ export interface CheckoutFormData {
     checkedOutTo: string;
     division: string;
     email: string;
-    dueDate: string;
+    dueDate?: string;
+    isPermanent?: boolean;
     notes: string;
 }
 

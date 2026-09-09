@@ -42,7 +42,8 @@ export class CheckoutService {
             `${this.assetsApiUrl}/${data.assetId}/checkout`,
             {
                 assigneeUserId: Number(data.checkedOutToUserId),
-                dueDate: data.dueDate,
+                dueDate: data.isPermanent ? null : (data.dueDate || null),
+                isPermanent: !!data.isPermanent,
                 notes: data.notes,
             }
         );

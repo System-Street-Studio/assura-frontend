@@ -61,6 +61,7 @@ export class CheckoutComponent implements OnInit {
         division: '',
         email: '',
         dueDate: '',
+        isPermanent: false,
         notes: '',
     };
 
@@ -74,7 +75,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     get activeCount(): number {
-        return this.allRecords.filter((r) => r.status === 'Checked Out').length;
+        return this.allRecords.filter((r) => r.status === 'Checked Out' || r.status === 'Assigned').length;
     }
 
     get overdueCount(): number {
@@ -331,7 +332,11 @@ export class CheckoutComponent implements OnInit {
         this.checkoutProcessing = false;
 
         const defaultDueDate = new Date();
-        defaultDueDate.setFullYear(defaultDueDate.getFullYear() + 1);
+        defaultDueDate.setDate(defaultDueDate.getDate() + 14);
+        const dueYear = defaultDueDate.getFullYear();
+        const dueMonth = String(defaultDueDate.getMonth() + 1).padStart(2, '0');
+        const dueDay = String(defaultDueDate.getDate()).padStart(2, '0');
+        const defaultDueDateStr = `${dueYear}-${dueMonth}-${dueDay}`;
 
         let preselectedAssetId = '';
 
@@ -409,7 +414,8 @@ export class CheckoutComponent implements OnInit {
             checkedOutTo: '',
             division: '',
             email: '',
-            dueDate: defaultDueDate.toISOString().slice(0, 10),
+            dueDate: defaultDueDateStr,
+            isPermanent: false,
             notes: preselectItem ? `Checked out for approved arrival: ${preselectItem}` : 'Standard employee issue.'
         };
         if (preselectEmpId) {
@@ -444,9 +450,16 @@ export class CheckoutComponent implements OnInit {
         if (
             !this.checkoutForm.assetId ||
             !this.checkoutForm.checkedOutToUserId ||
-            !this.checkoutForm.dueDate
+            (!this.checkoutForm.isPermanent && !this.checkoutForm.dueDate)
         ) {
             return;
+        }
+
+        if (!this.checkoutForm.isPermanent && this.checkoutForm.dueDate) {
+            if (this.checkoutForm.dueDate < this.getMinDate()) {
+                this.toast.error('Due date cannot be in the past.');
+                return;
+            }
         }
 
         const selectedAsset = this.availableAssets.find((a) => a.id === this.checkoutForm.assetId);
@@ -512,6 +525,7 @@ export class CheckoutComponent implements OnInit {
     getStatusClass(status: string): string {
         const map: Record<string, string> = {
             'Checked Out': 'checked-out',
+            Assigned: 'assigned',
             Returned: 'returned',
             Overdue: 'overdue',
         };
@@ -531,12 +545,12 @@ export class CheckoutComponent implements OnInit {
     }
 
     isOverdue(record: CheckoutRecord): boolean {
-        if (record.status === 'Returned') return false;
+        if (record.status === 'Returned' || record.isPermanent || !record.dueDate) return false;
         return new Date(record.dueDate) < new Date();
     }
 
     isDueSoon(record: CheckoutRecord): boolean {
-        if (record.status !== 'Checked Out') return false;
+        if (record.status !== 'Checked Out' || record.isPermanent || !record.dueDate) return false;
         const now = new Date();
         const due = new Date(record.dueDate);
         const diff = (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
@@ -545,6 +559,7 @@ export class CheckoutComponent implements OnInit {
 
     getDaysInfo(record: CheckoutRecord): string {
         if (record.status === 'Returned') return '';
+        if (record.isPermanent || !record.dueDate) return 'Permanent';
         const now = new Date();
         const due = new Date(record.dueDate);
         const diff = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -590,8 +605,10 @@ export class CheckoutComponent implements OnInit {
     }
 
     getMinDate(): string {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        return tomorrow.toISOString().split('T')[0];
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 }

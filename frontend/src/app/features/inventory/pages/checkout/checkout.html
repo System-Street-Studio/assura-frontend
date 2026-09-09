@@ -167,9 +167,14 @@
           </td>
           <td class="assura-td">
             <div>
-              <div style="font-weight: 500; font-size: 14px; margin-bottom: 2px;">{{ formatDate(rec.dueDate) }}</div>
-              <span style="font-size: 12px; font-weight: 600;" *ngIf="rec.status !== 'Returned'" [ngStyle]="{'color': isOverdue(rec) ? '#ef4444' : (isDueSoon(rec) ? '#f59e0b' : '#64748b')}">
+              <div style="font-weight: 500; font-size: 14px; margin-bottom: 2px;">
+                {{ rec.isPermanent || !rec.dueDate ? 'Permanent' : formatDate(rec.dueDate) }}
+              </div>
+              <span style="font-size: 12px; font-weight: 600;" *ngIf="rec.status !== 'Returned' && !rec.isPermanent && rec.dueDate" [ngStyle]="{'color': isOverdue(rec) ? '#ef4444' : (isDueSoon(rec) ? '#f59e0b' : '#64748b')}">
                 {{ getDaysInfo(rec) }}
+              </span>
+              <span style="font-size: 12px; font-weight: 500; color: #c084fc;" *ngIf="rec.status !== 'Returned' && (rec.isPermanent || !rec.dueDate)">
+                No due date
               </span>
             </div>
           </td>
@@ -280,10 +285,21 @@
             </div>
           </div>
 
-          <div>
+          <!-- Permanent vs Temporary Assignment Option -->
+          <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid #334155; border-radius: 8px; padding: 12px 14px;">
+            <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; user-select: none;">
+              <input type="checkbox" style="width: 18px; height: 18px; margin-top: 2px; accent-color: #8b5cf6; cursor: pointer;" [(ngModel)]="checkoutForm.isPermanent" />
+              <div>
+                <div style="font-size: 14px; font-weight: 600; color: #f8fafc;">Permanent Assignment</div>
+                <div style="font-size: 12px; color: #94a3b8;">For official long-term use (e.g. employee laptop, chair). No return due date or overdue tracking.</div>
+              </div>
+            </label>
+          </div>
+
+          <div *ngIf="!checkoutForm.isPermanent">
             <label class="assura-label">Due Date <span style="color: #ef4444;">*</span></label>
-            <input type="date" class="assura-input" [(ngModel)]="checkoutForm.dueDate" [min]="getMinDate()" [ngStyle]="{'border-color': (submitted && !checkoutForm.dueDate) ? '#ef4444' : ''}" />
-            <div style="color: #ef4444; font-size: 13px; margin-top: 4px;" *ngIf="submitted && !checkoutForm.dueDate">Due date is required</div>
+            <input type="date" class="assura-input" [(ngModel)]="checkoutForm.dueDate" [min]="getMinDate()" [ngStyle]="{'border-color': (submitted && !checkoutForm.isPermanent && !checkoutForm.dueDate) ? '#ef4444' : ''}" />
+            <div style="color: #ef4444; font-size: 13px; margin-top: 4px;" *ngIf="submitted && !checkoutForm.isPermanent && !checkoutForm.dueDate">Due date is required for temporary checkouts</div>
           </div>
 
           <div>
@@ -378,8 +394,8 @@
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 14px; font-weight: 500; color: #94a3b8;">Due Date</span>
             <span style="font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;" [ngStyle]="{'color': isOverdue(detailRecord) ? '#ef4444' : '#f8fafc'}">
-              {{ formatDate(detailRecord.dueDate) }}
-              <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 700;" *ngIf="detailRecord.status !== 'Returned'"
+              {{ detailRecord.isPermanent || !detailRecord.dueDate ? 'Permanent (No due date)' : formatDate(detailRecord.dueDate) }}
+              <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 700;" *ngIf="detailRecord.status !== 'Returned' && !detailRecord.isPermanent && detailRecord.dueDate"
                 [ngStyle]="{'background': isOverdue(detailRecord) ? 'rgba(239, 68, 68, 0.2)' : 'rgba(148, 163, 184, 0.2)', 'color': isOverdue(detailRecord) ? '#f87171' : '#cbd5e1'}">
                 {{ getDaysInfo(detailRecord) }}
               </span>

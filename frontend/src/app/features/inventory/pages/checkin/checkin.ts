@@ -229,7 +229,8 @@ export class CheckinComponent implements OnInit, OnDestroy {
     }
 
     /* ── Helpers ── */
-    formatDate(dateStr: string): string {
+    formatDate(dateStr: string | undefined): string {
+        if (!dateStr) return 'Permanent (No due date)';
         return new Date(dateStr).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -238,12 +239,13 @@ export class CheckinComponent implements OnInit, OnDestroy {
     }
 
     isOverdue(): boolean {
-        if (!this.record) return false;
+        if (!this.record || this.record.isPermanent || !this.record.dueDate) return false;
         return new Date(this.record.dueDate) < new Date();
     }
 
     getDaysInfo(): string {
         if (!this.record) return '';
+        if (this.record.isPermanent || !this.record.dueDate) return 'Permanent assignment';
         const now = new Date();
         const due = new Date(this.record.dueDate);
         const diff = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
