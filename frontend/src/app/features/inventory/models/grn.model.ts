@@ -11,6 +11,7 @@ export interface Grn {
     assetCode: string;
     productName: string;
     createdAt: string;
+    isCheckedOut?: boolean;
 }
 
 export interface CreateGrnRequest {

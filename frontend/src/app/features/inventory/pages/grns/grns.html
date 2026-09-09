@@ -64,10 +64,17 @@
                                     </td>
                                     <td class="assura-td" style="text-align: right;">
                                         <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
-                                            <button class="assura-btn assura-btn-primary" style="padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;" (click)="checkoutGrn(grn)" title="Checkout asset">
-                                                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">output</mat-icon>
-                                                <span>Checkout</span>
-                                            </button>
+                                            @if (!grn.isCheckedOut) {
+                                                <button class="assura-btn assura-btn-primary" style="padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;" (click)="checkoutGrn(grn)" title="Checkout asset">
+                                                    <mat-icon style="font-size: 16px; width: 16px; height: 16px;">output</mat-icon>
+                                                    <span>Checkout</span>
+                                                </button>
+                                            } @else {
+                                                <span style="font-size: 11px; font-weight: 500; color: #10b981; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px;">
+                                                    <mat-icon style="font-size: 14px; width: 14px; height: 14px;">check_circle</mat-icon>
+                                                    <span>Checked Out</span>
+                                                </span>
+                                            }
                                             <button class="assura-btn assura-btn-secondary" style="padding: 6px;" (click)="openDetail(grn)" title="View Details">
                                                 <mat-icon style="font-size: 16px;">visibility</mat-icon>
                                             </button>
