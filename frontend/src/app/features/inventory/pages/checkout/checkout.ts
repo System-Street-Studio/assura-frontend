@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { catchError, finalize, forkJoin, of, throwError, timeout } from 'rxjs';
 import { CheckoutService } from '../../services/checkout.service';
+import { AssetService } from '../../services/asset.service';
 import { CheckoutRecord, CheckoutFormData, CheckoutEmployee } from '../../models/checkout.model';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination';
@@ -19,6 +20,7 @@ import { ProcurementService } from '../../../procurement/services/procurement.se
 })
 export class CheckoutComponent implements OnInit {
     private svc = inject(CheckoutService);
+    private assetService = inject(AssetService);
     private procurementService = inject(ProcurementService);
     private router = inject(Router);
     private route = inject(ActivatedRoute);
@@ -49,7 +51,7 @@ export class CheckoutComponent implements OnInit {
     checkoutProcessing = false;
     submitted = false;
     unmatchedItemName: string | null = null;
-    availableAssets: { id: string; name: string; serial: string; category: string }[] = [];
+    availableAssets: { id: string; assetCode?: string; name: string; serial: string; category: string }[] = [];
     employees: CheckoutEmployee[] = [];
 
     checkoutForm: CheckoutFormData = {
@@ -162,7 +164,27 @@ export class CheckoutComponent implements OnInit {
                             }
                         }
 
-                        this.openCheckoutModal(empId, itemName, directAssetId);
+                        if (directAssetId && !this.availableAssets.some(a => String(a.id) === String(directAssetId) || a.assetCode?.toLowerCase() === String(directAssetId).toLowerCase())) {
+                            this.assetService.getAssetById(directAssetId).subscribe({
+                                next: (asset) => {
+                                    if (asset && !asset.assignedUserId) {
+                                        this.availableAssets.unshift({
+                                            id: String(asset.id),
+                                            assetCode: asset.assetCode,
+                                            name: asset.productName || asset.assetCode,
+                                            serial: asset.serialNumber || '-',
+                                            category: asset.categoryName || '-',
+                                        });
+                                    }
+                                    this.openCheckoutModal(empId, itemName, directAssetId);
+                                },
+                                error: () => {
+                                    this.openCheckoutModal(empId, itemName, directAssetId);
+                                }
+                            });
+                        } else {
+                            this.openCheckoutModal(empId, itemName, directAssetId);
+                        }
                     }
                 });
                 this.cdr.detectChanges();
@@ -307,9 +329,10 @@ export class CheckoutComponent implements OnInit {
 
         // 1. Prefer direct assetId match (most reliable — from GRN / Arrival linked asset)
         if (directAssetId && this.availableAssets.length > 0) {
+            const target = String(directAssetId).trim().toLowerCase();
             const directMatch = this.availableAssets.find(a =>
-                String(a.id) === String(directAssetId) ||
-                (a as any).assetCode?.toLowerCase() === String(directAssetId).toLowerCase()
+                String(a.id).trim().toLowerCase() === target ||
+                (a.assetCode && a.assetCode.trim().toLowerCase() === target)
             );
             if (directMatch) {
                 preselectedAssetId = directMatch.id;
@@ -329,7 +352,7 @@ export class CheckoutComponent implements OnInit {
                 let match = this.availableAssets.find(a => {
                     const aname = a.name.trim().toLowerCase();
                     const aserial = a.serial.trim().toLowerCase();
-                    const acode = ((a as any).assetCode || '').trim().toLowerCase();
+                    const acode = (a.assetCode || '').trim().toLowerCase();
                     return aname === cleanItem || aserial === cleanItem || acode === cleanItem;
                 });
 

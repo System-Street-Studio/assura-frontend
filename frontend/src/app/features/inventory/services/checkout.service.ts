@@ -94,12 +94,13 @@ export class CheckoutService {
         );
     }
 
-    getAvailableAssets(): Observable<{ id: string; name: string; serial: string; category: string }[]> {
+    getAvailableAssets(): Observable<{ id: string; assetCode?: string; name: string; serial: string; category: string }[]> {
         return this.assetService.getAvailableForCheckout().pipe(
             map((assets) =>
                 (assets || [])
                     .map((a) => ({
                         id: String(a.id),
+                        assetCode: a.assetCode,
                         name: a.productName || a.assetCode,
                         serial: a.serialNumber || '-',
                         category: a.categoryName || '-',

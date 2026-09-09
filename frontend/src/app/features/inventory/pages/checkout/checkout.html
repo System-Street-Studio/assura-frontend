@@ -252,7 +252,7 @@
             <select class="assura-input custom-select" [(ngModel)]="checkoutForm.assetId" [ngStyle]="{'border-color': (submitted && !checkoutForm.assetId) ? '#ef4444' : ''}">
               <option value="">Select an available asset</option>
               <option *ngFor="let a of availableAssets" [value]="a.id">
-                {{ a.name }} ({{ a.serial }}) - {{ a.category }}
+                {{ a.assetCode ? a.assetCode + ' — ' : '' }}{{ a.name }} ({{ a.serial }}) - {{ a.category }}
               </option>
             </select>
             <div style="color: #ef4444; font-size: 13px; margin-top: 4px;" *ngIf="submitted && !checkoutForm.assetId">Asset is required</div>
