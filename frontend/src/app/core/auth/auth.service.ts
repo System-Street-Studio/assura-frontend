@@ -195,13 +195,10 @@ export class AuthService {
   }
 
   logout(): void {
-    const token = this.getToken();
-    if (token) {
-      this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
-        next: () => {},
-        error: () => {}
-      });
-    }
+    this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
+      next: () => {},
+      error: () => {}
+    });
     localStorage.removeItem(this.TOKEN_KEY);
   }
 

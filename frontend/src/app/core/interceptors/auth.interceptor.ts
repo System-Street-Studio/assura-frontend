@@ -12,14 +12,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Skip adding token for login and register requests
   const isAuthRequest = req.url.includes('/auth/login') || req.url.includes('/auth/register');
 
-  let request = req;
+  const headers: Record<string, string> = {};
   if (token && !isAuthRequest) {
-    request = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    headers['Authorization'] = `Bearer ${token}`;
   }
+
+  const request = req.clone({
+    withCredentials: true,
+    setHeaders: headers,
+  });
 
   return next(request).pipe(
     catchError((error: HttpErrorResponse) => {
