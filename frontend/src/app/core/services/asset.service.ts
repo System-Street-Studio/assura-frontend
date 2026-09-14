@@ -13,6 +13,10 @@ export class AssetService {
         return this.api.get<Asset[]>('assets');
     }
 
+    getMyAssets(): Observable<Asset[]> {
+        return this.api.get<Asset[]>('assets?onlyMine=true');
+    }
+
     getAsset(id: number): Observable<Asset> {
         return this.api.get<Asset>(`assets/${id}`);
     }

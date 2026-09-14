@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge';
 import { DataTableComponent, ColumnDef } from '../../../../shared/components/data-table/data-table';
@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CategoryService } from '../../../inventory/services/category.service';
 import { DivisionService } from '../../../inventory/services/division.service';
+import { AssetService } from '../../../../core/services/asset.service';
 
 @Component({
   selector: 'app-overview',
@@ -121,6 +122,8 @@ export class OverviewComponent implements OnInit {
   private authService = inject(AuthService);
   private categoryService = inject(CategoryService);
   private divisionService = inject(DivisionService);
+  private assetService = inject(AssetService);
+  private cdr = inject(ChangeDetectorRef);
 
   greeting = 'Welcome';
   firstName = 'Admin';
@@ -139,6 +142,7 @@ export class OverviewComponent implements OnInit {
     }
     this.loadCategories();
     this.loadDivisions();
+    this.loadAssets();
   }
 
   private loadDivisions(): void {
@@ -171,6 +175,42 @@ export class OverviewComponent implements OnInit {
     });
   }
 
+  private loadAssets(): void {
+    this.assetService.getAssets().subscribe({
+      next: (assets) => {
+        this.allData = assets.map(a => ({
+          id: a.assetCode || `AST-${a.id}`,
+          name: a.productName || 'N/A',
+          category: a.categoryName || 'N/A',
+          status: this.formatStatus(a.status)
+        }));
+        this.tableData = [...this.allData];
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to load assets in overview:', err);
+      }
+    });
+  }
+
+  formatStatus(status: any): string {
+    if (typeof status === 'number') {
+      switch (status) {
+        case 1: return 'In Use';
+        case 2: return 'In Store';
+        case 3: return 'Repairing';
+        case 4: return 'Discarded';
+        case 5: return 'Transferred';
+        case 6: return 'Lost';
+        default: return 'Unknown';
+      }
+    }
+    if (typeof status === 'string') {
+      return status;
+    }
+    return 'Unknown';
+  }
+
   showFilter = false;
   // ...
 
@@ -181,14 +221,8 @@ export class OverviewComponent implements OnInit {
     { key: 'status', label: 'Status', type: 'status' },
   ];
 
-  allData = [
-    { id: '123A', name: 'Dell XPS15', category: 'Computer & Peripherals', status: 'In Use' },
-    { id: '234A', name: 'Cisco Switch', category: 'Office Equipment', status: 'Repairing' },
-    { id: '994D', name: 'Wooden Table', category: 'Furniture & Fittings', status: 'Discarded' },
-    { id: '034S', name: 'Chair', category: 'Furniture & Fittings', status: 'In Store' },
-  ];
-
-  tableData = [...this.allData];
+  allData: any[] = [];
+  tableData: any[] = [];
   searchTerm = '';
 
   filterGroups: FilterGroup[] = [

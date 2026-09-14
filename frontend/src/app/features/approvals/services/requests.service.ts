@@ -145,14 +145,9 @@ export class RequestService {
     return this.http.get<SuggestedAsset[]>(`${this.baseUrl}/requests/${id}/suggested-assets`);
   }
 
-  // `id` here is always the AssetRequests table's own (positive) id — this component only ever
-  // shows new-asset requests, sourced from /assetrequests. The unified /requests endpoints below
-  // key that same record by its *negative* id (the scheme GetRequestsQuery, ProcessRequestCommand
-  // and ConfirmTemporaryAssignmentCommand already use to disambiguate it from the separate
-  // Requests table). Sending the raw positive id here risked silently mutating an unrelated
-  // Requests-table row that happened to share the same numeric id.
+  // Clean positive id used across all endpoints
   processByStorekeeper(id: number, isInStock: boolean, assetId?: number, remarks?: string): Observable<void> {
-    const unifiedId = -Math.abs(id);
+    const unifiedId = Math.abs(id);
     return this.http.post<void>(`${this.baseUrl}/requests/${unifiedId}/process`, {
       id: unifiedId,
       isInStock,
@@ -162,7 +157,7 @@ export class RequestService {
   }
 
   confirmTemporaryAssignment(id: number, remarks?: string): Observable<void> {
-    const unifiedId = -Math.abs(id);
+    const unifiedId = Math.abs(id);
     return this.http.post<void>(`${this.baseUrl}/requests/${unifiedId}/confirm-temporary-assignment`, {
       id: unifiedId,
       remarks,

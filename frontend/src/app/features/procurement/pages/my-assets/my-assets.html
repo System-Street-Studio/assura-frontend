@@ -4,7 +4,9 @@
     </div>
 
     <div class="assura-table-container">
-        <app-data-table [columns]="columns" [data]="assets" (rowClick)="onAssetClick($event)">
+        <div *ngIf="loading" style="padding: 24px; text-align: center; color: #6b7280;">Loading assets...</div>
+        <div *ngIf="!loading && assets.length === 0" style="padding: 24px; text-align: center; color: #6b7280;">No assets currently assigned to your account.</div>
+        <app-data-table *ngIf="!loading && assets.length > 0" [columns]="columns" [data]="assets" (rowClick)="onAssetClick($event)">
         </app-data-table>
     </div>
 </div>
