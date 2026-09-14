@@ -8,6 +8,75 @@
   <!-- Right Actions -->
   <div class="navbar-actions-container">
 
+    <!-- Role / Division Switcher -->
+    @if (hasMultipleWorkspaces) {
+      <div class="navbar-role-wrapper">
+        <button
+          class="navbar-role-btn"
+          type="button"
+          [class.active]="showRoleMenu"
+          aria-label="Switch Dashboard"
+          (click)="toggleRoleMenu($event)">
+          <span class="role-pill-icon">
+            <mat-icon>{{ activeWorkspace?.icon || 'manage_accounts' }}</mat-icon>
+          </span>
+          <div class="navbar-role-info">
+            <span class="navbar-role-name">{{ activeWorkspace?.label || 'Select Dashboard' }}</span>
+            @if (activeWorkspace?.divisionName) {
+              <span class="navbar-role-division">({{ activeWorkspace?.divisionName }})</span>
+            }
+          </div>
+          <mat-icon class="role-chevron" [class.rotated]="showRoleMenu">expand_more</mat-icon>
+        </button>
+
+        <!-- Role / Division Dropdown -->
+        @if (showRoleMenu) {
+          <div class="navbar-dropdown role-dropdown" (click)="$event.stopPropagation()">
+            <div class="navbar-dropdown-header">
+              <h4>Switch Dashboard</h4>
+              <span class="role-count-badge">{{ availableWorkspaces.length }} Workspaces</span>
+            </div>
+
+            <div class="role-dropdown-list">
+              @for (workspace of availableWorkspaces; track workspace.id) {
+                <button
+                  type="button"
+                  class="role-dropdown-item"
+                  [class.is-active]="workspace.id === activeWorkspace?.id"
+                  (click)="switchWorkspace(workspace, $event)">
+                  <div class="role-item-left">
+                    <span class="role-item-icon-wrap" [class.is-active]="workspace.id === activeWorkspace?.id">
+                      <mat-icon>{{ workspace.icon }}</mat-icon>
+                    </span>
+                    <div class="role-item-text">
+                      <div class="role-item-title-row">
+                        <span class="role-item-label">{{ workspace.label }}</span>
+                        @if (workspace.divisionName) {
+                          <span class="role-division-tag">{{ workspace.divisionName }}</span>
+                        }
+                      </div>
+                      <span class="role-item-sub">Go to {{ workspace.divisionName ? workspace.divisionName + ' ' : '' }}dashboard</span>
+                    </div>
+                  </div>
+                  @if (workspace.id === activeWorkspace?.id) {
+                    <mat-icon class="role-item-check">check_circle</mat-icon>
+                  }
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (activeWorkspace) {
+      <div class="navbar-single-role-badge">
+        <mat-icon class="role-badge-icon">{{ activeWorkspace.icon }}</mat-icon>
+        <span>{{ activeWorkspace.label }}</span>
+        @if (activeWorkspace.divisionName) {
+          <span class="navbar-badge-division">({{ activeWorkspace.divisionName }})</span>
+        }
+      </div>
+    }
+
     <!-- Notification Bell -->
     <div class="navbar-notification-wrapper">
       <button
@@ -70,7 +139,7 @@
     <button
       class="navbar-avatar-btn"
       type="button" aria-label="Open profile menu" (click)="toggleProfileMenu($event)">
-      <span class="navbar-avatar-text">A</span>
+      <span class="navbar-avatar-text">{{ userInitials }}</span>
     </button>
 
     <!-- Profile Menu -->

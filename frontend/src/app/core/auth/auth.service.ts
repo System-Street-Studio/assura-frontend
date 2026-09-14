@@ -28,6 +28,19 @@ export class AuthService {
   }
 
   /**
+   * Switch the active division and role context for the current user
+   */
+  switchContext(payload: { divisionId?: number; role: string }): Observable<{ token: string; divisionId?: number; role: string }> {
+    return this.http.post<{ token: string; divisionId?: number; role: string }>(`${this.apiUrl}/switch-context`, payload).pipe(
+      tap((response) => {
+        if (response && response.token) {
+          localStorage.setItem(this.TOKEN_KEY, response.token);
+        }
+      })
+    );
+  }
+
+  /**
    * Register a new user (POST Request)
    */
   register(userData: RegisterRequest): Observable<any> {

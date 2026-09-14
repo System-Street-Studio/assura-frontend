@@ -50,6 +50,50 @@
   border-bottom: none;
 }
 
+.user-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-subtext {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.badges-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(129, 140, 248, 0.25);
+  white-space: nowrap;
+}
+
+.division-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(14, 165, 233, 0.12);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
   .hr-shell {
     padding: 20px;

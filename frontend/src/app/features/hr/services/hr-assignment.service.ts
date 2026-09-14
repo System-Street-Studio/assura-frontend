@@ -15,6 +15,12 @@ export interface PendingRoleUser {
   status: string;
 }
 
+export interface AssignedUserRole {
+  divisionId: number;
+  divisionName: string;
+  role: string;
+}
+
 export interface AssignedUser {
   id: number;
   userId: string;
@@ -24,6 +30,7 @@ export interface AssignedUser {
   joinedDate: string;
   jobTitle?: string;
   status?: string;
+  assignments?: AssignedUserRole[];
 }
 
 export interface DivisionRoleAssignment {

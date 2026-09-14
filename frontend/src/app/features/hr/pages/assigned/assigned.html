@@ -20,9 +20,40 @@
             @for (user of assignedUsers(); track user.id) {
             <tr class="assura-tr-hover">
               <td class="assura-td">{{ user.userId }}</td>
-              <td class="assura-td">{{ user.name }}</td>
-              <td class="assura-td">{{ user.role }}</td>
-              <td class="assura-td">{{ user.division }}</td>
+              <td class="assura-td">
+                <div class="user-name-cell">
+                  <span class="font-medium text-slate-100">{{ user.name }}</span>
+                  @if (user.jobTitle && user.jobTitle !== 'N/A') {
+                    <span class="user-subtext">{{ user.jobTitle }}</span>
+                  }
+                </div>
+              </td>
+              <td class="assura-td">
+                @if (user.assignments && user.assignments.length > 0) {
+                  <div class="badges-wrapper">
+                    @for (assignment of user.assignments; track $index) {
+                      <span class="role-badge" [title]="assignment.divisionName">
+                        {{ assignment.role }}
+                      </span>
+                    }
+                  </div>
+                } @else {
+                  <span class="role-badge">{{ user.role }}</span>
+                }
+              </td>
+              <td class="assura-td">
+                @if (user.assignments && user.assignments.length > 0) {
+                  <div class="badges-wrapper">
+                    @for (assignment of user.assignments; track $index) {
+                      <span class="division-badge" [title]="assignment.role">
+                        {{ assignment.divisionName }}
+                      </span>
+                    }
+                  </div>
+                } @else {
+                  <span class="division-badge">{{ user.division }}</span>
+                }
+              </td>
               <td class="assura-td">{{ user.joinedDate }}</td>
               <td class="assura-td">
                 <button class="assura-btn assura-btn-secondary" style="padding: 4px 12px; font-size: 13px;" (click)="openEditForm(user.id)">Edit</button>

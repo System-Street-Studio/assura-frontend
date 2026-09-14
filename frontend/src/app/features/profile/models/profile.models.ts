@@ -1,3 +1,10 @@
+export interface UserWorkspace {
+    divisionId?: number;
+    divisionName?: string;
+    role: string;
+    jobTitle?: string;
+}
+
 export interface UserProfile {
     id: number;
     username: string;
@@ -8,6 +15,7 @@ export interface UserProfile {
     divisionName?: string;
     divisionId?: number;
     phoneNumber?: string;
+    workspaces?: UserWorkspace[];
 }
 
 export interface UpdateProfileRequest {
