@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment';
 
 import { LoginRequest, LoginResponse, RegisterRequest, ForgotPasswordRequest, ResetPasswordRequest } from '../../features/auth/models/auth.models';
+import { ProfileService } from '../services/profile.service';
 
 
 @Injectable({ providedIn: 'root' })
@@ -12,6 +13,8 @@ export class AuthService {
   private readonly TOKEN_KEY = 'access_token';
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/auth`;
+
+  private profileService = inject(ProfileService);
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
@@ -22,6 +25,7 @@ export class AuthService {
       tap((response) => {
         if (response.token) {
           localStorage.setItem(this.TOKEN_KEY, response.token);
+          this.profileService.clearCache();
         }
       })
     );
@@ -207,12 +211,25 @@ export class AuthService {
     }
   }
 
+  // Returns the user's active role from the JWT token (if set during context switch)
+  getActiveRole(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const decoded: any = jwtDecode(token);
+      return decoded.ActiveRole ?? decoded.activeRole ?? null;
+    } catch {
+      return null;
+    }
+  }
+
   logout(): void {
     this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
       next: () => {},
       error: () => {}
     });
     localStorage.removeItem(this.TOKEN_KEY);
+    this.profileService.clearCache();
   }
 
   getDashboardUrl(): string {

@@ -175,19 +175,35 @@ export class SharedNavbarComponent implements OnInit {
     const currentUrl = this.router.url;
     const currentDivisionId = this.authService.getDivisionId();
     const workspaces = this.availableWorkspaces;
+    if (workspaces.length === 0) return null;
 
-    // 1. Try matching both section AND divisionId
+    // 1. Try matching current URL section AND divisionId
     const bySectionAndDivision = workspaces.find(w =>
       currentUrl.startsWith(`/${w.section}`) &&
       (!w.divisionId || w.divisionId === currentDivisionId)
     );
     if (bySectionAndDivision) return bySectionAndDivision;
 
-    // 2. Try matching section only
+    // 2. Try matching current URL section only
     const bySection = workspaces.find(w => currentUrl.startsWith(`/${w.section}`));
     if (bySection) return bySection;
 
-    // 3. Try matching primary role & division
+    // 3. Try matching ActiveRole from token (if set during context switch) & division
+    const activeRole = this.authService.getActiveRole();
+    if (activeRole) {
+      const byActiveRoleAndDiv = workspaces.find(w =>
+        w.role.toLowerCase() === activeRole.toLowerCase() &&
+        (!w.divisionId || w.divisionId === currentDivisionId)
+      );
+      if (byActiveRoleAndDiv) return byActiveRoleAndDiv;
+
+      const byActiveRole = workspaces.find(w =>
+        w.role.toLowerCase() === activeRole.toLowerCase()
+      );
+      if (byActiveRole) return byActiveRole;
+    }
+
+    // 4. Try matching primary role & division
     const primary = this.authService.getRole();
     if (primary) {
       const byPrimary = workspaces.find(w =>
@@ -195,9 +211,14 @@ export class SharedNavbarComponent implements OnInit {
         (!w.divisionId || w.divisionId === currentDivisionId)
       );
       if (byPrimary) return byPrimary;
+
+      const byPrimaryOnly = workspaces.find(w =>
+        w.role.toLowerCase() === primary.toLowerCase()
+      );
+      if (byPrimaryOnly) return byPrimaryOnly;
     }
 
-    return workspaces.length > 0 ? workspaces[0] : null;
+    return workspaces[0];
   }
 
   get pageTitle(): string {
