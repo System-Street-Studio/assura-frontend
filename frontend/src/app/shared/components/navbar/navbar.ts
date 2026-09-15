@@ -154,9 +154,6 @@ export class SharedNavbarComponent implements OnInit {
       }
     }
 
-    if (!roleKeys.has('SystemAdmin') && roleKeys.size > 0 && !roleKeys.has('Employee')) {
-      roleKeys.add('Employee');
-    }
 
     return Array.from(roleKeys).map(key => ({
       id: `${key}-${currentDivisionId ?? 0}`,

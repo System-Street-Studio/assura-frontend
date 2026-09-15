@@ -121,13 +121,17 @@
 
                 <div style="margin-bottom: 24px;">
                     <label class="assura-label">Select Target Employee</label>
+                    <div *ngIf="selectedArrival?.targetEmployeeName" style="margin-bottom: 8px; font-size: 13px; color: #38bdf8; display: flex; align-items: center; gap: 4px;">
+                        <mat-icon style="font-size: 16px; width: 16px; height: 16px;">person</mat-icon>
+                        <span>Original Requester: <strong>{{ selectedArrival?.targetEmployeeName }}</strong></span>
+                    </div>
                     <select class="assura-input custom-select" [(ngModel)]="selectedEmployeeId">
                         <option value="" disabled>Choose an employee...</option>
                         <option *ngFor="let emp of employees" [value]="emp.id">
-                            {{ emp.name }}
+                            {{ emp.name }}{{ isRequester(emp) ? ' (Requester)' : '' }}
                         </option>
                     </select>
-                    <div style="font-size: 13px; margin-top: 4px; opacity: 0.75;">The employee will receive a notification.</div>
+                    <div style="font-size: 13px; margin-top: 4px; opacity: 0.75;">The selected employee will receive this asset arrival on their dashboard.</div>
                 </div>
 
                 <div style="margin-bottom: 24px;">

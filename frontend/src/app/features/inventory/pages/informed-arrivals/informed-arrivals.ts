@@ -59,7 +59,7 @@ export class InformedArrivalsComponent implements OnInit {
     loadEmployees(): void {
         this.checkoutService.getEmployees().subscribe((data) => {
             this.employees = data || [];
-            if (this.showInformModal && !this.selectedEmployeeId) {
+            if (this.showInformModal && !this.selectedEmployeeId && this.selectedArrival?.targetEmployeeId) {
                 this.autoFillTargetEmployee();
                 this.cdr.detectChanges();
             }
@@ -71,29 +71,38 @@ export class InformedArrivalsComponent implements OnInit {
             return;
         }
 
-        const arrivalDivId = this.selectedArrival.divisionId;
-        const arrivalDivName = (this.selectedArrival.divisionName || '').trim().toLowerCase();
-
-        // 1. Match by Division ID if present
-        if (arrivalDivId) {
-            const matchById = this.employees.find(e => e.divisionId != null && Number(e.divisionId) === Number(arrivalDivId));
+        // 1. Only pre-select if targetEmployeeId is explicitly known
+        if (this.selectedArrival.targetEmployeeId) {
+            const matchById = this.employees.find(e => Number(e.id) === Number(this.selectedArrival?.targetEmployeeId));
             if (matchById) {
                 this.selectedEmployeeId = String(matchById.id);
                 return;
             }
         }
 
-        // 2. Match by Division Name
-        if (arrivalDivName) {
-            const matchByName = this.employees.find(e => {
-                const empDiv = (e.division || '').trim().toLowerCase();
-                return empDiv === arrivalDivName || empDiv.includes(arrivalDivName) || arrivalDivName.includes(empDiv);
-            });
+        // 2. Try matching by targetEmployeeName if available
+        if (this.selectedArrival.targetEmployeeName) {
+            const targetName = this.selectedArrival.targetEmployeeName.trim().toLowerCase();
+            const matchByName = this.employees.find(e => (e.name || '').trim().toLowerCase() === targetName);
             if (matchByName) {
                 this.selectedEmployeeId = String(matchByName.id);
                 return;
             }
         }
+
+        // Leave unselected so storekeeper deliberately chooses the intended employee
+        this.selectedEmployeeId = '';
+    }
+
+    isRequester(emp: CheckoutEmployee): boolean {
+        if (!this.selectedArrival) return false;
+        if (this.selectedArrival.targetEmployeeId && Number(emp.id) === Number(this.selectedArrival.targetEmployeeId)) {
+            return true;
+        }
+        if (this.selectedArrival.targetEmployeeName && emp.name && emp.name.trim().toLowerCase() === this.selectedArrival.targetEmployeeName.trim().toLowerCase()) {
+            return true;
+        }
+        return false;
     }
 
     getStatusClass(status: string): string {
@@ -142,12 +151,10 @@ export class InformedArrivalsComponent implements OnInit {
 
     openInformModal(item: AssetInformingDto): void {
         this.selectedArrival = item;
-        this.selectedEmployeeId = item.targetEmployeeId ? String(item.targetEmployeeId) : '';
         this.notifyDivisionHead = true;
         this.informRemarks = item.remarks || '';
-        if (!this.selectedEmployeeId) {
-            this.autoFillTargetEmployee();
-        }
+        this.selectedEmployeeId = '';
+        this.autoFillTargetEmployee();
         this.showInformModal = true;
     }
 
